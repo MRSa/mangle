@@ -1,4 +1,4 @@
-package jp.osdn.gokigen.mangle
+package jp.osdn.gokigen.mangle.scene
 
 import android.graphics.Color
 

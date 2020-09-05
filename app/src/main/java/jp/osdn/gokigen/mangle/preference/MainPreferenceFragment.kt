@@ -10,7 +10,7 @@ import android.util.Log
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
-import jp.osdn.gokigen.mangle.IChangeScene
+import jp.osdn.gokigen.mangle.scene.IChangeScene
 import jp.osdn.gokigen.mangle.R
 
 class MainPreferenceFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeListener, Preference.OnPreferenceClickListener
@@ -24,17 +24,18 @@ class MainPreferenceFragment : PreferenceFragmentCompat(), OnSharedPreferenceCha
         fun newInstance() = MainPreferenceFragment().apply { }
     }
 
+    fun setSceneChanger(changer : IChangeScene)
+    {
+        this.changeScene = changer
+    }
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?)
     {
         setPreferencesFromResource(R.xml.preference_main, rootKey)
 
         prepareClickListener(IPreferencePropertyAccessor.LABEL_EXIT_APPLICATION)
         prepareClickListener(IPreferencePropertyAccessor.LABEL_WIFI_SETTINGS)
-    }
-
-    fun setSceneChanger(changer : IChangeScene)
-    {
-        this.changeScene = changer
+        prepareClickListener(IPreferencePropertyAccessor.LABEL_DEBUG_INFO)
     }
 
     private fun prepareClickListener(label: String)
@@ -82,15 +83,10 @@ class MainPreferenceFragment : PreferenceFragmentCompat(), OnSharedPreferenceCha
         when (preference?.key)
         {
             IPreferencePropertyAccessor.LABEL_WIFI_SETTINGS -> activity?.startActivity(Intent(Settings.ACTION_WIFI_SETTINGS))
-            IPreferencePropertyAccessor.LABEL_EXIT_APPLICATION -> exitApplication()
+            IPreferencePropertyAccessor.LABEL_EXIT_APPLICATION -> changeScene.exitApplication()
             IPreferencePropertyAccessor.LABEL_DEBUG_INFO -> changeScene.changeSceneToDebugInformation()
             else -> { Log.v(TAG, " onPreferenceClick() : " + preference?.key); ret = false; }
         }
         return (ret)
-    }
-
-    private fun exitApplication()
-    {
-        Log.v(TAG, " exitApplication() : ")
     }
 }

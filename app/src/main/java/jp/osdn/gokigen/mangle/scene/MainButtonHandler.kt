@@ -1,14 +1,13 @@
-package jp.osdn.gokigen.mangle
+package jp.osdn.gokigen.mangle.scene
 
-import android.graphics.Color
-import android.graphics.Typeface
 import android.util.Log
 import android.view.View
 import android.widget.ImageButton
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import jp.osdn.gokigen.mangle.R
+import jp.osdn.gokigen.mangle.scene.SceneChanger
 
-class MainButtonHandler(val activity : AppCompatActivity) : View.OnClickListener,  IInformationReceiver
+class MainButtonHandler(val activity : AppCompatActivity) : View.OnClickListener
 {
     private val TAG = toString()
     private lateinit var sceneChanger : SceneChanger
@@ -35,7 +34,6 @@ class MainButtonHandler(val activity : AppCompatActivity) : View.OnClickListener
         activity.findViewById<ImageButton>(R.id.button_configure).setOnClickListener(this)
     }
 
-
     fun camera()
     {
         Log.v(TAG, " - - - - - - - - - CAMERA - - - - - - - - -")
@@ -52,26 +50,4 @@ class MainButtonHandler(val activity : AppCompatActivity) : View.OnClickListener
     {
 
     }
-
-    override fun updateMessage(message: String, isBold: Boolean, isColor: Boolean, color: Int)
-    {
-        val messageArea = activity.findViewById<TextView>(R.id.message)
-        activity.runOnUiThread {
-            messageArea?.text = message
-            if (isBold)
-            {
-                messageArea?.typeface = Typeface.DEFAULT_BOLD
-            }
-            if (isColor)
-            {
-                messageArea?.setTextColor(color)
-            }
-            else
-            {
-                messageArea?.setTextColor(Color.DKGRAY)
-            }
-            messageArea?.invalidate()
-        }
-    }
-
 }

@@ -9,14 +9,18 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import jp.osdn.gokigen.mangle.scene.MainButtonHandler
+import jp.osdn.gokigen.mangle.scene.ShowMessage
+import jp.osdn.gokigen.mangle.scene.SceneChanger
 
 class MainActivity : AppCompatActivity()
 {
     private val TAG = toString()
     private val mainButtonHandler : MainButtonHandler = MainButtonHandler(this)
+    private val showMessage : ShowMessage = ShowMessage(this)
 
     //private var cameraControl: CameraControl? = null
-    private val sceneChanger : SceneChanger = SceneChanger(this, mainButtonHandler)
+    private val sceneChanger : SceneChanger = SceneChanger(this, showMessage)
     //private var sceneChanger : SceneChanger? = null // = SceneChanger(this, this)
 
     override fun onCreate(savedInstanceState: Bundle?)

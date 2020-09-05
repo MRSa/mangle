@@ -25,4 +25,7 @@
     <string name="pref_wifi_settings">WiFi設定</string>
     <string name="pref_summary_wifi_settings"> </string>
 
+    <string name="dialog_title_exit_application">アプリケーション終了</string>
+    <string name="dialog_message_exit_application">アプリケーションを終了します。</string>
+
 </resources>

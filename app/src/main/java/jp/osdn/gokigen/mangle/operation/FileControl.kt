@@ -1,4 +1,4 @@
-package jp.osdn.gokigen.mangle
+package jp.osdn.gokigen.mangle.operation
 
 import android.net.Uri
 import android.util.Log
@@ -9,6 +9,7 @@ import androidx.camera.core.ImageCaptureException
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import com.google.android.material.snackbar.Snackbar
+import jp.osdn.gokigen.mangle.R
 import java.io.File
 import java.lang.Exception
 import java.text.SimpleDateFormat
@@ -77,7 +78,9 @@ class FileControl(private val context: FragmentActivity) : View.OnClickListener
                     val savedUri = Uri.fromFile(photoFile)
                     val msg = context.getString(R.string.capture_success) + " $savedUri"
                     //Toast.makeText(context.baseContext, msg, Toast.LENGTH_SHORT).show()
-                    Snackbar.make(context.findViewById<androidx.constraintlayout.widget.ConstraintLayout>(R.id.main_layout), msg, Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(context.findViewById<androidx.constraintlayout.widget.ConstraintLayout>(
+                        R.id.main_layout
+                    ), msg, Snackbar.LENGTH_SHORT).show()
                     Log.v(TAG, msg)
                 }
             })

@@ -1,4 +1,4 @@
-package jp.osdn.gokigen.mangle
+package jp.osdn.gokigen.mangle.operation
 
 import android.util.Log
 import androidx.camera.core.CameraSelector
@@ -7,6 +7,7 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
+import jp.osdn.gokigen.mangle.R
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -40,7 +41,7 @@ class CameraControl(val activity : FragmentActivity)
         cameraIsStarted = true
 
         val cameraProviderFuture = ProcessCameraProvider.getInstance(activity)
-        cameraProviderFuture.addListener(Runnable {
+        cameraProviderFuture.addListener( {
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
             val preview = Preview.Builder()
                 .build()

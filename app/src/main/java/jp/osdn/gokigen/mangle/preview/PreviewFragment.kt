@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import jp.osdn.gokigen.mangle.CameraControl
+import jp.osdn.gokigen.mangle.operation.CameraControl
 import jp.osdn.gokigen.mangle.R
 
 class PreviewFragment(contentLayoutId: Int = R.layout.camera_capture) : Fragment(contentLayoutId)

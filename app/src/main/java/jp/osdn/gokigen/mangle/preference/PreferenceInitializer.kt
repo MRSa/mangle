@@ -4,7 +4,6 @@ import android.content.SharedPreferences
 
 class PreferenceInitializer
 {
-    //
     fun initializePreferences(preferences : SharedPreferences)
     {
         val items : Map<String, *> = preferences.all

@@ -1,4 +1,4 @@
-package jp.osdn.gokigen.mangle
+package jp.osdn.gokigen.mangle.operation
 
 import android.util.Log
 import androidx.camera.core.ImageAnalysis

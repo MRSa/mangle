@@ -1,4 +1,4 @@
-package jp.osdn.gokigen.mangle
+package jp.osdn.gokigen.mangle.scene
 
 interface IChangeScene
 {
@@ -6,4 +6,5 @@ interface IChangeScene
     fun changeToPreview()
     fun changeSceneToConfiguration()
     fun changeSceneToDebugInformation()
+    fun exitApplication()
 }
