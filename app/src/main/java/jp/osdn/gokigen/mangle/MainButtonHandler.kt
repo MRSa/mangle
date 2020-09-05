@@ -45,7 +45,7 @@ class MainButtonHandler(val activity : AppCompatActivity) : View.OnClickListener
     fun configure()
     {
         Log.v(TAG, " - - - - - - - - - CONFIGURE - - - - - - - - -")
-
+        sceneChanger.changeSceneToConfiguration()
     }
 
     fun message()

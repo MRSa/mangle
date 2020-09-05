@@ -2,9 +2,11 @@ package jp.osdn.gokigen.mangle
 
 import android.graphics.Color
 import android.util.Log
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
 import jp.osdn.gokigen.mangle.logcat.LogCatFragment
+import jp.osdn.gokigen.mangle.preference.MainPreferenceFragment
 import jp.osdn.gokigen.mangle.preview.PreviewFragment
 
 class SceneChanger(val activity: FragmentActivity, val informationNotify: IInformationReceiver) : IChangeScene
@@ -14,6 +16,7 @@ class SceneChanger(val activity: FragmentActivity, val informationNotify: IInfor
     private var count : Int = 0
     private lateinit var previewFragment : PreviewFragment
     private lateinit var logCatFragment : LogCatFragment
+    private lateinit var mainPreferenceFragment : MainPreferenceFragment
 
     init
     {
@@ -25,25 +28,33 @@ class SceneChanger(val activity: FragmentActivity, val informationNotify: IInfor
         if (!::previewFragment.isInitialized)
         {
             previewFragment = PreviewFragment.newInstance()
+            previewFragment.setCameraControl(cameraControl)
         }
-        val transaction: FragmentTransaction = activity.supportFragmentManager.beginTransaction()
-        previewFragment.setCameraControl(cameraControl)
         cameraControl.startCamera()
-        previewFragment.retainInstance = true
-        transaction.replace(R.id.fragment1, previewFragment)
-        transaction.commitAllowingStateLoss()
+        setDefaultFragment(previewFragment)
+
         count++
         informationNotify.updateMessage(" changeToPreview " + count, false, true, Color.BLUE)
     }
 
     override fun changeToPreview()
     {
-        TODO("Not yet implemented")
+        if (!::previewFragment.isInitialized)
+        {
+            previewFragment = PreviewFragment.newInstance()
+            previewFragment.setCameraControl(cameraControl)
+        }
+        changeFragment(previewFragment)
     }
 
     override fun changeSceneToConfiguration()
     {
-        TODO("Not yet implemented")
+        if (!::mainPreferenceFragment.isInitialized)
+        {
+            mainPreferenceFragment = MainPreferenceFragment.newInstance()
+            mainPreferenceFragment.setSceneChanger(this)
+        }
+        changeFragment(mainPreferenceFragment)
     }
 
     override fun changeSceneToDebugInformation()
@@ -52,10 +63,23 @@ class SceneChanger(val activity: FragmentActivity, val informationNotify: IInfor
         {
             logCatFragment = LogCatFragment.newInstance()
         }
+        changeFragment(logCatFragment)
+    }
+
+    private fun changeFragment(fragment : Fragment)
+    {
         val transaction : FragmentTransaction = activity.supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.fragment1, logCatFragment)
+        transaction.replace(R.id.fragment1, fragment)
         transaction.addToBackStack(null)
         transaction.commit()
+    }
+
+    private fun setDefaultFragment(fragment : Fragment)
+    {
+        val transaction: FragmentTransaction = activity.supportFragmentManager.beginTransaction()
+        fragment.retainInstance = true
+        transaction.replace(R.id.fragment1, fragment)
+        transaction.commitAllowingStateLoss()
     }
 
     fun finish()

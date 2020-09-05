@@ -15,6 +15,9 @@ class ConfirmationDialog : DialogFragment()
         this.myContext = context
     }
 
+    /**
+     *    ダイアログを表示する (タイトルやメッセージはリソースからとってくる）
+     */
     fun show(titleResId: Int, messageResId: Int, callback: Callback)
     {
         val title = myContext.getString(titleResId)

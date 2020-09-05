@@ -1,4 +1,4 @@
-<androidx.preference.Preference.PreferenceScreen
+<PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
@@ -10,12 +10,10 @@
             android:title="@string/pref_exit_power_off"
             android:summary="@string/pref_summary_exit_power_off"
             />
-
         <PreferenceScreen
             android:key="wifi_settings"
             android:title="@string/pref_wifi_settings"
             android:summary="@string/pref_summary_wifi_settings" />
-
         <SwitchPreferenceCompat
             android:key="show_notifications"
             android:title="@string/notification_title"/>
@@ -31,7 +29,6 @@
             <intent android:action="android.intent.action.VIEW"
                 android:data="https://osdn.net/projects/gokigen/wiki/Mangle" />
         </Preference>
-
         <Preference
             android:key="privacy_policy"
             android:title="@string/pref_privacy_policy"
@@ -40,11 +37,10 @@
             <intent android:action="android.intent.action.VIEW"
                 android:data="https://osdn.net/projects/gokigen/wiki/PrivacyPolicy" />
         </Preference>
-
         <PreferenceScreen
             android:key="debug_info"
             android:title="@string/pref_degug_info"
             android:summary="@string/pref_summary_debug_info" />
     </PreferenceCategory>
 
-</androidx.preference.Preference.PreferenceScreen>
+</PreferenceScreen>
