@@ -1,0 +1,28 @@
+<resources>
+    <string name="blank"> </string>
+    <string name="app_name">mangle</string>
+    <string name="action_refresh">Refresh</string>
+    <string name="finish_refresh">Finish refresh.</string>
+    <string name="dialog_positive_execute">OK</string>
+    <string name="dialog_negative_cancel">Cancel</string>
+    <string name="take_photo">Take Photo</string>
+    <string name="permission_not_granted">Permissions not granted by the user.</string>
+    <string name="capture_success">Photo capture succeeded: </string>
+    <string name="dialog_confirm_title_output_log">Share debug log</string>
+    <string name="dialog_confirm_message_output_log">Share the debug log, OK?</string>
+
+    <string name="pref_cat_gokigen">GOKIGEN</string>
+    <string name="pref_instruction_manual">Instructions</string>
+    <string name="pref_privacy_policy">Privacy Policy</string>
+    <string name="pref_degug_info">Debug Information</string>
+    <string name="pref_summary_debug_info">LogCat Information</string>
+
+    <string name="notification_title">Use Notification</string>
+
+    <string name="pref_cat_application_control">App. Control</string>
+    <string name="pref_exit_power_off">Exit Application</string>
+    <string name="pref_summary_exit_power_off"> </string>
+    <string name="pref_wifi_settings">WIFI Settings</string>
+    <string name="pref_summary_wifi_settings"> </string>
+
+</resources>
