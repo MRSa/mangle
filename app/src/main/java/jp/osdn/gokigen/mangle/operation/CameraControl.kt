@@ -1,6 +1,7 @@
 package jp.osdn.gokigen.mangle.operation
 
 import android.util.Log
+import android.util.Size
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
@@ -26,7 +27,6 @@ class CameraControl(val activity : FragmentActivity)
     fun initialize()
     {
         Log.v(TAG, " initialize()")
-        fileControl.initialize()
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
 
@@ -54,6 +54,8 @@ class CameraControl(val activity : FragmentActivity)
             try
             {
                 val imageAnalyzer = ImageAnalysis.Builder()
+                    .setTargetResolution(Size(800, 600))
+                    .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                     .build()
                     .also {
                         it.setAnalyzer(cameraExecutor, MyImageAnalyzer { luma ->
@@ -69,6 +71,7 @@ class CameraControl(val activity : FragmentActivity)
                 e.printStackTrace()
             }
         }, ContextCompat.getMainExecutor(activity))
+
     }
 
     fun finish()

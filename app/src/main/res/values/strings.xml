@@ -1,6 +1,7 @@
 <resources>
     <string name="blank"> </string>
-    <string name="app_name">mangle</string>
+    <string name="app_name">A01e</string>
+    <string name="app_location">AirA01a</string>
     <string name="action_refresh">Refresh</string>
     <string name="finish_refresh">Finish refresh.</string>
     <string name="dialog_positive_execute">OK</string>
@@ -24,6 +25,9 @@
     <string name="pref_summary_exit_power_off"> </string>
     <string name="pref_wifi_settings">WIFI Settings</string>
     <string name="pref_summary_wifi_settings"> </string>
+
+    <string name="pref_cat_application_settings">App. Settings</string>
+    <string name="save_local_location">Save local location</string>
 
     <string name="dialog_title_exit_application">Exit Application</string>
     <string name="dialog_message_exit_application">Exit Application</string>

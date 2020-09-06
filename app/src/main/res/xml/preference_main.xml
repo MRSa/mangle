@@ -14,9 +14,18 @@
             android:key="wifi_settings"
             android:title="@string/pref_wifi_settings"
             android:summary="@string/pref_summary_wifi_settings" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:title="@string/pref_cat_application_settings">
+<!--
         <SwitchPreferenceCompat
             android:key="show_notifications"
             android:title="@string/notification_title"/>
+-->
+        <SwitchPreferenceCompat
+            android:key="save_local_location"
+            android:title="@string/save_local_location"/>
     </PreferenceCategory>
 
     <PreferenceCategory

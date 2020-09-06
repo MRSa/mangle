@@ -50,20 +50,8 @@ class MainPreferenceFragment : PreferenceFragmentCompat(), OnSharedPreferenceCha
         Log.v(TAG, " onAttach() : ")
 
         preferences = PreferenceManager.getDefaultSharedPreferences(context)
-        PreferenceInitializer().initializePreferences(preferences)
+        PreferenceValueInitializer().initializePreferences(preferences)
         preferences.registerOnSharedPreferenceChangeListener(this)
-    }
-
-    override fun onResume()
-    {
-        super.onResume()
-        Log.v(TAG, " onResume() : ")
-    }
-
-    override fun onPause()
-    {
-        super.onPause()
-        Log.v(TAG, " onPause() : ")
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?)
@@ -72,6 +60,7 @@ class MainPreferenceFragment : PreferenceFragmentCompat(), OnSharedPreferenceCha
         when (key)
         {
             IPreferencePropertyAccessor.PREFERENCE_NOTIFICATIONS -> value = preferences.getBoolean(key, IPreferencePropertyAccessor.PREFERENCE_NOTIFICATIONS_DEFAULT_VALUE)
+            IPreferencePropertyAccessor.PREFERENCE_SAVE_LOCAL_LOCATION -> value = preferences.getBoolean(key, IPreferencePropertyAccessor.PREFERENCE_SAVE_LOCAL_LOCATION_DEFAULT_VALUE)
             // else -> Log.v(TAG, " onSharedPreferenceChanged() : + $key ")
         }
         Log.v(TAG, " onSharedPreferenceChanged() : + $key, $value")

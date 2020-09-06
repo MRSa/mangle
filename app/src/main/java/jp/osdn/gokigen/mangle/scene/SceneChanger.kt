@@ -17,7 +17,7 @@ class SceneChanger(val activity: FragmentActivity, val informationNotify: IInfor
 {
     private val TAG = toString()
     private val cameraControl: CameraControl = CameraControl(activity)
-    private var count : Int = 0
+
     private lateinit var previewFragment : PreviewFragment
     private lateinit var logCatFragment : LogCatFragment
     private lateinit var mainPreferenceFragment : MainPreferenceFragment
@@ -34,11 +34,8 @@ class SceneChanger(val activity: FragmentActivity, val informationNotify: IInfor
             previewFragment = PreviewFragment.newInstance()
             previewFragment.setCameraControl(cameraControl)
         }
-        cameraControl.startCamera()
         setDefaultFragment(previewFragment)
-
-        count++
-        informationNotify.updateMessage(" changeToPreview " + count, false, true, Color.BLUE)
+        cameraControl.startCamera()
     }
 
     override fun changeToPreview()

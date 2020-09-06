@@ -33,7 +33,6 @@ class PreviewFragment(contentLayoutId: Int = R.layout.camera_capture) : Fragment
             return (previewView)
         }
         previewView = inflater.inflate(R.layout.camera_capture, null, false)
-        //cameraControl?.initialize()
         return (previewView)
     }
 
