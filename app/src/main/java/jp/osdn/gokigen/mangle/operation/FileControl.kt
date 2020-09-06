@@ -129,8 +129,8 @@ class FileControl(private val context: FragmentActivity) : View.OnClickListener
 
         val mimeType = "image/jpeg"
         val now = System.currentTimeMillis()
-        val path = "DCIM/aira01a"
-        val photoFile = SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(now) + ".jpg"
+        val path = "DCIM/aira01a/"
+        val photoFile = "P" + SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(now) + ".jpg"
 
         val extStorageUri : Uri
         val values = ContentValues()
@@ -140,7 +140,6 @@ class FileControl(private val context: FragmentActivity) : View.OnClickListener
         values.put(MediaStore.Images.Media.DATE_MODIFIED, now)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
         {
-            values.put(MediaStore.Images.Media.DATA, photoFile)
             values.put(MediaStore.Images.Media.DATE_TAKEN, now)
             values.put(MediaStore.Images.Media.RELATIVE_PATH, path)
             values.put(MediaStore.Images.Media.IS_PENDING, true)

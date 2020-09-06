@@ -3,6 +3,7 @@ package jp.osdn.gokigen.mangle.scene
 import android.util.Log
 import android.view.View
 import android.widget.ImageButton
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import jp.osdn.gokigen.mangle.R
 
@@ -33,7 +34,7 @@ class MainButtonHandler(private val activity : AppCompatActivity) : View.OnClick
         activity.findViewById<ImageButton>(R.id.button_camera).setOnClickListener(this)
         activity.findViewById<ImageButton>(R.id.button_configure).setOnClickListener(this)
         activity.findViewById<ImageButton>(R.id.button_connect).setOnClickListener(this)
-        activity.findViewById<ImageButton>(R.id.message).setOnClickListener(this)
+        activity.findViewById<TextView>(R.id.message).setOnClickListener(this)
     }
 
     private fun connect()
