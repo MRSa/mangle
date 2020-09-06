@@ -36,6 +36,9 @@ class SceneChanger(val activity: FragmentActivity, val informationNotify: IInfor
         }
         setDefaultFragment(previewFragment)
         cameraControl.startCamera()
+
+        val msg = activity.getString(R.string.app_name) + " : " + " STARTED."
+        informationNotify.updateMessage(msg, false, true, Color.LTGRAY)
     }
 
     override fun changeToPreview()

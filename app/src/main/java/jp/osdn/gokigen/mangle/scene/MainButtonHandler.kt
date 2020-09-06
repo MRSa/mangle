@@ -5,9 +5,8 @@ import android.view.View
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import jp.osdn.gokigen.mangle.R
-import jp.osdn.gokigen.mangle.scene.SceneChanger
 
-class MainButtonHandler(val activity : AppCompatActivity) : View.OnClickListener
+class MainButtonHandler(private val activity : AppCompatActivity) : View.OnClickListener
 {
     private val TAG = toString()
     private lateinit var sceneChanger : SceneChanger
@@ -16,6 +15,7 @@ class MainButtonHandler(val activity : AppCompatActivity) : View.OnClickListener
     {
         when (v?.id)
         {
+            R.id.button_connect -> connect()
             R.id.button_camera -> camera()
             R.id.button_configure -> configure()
             R.id.message -> message()
@@ -32,22 +32,30 @@ class MainButtonHandler(val activity : AppCompatActivity) : View.OnClickListener
     {
         activity.findViewById<ImageButton>(R.id.button_camera).setOnClickListener(this)
         activity.findViewById<ImageButton>(R.id.button_configure).setOnClickListener(this)
+        activity.findViewById<ImageButton>(R.id.button_connect).setOnClickListener(this)
+        activity.findViewById<ImageButton>(R.id.message).setOnClickListener(this)
     }
 
-    fun camera()
+    private fun connect()
+    {
+        Log.v(TAG, " - - - - - - - - - CONNECT - - - - - - - - -")
+
+    }
+
+    private fun camera()
     {
         Log.v(TAG, " - - - - - - - - - CAMERA - - - - - - - - -")
         sceneChanger.changeSceneToDebugInformation()
     }
 
-    fun configure()
+    private fun configure()
     {
         Log.v(TAG, " - - - - - - - - - CONFIGURE - - - - - - - - -")
         sceneChanger.changeSceneToConfiguration()
     }
 
-    fun message()
+    private fun message()
     {
-
+        Log.v(TAG, " - - - - - - - - - MESSAGE - - - - - - - - -")
     }
 }
