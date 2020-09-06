@@ -1,6 +1,7 @@
 package jp.osdn.gokigen.mangle.operation
 
 import android.content.ContentValues
+import android.database.DatabaseUtils
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
@@ -100,7 +101,7 @@ class FileControl(private val context: FragmentActivity) : View.OnClickListener
 
     private fun getExternalOutputDirectory(): File
     {
-        val directoryPath = (Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).path + "/" + context.getString(R.string.app_location) + "/").toLowerCase(Locale.US)
+        val directoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).path + "/" + context.getString(R.string.app_location) + "/"
         val target = File(directoryPath)
         try
         {
@@ -129,30 +130,38 @@ class FileControl(private val context: FragmentActivity) : View.OnClickListener
 
         val mimeType = "image/jpeg"
         val now = System.currentTimeMillis()
-        val path = "DCIM/aira01a/"
+        val path = Environment.DIRECTORY_DCIM + File.separator + context.getString(R.string.app_location) // Environment.DIRECTORY_PICTURES  + File.separator + "gokigen" //"DCIM/aira01a/"
         val photoFile = "P" + SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(now) + ".jpg"
 
         val extStorageUri : Uri
         val values = ContentValues()
-        values.put(MediaStore.Images.Media.DISPLAY_NAME,photoFile)
+        values.put(MediaStore.Images.Media.TITLE, photoFile)
+        values.put(MediaStore.Images.Media.DISPLAY_NAME, photoFile)
         values.put(MediaStore.Images.Media.MIME_TYPE, mimeType)
-        values.put(MediaStore.Images.Media.DATE_ADDED, now)
-        values.put(MediaStore.Images.Media.DATE_MODIFIED, now)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
         {
-            values.put(MediaStore.Images.Media.DATE_TAKEN, now)
             values.put(MediaStore.Images.Media.RELATIVE_PATH, path)
             values.put(MediaStore.Images.Media.IS_PENDING, true)
-            extStorageUri = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY + "/" + photoFile)
+            extStorageUri = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+            //extStorageUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
         }
         else
         {
+            values.put(MediaStore.Images.Media.DATA, outputDir.absolutePath + File.separator + photoFile)
             extStorageUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
         }
 
         val imageUri = resolver.insert(extStorageUri, values)
         if (imageUri != null)
         {
+            resolver.update(imageUri, values, null, null)
+
+            /////////////////////////////
+            val cursor = resolver.query(imageUri, null, null, null, null)
+            DatabaseUtils.dumpCursor(cursor)
+            cursor!!.close()
+            /////////////////////////////
+
             val openStream = resolver.openOutputStream(imageUri)
             if (openStream != null)
             {
@@ -162,15 +171,16 @@ class FileControl(private val context: FragmentActivity) : View.OnClickListener
                     ContextCompat.getMainExecutor(context),
                     object : ImageCapture.OnImageSavedCallback
                     {
-                        override fun onError(exc: ImageCaptureException)
+                        override fun onError(e: ImageCaptureException)
                         {
-                            Log.e(TAG, "Photo capture failed: ${exc.message}", exc)
+                            Log.e(TAG, "Photo capture failed: ${e.message} ", e)
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
                             {
-                                values.clear()
+                                //values.clear()
                                 values.put(MediaStore.Images.Media.IS_PENDING, false)
                                 resolver.update(imageUri, values, null, null)
                             }
+                            e.printStackTrace()
                         }
 
                         override fun onImageSaved(output: ImageCapture.OutputFileResults)
