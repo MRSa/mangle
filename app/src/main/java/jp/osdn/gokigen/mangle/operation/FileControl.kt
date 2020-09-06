@@ -70,7 +70,7 @@ class FileControl(private val context: FragmentActivity) : View.OnClickListener
         val imageCapture = imageCapture ?: return
 
         Log.v(TAG, " takePhotoLocal()")
-        val photoFile = File(prepareLocalOutputDirectory(), SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(System.currentTimeMillis()) + ".jpg")
+        val photoFile = File(prepareLocalOutputDirectory(), "P" + SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(System.currentTimeMillis()) + ".jpg")
         val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
 
         imageCapture.takePicture(
@@ -191,7 +191,7 @@ class FileControl(private val context: FragmentActivity) : View.OnClickListener
                                 values.put(MediaStore.Images.Media.IS_PENDING, false)
                                 resolver.update(imageUri, values, null, null)
                             }
-                            val msg = context.getString(R.string.capture_success) + " $extStorageUri  $path $photoFile"
+                            val msg = context.getString(R.string.capture_success) + " $path/$photoFile"
                             //Toast.makeText(context.baseContext, msg, Toast.LENGTH_SHORT).show()
                             Snackbar.make(
                                 context.findViewById<androidx.constraintlayout.widget.ConstraintLayout>(
