@@ -12,7 +12,7 @@ import jp.osdn.gokigen.mangle.R
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class CameraControl(val activity : FragmentActivity)
+class CameraControl(val activity : FragmentActivity) : ICameraControl
 {
     private val TAG = toString()
     private lateinit var cameraExecutor: ExecutorService
@@ -24,13 +24,13 @@ class CameraControl(val activity : FragmentActivity)
 
     }
 
-    fun initialize()
+    override fun initialize()
     {
         Log.v(TAG, " initialize()")
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
 
-    fun startCamera()
+    override fun startCamera()
     {
         Log.v(TAG, " startCamera()")
         if (cameraIsStarted)
@@ -74,7 +74,7 @@ class CameraControl(val activity : FragmentActivity)
 
     }
 
-    fun finish()
+    override fun finishCamera()
     {
         try
         {
@@ -86,7 +86,15 @@ class CameraControl(val activity : FragmentActivity)
         {
             e.printStackTrace()
         }
-        cameraExecutor.shutdown()
+
+        try
+        {
+            cameraExecutor.shutdown()
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
         fileControl.finish()
     }
 }

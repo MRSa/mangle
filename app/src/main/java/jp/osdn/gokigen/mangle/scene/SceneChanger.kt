@@ -5,9 +5,12 @@ import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
+import androidx.preference.PreferenceManager
 import jp.osdn.gokigen.mangle.R
+import jp.osdn.gokigen.mangle.liveview.LiveImageViewFragment
 import jp.osdn.gokigen.mangle.logcat.LogCatFragment
 import jp.osdn.gokigen.mangle.operation.CameraControl
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor
 import jp.osdn.gokigen.mangle.preference.MainPreferenceFragment
 import jp.osdn.gokigen.mangle.preview.PreviewFragment
 import jp.osdn.gokigen.mangle.utils.ConfirmationDialog
@@ -18,6 +21,7 @@ class SceneChanger(val activity: FragmentActivity, val informationNotify: IInfor
     private val TAG = toString()
     private val cameraControl: CameraControl = CameraControl(activity)
 
+    private lateinit var liveviewFragment : LiveImageViewFragment
     private lateinit var previewFragment : PreviewFragment
     private lateinit var logCatFragment : LogCatFragment
     private lateinit var mainPreferenceFragment : MainPreferenceFragment
@@ -25,14 +29,15 @@ class SceneChanger(val activity: FragmentActivity, val informationNotify: IInfor
     init
     {
         Log.v(TAG, " SceneChanger is created. ")
+        cameraControl.initialize()
     }
 
-    override fun initializeFragment()
+
+    private fun initializeFragmentForPreview()
     {
         if (!::previewFragment.isInitialized)
         {
             previewFragment = PreviewFragment.newInstance()
-            previewFragment.setCameraControl(cameraControl)
         }
         setDefaultFragment(previewFragment)
         cameraControl.startCamera()
@@ -41,17 +46,62 @@ class SceneChanger(val activity: FragmentActivity, val informationNotify: IInfor
         informationNotify.updateMessage(msg, false, true, Color.LTGRAY)
     }
 
+    private fun initializeFragmentForLiveView()
+    {
+        if (!::liveviewFragment.isInitialized)
+        {
+            liveviewFragment = LiveImageViewFragment.newInstance()
+        }
+        setDefaultFragment(liveviewFragment)
+
+        val msg = activity.getString(R.string.app_name) + " : " + " STARTED."
+        informationNotify.updateMessage(msg, false, true, Color.LTGRAY)
+    }
+
+    override fun initializeFragment()
+    {
+        try
+        {
+            val isCameraXPreview  = PreferenceManager.getDefaultSharedPreferences(activity).getBoolean(
+                IPreferencePropertyAccessor.PREFERENCE_USE_CAMERA_X_PREVIEW,
+                IPreferencePropertyAccessor.PREFERENCE_USE_CAMERA_X_PREVIEW_DEFAULT_VALUE
+            )
+            if (isCameraXPreview)
+            {
+                initializeFragmentForPreview()
+            }
+            else
+            {
+                initializeFragmentForLiveView()
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    override fun changeToLiveView()
+    {
+        if (!::liveviewFragment.isInitialized)
+        {
+            liveviewFragment = LiveImageViewFragment.newInstance()
+        }
+        changeFragment(liveviewFragment)
+    }
+
+
     override fun changeToPreview()
     {
         if (!::previewFragment.isInitialized)
         {
             previewFragment = PreviewFragment.newInstance()
-            previewFragment.setCameraControl(cameraControl)
         }
         changeFragment(previewFragment)
+        cameraControl.startCamera()
     }
 
-    override fun changeSceneToConfiguration()
+    override fun changeToConfiguration()
     {
         if (!::mainPreferenceFragment.isInitialized)
         {
@@ -61,7 +111,7 @@ class SceneChanger(val activity: FragmentActivity, val informationNotify: IInfor
         changeFragment(mainPreferenceFragment)
     }
 
-    override fun changeSceneToDebugInformation()
+    override fun changeToDebugInformation()
     {
         if (!::logCatFragment.isInitialized)
         {
@@ -103,6 +153,6 @@ class SceneChanger(val activity: FragmentActivity, val informationNotify: IInfor
 
     fun finish()
     {
-        cameraControl.finish()
+        cameraControl.finishCamera()
     }
 }

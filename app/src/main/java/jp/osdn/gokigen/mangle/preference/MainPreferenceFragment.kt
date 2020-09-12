@@ -60,6 +60,7 @@ class MainPreferenceFragment : PreferenceFragmentCompat(), OnSharedPreferenceCha
         when (key)
         {
             IPreferencePropertyAccessor.PREFERENCE_NOTIFICATIONS -> value = preferences.getBoolean(key, IPreferencePropertyAccessor.PREFERENCE_NOTIFICATIONS_DEFAULT_VALUE)
+            IPreferencePropertyAccessor.PREFERENCE_USE_CAMERA_X_PREVIEW -> value = preferences.getBoolean(key, IPreferencePropertyAccessor.PREFERENCE_USE_CAMERA_X_PREVIEW_DEFAULT_VALUE)
             IPreferencePropertyAccessor.PREFERENCE_SAVE_LOCAL_LOCATION -> value = preferences.getBoolean(key, IPreferencePropertyAccessor.PREFERENCE_SAVE_LOCAL_LOCATION_DEFAULT_VALUE)
             // else -> Log.v(TAG, " onSharedPreferenceChanged() : + $key ")
         }
@@ -73,7 +74,7 @@ class MainPreferenceFragment : PreferenceFragmentCompat(), OnSharedPreferenceCha
         {
             IPreferencePropertyAccessor.LABEL_WIFI_SETTINGS -> activity?.startActivity(Intent(Settings.ACTION_WIFI_SETTINGS))
             IPreferencePropertyAccessor.LABEL_EXIT_APPLICATION -> changeScene.exitApplication()
-            IPreferencePropertyAccessor.LABEL_DEBUG_INFO -> changeScene.changeSceneToDebugInformation()
+            IPreferencePropertyAccessor.LABEL_DEBUG_INFO -> changeScene.changeToDebugInformation()
             else -> { Log.v(TAG, " onPreferenceClick() : " + preference?.key); ret = false; }
         }
         return (ret)

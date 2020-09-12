@@ -24,6 +24,10 @@
             android:title="@string/notification_title"/>
 -->
         <SwitchPreferenceCompat
+            android:key="use_camera_x_preview"
+            android:title="@string/pref_use_camerax_preview"/>
+
+        <SwitchPreferenceCompat
             android:key="save_local_location"
             android:title="@string/save_local_location"/>
     </PreferenceCategory>

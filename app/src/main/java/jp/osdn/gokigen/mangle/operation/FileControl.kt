@@ -8,7 +8,7 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
-import android.widget.Button
+import android.widget.ImageButton
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.core.content.ContextCompat
@@ -39,7 +39,7 @@ class FileControl(private val context: FragmentActivity) : View.OnClickListener
     {
         try
         {
-            context.findViewById<Button>(R.id.camera_capture_button)?.setOnClickListener(this)
+            context.findViewById<ImageButton>(R.id.camera_capture_button)?.setOnClickListener(this)
             imageCapture = ImageCapture.Builder().build()
         }
         catch (e: Exception)

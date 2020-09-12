@@ -18,6 +18,8 @@
     <string name="pref_degug_info">デバッグ情報</string>
     <string name="pref_summary_debug_info">LogCat情報を表示します。</string>
 
+    <string name="pref_use_camerax_preview">カメラプレビューを使用(要再起動)</string>
+
     <string name="notification_title">通知を使用する</string>
 
     <string name="pref_cat_application_control">アプリ制御</string>
@@ -31,5 +33,8 @@
 
     <string name="dialog_title_exit_application">アプリケーション終了</string>
     <string name="dialog_message_exit_application">アプリケーションを終了します。</string>
+
+    <string name="data_saving">保存中、お待ちください&#8230;</string>
+    <string name="save_image_failure">画像保存に失敗しました。</string>
 
 </resources>

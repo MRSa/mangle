@@ -40,19 +40,19 @@ class MainButtonHandler(private val activity : AppCompatActivity) : View.OnClick
     private fun connect()
     {
         Log.v(TAG, " - - - - - - - - - CONNECT - - - - - - - - -")
-
+        sceneChanger.changeToPreview()
     }
 
     private fun camera()
     {
         Log.v(TAG, " - - - - - - - - - CAMERA - - - - - - - - -")
-        sceneChanger.changeSceneToDebugInformation()
+        sceneChanger.changeToDebugInformation()
     }
 
     private fun configure()
     {
         Log.v(TAG, " - - - - - - - - - CONFIGURE - - - - - - - - -")
-        sceneChanger.changeSceneToConfiguration()
+        sceneChanger.changeToConfiguration()
     }
 
     private fun message()
