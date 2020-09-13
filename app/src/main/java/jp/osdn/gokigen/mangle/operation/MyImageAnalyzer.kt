@@ -3,11 +3,10 @@ package jp.osdn.gokigen.mangle.operation
 import android.util.Log
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
+import jp.osdn.gokigen.mangle.liveview.image.IImageDataReceiver
 import java.nio.ByteBuffer
 
-typealias MyImageListener = (img: Double) -> Unit
-
-class MyImageAnalyzer(private val listener: MyImageListener) : ImageAnalysis.Analyzer
+class MyImageAnalyzer(private val dataReceiver : IImageDataReceiver) : ImageAnalysis.Analyzer
 {
     private val TAG = toString()
 
@@ -26,14 +25,10 @@ class MyImageAnalyzer(private val listener: MyImageListener) : ImageAnalysis.Ana
 
     override fun analyze(image: ImageProxy)
     {
-        Log.v(TAG, " image analyze...")
-
+        Log.v(TAG, " ----- received image ----- ")
         val buffer = image.planes[0].buffer
         val data = buffer.toByteArray()
-        val pixels = data.map { it.toInt() and 0xFF }
-        val luma = pixels.average()
-
-        listener(luma)
+        dataReceiver.onUpdateLiveView(data, null)
 
         image.close()
     }

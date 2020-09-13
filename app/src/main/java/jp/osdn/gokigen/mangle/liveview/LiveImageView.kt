@@ -1,10 +1,7 @@
 package jp.osdn.gokigen.mangle.liveview
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Rect
-import android.graphics.RectF
+import android.graphics.*
 import android.os.Looper
 import android.util.AttributeSet
 import android.util.Log
@@ -12,15 +9,18 @@ import android.view.View
 import jp.osdn.gokigen.mangle.liveview.focusframe.FocusFrameDrawer
 import jp.osdn.gokigen.mangle.liveview.gridframe.GridFrameFactory
 import jp.osdn.gokigen.mangle.liveview.gridframe.IGridFrameDrawer
+import jp.osdn.gokigen.mangle.liveview.gridframe.IShowGridFrame
 import jp.osdn.gokigen.mangle.liveview.image.IImageProvider
+import jp.osdn.gokigen.mangle.liveview.message.IMessageDrawer
 import jp.osdn.gokigen.mangle.liveview.message.InformationDrawer
 import kotlin.math.min
 
-class LiveImageView : View, ILiveImageView
+class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame
 {
     private val TAG = this.toString()
 
     private var rotationDegrees : Int = 0
+    private var showGrid : Boolean = false
     private lateinit var imageProvider : IImageProvider
     private lateinit var gridFrameDrawer : IGridFrameDrawer
     private lateinit var focusFrameDrawer : FocusFrameDrawer
@@ -35,20 +35,11 @@ class LiveImageView : View, ILiveImageView
     {
         initComponent(context)
     }
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr
-    )
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
     {
         initComponent(context)
     }
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int, defStyleRes: Int) : super(
-        context,
-        attrs,
-        defStyleAttr,
-        defStyleRes
-    )
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int, defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes)
     {
         initComponent(context)
     }
@@ -58,6 +49,11 @@ class LiveImageView : View, ILiveImageView
         gridFrameDrawer = GridFrameFactory().getGridFrameDrawer(0)
         focusFrameDrawer = FocusFrameDrawer(context)
         informationDrawer = InformationDrawer()
+    }
+
+    override fun getMessageDrawer() : IMessageDrawer
+    {
+        return (informationDrawer)
     }
 
     override fun refresh()
@@ -81,15 +77,25 @@ class LiveImageView : View, ILiveImageView
         super.onDraw(canvas)
         if ((canvas == null)||(!(::imageProvider.isInitialized)))
         {
-            Log.v(TAG, " onDraw : canvas is not ready.")
+            Log.v(TAG, " ===== onDraw : canvas is not ready. ==== ")
             return
         }
+        //Log.v(TAG, " ----- onDraw() ----- ")
         canvas.drawARGB(255, 0, 0, 0)
         val imageRectF = drawImage(canvas)
-        gridFrameDrawer.drawFramingGrid(canvas, imageRectF)
+        if (showGrid)
+        {
+            gridFrameDrawer.drawFramingGrid(canvas, imageRectF)
+        }
         focusFrameDrawer.drawFocusFrame(canvas)
-        informationDrawer.drawInformationMessages(canvas)
-        informationDrawer.drawLevelGauge(canvas)
+        informationDrawer.drawInformationMessages(canvas, imageRectF)
+        informationDrawer.drawLevelGauge(canvas, rotationDegrees)
+    }
+
+    override fun showGridFrame(isShowGrid: Boolean)
+    {
+        this.showGrid = isShowGrid
+        refreshCanvas()
     }
 
     private fun drawImage(canvas: Canvas) : RectF
@@ -97,12 +103,21 @@ class LiveImageView : View, ILiveImageView
         val centerX = canvas.width / 2
         val centerY = canvas.height / 2
 
+        val paint = Paint(Color.LTGRAY)
+        paint.strokeWidth = 1.0f
+        paint.style = Paint.Style.STROKE
+
         val imageBitmap = imageProvider.getImage()
         val viewRect = decideViewRect(canvas, imageBitmap, rotationDegrees)
+        val imageRect = Rect(0, 0, imageBitmap.getWidth(), imageBitmap.getHeight())
+
+        Log.v(TAG, " canvas:   ${canvas.width} x ${canvas.height} (D: ${rotationDegrees}) ")
+        Log.v(TAG, " bitmap:   ${imageBitmap.width} x ${imageBitmap.height} (D: ${rotationDegrees}) ")
+        Log.v(TAG, " imageRect: [${imageRect.left},${imageRect.top}]-[${imageRect.right},${imageRect.bottom}] ")
+        Log.v(TAG, " viewRect: [${viewRect.left},${viewRect.top}]-[${viewRect.right},${viewRect.bottom}] ")
 
         canvas.rotate(rotationDegrees.toFloat(), centerX.toFloat(), centerY.toFloat())
-        val imageRect = Rect(0, 0, imageBitmap.getWidth(), imageBitmap.getHeight())
-        canvas.drawBitmap(imageBitmap, imageRect, viewRect, null)
+        canvas.drawBitmap(imageBitmap, imageRect, viewRect, paint)
         canvas.rotate(-rotationDegrees.toFloat(), centerX.toFloat(), centerY.toFloat())
 
         return (viewRect)
@@ -110,6 +125,7 @@ class LiveImageView : View, ILiveImageView
 
     private fun refreshCanvas()
     {
+        Log.v(TAG, " refreshCanvas()")
         if (Looper.getMainLooper().thread === Thread.currentThread())
         {
             invalidate()
@@ -157,21 +173,11 @@ class LiveImageView : View, ILiveImageView
         val halfHeight = dstHeight * 0.5f
         return (if (rotationDegrees == 0 || rotationDegrees == 180)
         {
-            RectF(
-                (centerX - halfWidth),
-                (centerY - halfHeight),
-                ((centerX - halfWidth) + dstWidth),
-                ((centerY - halfHeight) + dstHeight)
-            )
+            RectF((centerX - halfWidth), (centerY - halfHeight), ((centerX - halfWidth) + dstWidth), ((centerY - halfHeight) + dstHeight))
         }
         else
         {
-            RectF(
-                (centerX - halfHeight),
-                (centerY - halfWidth),
-                ((centerX - halfHeight) + dstHeight),
-                ((centerY - halfWidth) + dstWidth)
-            )
+            RectF((centerX - halfHeight), (centerY - halfWidth), ((centerX - halfHeight) + dstHeight), ((centerY - halfWidth) + dstWidth))
         })
     }
 }

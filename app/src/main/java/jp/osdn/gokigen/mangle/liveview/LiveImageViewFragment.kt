@@ -23,7 +23,6 @@ class LiveImageViewFragment(val contentLayoutId: Int = R.layout.liveimage_view) 
     fun setCameraControl(cameraControl : CameraControl)
     {
         this.cameraControl = cameraControl
-        this.cameraControl.initialize()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
@@ -32,9 +31,9 @@ class LiveImageViewFragment(val contentLayoutId: Int = R.layout.liveimage_view) 
         {
             return (liveviewView)
         }
-//        liveviewView = inflater.inflate(R.layout.liveimage_view, null, false)
         liveviewView = inflater.inflate(contentLayoutId, null, false)
-
+        val imageView = liveviewView.findViewById<LiveImageView>(R.id.liveViewFinder0)
+        cameraControl.setRefresher(imageView, imageView)
         return (liveviewView)
     }
 

@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
  *
  */
 @RequiresApi(api = Build.VERSION_CODES.R)
-class StorageOperationWithPermission(val activity: AppCompatActivity)
+class StorageOperationWithPermission(private val activity: AppCompatActivity)
 {
     fun requestAndroidRMediaPermission()
     {

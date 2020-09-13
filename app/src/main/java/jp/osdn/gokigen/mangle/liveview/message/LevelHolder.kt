@@ -10,4 +10,5 @@ class LevelHolder(private var angleLevel: Float = 0.0f) : ILevelHolder
         const val LEVEL_GAUGE_THRESHOLD_MIDDLE = 2.0f
         const val LEVEL_GAUGE_THRESHOLD_OVER = 15.0f
     }
+
 }

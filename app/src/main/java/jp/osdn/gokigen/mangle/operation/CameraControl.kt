@@ -9,6 +9,9 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import jp.osdn.gokigen.mangle.R
+import jp.osdn.gokigen.mangle.liveview.ILiveView
+import jp.osdn.gokigen.mangle.liveview.ILiveViewRefresher
+import jp.osdn.gokigen.mangle.liveview.image.CameraLiveViewListenerImpl
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -17,28 +20,59 @@ class CameraControl(val activity : FragmentActivity) : ICameraControl
     private val TAG = toString()
     private lateinit var cameraExecutor: ExecutorService
     private val fileControl : FileControl = FileControl(activity)
-    private var cameraIsStarted : Boolean = false
+    private lateinit var liveViewListener : CameraLiveViewListenerImpl
+    private var cameraIsStarted = false
 
     init
     {
-
     }
 
     override fun initialize()
     {
         Log.v(TAG, " initialize()")
+        liveViewListener = CameraLiveViewListenerImpl(activity)
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
 
-    override fun startCamera()
+    override fun setRefresher(refresher: ILiveViewRefresher, imageView : ILiveView)
+    {
+        liveViewListener.setRefresher(refresher)
+        imageView.setImageProvider(liveViewListener)
+    }
+
+    override fun startCamera(isPreviewView : Boolean)
     {
         Log.v(TAG, " startCamera()")
         if (cameraIsStarted)
         {
-            Log.v(TAG, " CAMERA IS ALREADY STARTED.")
-            return
+            Log.v(TAG, " ALREADY STARTED...")
+            try
+            {
+                val cameraProvider: ProcessCameraProvider = ProcessCameraProvider.getInstance(activity).get()
+                cameraProvider.unbindAll()
+                cameraIsStarted = false
+            }
+            catch (e : Exception)
+            {
+                e.printStackTrace()
+            }
         }
         cameraIsStarted = true
+        if (isPreviewView)
+        {
+            // Preview View
+            startCameraForPreviewView()
+        }
+        else
+        {
+            // Liveview View
+            startCameraForLiveView()
+        }
+    }
+
+    private fun startCameraForPreviewView()
+    {
+        Log.v(TAG, " startCameraPreviewView()")
 
         val cameraProviderFuture = ProcessCameraProvider.getInstance(activity)
         cameraProviderFuture.addListener( {
@@ -57,11 +91,7 @@ class CameraControl(val activity : FragmentActivity) : ICameraControl
                     .setTargetResolution(Size(800, 600))
                     .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                     .build()
-                    .also {
-                        it.setAnalyzer(cameraExecutor, MyImageAnalyzer { luma ->
-                            Log.d(TAG, "Average luminosity: $luma")
-                        })
-                    }
+                    .also { it.setAnalyzer(cameraExecutor, MyImageAnalyzer(liveViewListener)) }
                 cameraProvider.unbindAll()
                 cameraProvider.bindToLifecycle(activity, cameraSelector, preview, imageCapture, imageAnalyzer)
             }
@@ -71,7 +101,43 @@ class CameraControl(val activity : FragmentActivity) : ICameraControl
                 e.printStackTrace()
             }
         }, ContextCompat.getMainExecutor(activity))
+    }
 
+    private fun startCameraForLiveView()
+    {
+        Log.v(TAG, " startCameraForLiveView()")
+
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(activity)
+        cameraProviderFuture.addListener( {
+            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
+/*
+            val preview = Preview.Builder()
+                .build()
+                .also {
+                    it.setSurfaceProvider(activity.findViewById<androidx.camera.view.PreviewView>(R.id.viewFinder).createSurfaceProvider())
+                }
+*/
+            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+            val imageCapture = fileControl.prepare()
+
+            try
+            {
+                val imageAnalyzer = ImageAnalysis.Builder()
+                    .setTargetResolution(Size(800, 600))
+                    .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                    .build()
+                    .also {
+                        it.setAnalyzer(cameraExecutor, MyImageAnalyzer(liveViewListener))
+                    }
+                cameraProvider.unbindAll()
+                cameraProvider.bindToLifecycle(activity, cameraSelector, imageCapture, imageAnalyzer)
+            }
+            catch(e : Exception)
+            {
+                Log.e(TAG, "Use case binding failed", e)
+                e.printStackTrace()
+            }
+        }, ContextCompat.getMainExecutor(activity))
     }
 
     override fun finishCamera()

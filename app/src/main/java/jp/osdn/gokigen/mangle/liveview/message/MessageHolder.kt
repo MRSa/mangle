@@ -2,7 +2,7 @@ package jp.osdn.gokigen.mangle.liveview.message
 
 import android.graphics.Color
 
-class MessageHolder(private var message: String = "", private var color: Int = Color.BLACK, private var size: Int = 8) : IMessageHolder
+class MessageHolder(private var message: String = "", private var color: Int = Color.LTGRAY, private var size: Int = 20) : IMessageHolder
 {
     override fun getSize() : Int { return (size) }
     override fun getColor(): Int { return (color) }

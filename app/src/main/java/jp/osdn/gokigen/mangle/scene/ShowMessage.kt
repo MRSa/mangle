@@ -6,7 +6,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import jp.osdn.gokigen.mangle.R
 
-class ShowMessage(val activity : AppCompatActivity) : IInformationReceiver
+class ShowMessage(private val activity : AppCompatActivity) : IInformationReceiver
 {
     override fun updateMessage(message: String, isBold: Boolean, isColor: Boolean, color: Int)
     {

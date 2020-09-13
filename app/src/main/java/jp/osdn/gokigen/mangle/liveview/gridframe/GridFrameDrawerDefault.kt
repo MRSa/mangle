@@ -9,7 +9,11 @@ class GridFrameDrawerDefault : IGridFrameDrawer
 {
     override fun drawFramingGrid(canvas: Canvas, rect: RectF)
     {
-        val paint = Paint(Color.argb(130, 235, 235, 235))
+        val paint = Paint()
+        paint.color = Color.argb(130, 235, 235, 235)
+        paint.strokeWidth = 1.0f
+        paint.style = Paint.Style.STROKE
+        paint.isAntiAlias = true
         val width = (rect.right - rect.left) / 3.0f
         val height = (rect.bottom - rect.top) / 3.0f
 

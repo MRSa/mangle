@@ -16,11 +16,10 @@ import jp.osdn.gokigen.mangle.preview.PreviewFragment
 import jp.osdn.gokigen.mangle.utils.ConfirmationDialog
 import jp.osdn.gokigen.mangle.utils.ConfirmationDialog.Callback
 
-class SceneChanger(val activity: FragmentActivity, val informationNotify: IInformationReceiver) : IChangeScene
+class SceneChanger(private val activity: FragmentActivity, private val informationNotify: IInformationReceiver) : IChangeScene
 {
     private val TAG = toString()
-    private val cameraControl: CameraControl = CameraControl(activity)
-
+    private val cameraControl: CameraControl
     private lateinit var liveviewFragment : LiveImageViewFragment
     private lateinit var previewFragment : PreviewFragment
     private lateinit var logCatFragment : LogCatFragment
@@ -29,9 +28,9 @@ class SceneChanger(val activity: FragmentActivity, val informationNotify: IInfor
     init
     {
         Log.v(TAG, " SceneChanger is created. ")
+        cameraControl = CameraControl(activity)
         cameraControl.initialize()
     }
-
 
     private fun initializeFragmentForPreview()
     {
@@ -42,7 +41,7 @@ class SceneChanger(val activity: FragmentActivity, val informationNotify: IInfor
         setDefaultFragment(previewFragment)
         cameraControl.startCamera()
 
-        val msg = activity.getString(R.string.app_name) + " : " + " STARTED."
+        val msg = activity.getString(R.string.app_name) + " : " + " camerax"
         informationNotify.updateMessage(msg, false, true, Color.LTGRAY)
     }
 
@@ -51,8 +50,10 @@ class SceneChanger(val activity: FragmentActivity, val informationNotify: IInfor
         if (!::liveviewFragment.isInitialized)
         {
             liveviewFragment = LiveImageViewFragment.newInstance()
+            liveviewFragment.setCameraControl(cameraControl)
         }
         setDefaultFragment(liveviewFragment)
+        cameraControl.startCamera(false)
 
         val msg = activity.getString(R.string.app_name) + " : " + " STARTED."
         informationNotify.updateMessage(msg, false, true, Color.LTGRAY)
