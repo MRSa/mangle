@@ -2,6 +2,7 @@ package jp.osdn.gokigen.mangle.operation
 
 import android.util.Log
 import android.util.Size
+import android.view.View
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
@@ -87,13 +88,8 @@ class CameraControl(val activity : FragmentActivity) : ICameraControl
 
             try
             {
-                val imageAnalyzer = ImageAnalysis.Builder()
-                    .setTargetResolution(Size(800, 600))
-                    .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                    .build()
-                    .also { it.setAnalyzer(cameraExecutor, MyImageAnalyzer(liveViewListener)) }
                 cameraProvider.unbindAll()
-                cameraProvider.bindToLifecycle(activity, cameraSelector, preview, imageCapture, imageAnalyzer)
+                cameraProvider.bindToLifecycle(activity, cameraSelector, preview, imageCapture)
             }
             catch(e : Exception)
             {
@@ -127,7 +123,7 @@ class CameraControl(val activity : FragmentActivity) : ICameraControl
                     .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                     .build()
                     .also {
-                        it.setAnalyzer(cameraExecutor, MyImageAnalyzer(liveViewListener))
+                        it.setAnalyzer(cameraExecutor, liveViewListener)
                     }
                 cameraProvider.unbindAll()
                 cameraProvider.bindToLifecycle(activity, cameraSelector, imageCapture, imageAnalyzer)
@@ -162,5 +158,10 @@ class CameraControl(val activity : FragmentActivity) : ICameraControl
             e.printStackTrace()
         }
         fileControl.finish()
+    }
+
+    override fun captureButtonReceiver() : View.OnClickListener
+    {
+        return (fileControl)
     }
 }

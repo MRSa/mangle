@@ -5,22 +5,23 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import androidx.fragment.app.Fragment
 import jp.osdn.gokigen.mangle.R
-import jp.osdn.gokigen.mangle.operation.CameraControl
+import jp.osdn.gokigen.mangle.operation.ICameraControl
 
 class LiveImageViewFragment(val contentLayoutId: Int = R.layout.liveimage_view) : Fragment(contentLayoutId)
 {
     private val TAG = toString()
     private lateinit var liveviewView : View
-    private lateinit var cameraControl: CameraControl
+    private lateinit var cameraControl: ICameraControl
 
     companion object
     {
         fun newInstance() = LiveImageViewFragment().apply { }
     }
 
-    fun setCameraControl(cameraControl : CameraControl)
+    fun setCameraControl(cameraControl : ICameraControl)
     {
         this.cameraControl = cameraControl
     }
@@ -33,7 +34,12 @@ class LiveImageViewFragment(val contentLayoutId: Int = R.layout.liveimage_view) 
         }
         liveviewView = inflater.inflate(contentLayoutId, null, false)
         val imageView = liveviewView.findViewById<LiveImageView>(R.id.liveViewFinder0)
+        if (::cameraControl.isInitialized)
+        {
+            liveviewView.findViewById<ImageButton>(R.id.button_camera)?.setOnClickListener(cameraControl.captureButtonReceiver())
+        }
         cameraControl.setRefresher(imageView, imageView)
+
         return (liveviewView)
     }
 
