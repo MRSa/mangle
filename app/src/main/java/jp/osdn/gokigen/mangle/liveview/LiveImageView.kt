@@ -111,10 +111,10 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame
         val viewRect = decideViewRect(canvas, imageBitmap, rotationDegrees)
         val imageRect = Rect(0, 0, imageBitmap.getWidth(), imageBitmap.getHeight())
 
-        Log.v(TAG, " canvas:   ${canvas.width} x ${canvas.height} (D: ${rotationDegrees}) ")
-        Log.v(TAG, " bitmap:   ${imageBitmap.width} x ${imageBitmap.height} (D: ${rotationDegrees}) ")
-        Log.v(TAG, " imageRect: [${imageRect.left},${imageRect.top}]-[${imageRect.right},${imageRect.bottom}] ")
-        Log.v(TAG, " viewRect: [${viewRect.left},${viewRect.top}]-[${viewRect.right},${viewRect.bottom}] ")
+        //Log.v(TAG, " canvas:   ${canvas.width} x ${canvas.height} (D: ${rotationDegrees}) ")
+        //Log.v(TAG, " bitmap:   ${imageBitmap.width} x ${imageBitmap.height} (D: ${rotationDegrees}) ")
+        //Log.v(TAG, " imageRect: [${imageRect.left},${imageRect.top}]-[${imageRect.right},${imageRect.bottom}] ")
+        //Log.v(TAG, " viewRect: [${viewRect.left},${viewRect.top}]-[${viewRect.right},${viewRect.bottom}] ")
 
         canvas.rotate(rotationDegrees.toFloat(), centerX.toFloat(), centerY.toFloat())
         canvas.drawBitmap(imageBitmap, imageRect, viewRect, paint)
@@ -125,7 +125,7 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame
 
     private fun refreshCanvas()
     {
-        Log.v(TAG, " refreshCanvas()")
+        //Log.v(TAG, " refreshCanvas()")
         if (Looper.getMainLooper().thread === Thread.currentThread())
         {
             invalidate()

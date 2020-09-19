@@ -2,6 +2,7 @@ package jp.osdn.gokigen.mangle.liveview.image
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.*
 import android.graphics.ImageFormat.NV21
 import android.util.Log
@@ -41,7 +42,6 @@ class CameraLiveViewListenerImpl(val context: Context) : IImageDataReceiver, IIm
 
     override fun onUpdateLiveView(data: ByteArray, metadata: Map<String, Any>?)
     {
-
         refresh()
     }
 
@@ -50,26 +50,28 @@ class CameraLiveViewListenerImpl(val context: Context) : IImageDataReceiver, IIm
     {
         try
         {
+            val rotationDegrees = imageProxy.imageInfo.rotationDegrees
+
             if (imageProxy.image?.planes?.get(1)?.pixelStride == 1)
             {
                 // from I420 format
-                convertToBitmapFromI420(imageProxy, imageProxy.imageInfo.rotationDegrees.toFloat())
+                convertToBitmapFromI420(imageProxy, rotationDegrees)
                 return
             }
             if (imageProxy.format == ImageFormat.YUV_420_888)
             {
-                convertToBitmapYUV420888(imageProxy, imageProxy.imageInfo.rotationDegrees.toFloat())
+                convertToBitmapYUV420888(imageProxy, rotationDegrees)
                 return
             }
+            convertToBitmapYUV420888(imageProxy, rotationDegrees)
         }
         catch (e: Exception)
         {
             e.printStackTrace()
         }
-        convertToBitmapYUV420888(imageProxy, imageProxy.imageInfo.rotationDegrees.toFloat())
     }
 
-    private fun convertToBitmapFromI420(imageProxy: ImageProxy, rotationDegrees: Float)
+    private fun convertToBitmapFromI420(imageProxy: ImageProxy, rotationDegrees: Int)
     {
         Log.v(TAG, " convertToBitmap(I420) $rotationDegrees ")
 
@@ -126,14 +128,7 @@ class CameraLiveViewListenerImpl(val context: Context) : IImageDataReceiver, IIm
         refresh()
     }
 
-    private fun rotateImageBitmap(rotationDegrees: Float)
-    {
-        val rotationMatrix = Matrix()
-        rotationMatrix.postRotate(rotationDegrees)
-        imageBitmap = Bitmap.createBitmap(imageBitmap, 0, 0, imageBitmap.getWidth(), imageBitmap.getHeight(), rotationMatrix, true)
-    }
-
-    private fun convertToBitmapYUV420888(imageProxy: ImageProxy, rotationDegrees: Float)
+    private fun convertToBitmapYUV420888(imageProxy: ImageProxy, rotationDegrees: Int)
     {
         Log.v(TAG, " convertToBitmap(YUV420) $rotationDegrees ")
 
@@ -161,9 +156,31 @@ class CameraLiveViewListenerImpl(val context: Context) : IImageDataReceiver, IIm
         val imageBytes = out.toByteArray()
         imageBitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
         rotateImageBitmap(rotationDegrees)
-
         imageProxy.close()
         refresh()
+    }
+
+    private fun rotateImageBitmap(degrees: Int)
+    {
+        var addDegrees = 0
+        try
+        {
+            val config = context.resources.configuration
+            if (config.orientation == Configuration.ORIENTATION_LANDSCAPE)
+            {
+                addDegrees = 90
+            }
+            System.gc()
+        }
+        catch (t: Throwable)
+        {
+            t.printStackTrace()
+        }
+
+        val rotationDegrees = degrees + addDegrees
+        val rotationMatrix = Matrix()
+        rotationMatrix.postRotate(rotationDegrees.toFloat())
+        imageBitmap = Bitmap.createBitmap(imageBitmap, 0, 0, imageBitmap.getWidth(), imageBitmap.getHeight(), rotationMatrix, true)
     }
 
     override fun getImage(position: Float) : Bitmap
