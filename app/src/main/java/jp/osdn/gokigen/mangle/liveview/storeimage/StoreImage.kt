@@ -1,19 +1,35 @@
 package jp.osdn.gokigen.mangle.liveview.storeimage
 
+import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Environment
+import androidx.fragment.app.FragmentActivity
 import jp.osdn.gokigen.mangle.R
+import jp.osdn.gokigen.mangle.liveview.image.IImageProvider
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
-class StoreImage(private val context: Context) : IStoreImage
+class StoreImage(private val context: FragmentActivity, private val imageProvider : IImageProvider) : IStoreImage
 {
-    override fun doStore(target: Bitmap)
+    override fun doStore(target: Bitmap?)
     {
+        if (target != null)
+        {
+            storeImageImpl(target)
+        }
+        else
+        {
+            storeImageImpl(imageProvider.getImage())
+        }
+    }
+
+    private fun storeImageImpl(target : Bitmap)
+    {
+/*
         // 保存処理(プログレスダイアログ（「保存中...」）を表示して処理する)
         val saveDialog = ProgressDialog(context)
         saveDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER)
@@ -36,6 +52,15 @@ class StoreImage(private val context: Context) : IStoreImage
             t.printStackTrace()
             System.gc()
         }
+*/
+        try
+        {
+            saveImageImpl(target)
+        }
+        catch (t : Throwable)
+        {
+            t.printStackTrace()
+        }
     }
 
     private fun prepareLocalOutputDirectory(): File
@@ -54,7 +79,7 @@ class StoreImage(private val context: Context) : IStoreImage
     {
         try
         {
-            val fileName = "P" + SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(System.currentTimeMillis()) + ".jpg"
+            val fileName = "L" + SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(System.currentTimeMillis()) + ".jpg"
             val photoFile = File(prepareLocalOutputDirectory(), fileName)
             val outputStream = FileOutputStream(photoFile)
             targetImage.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
@@ -71,7 +96,6 @@ class StoreImage(private val context: Context) : IStoreImage
                 values.put(MediaStore.Images.Media.DATA, fileName)
             }
             resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
-
 */
         }
         catch (t: Throwable)
@@ -79,5 +103,4 @@ class StoreImage(private val context: Context) : IStoreImage
             t.printStackTrace()
         }
     }
-
 }

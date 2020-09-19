@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import jp.osdn.gokigen.mangle.R
 import jp.osdn.gokigen.mangle.operation.ICameraControl
 
-class LiveImageViewFragment(val contentLayoutId: Int = R.layout.liveimage_view) : Fragment(contentLayoutId)
+class LiveImageViewFragment(private val contentLayoutId: Int = R.layout.liveimage_view) : Fragment(contentLayoutId)
 {
     private val TAG = toString()
     private lateinit var liveviewView : View

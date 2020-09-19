@@ -6,7 +6,7 @@ import android.util.DisplayMetrics
 import android.util.TypedValue
 
 
-class FocusFrameDrawer(val context : Context): IFocusFrameDrawer, IFocusFrameControl
+class FocusFrameDrawer(private val context : Context): IFocusFrameDrawer, IFocusFrameControl
 {
     override fun drawFocusFrame(canvas: Canvas)
     {

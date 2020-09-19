@@ -9,7 +9,7 @@ import android.widget.AdapterView.OnItemLongClickListener
 import jp.osdn.gokigen.mangle.utils.ConfirmationDialog
 import jp.osdn.gokigen.mangle.R
 
-class LogCatExporter(val activity: Activity) : OnItemLongClickListener
+class LogCatExporter(private val activity: Activity) : OnItemLongClickListener
 {
     private val TAG = toString()
 

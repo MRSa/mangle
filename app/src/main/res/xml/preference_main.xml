@@ -33,6 +33,33 @@
     </PreferenceCategory>
 
     <PreferenceCategory
+        android:title="@string/pref_cat_camera">
+        <SwitchPreferenceCompat
+            android:key="capture_both_camera_and_live_view"
+            android:title="@string/pref_capture_both_camera_and_live_view"
+            android:summary="@string/pref_summary_capture_both_live_view"/>
+<!--
+        <SwitchPreferenceCompat
+            android:key="capture_only_live_view"
+            android:title="@string/pref_capture_only_live_view"
+            android:summary="@string/pref_summary_capture_only_live_view" />
+
+        <SwitchPreferenceCompat
+            android:key="cache_live_view_pictures"
+            android:title="@string/pref_cache_live_view_pictures"
+            android:summary="@string/pref_summary_cache_live_view_pictures" />
+
+        <EditTextPreference
+            android:key="number_of_cache_pictures"
+            android:title="@string/pref_number_of_cache_pictures"
+            android:defaultValue="500"
+            android:inputType="numberDecimal"
+            android:digits="0123456789"
+            android:summary="@string/pref_summary_number_of_cache_pictures" />
+-->
+    </PreferenceCategory>
+
+    <PreferenceCategory
         app:title="@string/pref_cat_gokigen">
         <Preference
             android:key="instruction_link"

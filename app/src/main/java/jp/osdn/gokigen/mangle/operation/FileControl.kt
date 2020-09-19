@@ -15,12 +15,13 @@ import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceManager
 import com.google.android.material.snackbar.Snackbar
 import jp.osdn.gokigen.mangle.R
+import jp.osdn.gokigen.mangle.liveview.storeimage.IStoreImage
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
-class FileControl(private val context: FragmentActivity) : View.OnClickListener
+class FileControl(private val context: FragmentActivity, private val storeImage : IStoreImage) : View.OnClickListener
 {
     private val TAG = toString()
     private val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
@@ -31,7 +32,6 @@ class FileControl(private val context: FragmentActivity) : View.OnClickListener
 
     init
     {
-
     }
 
     fun prepare() : ImageCapture?
@@ -208,10 +208,28 @@ class FileControl(private val context: FragmentActivity) : View.OnClickListener
         Log.v(TAG, " takePhoto()")
         try
         {
-            val isLocalLocation  = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
+            val preference = PreferenceManager.getDefaultSharedPreferences(context)
+            val isLocalLocation  = preference.getBoolean(
                 IPreferencePropertyAccessor.PREFERENCE_SAVE_LOCAL_LOCATION,
                 IPreferencePropertyAccessor.PREFERENCE_SAVE_LOCAL_LOCATION_DEFAULT_VALUE
             )
+            val captureBothCamera  = preference.getBoolean(
+                IPreferencePropertyAccessor.CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW,
+                IPreferencePropertyAccessor.CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW_DEFAULT_VALUE
+            )
+            if (captureBothCamera)
+            {
+                val thread = Thread(Runnable { storeImage.doStore() })
+                try
+                {
+                    thread.start()
+                }
+                catch (e : Exception)
+                {
+                    e.printStackTrace()
+                }
+            }
+
             if (isLocalLocation)
             {
                 takePhotoLocal()

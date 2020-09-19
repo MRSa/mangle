@@ -1,7 +1,6 @@
 package jp.osdn.gokigen.mangle.operation
 
 import android.util.Log
-import android.util.Size
 import android.view.Surface
 import android.view.View
 import androidx.camera.core.CameraSelector
@@ -10,21 +9,21 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
-import androidx.preference.PreferenceManager
 import jp.osdn.gokigen.mangle.R
 import jp.osdn.gokigen.mangle.liveview.ILiveView
 import jp.osdn.gokigen.mangle.liveview.ILiveViewRefresher
 import jp.osdn.gokigen.mangle.liveview.image.CameraLiveViewListenerImpl
-import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor
+import jp.osdn.gokigen.mangle.liveview.storeimage.StoreImage
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class CameraControl(val activity : FragmentActivity) : ICameraControl
+class CameraControl(private val activity : FragmentActivity) : ICameraControl
 {
     private val TAG = toString()
     private lateinit var cameraExecutor: ExecutorService
-    private val fileControl : FileControl = FileControl(activity)
     private lateinit var liveViewListener : CameraLiveViewListenerImpl
+    private lateinit var fileControl : FileControl
+    private lateinit var storeImage : StoreImage
     private var cameraIsStarted = false
 
     init
@@ -37,6 +36,8 @@ class CameraControl(val activity : FragmentActivity) : ICameraControl
         Log.v(TAG, " initialize()")
         liveViewListener = CameraLiveViewListenerImpl(activity)
         cameraExecutor = Executors.newSingleThreadExecutor()
+        storeImage = StoreImage(activity, liveViewListener)
+        fileControl = FileControl(activity, storeImage)
     }
 
     override fun setRefresher(refresher: ILiveViewRefresher, imageView : ILiveView)

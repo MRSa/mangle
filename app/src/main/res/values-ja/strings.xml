@@ -37,4 +37,15 @@
     <string name="data_saving">保存中、お待ちください&#8230;</string>
     <string name="save_image_failure">画像保存に失敗しました。</string>
 
+    <string name="pref_cat_camera">カメラ設定</string>
+    <string name="pref_capture_both_camera_and_live_view">ライブビュー画像を撮影する</string>
+    <string name="pref_summary_capture_both_live_view">シャッターボタンを押すとライブビュー画像を保存します。</string>
+    <string name="pref_capture_only_live_view">カメラのシャッターを使用しない</string>
+    <string name="pref_summary_capture_only_live_view">チェックを入れると、シャッターを押してもカメラ側で撮影を行いません。</string>
+    <string name="pref_cache_live_view_pictures">ライブビュー画像の表示を遅延</string>
+    <string name="pref_summary_cache_live_view_pictures">ライブビュー画像を溜めて表示します。（再起動後に有効）</string>
+    <string name="pref_number_of_cache_pictures">ライブビュー画像の遅延最大数</string>
+    <string name="pref_summary_number_of_cache_pictures">ライブビューを遅らせる画像の最大枚数を指定します。(初期値:500、再起動後に有効)</string>
+
+
 </resources>

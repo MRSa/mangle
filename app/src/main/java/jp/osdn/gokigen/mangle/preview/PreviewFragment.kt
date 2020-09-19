@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import jp.osdn.gokigen.mangle.R
 import jp.osdn.gokigen.mangle.operation.ICameraControl
 
-class PreviewFragment(val contentLayoutId: Int = R.layout.camera_capture) : Fragment(contentLayoutId)
+class PreviewFragment(private val contentLayoutId: Int = R.layout.camera_capture) : Fragment(contentLayoutId)
 {
     private lateinit var previewView : View
     private lateinit var cameraControl: ICameraControl

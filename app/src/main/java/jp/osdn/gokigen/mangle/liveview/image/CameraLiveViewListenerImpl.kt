@@ -16,7 +16,7 @@ import java.io.ByteArrayOutputStream
 import java.util.*
 
 
-class CameraLiveViewListenerImpl(val context: Context) : IImageDataReceiver, IImageProvider, ImageAnalysis.Analyzer
+class CameraLiveViewListenerImpl(private val context: Context) : IImageDataReceiver, IImageProvider, ImageAnalysis.Analyzer
 {
     private var cachePics = ArrayList<ByteArray>()
     private var maxCachePics : Int = 0
@@ -184,7 +184,7 @@ class CameraLiveViewListenerImpl(val context: Context) : IImageDataReceiver, IIm
     private fun setupLiveviewCache()
     {
         val preference = PreferenceManager.getDefaultSharedPreferences(context)
-        if ((preference == null)||(!preference.getBoolean(IPreferencePropertyAccessor.CACHE_LIVEVIEW_PICTURES, false)))
+        if ((preference == null)||(!preference.getBoolean(IPreferencePropertyAccessor.CACHE_LIVE_VIEW_PICTURES, false)))
         {
             return
         }
