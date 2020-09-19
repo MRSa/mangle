@@ -1,8 +1,9 @@
 package jp.osdn.gokigen.mangle.liveview.image
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
-import android.media.Image
+import android.graphics.ImageFormat.NV21
 import android.util.Log
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
@@ -15,12 +16,13 @@ import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor
 import java.io.ByteArrayOutputStream
 import java.util.*
 
+
 class CameraLiveViewListenerImpl(val context: Context) : IImageDataReceiver, IImageProvider, ImageAnalysis.Analyzer
 {
     private val TAG = toString()
     private var cachePics = ArrayList<ByteArray>()
     private var maxCachePics : Int = 0
-    private var currentCachePics : Int = 0
+    //private var currentCachePics : Int = 0
     private lateinit var imageBitmap : Bitmap
     private var bitmapConverter : IPreviewImageConverter
     private lateinit var refresher : ILiveViewRefresher
@@ -30,7 +32,7 @@ class CameraLiveViewListenerImpl(val context: Context) : IImageDataReceiver, IIm
         bitmapConverter = ImageConvertFactory().getImageConverter(0)
     }
 
-    fun setRefresher(refresher : ILiveViewRefresher)
+    fun setRefresher(refresher: ILiveViewRefresher)
     {
         this.refresher = refresher
         imageBitmap = BitmapFactory.decodeResource(context.resources, R.drawable.a01e1)
@@ -43,14 +45,60 @@ class CameraLiveViewListenerImpl(val context: Context) : IImageDataReceiver, IIm
         refresh()
     }
 
-
+    @SuppressLint("UnsafeExperimentalUsageError")
     override fun analyze(imageProxy: ImageProxy)
     {
-        val v = Log.v(TAG, " ----- received image ----- ")
+        try
+        {
+            if (imageProxy.image?.planes?.get(1)?.pixelStride == 1)
+            {
+                // from I420 format
+                convertToBitmapFromI420(imageProxy, imageProxy.imageInfo.rotationDegrees.toFloat())
+                return
+            }
+            if (imageProxy.format == ImageFormat.YUV_420_888)
+            {
+                convertToBitmapYUV420888(imageProxy, imageProxy.imageInfo.rotationDegrees.toFloat())
+                return
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+        convertToBitmapYUV420888(imageProxy, imageProxy.imageInfo.rotationDegrees.toFloat())
+    }
 
-        val yBuffer = imageProxy.planes[0].buffer // Y
-        val uBuffer = imageProxy.planes[1].buffer // U
-        val vBuffer = imageProxy.planes[2].buffer // V
+    private fun convertToBitmapFromI420(imageProxy: ImageProxy, rotationDegrees: Float)
+    {
+        Log.v(TAG, " convertToBitmap(I420) $rotationDegrees ")
+
+        val width = imageProxy.width
+        val height = imageProxy.height
+        val bytes = ByteArray(imageProxy.width * imageProxy.height * 3 / 2)
+        var i = 0
+        for (row in 0 until height)
+        {
+            for (col in 0 until width)
+            {
+                bytes[i++] = imageProxy.planes[0].buffer.get(col + row * (width))
+            }
+        }
+        for (row in 0 until height / 2)
+        {
+            for (col in 0 until width / 2)
+            {
+                bytes[i++] = imageProxy.planes[2].buffer.get(col + row * (width / 2))
+                bytes[i++] = imageProxy.planes[1].buffer.get(col + row * (width / 2))
+            }
+        }
+        val yuvImage = YuvImage(bytes, NV21, width, height, null)
+
+/*
+        //  ImageFormat.YUV_420_888 : 35
+        val yBuffer = imageProxy.planes[0].buffer
+        val vBuffer = imageProxy.planes[1].buffer
+        val uBuffer = imageProxy.planes[2].buffer
 
         val ySize = yBuffer.remaining()
         val uSize = uBuffer.remaining()
@@ -58,15 +106,61 @@ class CameraLiveViewListenerImpl(val context: Context) : IImageDataReceiver, IIm
 
         val nv21 = ByteArray(ySize + uSize + vSize)
 
-        //U and V are swapped
+        // YUVの並びをそのままに変更してみる
         yBuffer.get(nv21, 0, ySize)
         vBuffer.get(nv21, ySize, vSize)
         uBuffer.get(nv21, ySize + vSize, uSize)
-        val yuvImage = YuvImage(nv21, ImageFormat.NV21, imageProxy.width, imageProxy.height, null)
+
+        val width = imageProxy.width
+        val height = imageProxy.height
+        val yuvImage = YuvImage(nv21, ImageFormat.NV21, width, height, null)
+        yuvImage.compressToJpeg(Rect(0, 0, width, height), 100, out)
+*/
         val out = ByteArrayOutputStream()
-        yuvImage.compressToJpeg(Rect(0, 0, yuvImage.width, yuvImage.height), 50, out)
+        yuvImage.compressToJpeg(Rect(0, 0, width, height), 100, out)
         val imageBytes = out.toByteArray()
         imageBitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+        rotateImageBitmap(rotationDegrees)
+
+        imageProxy.close()
+        refresh()
+    }
+
+    private fun rotateImageBitmap(rotationDegrees: Float)
+    {
+        val rotationMatrix = Matrix()
+        rotationMatrix.postRotate(rotationDegrees)
+        imageBitmap = Bitmap.createBitmap(imageBitmap, 0, 0, imageBitmap.getWidth(), imageBitmap.getHeight(), rotationMatrix, true)
+    }
+
+    private fun convertToBitmapYUV420888(imageProxy: ImageProxy, rotationDegrees: Float)
+    {
+        Log.v(TAG, " convertToBitmap(YUV420) $rotationDegrees ")
+
+        //  ImageFormat.YUV_420_888 : 35
+        val yBuffer = imageProxy.planes[0].buffer
+        val uBuffer = imageProxy.planes[1].buffer
+        val vBuffer = imageProxy.planes[2].buffer
+
+        val ySize = yBuffer.remaining()
+        val uSize = uBuffer.remaining()
+        val vSize = vBuffer.remaining()
+
+        val nv21 = ByteArray(ySize + uSize + vSize)
+
+        yBuffer.get(nv21, 0, ySize)
+        vBuffer.get(nv21, ySize, vSize)
+        uBuffer.get(nv21, ySize + vSize, uSize)
+
+        val out = ByteArrayOutputStream()
+        val width = imageProxy.width
+        val height = imageProxy.height
+        val yuvImage = YuvImage(nv21, NV21, width, height, null)
+        yuvImage.compressToJpeg(Rect(0, 0, width, height), 100, out)
+
+        val imageBytes = out.toByteArray()
+        imageBitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+        rotateImageBitmap(rotationDegrees)
 
         imageProxy.close()
         refresh()
@@ -88,13 +182,19 @@ class CameraLiveViewListenerImpl(val context: Context) : IImageDataReceiver, IIm
     private fun setupLiveviewCache()
     {
         val preference = PreferenceManager.getDefaultSharedPreferences(context)
-        if ((preference == null)||(!preference.getBoolean(IPreferencePropertyAccessor.CACHE_LIVEVIEW_PICTURES, false)))
+        if ((preference == null)||(!preference.getBoolean(
+                IPreferencePropertyAccessor.CACHE_LIVEVIEW_PICTURES,
+                false
+            )))
         {
             return
         }
 
         cachePics = ArrayList()
-        val nofCachePics = preference.getString(IPreferencePropertyAccessor.NUMBER_OF_CACHE_PICTURES, IPreferencePropertyAccessor.NUMBER_OF_CACHE_PICTURES_DEFAULT_VALUE)
+        val nofCachePics = preference.getString(
+            IPreferencePropertyAccessor.NUMBER_OF_CACHE_PICTURES,
+            IPreferencePropertyAccessor.NUMBER_OF_CACHE_PICTURES_DEFAULT_VALUE
+        )
         try
         {
             if (nofCachePics != null)

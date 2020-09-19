@@ -2,6 +2,7 @@ package jp.osdn.gokigen.mangle.operation
 
 import android.util.Log
 import android.util.Size
+import android.view.Surface
 import android.view.View
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
@@ -9,10 +10,12 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
+import androidx.preference.PreferenceManager
 import jp.osdn.gokigen.mangle.R
 import jp.osdn.gokigen.mangle.liveview.ILiveView
 import jp.osdn.gokigen.mangle.liveview.ILiveViewRefresher
 import jp.osdn.gokigen.mangle.liveview.image.CameraLiveViewListenerImpl
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -26,6 +29,7 @@ class CameraControl(val activity : FragmentActivity) : ICameraControl
 
     init
     {
+        //val preference = PreferenceManager.getDefaultSharedPreferences(activity)
     }
 
     override fun initialize()
@@ -99,6 +103,11 @@ class CameraControl(val activity : FragmentActivity) : ICameraControl
         }, ContextCompat.getMainExecutor(activity))
     }
 
+    private fun getImageRotation() : Int
+    {
+        return (Surface.ROTATION_0)
+    }
+
     private fun startCameraForLiveView()
     {
         Log.v(TAG, " startCameraForLiveView()")
@@ -119,7 +128,8 @@ class CameraControl(val activity : FragmentActivity) : ICameraControl
             try
             {
                 val imageAnalyzer = ImageAnalysis.Builder()
-                    .setTargetResolution(Size(800, 600))
+                    //.setTargetResolution(Size(800, 600))
+                    .setTargetRotation(getImageRotation())
                     .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                     .build()
                     .also {
