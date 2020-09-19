@@ -1,6 +1,7 @@
 package jp.osdn.gokigen.mangle.liveview
 
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.*
 import android.os.Looper
 import android.util.AttributeSet
@@ -108,17 +109,33 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame
         paint.style = Paint.Style.STROKE
 
         val imageBitmap = imageProvider.getImage()
-        val viewRect = decideViewRect(canvas, imageBitmap, rotationDegrees)
-        val imageRect = Rect(0, 0, imageBitmap.getWidth(), imageBitmap.getHeight())
+
+        var addDegrees = 0
+        try
+        {
+            val config = context.resources.configuration
+            if (config.orientation == Configuration.ORIENTATION_LANDSCAPE)
+            {
+                addDegrees = 90
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+        val degrees = rotationDegrees + addDegrees
+
+        val viewRect = decideViewRect(canvas, imageBitmap, degrees)
+        val imageRect = Rect(0, 0, imageBitmap.width, imageBitmap.height)
 
         //Log.v(TAG, " canvas:   ${canvas.width} x ${canvas.height} (D: ${rotationDegrees}) ")
         //Log.v(TAG, " bitmap:   ${imageBitmap.width} x ${imageBitmap.height} (D: ${rotationDegrees}) ")
         //Log.v(TAG, " imageRect: [${imageRect.left},${imageRect.top}]-[${imageRect.right},${imageRect.bottom}] ")
         //Log.v(TAG, " viewRect: [${viewRect.left},${viewRect.top}]-[${viewRect.right},${viewRect.bottom}] ")
 
-        canvas.rotate(rotationDegrees.toFloat(), centerX.toFloat(), centerY.toFloat())
+        canvas.rotate(degrees.toFloat(), centerX.toFloat(), centerY.toFloat())
         canvas.drawBitmap(imageBitmap, imageRect, viewRect, paint)
-        canvas.rotate(-rotationDegrees.toFloat(), centerX.toFloat(), centerY.toFloat())
+        canvas.rotate(-degrees.toFloat(), centerX.toFloat(), centerY.toFloat())
 
         return (viewRect)
     }

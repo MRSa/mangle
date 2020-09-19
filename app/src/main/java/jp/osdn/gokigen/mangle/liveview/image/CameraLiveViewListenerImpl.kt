@@ -2,10 +2,8 @@ package jp.osdn.gokigen.mangle.liveview.image
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.res.Configuration
 import android.graphics.*
 import android.graphics.ImageFormat.NV21
-import android.util.Log
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import androidx.preference.PreferenceManager
@@ -20,7 +18,6 @@ import java.util.*
 
 class CameraLiveViewListenerImpl(val context: Context) : IImageDataReceiver, IImageProvider, ImageAnalysis.Analyzer
 {
-    private val TAG = toString()
     private var cachePics = ArrayList<ByteArray>()
     private var maxCachePics : Int = 0
     //private var currentCachePics : Int = 0
@@ -55,7 +52,7 @@ class CameraLiveViewListenerImpl(val context: Context) : IImageDataReceiver, IIm
             if (imageProxy.image?.planes?.get(1)?.pixelStride == 1)
             {
                 // from I420 format
-                convertToBitmapFromI420(imageProxy, rotationDegrees)
+                convertToBitmapI420(imageProxy, rotationDegrees)
                 return
             }
             if (imageProxy.format == ImageFormat.YUV_420_888)
@@ -65,72 +62,59 @@ class CameraLiveViewListenerImpl(val context: Context) : IImageDataReceiver, IIm
             }
             convertToBitmapYUV420888(imageProxy, rotationDegrees)
         }
-        catch (e: Exception)
+        catch (e: Throwable)
         {
             e.printStackTrace()
         }
     }
 
-    private fun convertToBitmapFromI420(imageProxy: ImageProxy, rotationDegrees: Int)
+    private fun convertToBitmapI420(imageProxy: ImageProxy, rotationDegrees: Int)
     {
-        Log.v(TAG, " convertToBitmap(I420) $rotationDegrees ")
+        //Log.v(TAG, " convertToBitmap(I420) $rotationDegrees ")
 
-        val width = imageProxy.width
-        val height = imageProxy.height
-        val bytes = ByteArray(imageProxy.width * imageProxy.height * 3 / 2)
-        var i = 0
-        for (row in 0 until height)
-        {
-            for (col in 0 until width)
-            {
-                bytes[i++] = imageProxy.planes[0].buffer.get(col + row * (width))
-            }
-        }
-        for (row in 0 until height / 2)
-        {
-            for (col in 0 until width / 2)
-            {
-                bytes[i++] = imageProxy.planes[2].buffer.get(col + row * (width / 2))
-                bytes[i++] = imageProxy.planes[1].buffer.get(col + row * (width / 2))
-            }
-        }
-        val yuvImage = YuvImage(bytes, NV21, width, height, null)
-
-/*
         //  ImageFormat.YUV_420_888 : 35
         val yBuffer = imageProxy.planes[0].buffer
-        val vBuffer = imageProxy.planes[1].buffer
-        val uBuffer = imageProxy.planes[2].buffer
+        val uBuffer = imageProxy.planes[1].buffer
+        val vBuffer = imageProxy.planes[2].buffer
 
         val ySize = yBuffer.remaining()
         val uSize = uBuffer.remaining()
         val vSize = vBuffer.remaining()
 
         val nv21 = ByteArray(ySize + uSize + vSize)
-
-        // YUVの並びをそのままに変更してみる
         yBuffer.get(nv21, 0, ySize)
-        vBuffer.get(nv21, ySize, vSize)
-        uBuffer.get(nv21, ySize + vSize, uSize)
+        try
+        {
+            var orgIndex = 0
+            var index = ySize
+            while (index < (ySize + uSize + vSize))
+            {
+                nv21[index++] = imageProxy.planes[2].buffer.get(orgIndex)
+                nv21[index++] = imageProxy.planes[1].buffer.get(orgIndex)
+                orgIndex++
+            }
+        }
+        catch (t : Throwable)
+        {
+            t.printStackTrace()
+        }
 
         val width = imageProxy.width
         val height = imageProxy.height
-        val yuvImage = YuvImage(nv21, ImageFormat.NV21, width, height, null)
-        yuvImage.compressToJpeg(Rect(0, 0, width, height), 100, out)
-*/
+        val yuvImage = YuvImage(nv21, NV21, width, height, null)
+
         val out = ByteArrayOutputStream()
         yuvImage.compressToJpeg(Rect(0, 0, width, height), 100, out)
         val imageBytes = out.toByteArray()
         imageBitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
         rotateImageBitmap(rotationDegrees)
-
         imageProxy.close()
         refresh()
     }
 
     private fun convertToBitmapYUV420888(imageProxy: ImageProxy, rotationDegrees: Int)
     {
-        Log.v(TAG, " convertToBitmap(YUV420) $rotationDegrees ")
+        //Log.v(TAG, " convertToBitmap(YUV420) $rotationDegrees ")
 
         //  ImageFormat.YUV_420_888 : 35
         val yBuffer = imageProxy.planes[0].buffer
@@ -160,27 +144,28 @@ class CameraLiveViewListenerImpl(val context: Context) : IImageDataReceiver, IIm
         refresh()
     }
 
-    private fun rotateImageBitmap(degrees: Int)
+    private fun rotateImageBitmap(rotationDegrees: Int)
     {
-        var addDegrees = 0
         try
         {
+/*
+            var addDegrees = 0
             val config = context.resources.configuration
             if (config.orientation == Configuration.ORIENTATION_LANDSCAPE)
             {
                 addDegrees = 90
             }
+            val rotationDegrees = degrees + addDegrees
+*/
+            val rotationMatrix = Matrix()
+            rotationMatrix.postRotate(rotationDegrees.toFloat())
+            imageBitmap = Bitmap.createBitmap(imageBitmap, 0, 0, imageBitmap.getWidth(), imageBitmap.getHeight(), rotationMatrix, true)
             System.gc()
         }
         catch (t: Throwable)
         {
             t.printStackTrace()
         }
-
-        val rotationDegrees = degrees + addDegrees
-        val rotationMatrix = Matrix()
-        rotationMatrix.postRotate(rotationDegrees.toFloat())
-        imageBitmap = Bitmap.createBitmap(imageBitmap, 0, 0, imageBitmap.getWidth(), imageBitmap.getHeight(), rotationMatrix, true)
     }
 
     override fun getImage(position: Float) : Bitmap
@@ -199,19 +184,13 @@ class CameraLiveViewListenerImpl(val context: Context) : IImageDataReceiver, IIm
     private fun setupLiveviewCache()
     {
         val preference = PreferenceManager.getDefaultSharedPreferences(context)
-        if ((preference == null)||(!preference.getBoolean(
-                IPreferencePropertyAccessor.CACHE_LIVEVIEW_PICTURES,
-                false
-            )))
+        if ((preference == null)||(!preference.getBoolean(IPreferencePropertyAccessor.CACHE_LIVEVIEW_PICTURES, false)))
         {
             return
         }
 
         cachePics = ArrayList()
-        val nofCachePics = preference.getString(
-            IPreferencePropertyAccessor.NUMBER_OF_CACHE_PICTURES,
-            IPreferencePropertyAccessor.NUMBER_OF_CACHE_PICTURES_DEFAULT_VALUE
-        )
+        val nofCachePics = preference.getString(IPreferencePropertyAccessor.NUMBER_OF_CACHE_PICTURES, IPreferencePropertyAccessor.NUMBER_OF_CACHE_PICTURES_DEFAULT_VALUE)
         try
         {
             if (nofCachePics != null)
