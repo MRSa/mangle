@@ -24,7 +24,7 @@ import java.util.*
 class FileControl(private val context: FragmentActivity, private val storeImage : IStoreImage) : View.OnClickListener
 {
     private val TAG = toString()
-    private val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
+    private val FILENAME_FORMAT = "yyyyMMdd_HHmmss"
     private var imageCapture: ImageCapture? = null
 
     //private lateinit var outputDirectory: File
