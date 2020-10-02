@@ -1,5 +1,6 @@
 package jp.osdn.gokigen.mangle.liveview.storeimage
 
+import android.content.ContentResolver
 import android.content.ContentValues
 import android.database.DatabaseUtils
 import android.graphics.Bitmap
@@ -8,9 +9,12 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceManager
+import jp.osdn.gokigen.mangle.MainActivity
 import jp.osdn.gokigen.mangle.R
+import jp.osdn.gokigen.mangle.StorageOperationWithPermission
 import jp.osdn.gokigen.mangle.liveview.image.IImageProvider
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor
 import java.io.File
@@ -191,6 +195,11 @@ class StoreImage(private val context: FragmentActivity, private val imageProvide
             if (imageUri != null)
             {
                 resolver.update(imageUri, values, null, null)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+                {
+                    Log.v(TAG, "  ===== StorageOperationWithPermission() : ${imageUri} =====")
+                    //StorageOperationWithPermission(context).requestAndroidRMediaPermission(imageUri)
+                }
 
                 ////////////////////////////////////////////////////////////////
                 if (dumpLog)
@@ -221,6 +230,7 @@ class StoreImage(private val context: FragmentActivity, private val imageProvide
             t.printStackTrace()
         }
     }
+
 
     private fun isExternalStorageWritable(): Boolean
     {

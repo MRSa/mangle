@@ -87,8 +87,7 @@ class MainActivity : AppCompatActivity()
         super.onActivityResult(requestCode, resultCode, data)
         if ((requestCode == REQUEST_CODE_MEDIA_EDIT)&&(resultCode == RESULT_OK))
         {
-            //
-            Log.v(TAG, " WRITE PERMISSION GRANTED")
+            Log.v(TAG, " WRITE PERMISSION GRANTED  ${data}")
         }
     }
 

@@ -15,6 +15,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceManager
 import com.google.android.material.snackbar.Snackbar
 import jp.osdn.gokigen.mangle.R
+import jp.osdn.gokigen.mangle.StorageOperationWithPermission
 import jp.osdn.gokigen.mangle.liveview.storeimage.IStoreImage
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor
 import java.io.File
@@ -142,6 +143,8 @@ class FileControl(private val context: FragmentActivity, private val storeImage 
             values.put(MediaStore.Images.Media.IS_PENDING, true)
             extStorageUri = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
             //extStorageUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+
+            values.put(MediaStore.Images.Media.DATA, outputDir.absolutePath + File.separator + photoFile)
         }
         else
         {
@@ -153,6 +156,12 @@ class FileControl(private val context: FragmentActivity, private val storeImage 
         if (imageUri != null)
         {
             resolver.update(imageUri, values, null, null)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+            {
+                Log.v(TAG, "  ===== StorageOperationWithPermission() : ${imageUri} =====")
+                //StorageOperationWithPermission(context).requestAndroidRMediaPermission(imageUri)
+            }
 
             /////////////////////////////
             val cursor = resolver.query(imageUri, null, null, null, null)
@@ -199,6 +208,15 @@ class FileControl(private val context: FragmentActivity, private val storeImage 
                             Log.v(TAG, msg)
                         }
                     })
+            }
+            else
+            {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+                {
+                    //values.clear()
+                    values.put(MediaStore.Images.Media.IS_PENDING, false)
+                    resolver.update(imageUri, values, null, null)
+                }
             }
         }
     }

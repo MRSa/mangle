@@ -86,7 +86,7 @@ class CameraControl(private val activity : FragmentActivity) : ICameraControl
             val preview = Preview.Builder()
                 .build()
                 .also {
-                    it.setSurfaceProvider(activity.findViewById<androidx.camera.view.PreviewView>(R.id.viewFinder).createSurfaceProvider())
+                    it.setSurfaceProvider(activity.findViewById<androidx.camera.view.PreviewView>(R.id.viewFinder).surfaceProvider)
                 }
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
             val imageCapture = fileControl.prepare()
