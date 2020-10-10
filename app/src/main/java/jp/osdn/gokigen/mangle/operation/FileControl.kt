@@ -15,7 +15,6 @@ import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceManager
 import com.google.android.material.snackbar.Snackbar
 import jp.osdn.gokigen.mangle.R
-import jp.osdn.gokigen.mangle.StorageOperationWithPermission
 import jp.osdn.gokigen.mangle.liveview.storeimage.IStoreImage
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor
 import java.io.File
@@ -27,9 +26,6 @@ class FileControl(private val context: FragmentActivity, private val storeImage 
     private val TAG = toString()
     private val FILENAME_FORMAT = "yyyyMMdd_HHmmss"
     private var imageCapture: ImageCapture? = null
-
-    //private lateinit var outputDirectory: File
-    //private var isLocalLocation : Boolean = false
 
     init
     {
@@ -86,7 +82,7 @@ class FileControl(private val context: FragmentActivity, private val storeImage 
                 {
                     val savedUri = Uri.fromFile(photoFile)
                     val msg = context.getString(R.string.capture_success) + " $savedUri"
-                    //Toast.makeText(context.baseContext, msg, Toast.LENGTH_SHORT).show()
+
                     Snackbar.make(
                         context.findViewById<androidx.constraintlayout.widget.ConstraintLayout>(
                             R.id.main_layout
@@ -142,8 +138,6 @@ class FileControl(private val context: FragmentActivity, private val storeImage 
             values.put(MediaStore.Images.Media.RELATIVE_PATH, path)
             values.put(MediaStore.Images.Media.IS_PENDING, true)
             extStorageUri = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
-            //extStorageUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-
             values.put(MediaStore.Images.Media.DATA, outputDir.absolutePath + File.separator + photoFile)
         }
         else
@@ -159,7 +153,7 @@ class FileControl(private val context: FragmentActivity, private val storeImage 
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
             {
-                Log.v(TAG, "  ===== StorageOperationWithPermission() : ${imageUri} =====")
+                Log.v(TAG, "  ===== StorageOperationWithPermission() : $imageUri =====")
                 //StorageOperationWithPermission(context).requestAndroidRMediaPermission(imageUri)
             }
 
@@ -237,7 +231,7 @@ class FileControl(private val context: FragmentActivity, private val storeImage 
             )
             if (captureBothCamera)
             {
-                val thread = Thread(Runnable { storeImage.doStore() })
+                val thread = Thread { storeImage.doStore() }
                 try
                 {
                     thread.start()

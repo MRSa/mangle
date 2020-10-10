@@ -1,6 +1,7 @@
 package jp.osdn.gokigen.mangle.preference
 
 import android.content.SharedPreferences
+import android.net.Uri
 
 class PreferenceValueInitializer
 {
@@ -65,7 +66,36 @@ class PreferenceValueInitializer
                 IPreferencePropertyAccessor.CAPTURE_ONLY_LIVE_VIEW_DEFAULT_VALUE
             )
         }
+        if (!items.containsKey(IPreferencePropertyAccessor.EXTERNAL_STORAGE_LOCATION))
+        {
+            editor.putString(IPreferencePropertyAccessor.EXTERNAL_STORAGE_LOCATION, IPreferencePropertyAccessor.EXTERNAL_STORAGE_LOCATION_DEFAULT_VALUE)
+        }
         editor.apply()
+    }
+
+    fun initializeStorageLocationPreferences(preferences: SharedPreferences)
+    {
+        val items : Map<String, *> = preferences.all
+        val editor : SharedPreferences.Editor = preferences.edit()
+        if (!items.containsKey(IPreferencePropertyAccessor.EXTERNAL_STORAGE_LOCATION))
+        {
+            editor.putString(IPreferencePropertyAccessor.EXTERNAL_STORAGE_LOCATION, IPreferencePropertyAccessor.EXTERNAL_STORAGE_LOCATION_DEFAULT_VALUE)
+        }
+        editor.apply()
+    }
+
+    fun storeStorageLocationPreference(preferences: SharedPreferences, uri : Uri)
+    {
+        try
+        {
+            val editor : SharedPreferences.Editor = preferences.edit()
+            editor.putString(IPreferencePropertyAccessor.EXTERNAL_STORAGE_LOCATION, uri.toString())
+            editor.apply()
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
     }
 
 }

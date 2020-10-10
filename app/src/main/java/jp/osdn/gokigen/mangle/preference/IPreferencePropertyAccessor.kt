@@ -35,6 +35,8 @@ interface IPreferencePropertyAccessor
         // --- HIDDEN
         const val SHOW_GRID_STATUS = "show_grid"
         const val SHOW_GRID_STATUS_DEFAULT_VALUE = false
+        const val EXTERNAL_STORAGE_LOCATION = "external_storage_location"
+        const val EXTERNAL_STORAGE_LOCATION_DEFAULT_VALUE = ""
     }
 
 }

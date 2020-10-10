@@ -231,7 +231,6 @@ class StoreImage(private val context: FragmentActivity, private val imageProvide
         }
     }
 
-
     private fun isExternalStorageWritable(): Boolean
     {
         return (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED)

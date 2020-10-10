@@ -1,13 +1,16 @@
 package jp.osdn.gokigen.mangle
 
 import android.content.ContentResolver
-import android.content.ContentValues
+import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
+import android.provider.DocumentsContract
 import android.provider.MediaStore
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.FragmentActivity
+import androidx.preference.PreferenceManager
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor
 import java.io.File
 
 /**
@@ -21,7 +24,22 @@ class StorageOperationWithPermission(private val activity: FragmentActivity)
     {
         try
         {
+            val mediaLocation = PreferenceManager.getDefaultSharedPreferences(activity).getString(IPreferencePropertyAccessor.EXTERNAL_STORAGE_LOCATION, "")
+            if ((mediaLocation != null)&&(mediaLocation.length > 1))
+            {
+                return
+            }
 
+            val path = Environment.DIRECTORY_DCIM + File.separator + activity.getString(R.string.app_location)
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+            intent.addCategory(Intent.CATEGORY_OPENABLE)
+            intent.setType("*/*")
+            intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, path)
+
+            activity.startActivityForResult(
+                Intent(Intent.ACTION_OPEN_DOCUMENT_TREE),
+                MainActivity.REQUEST_CODE_OPEN_DOCUMENT_TREE
+            )
 
         }
         catch (e : Exception)

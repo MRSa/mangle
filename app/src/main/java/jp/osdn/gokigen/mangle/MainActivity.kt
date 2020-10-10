@@ -11,6 +11,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.preference.PreferenceManager
+import jp.osdn.gokigen.mangle.preference.PreferenceValueInitializer
 import jp.osdn.gokigen.mangle.scene.MainButtonHandler
 import jp.osdn.gokigen.mangle.scene.SceneChanger
 import jp.osdn.gokigen.mangle.scene.ShowMessage
@@ -32,6 +34,19 @@ class MainActivity : AppCompatActivity()
 
         supportActionBar?.hide()
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+        try
+        {
+           PreferenceValueInitializer().initializeStorageLocationPreferences(
+               PreferenceManager.getDefaultSharedPreferences(
+                   this
+               )
+           )
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
 
         if (allPermissionsGranted())
         {
@@ -63,7 +78,11 @@ class MainActivity : AppCompatActivity()
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray)
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    )
     {
         if (requestCode == REQUEST_CODE_PERMISSIONS)
         {
@@ -89,14 +108,35 @@ class MainActivity : AppCompatActivity()
         {
             Log.v(TAG, " WRITE PERMISSION GRANTED  ${data}")
         }
+        if ((requestCode == REQUEST_CODE_OPEN_DOCUMENT_TREE)&&(resultCode == RESULT_OK))
+        {
+            Log.v(TAG, " WRITE PERMISSION GRANTED  ${data}")
+
+            data?.data?.also { uri ->
+                val contentResolver = applicationContext.contentResolver
+                val takeFlags: Int =
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                contentResolver.takePersistableUriPermission(uri, takeFlags)
+                PreferenceValueInitializer().storeStorageLocationPreference(
+                    PreferenceManager.getDefaultSharedPreferences(
+                        this
+                    ), uri
+                )
+            }
+        }
     }
 
     companion object
     {
         private const val REQUEST_CODE_PERMISSIONS = 10
         const val REQUEST_CODE_MEDIA_EDIT = 12
-        private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA,
-                                                   Manifest.permission.VIBRATE,
-                                                   Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        const val REQUEST_CODE_OPEN_DOCUMENT_TREE = 20
+
+        private val REQUIRED_PERMISSIONS = arrayOf(
+            Manifest.permission.CAMERA,
+            Manifest.permission.VIBRATE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        )
     }
 }
