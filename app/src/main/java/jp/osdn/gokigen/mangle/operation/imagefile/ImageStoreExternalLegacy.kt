@@ -1,7 +1,6 @@
 package jp.osdn.gokigen.mangle.operation.imagefile
 
 import android.content.ContentValues
-import android.database.DatabaseUtils
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
@@ -62,9 +61,9 @@ class ImageStoreExternalLegacy(private val context: FragmentActivity) : IImageSt
             resolver.update(imageUri, values, null, null)
 
             /////////////////////////////
-            val cursor = resolver.query(imageUri, null, null, null, null)
-            DatabaseUtils.dumpCursor(cursor)
-            cursor!!.close()
+            //val cursor = resolver.query(imageUri, null, null, null, null)
+            //DatabaseUtils.dumpCursor(cursor)
+            //cursor!!.close()
             /////////////////////////////
 
             val openStream = resolver.openOutputStream(imageUri) ?: return (false)

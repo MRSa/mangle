@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.core.content.ContextCompat
@@ -17,6 +18,7 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
+@RequiresApi(api = Build.VERSION_CODES.Q)
 class ImageStoreExternal(private val context: FragmentActivity) : IImageStore
 {
     private fun getExternalOutputDirectory(): File

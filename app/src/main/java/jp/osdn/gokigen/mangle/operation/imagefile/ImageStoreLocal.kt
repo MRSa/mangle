@@ -16,11 +16,6 @@ import java.util.*
 
 class ImageStoreLocal(private val context: FragmentActivity)
 {
-    init
-    {
-
-    }
-
     /**
      *   保存用ディレクトリを準備する（ダメな場合はアプリ領域のディレクトリを確保する）
      *
@@ -40,28 +35,34 @@ class ImageStoreLocal(private val context: FragmentActivity)
             return
         }
         Log.v(TAG, " takePhotoLocal()")
-        val photoFile = File(prepareLocalOutputDirectory(), "P" + SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(System.currentTimeMillis()) + ".jpg")
-        val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
-
-        imageCapture.takePicture(
-            outputOptions,
-            ContextCompat.getMainExecutor(context),
-            object : ImageCapture.OnImageSavedCallback
-            {
-                override fun onError(exc: ImageCaptureException)
+        try
+        {
+            val photoFile = File(prepareLocalOutputDirectory(), "P" + SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(System.currentTimeMillis()) + ".jpg")
+            val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
+            imageCapture.takePicture(
+                outputOptions,
+                ContextCompat.getMainExecutor(context),
+                object : ImageCapture.OnImageSavedCallback
                 {
-                    Log.e(TAG, "Photo capture failed: ${exc.message}", exc)
-                }
+                    override fun onError(exc: ImageCaptureException)
+                    {
+                        Log.e(TAG, "Photo capture failed: ${exc.message}", exc)
+                    }
 
-                override fun onImageSaved(output: ImageCapture.OutputFileResults)
-                {
-                    val savedUri = Uri.fromFile(photoFile)
-                    val msg = context.getString(R.string.capture_success) + " $savedUri"
-                    Snackbar.make(context.findViewById<ConstraintLayout>(R.id.main_layout), msg, Snackbar.LENGTH_SHORT).show()
-                    Log.v(TAG, msg)
+                    override fun onImageSaved(output: ImageCapture.OutputFileResults)
+                    {
+                        val savedUri = Uri.fromFile(photoFile)
+                        val msg = context.getString(R.string.capture_success) + " $savedUri"
+                        Snackbar.make(context.findViewById<ConstraintLayout>(R.id.main_layout), msg, Snackbar.LENGTH_SHORT).show()
+                        Log.v(TAG, msg)
+                    }
                 }
-            }
-        )
+            )
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
     }
 
     companion object
@@ -69,5 +70,4 @@ class ImageStoreLocal(private val context: FragmentActivity)
         private val  TAG = this.toString()
         private const val FILENAME_FORMAT = "yyyyMMdd_HHmmss"
     }
-
 }
