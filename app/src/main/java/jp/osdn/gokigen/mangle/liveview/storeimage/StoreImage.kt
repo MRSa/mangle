@@ -194,7 +194,7 @@ class StoreImage(private val context: FragmentActivity, private val imageProvide
             val imageUri = resolver.insert(extStorageUri, values)
             if (imageUri != null)
             {
-                resolver.update(imageUri, values, null, null)
+                //resolver.update(imageUri, values, null, null)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
                 {
                     Log.v(TAG, "  ===== StorageOperationWithPermission() : ${imageUri} =====")
