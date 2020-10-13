@@ -9,7 +9,6 @@ import jp.osdn.gokigen.mangle.R
 
 class MainButtonHandler(private val activity : AppCompatActivity) : View.OnClickListener
 {
-    private val TAG = toString()
     private lateinit var sceneChanger : SceneChanger
 
     override fun onClick(v: View?)
@@ -58,5 +57,10 @@ class MainButtonHandler(private val activity : AppCompatActivity) : View.OnClick
     private fun message()
     {
         Log.v(TAG, " - - - - - - - - - MESSAGE - - - - - - - - -")
+    }
+
+    companion object
+    {
+        private val  TAG = this.toString()
     }
 }

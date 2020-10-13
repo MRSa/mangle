@@ -12,98 +12,142 @@ import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
+import androidx.preference.PreferenceManager
 import com.google.android.material.snackbar.Snackbar
+import jp.osdn.gokigen.mangle.IScopedStorageAccessPermission
 import jp.osdn.gokigen.mangle.R
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor
 import java.io.File
+import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
 @RequiresApi(api = Build.VERSION_CODES.Q)
-class ImageStoreExternal(private val context: FragmentActivity) : IImageStore
+class ImageStoreExternal(private val context: FragmentActivity, private val accessRequest : IScopedStorageAccessPermission?) : IImageStore, IImageStoreGrant
 {
-    private fun getExternalOutputDirectory(): File
+    private fun getExternalOutputDirectory(): String
     {
-        val directoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).path + "/" + context.getString(
-            R.string.app_location) + "/"
-        val target = File(directoryPath)
+        var uriString = ""
+        var prefString : String? = ""
         try
         {
-            target.mkdirs()
+            prefString = PreferenceManager.getDefaultSharedPreferences(context).getString(
+                IPreferencePropertyAccessor.EXTERNAL_STORAGE_LOCATION, IPreferencePropertyAccessor.EXTERNAL_STORAGE_LOCATION_DEFAULT_VALUE)
+            if (prefString != null)
+            {
+                uriString = Uri.decode(prefString)
+            }
+            if (uriString.isEmpty())
+            {
+                // 設定がない場合はデフォルトの場所に...
+                uriString = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).path + "/" + context.getString(R.string.app_location) + "/"
+            }
+
+            // DCIM 以下に変更... しかし、deprecated...
+            //uriString = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).path + uriString.substring(uriString.lastIndexOf("DCIM") + 4)
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+
+        try
+        {
+            File(uriString).mkdirs()
         }
         catch (e: Exception)
         {
             e.printStackTrace()
         }
-        Log.v(TAG, "  ----- RECORD Directory PATH : $directoryPath -----")
-        return (target)
+        Log.v(TAG, "  ----- RECORD Directory PATH : ${uriString} : ${prefString} -----")
+/*
+        try
+        {
+            //context.grantUriPermission(context.getCallingPackage(), Uri.parse(Uri.decode(prefString)), Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            context.grantUriPermission(context.getCallingPackage(), Uri.parse(Uri.decode(uriString)), Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+*/
+        return (uriString)
     }
 
-    override fun takePhoto(imageCapture : ImageCapture?) : Boolean
-    {
-        if ((!isExternalStorageWritable())||(imageCapture == null))
-        {
+    override fun takePhoto(imageCapture : ImageCapture?) : Boolean {
+        if ((!isExternalStorageWritable()) || (imageCapture == null)) {
             Log.v(TAG, " takePhotoExternal() : cannot write image to external.")
             return (false)
         }
         Log.v(TAG, " takePhotoExternal()")
 
-        val outputDir = getExternalOutputDirectory()
+        val outputDirString = getExternalOutputDirectory()
+        if (outputDirString.isEmpty()) {
+            return (false)
+        }
+        val outputDir = File(outputDirString)
         val resolver = context.contentResolver
 
         val mimeType = "image/jpeg"
         val now = System.currentTimeMillis()
-        val path = Environment.DIRECTORY_DCIM + File.separator + context.getString(R.string.app_location) // Environment.DIRECTORY_PICTURES  + File.separator + "gokigen" //"DCIM/aira01a/"
+        val path =
+            Environment.DIRECTORY_DCIM + File.separator + context.getString(R.string.app_location) // Environment.DIRECTORY_PICTURES  + File.separator + "gokigen" //"DCIM/aira01a/"
         val photoFile = "P" + SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(now) + ".jpg"
 
-        val extStorageUri : Uri
+        val extStorageUri = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
         val values = ContentValues()
         values.put(MediaStore.Images.Media.TITLE, photoFile)
         values.put(MediaStore.Images.Media.DISPLAY_NAME, photoFile)
         values.put(MediaStore.Images.Media.MIME_TYPE, mimeType)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+        values.put(MediaStore.Images.Media.RELATIVE_PATH, path)
+        values.put(MediaStore.Images.Media.IS_PENDING, true)
+        values.put(MediaStore.Images.Media.DATA, outputDir.absolutePath + File.separator + photoFile)
+
+        var imageUri: Uri? = null
+        try
         {
-            values.put(MediaStore.Images.Media.RELATIVE_PATH, path)
-            values.put(MediaStore.Images.Media.IS_PENDING, true)
-            extStorageUri = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
-            values.put(MediaStore.Images.Media.DATA, outputDir.absolutePath + File.separator + photoFile)
+            imageUri = resolver.insert(extStorageUri, values)
         }
-        else
+        catch (e: Exception)
         {
-            values.put(MediaStore.Images.Media.DATA, outputDir.absolutePath + File.separator + photoFile)
-            extStorageUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+            e.printStackTrace()
+        }
+        if (imageUri == null)
+        {
+            return (false)
         }
 
-        val imageUri = resolver.insert(extStorageUri, values)
-        if (imageUri != null)
+        /////////////////////////////
+        Log.v(TAG, "  ===== imageUri : $imageUri =====")
+        val cursor = resolver.query(imageUri, null, null, null, null)
+        DatabaseUtils.dumpCursor(cursor)
+        cursor!!.close()
+        /////////////////////////////
+
+        var openStream : OutputStream? = null
+        try
         {
+            openStream = resolver.openOutputStream(imageUri)
+        }
+        catch (e : Exception)
+        {
+            values.put(MediaStore.Images.Media.IS_PENDING, false)
             resolver.update(imageUri, values, null, null)
+            e.printStackTrace()
+        }
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
-            {
-                Log.v(TAG, "  ===== StorageOperationWithPermission() : $imageUri =====")
-                //StorageOperationWithPermission(context).requestAndroidRMediaPermission(imageUri)
-            }
-
-            /////////////////////////////
-            val cursor = resolver.query(imageUri, null, null, null, null)
-            DatabaseUtils.dumpCursor(cursor)
-            cursor!!.close()
-            /////////////////////////////
-
-            val openStream = resolver.openOutputStream(imageUri)
+        try
+        {
             if (openStream != null)
             {
                 val outputOptions = ImageCapture.OutputFileOptions.Builder(openStream).build()
                 imageCapture.takePicture(
                     outputOptions,
                     ContextCompat.getMainExecutor(context),
-                    object : ImageCapture.OnImageSavedCallback
-                    {
-                        override fun onError(e: ImageCaptureException)
-                        {
+                    object : ImageCapture.OnImageSavedCallback {
+                        override fun onError(e: ImageCaptureException) {
                             Log.e(TAG, "Photo capture failed: ${e.message} ", e)
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
-                            {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                                 //values.clear()
                                 values.put(MediaStore.Images.Media.IS_PENDING, false)
                                 resolver.update(imageUri, values, null, null)
@@ -111,15 +155,14 @@ class ImageStoreExternal(private val context: FragmentActivity) : IImageStore
                             e.printStackTrace()
                         }
 
-                        override fun onImageSaved(output: ImageCapture.OutputFileResults)
-                        {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
-                            {
+                        override fun onImageSaved(output: ImageCapture.OutputFileResults) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                                 //values.clear()
                                 values.put(MediaStore.Images.Media.IS_PENDING, false)
                                 resolver.update(imageUri, values, null, null)
                             }
-                            val msg = context.getString(R.string.capture_success) + " $path/$photoFile"
+                            val msg =
+                                context.getString(R.string.capture_success) + " $path/$photoFile"
                             //Toast.makeText(context.baseContext, msg, Toast.LENGTH_SHORT).show()
                             Snackbar.make(
                                 context.findViewById<androidx.constraintlayout.widget.ConstraintLayout>(
@@ -140,7 +183,16 @@ class ImageStoreExternal(private val context: FragmentActivity) : IImageStore
                 }
             }
         }
-        return (true)
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+         return (true)
+    }
+
+    override fun grantStoreImage()
+    {
+
     }
 
     private fun isExternalStorageWritable(): Boolean

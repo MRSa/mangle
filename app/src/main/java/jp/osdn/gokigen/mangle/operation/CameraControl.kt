@@ -9,6 +9,7 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
+import jp.osdn.gokigen.mangle.IScopedStorageAccessPermission
 import jp.osdn.gokigen.mangle.R
 import jp.osdn.gokigen.mangle.liveview.ILiveView
 import jp.osdn.gokigen.mangle.liveview.ILiveViewRefresher
@@ -18,9 +19,8 @@ import jp.osdn.gokigen.mangle.operation.imagefile.FileControl
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class CameraControl(private val activity : FragmentActivity) : ICameraControl
+class CameraControl(private val activity : FragmentActivity, private val accessPermission : IScopedStorageAccessPermission?) : ICameraControl
 {
-    private val TAG = toString()
     private lateinit var cameraExecutor: ExecutorService
     private lateinit var liveViewListener : CameraLiveViewListenerImpl
     private lateinit var fileControl : FileControl
@@ -38,7 +38,7 @@ class CameraControl(private val activity : FragmentActivity) : ICameraControl
         liveViewListener = CameraLiveViewListenerImpl(activity)
         cameraExecutor = Executors.newSingleThreadExecutor()
         storeImage = StoreImage(activity, liveViewListener)
-        fileControl = FileControl(activity, storeImage)
+        fileControl = FileControl(activity, storeImage, accessPermission)
     }
 
     override fun setRefresher(refresher: ILiveViewRefresher, imageView : ILiveView)
@@ -175,5 +175,10 @@ class CameraControl(private val activity : FragmentActivity) : ICameraControl
     override fun captureButtonReceiver() : View.OnClickListener
     {
         return (fileControl)
+    }
+
+    companion object
+    {
+        private val  TAG = this.toString()
     }
 }

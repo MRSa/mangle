@@ -22,7 +22,8 @@ class MainActivity : AppCompatActivity()
     private val TAG = toString()
     private val mainButtonHandler : MainButtonHandler = MainButtonHandler(this)
     private val showMessage : ShowMessage = ShowMessage(this)
-    private val sceneChanger : SceneChanger = SceneChanger(this, showMessage)
+    private val accessPermission : IScopedStorageAccessPermission? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) { StorageOperationWithPermission(this) } else { null }
+    private val sceneChanger : SceneChanger = SceneChanger(this, showMessage, accessPermission)
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -74,7 +75,7 @@ class MainActivity : AppCompatActivity()
     {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
         {
-            StorageOperationWithPermission(this).requestAndroidRMediaPermission()
+            StorageOperationWithPermission(this).requestStorageAccessFrameworkLocation()
         }
     }
 
@@ -104,25 +105,13 @@ class MainActivity : AppCompatActivity()
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
     {
         super.onActivityResult(requestCode, resultCode, data)
-        if ((requestCode == REQUEST_CODE_MEDIA_EDIT)&&(resultCode == RESULT_OK))
+        if (requestCode == REQUEST_CODE_MEDIA_EDIT)
         {
-            Log.v(TAG, " WRITE PERMISSION GRANTED  ${data}")
+            accessPermission?.responseAccessPermission(resultCode, data)
         }
-        if ((requestCode == REQUEST_CODE_OPEN_DOCUMENT_TREE)&&(resultCode == RESULT_OK))
+        if (requestCode == REQUEST_CODE_OPEN_DOCUMENT_TREE)
         {
-            Log.v(TAG, " WRITE PERMISSION GRANTED  ${data}")
-
-            data?.data?.also { uri ->
-                val contentResolver = applicationContext.contentResolver
-                val takeFlags: Int =
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                contentResolver.takePersistableUriPermission(uri, takeFlags)
-                PreferenceValueInitializer().storeStorageLocationPreference(
-                    PreferenceManager.getDefaultSharedPreferences(
-                        this
-                    ), uri
-                )
-            }
+            accessPermission?.responseStorageAccessFrameworkLocation(resultCode, data)
         }
     }
 

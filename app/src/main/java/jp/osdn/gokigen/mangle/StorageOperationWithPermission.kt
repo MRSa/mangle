@@ -7,10 +7,14 @@ import android.os.Build
 import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
+import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceManager
+import jp.osdn.gokigen.mangle.operation.imagefile.IImageStoreGrant
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor
+import jp.osdn.gokigen.mangle.preference.PreferenceValueInitializer
 import java.io.File
 
 /**
@@ -18,9 +22,12 @@ import java.io.File
  *
  */
 @RequiresApi(api = Build.VERSION_CODES.R)
-class StorageOperationWithPermission(private val activity: FragmentActivity)
+class StorageOperationWithPermission(private val activity: FragmentActivity) : IScopedStorageAccessPermission
 {
-    fun requestAndroidRMediaPermission()
+    private var callbackOwner : IImageStoreGrant? = null
+
+
+    override fun requestStorageAccessFrameworkLocation()
     {
         try
         {
@@ -73,10 +80,34 @@ class StorageOperationWithPermission(private val activity: FragmentActivity)
 */
     }
 
-    fun requestAndroidRMediaPermission(requestUri : Uri)
+    override fun responseStorageAccessFrameworkLocation(resultCode: Int, data: Intent?)
+    {
+        if (resultCode == AppCompatActivity.RESULT_OK)
+        {
+            Log.v(TAG, " DOCUMENT TREE GRANTED  ${data}")
+            data?.data?.also { uri ->
+                val contentResolver = activity.applicationContext.contentResolver
+                val takeFlags: Int =
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                contentResolver.takePersistableUriPermission(uri, takeFlags)
+                PreferenceValueInitializer().storeStorageLocationPreference(
+                    PreferenceManager.getDefaultSharedPreferences(
+                        activity
+                    ), uri
+                )
+            }
+        }
+        else
+        {
+            Log.v(TAG, " DOCUMENT TREE DENIED  ${resultCode}")
+        }
+    }
+
+    override fun requestAccessPermission(requestUri : Uri, grantResponse : IImageStoreGrant)
     {
         try
         {
+            callbackOwner = grantResponse
             val urisToModify: List<Uri> = listOf( requestUri )
             val contentResolver: ContentResolver = activity.contentResolver
             val editPendingIntent = MediaStore.createWriteRequest(contentResolver, urisToModify)
@@ -86,6 +117,23 @@ class StorageOperationWithPermission(private val activity: FragmentActivity)
         {
             e.printStackTrace()
         }
+    }
+
+    override fun responseAccessPermission(resultCode: Int, data: Intent?)
+    {
+        if (resultCode == AppCompatActivity.RESULT_OK)
+        {
+            Log.v(TAG, " WRITE PERMISSION GRANTED  ${data}")
+        }
+        else
+        {
+            Log.v(TAG, " WRITE PERMISSION DENIED  ${resultCode}")
+        }
+    }
+
+    companion object
+    {
+        private val  TAG = this.toString()
     }
 
 }

@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
 import androidx.preference.PreferenceManager
+import jp.osdn.gokigen.mangle.IScopedStorageAccessPermission
 import jp.osdn.gokigen.mangle.R
 import jp.osdn.gokigen.mangle.liveview.LiveImageViewFragment
 import jp.osdn.gokigen.mangle.logcat.LogCatFragment
@@ -16,9 +17,8 @@ import jp.osdn.gokigen.mangle.preview.PreviewFragment
 import jp.osdn.gokigen.mangle.utils.ConfirmationDialog
 import jp.osdn.gokigen.mangle.utils.ConfirmationDialog.Callback
 
-class SceneChanger(private val activity: FragmentActivity, private val informationNotify: IInformationReceiver) : IChangeScene
+class SceneChanger(private val activity: FragmentActivity, private val informationNotify: IInformationReceiver, accessRequest : IScopedStorageAccessPermission?) : IChangeScene
 {
-    private val TAG = toString()
     private val cameraControl: CameraControl
     private lateinit var liveviewFragment : LiveImageViewFragment
     private lateinit var previewFragment : PreviewFragment
@@ -28,7 +28,7 @@ class SceneChanger(private val activity: FragmentActivity, private val informati
     init
     {
         Log.v(TAG, " SceneChanger is created. ")
-        cameraControl = CameraControl(activity)
+        cameraControl = CameraControl(activity, accessRequest)
         cameraControl.initialize()
     }
 
@@ -158,5 +158,10 @@ class SceneChanger(private val activity: FragmentActivity, private val informati
     fun finish()
     {
         cameraControl.finishCamera()
+    }
+
+    companion object
+    {
+        private val  TAG = this.toString()
     }
 }

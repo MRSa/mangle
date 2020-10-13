@@ -6,14 +6,15 @@ import android.view.View
 import androidx.camera.core.ImageCapture
 import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceManager
+import jp.osdn.gokigen.mangle.IScopedStorageAccessPermission
 import jp.osdn.gokigen.mangle.R
 import jp.osdn.gokigen.mangle.liveview.storeimage.IStoreImage
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor
 
-class FileControl(private val context: FragmentActivity, private val storeImage : IStoreImage) : View.OnClickListener
+class FileControl(private val context: FragmentActivity, private val storeImage : IStoreImage, accessRequest : IScopedStorageAccessPermission?) : View.OnClickListener
 {
     private val storeLocal = ImageStoreLocal(context)
-    private val storeExternal = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) { ImageStoreExternal(context) } else { ImageStoreExternalLegacy(context) }
+    private val storeExternal = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) { ImageStoreExternal(context, accessRequest) } else { ImageStoreExternalLegacy(context) }
     private var imageCapture: ImageCapture? = null
 
     fun prepare() : ImageCapture?
@@ -103,5 +104,4 @@ class FileControl(private val context: FragmentActivity, private val storeImage 
     {
         private val  TAG = this.toString()
     }
-
 }
