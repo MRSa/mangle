@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity()
 
         try
         {
-           PreferenceValueInitializer().initializeStorageLocationPreferences(this)
+            PreferenceValueInitializer().initializePreferences(this)
         }
         catch (e: Exception)
         {

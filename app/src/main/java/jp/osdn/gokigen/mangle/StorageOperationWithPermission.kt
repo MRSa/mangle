@@ -14,7 +14,6 @@ import androidx.fragment.app.FragmentActivity
 import jp.osdn.gokigen.mangle.operation.imagefile.IImageStoreGrant
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor
 import jp.osdn.gokigen.mangle.preference.PreferenceAccessWrapper
-import jp.osdn.gokigen.mangle.preference.PreferenceValueInitializer
 import java.io.File
 
 /**
@@ -40,7 +39,7 @@ class StorageOperationWithPermission(private val activity: FragmentActivity) : I
             val path = Environment.DIRECTORY_DCIM + File.separator + activity.getString(R.string.app_location)
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
             intent.addCategory(Intent.CATEGORY_OPENABLE)
-            intent.setType("*/*")
+            intent.type = "*/*"
             intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, path)
 
             activity.startActivityForResult(
@@ -59,18 +58,18 @@ class StorageOperationWithPermission(private val activity: FragmentActivity) : I
     {
         if (resultCode == AppCompatActivity.RESULT_OK)
         {
-            Log.v(TAG, " DOCUMENT TREE GRANTED  ${data}")
+            Log.v(TAG, " DOCUMENT TREE GRANTED  $data")
             data?.data?.also { uri ->
                 val contentResolver = activity.applicationContext.contentResolver
                 val takeFlags: Int =
                     Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                 contentResolver.takePersistableUriPermission(uri, takeFlags)
-                PreferenceValueInitializer().storeStorageLocationPreference(activity, uri)
+                PreferenceAccessWrapper(activity).putString(IPreferencePropertyAccessor.EXTERNAL_STORAGE_LOCATION, uri.toString())
             }
         }
         else
         {
-            Log.v(TAG, " DOCUMENT TREE DENIED  ${resultCode}")
+            Log.v(TAG, " DOCUMENT TREE DENIED  $resultCode")
         }
     }
 

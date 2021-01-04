@@ -11,10 +11,29 @@ class PreferenceValueInitializer() : IPreferenceValueInitializer
     {
         try
         {
+            initializeApplicationPreferences(context)
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    private fun initializeApplicationPreferences(context : Context)
+    {
+        try
+        {
             val preferences = PreferenceManager.getDefaultSharedPreferences(context) ?: return
             val items : Map<String, *> = preferences.all
             val editor : SharedPreferences.Editor = preferences.edit()
 
+            if (!items.containsKey(IPreferencePropertyAccessor.EXTERNAL_STORAGE_LOCATION))
+            {
+                editor.putString(
+                    IPreferencePropertyAccessor.EXTERNAL_STORAGE_LOCATION,
+                    IPreferencePropertyAccessor.EXTERNAL_STORAGE_LOCATION_DEFAULT_VALUE
+                )
+            }
             if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_NOTIFICATIONS))
             {
                 editor.putBoolean(
@@ -75,41 +94,6 @@ class PreferenceValueInitializer() : IPreferenceValueInitializer
             {
                 editor.putString(IPreferencePropertyAccessor.EXTERNAL_STORAGE_LOCATION, IPreferencePropertyAccessor.EXTERNAL_STORAGE_LOCATION_DEFAULT_VALUE)
             }
-            editor.apply()
-        }
-        catch (e : Exception)
-        {
-            e.printStackTrace()
-        }
-    }
-
-    override fun initializeStorageLocationPreferences(context : Context)
-    {
-        try
-        {
-            val preferences = PreferenceManager.getDefaultSharedPreferences(context) ?: return
-            val items : Map<String, *> = preferences.all
-            val editor : SharedPreferences.Editor = preferences.edit()
-            if (!items.containsKey(IPreferencePropertyAccessor.EXTERNAL_STORAGE_LOCATION))
-            {
-                editor.putString(IPreferencePropertyAccessor.EXTERNAL_STORAGE_LOCATION, IPreferencePropertyAccessor.EXTERNAL_STORAGE_LOCATION_DEFAULT_VALUE)
-            }
-            editor.apply()
-        }
-        catch (e : Exception)
-        {
-            e.printStackTrace()
-        }
-
-    }
-
-    override fun storeStorageLocationPreference(context : Context, uri : Uri)
-    {
-        try
-        {
-            val preferences = PreferenceManager.getDefaultSharedPreferences(context) ?: return
-            val editor : SharedPreferences.Editor = preferences.edit()
-            editor.putString(IPreferencePropertyAccessor.EXTERNAL_STORAGE_LOCATION, uri.toString())
             editor.apply()
         }
         catch (e : Exception)

@@ -1,13 +1,15 @@
 package jp.osdn.gokigen.mangle.preference
 
 import android.content.Context
+import android.content.SharedPreferences
+import androidx.preference.PreferenceDataStore
 import androidx.preference.PreferenceManager
 
-class PreferenceAccessWrapper(context : Context) : IPreferenceAccessWrapper
+class PreferenceAccessWrapper(context : Context) : PreferenceDataStore()
 {
     private val preferences = PreferenceManager.getDefaultSharedPreferences(context)
 
-    override fun getString(key : String, defaultValue : String) : String
+    override fun getString(key : String, defaultValue : String?) : String
     {
         try
         {
@@ -21,7 +23,7 @@ class PreferenceAccessWrapper(context : Context) : IPreferenceAccessWrapper
         {
             e.printStackTrace()
         }
-        return (defaultValue)
+        return (defaultValue ?: "")
     }
 
     override fun getBoolean(key : String, defaultValue : Boolean) : Boolean
@@ -37,4 +39,17 @@ class PreferenceAccessWrapper(context : Context) : IPreferenceAccessWrapper
         return (defaultValue)
     }
 
+    override fun putString(key: String, value: String?)
+    {
+        try
+        {
+            val editor : SharedPreferences.Editor = preferences.edit()
+            editor.putString(key, value)
+            editor.apply()
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+    }
 }
