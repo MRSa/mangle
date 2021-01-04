@@ -6,12 +6,12 @@ import android.graphics.*
 import android.graphics.ImageFormat.NV21
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
-import androidx.preference.PreferenceManager
 import jp.osdn.gokigen.mangle.R
 import jp.osdn.gokigen.mangle.liveview.ILiveViewRefresher
 import jp.osdn.gokigen.mangle.liveview.bitmapconvert.IPreviewImageConverter
 import jp.osdn.gokigen.mangle.liveview.bitmapconvert.ImageConvertFactory
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor
+import jp.osdn.gokigen.mangle.preference.PreferenceAccessWrapper
 import java.io.ByteArrayOutputStream
 import java.util.*
 
@@ -183,8 +183,8 @@ class CameraLiveViewListenerImpl(private val context: Context) : IImageDataRecei
 
     private fun setupLiveviewCache()
     {
-        val preference = PreferenceManager.getDefaultSharedPreferences(context)
-        if ((preference == null)||(!preference.getBoolean(IPreferencePropertyAccessor.CACHE_LIVE_VIEW_PICTURES, false)))
+        val preference = PreferenceAccessWrapper(context)
+        if (!preference.getBoolean(IPreferencePropertyAccessor.CACHE_LIVE_VIEW_PICTURES, false))
         {
             return
         }
@@ -193,14 +193,7 @@ class CameraLiveViewListenerImpl(private val context: Context) : IImageDataRecei
         val nofCachePics = preference.getString(IPreferencePropertyAccessor.NUMBER_OF_CACHE_PICTURES, IPreferencePropertyAccessor.NUMBER_OF_CACHE_PICTURES_DEFAULT_VALUE)
         try
         {
-            if (nofCachePics != null)
-            {
-                maxCachePics = nofCachePics.toInt()
-            }
-            else
-            {
-                maxCachePics = 500
-            }
+            maxCachePics = nofCachePics.toInt()
         }
         catch (e: Exception)
         {

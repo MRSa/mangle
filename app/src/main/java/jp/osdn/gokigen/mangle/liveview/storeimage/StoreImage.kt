@@ -1,6 +1,6 @@
 package jp.osdn.gokigen.mangle.liveview.storeimage
 
-import android.content.ContentResolver
+
 import android.content.ContentValues
 import android.database.DatabaseUtils
 import android.graphics.Bitmap
@@ -9,14 +9,11 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.fragment.app.FragmentActivity
-import androidx.preference.PreferenceManager
-import jp.osdn.gokigen.mangle.MainActivity
 import jp.osdn.gokigen.mangle.R
-import jp.osdn.gokigen.mangle.StorageOperationWithPermission
 import jp.osdn.gokigen.mangle.liveview.image.IImageProvider
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor
+import jp.osdn.gokigen.mangle.preference.PreferenceAccessWrapper
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
@@ -24,8 +21,6 @@ import java.util.*
 
 class StoreImage(private val context: FragmentActivity, private val imageProvider: IImageProvider, private val dumpLog : Boolean = false) : IStoreImage
 {
-    private val TAG = toString()
-    private val FILENAME_FORMAT = "yyyyMMdd_HHmmss"
 
     override fun doStore(target: Bitmap?)
     {
@@ -34,11 +29,7 @@ class StoreImage(private val context: FragmentActivity, private val imageProvide
             // 保存処理(プログレスダイアログ（「保存中...」）を表示
 
             val bitmapToStore = target ?: imageProvider.getImage()
-            val preference = PreferenceManager.getDefaultSharedPreferences(context)
-            val isLocalLocation  = preference.getBoolean(
-                IPreferencePropertyAccessor.PREFERENCE_SAVE_LOCAL_LOCATION,
-                IPreferencePropertyAccessor.PREFERENCE_SAVE_LOCAL_LOCATION_DEFAULT_VALUE
-            )
+            val isLocalLocation  = PreferenceAccessWrapper(context).getBoolean(IPreferencePropertyAccessor.PREFERENCE_SAVE_LOCAL_LOCATION, IPreferencePropertyAccessor.PREFERENCE_SAVE_LOCAL_LOCATION_DEFAULT_VALUE)
             if (isLocalLocation)
             {
                 saveImageLocal(bitmapToStore)
@@ -84,11 +75,7 @@ class StoreImage(private val context: FragmentActivity, private val imageProvide
 */
         try
         {
-            val preference = PreferenceManager.getDefaultSharedPreferences(context)
-            val isLocalLocation  = preference.getBoolean(
-                IPreferencePropertyAccessor.PREFERENCE_SAVE_LOCAL_LOCATION,
-                IPreferencePropertyAccessor.PREFERENCE_SAVE_LOCAL_LOCATION_DEFAULT_VALUE
-            )
+            val isLocalLocation  = PreferenceAccessWrapper(context).getBoolean(IPreferencePropertyAccessor.PREFERENCE_SAVE_LOCAL_LOCATION, IPreferencePropertyAccessor.PREFERENCE_SAVE_LOCAL_LOCATION_DEFAULT_VALUE)
             if (isLocalLocation)
             {
                 saveImageLocal(target)
@@ -234,6 +221,12 @@ class StoreImage(private val context: FragmentActivity, private val imageProvide
     private fun isExternalStorageWritable(): Boolean
     {
         return (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED)
+    }
+
+    companion object
+    {
+        private val  TAG = this.toString()
+        private const val FILENAME_FORMAT = "yyyyMMdd_HHmmss"
     }
 
 }

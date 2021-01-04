@@ -12,11 +12,11 @@ import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
-import androidx.preference.PreferenceManager
 import com.google.android.material.snackbar.Snackbar
 import jp.osdn.gokigen.mangle.IScopedStorageAccessPermission
 import jp.osdn.gokigen.mangle.R
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor
+import jp.osdn.gokigen.mangle.preference.PreferenceAccessWrapper
 import java.io.File
 import java.io.OutputStream
 import java.text.SimpleDateFormat
@@ -31,12 +31,8 @@ class ImageStoreExternal(private val context: FragmentActivity, private val acce
         var prefString : String? = ""
         try
         {
-            prefString = PreferenceManager.getDefaultSharedPreferences(context).getString(
-                IPreferencePropertyAccessor.EXTERNAL_STORAGE_LOCATION, IPreferencePropertyAccessor.EXTERNAL_STORAGE_LOCATION_DEFAULT_VALUE)
-            if (prefString != null)
-            {
-                uriString = Uri.decode(prefString)
-            }
+            prefString = PreferenceAccessWrapper(context).getString(IPreferencePropertyAccessor.EXTERNAL_STORAGE_LOCATION, IPreferencePropertyAccessor.EXTERNAL_STORAGE_LOCATION_DEFAULT_VALUE)
+            uriString = Uri.decode(prefString)
             if (uriString.isEmpty())
             {
                 // 設定がない場合はデフォルトの場所に...

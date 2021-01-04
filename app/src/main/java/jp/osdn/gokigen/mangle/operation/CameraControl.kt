@@ -27,11 +27,6 @@ class CameraControl(private val activity : FragmentActivity, private val accessP
     private lateinit var storeImage : StoreImage
     private var cameraIsStarted = false
 
-    init
-    {
-        //val preference = PreferenceManager.getDefaultSharedPreferences(activity)
-    }
-
     override fun initialize()
     {
         Log.v(TAG, " initialize()")

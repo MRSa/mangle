@@ -11,9 +11,9 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
-import androidx.preference.PreferenceManager
 import jp.osdn.gokigen.mangle.operation.imagefile.IImageStoreGrant
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor
+import jp.osdn.gokigen.mangle.preference.PreferenceAccessWrapper
 import jp.osdn.gokigen.mangle.preference.PreferenceValueInitializer
 import java.io.File
 
@@ -31,8 +31,8 @@ class StorageOperationWithPermission(private val activity: FragmentActivity) : I
     {
         try
         {
-            val mediaLocation = PreferenceManager.getDefaultSharedPreferences(activity).getString(IPreferencePropertyAccessor.EXTERNAL_STORAGE_LOCATION, "")
-            if ((mediaLocation != null)&&(mediaLocation.length > 1))
+            val mediaLocation = PreferenceAccessWrapper(activity).getString(IPreferencePropertyAccessor.EXTERNAL_STORAGE_LOCATION, "")
+            if (mediaLocation.length > 1)
             {
                 return
             }
@@ -53,31 +53,6 @@ class StorageOperationWithPermission(private val activity: FragmentActivity) : I
         {
            e.printStackTrace()
         }
-
-/*
-
-        try
-        {
-            val path = Environment.DIRECTORY_DCIM + File.separator + activity.getString(R.string.app_location)
-            val extStorageUri = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
-            val values = ContentValues()
-            values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
-            values.put(MediaStore.Images.Media.RELATIVE_PATH, path)
-            values.put(MediaStore.Images.Media.DATA, path + File.separator)
-            val imageUri = activity.contentResolver.insert(extStorageUri, values)
-            if (imageUri != null)
-            {
-                val urisToModify: List<Uri> = listOf(imageUri)
-                val contentResolver: ContentResolver = activity.contentResolver
-                val editPendingIntent = MediaStore.createWriteRequest(contentResolver, urisToModify)
-                activity.startIntentSenderForResult(editPendingIntent.intentSender, MainActivity.REQUEST_CODE_MEDIA_EDIT, null, 0, 0, 0)
-            }
-        }
-        catch (e : Exception)
-        {
-            e.printStackTrace()
-        }
-*/
     }
 
     override fun responseStorageAccessFrameworkLocation(resultCode: Int, data: Intent?)
@@ -90,11 +65,7 @@ class StorageOperationWithPermission(private val activity: FragmentActivity) : I
                 val takeFlags: Int =
                     Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                 contentResolver.takePersistableUriPermission(uri, takeFlags)
-                PreferenceValueInitializer().storeStorageLocationPreference(
-                    PreferenceManager.getDefaultSharedPreferences(
-                        activity
-                    ), uri
-                )
+                PreferenceValueInitializer().storeStorageLocationPreference(activity, uri)
             }
         }
         else
@@ -123,11 +94,11 @@ class StorageOperationWithPermission(private val activity: FragmentActivity) : I
     {
         if (resultCode == AppCompatActivity.RESULT_OK)
         {
-            Log.v(TAG, " WRITE PERMISSION GRANTED  ${data}")
+            Log.v(TAG, " WRITE PERMISSION GRANTED  $data")
         }
         else
         {
-            Log.v(TAG, " WRITE PERMISSION DENIED  ${resultCode}")
+            Log.v(TAG, " WRITE PERMISSION DENIED  $resultCode")
         }
     }
 

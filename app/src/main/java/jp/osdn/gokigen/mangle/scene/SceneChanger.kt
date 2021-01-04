@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
-import androidx.preference.PreferenceManager
 import jp.osdn.gokigen.mangle.IScopedStorageAccessPermission
 import jp.osdn.gokigen.mangle.R
 import jp.osdn.gokigen.mangle.liveview.LiveImageViewFragment
@@ -13,6 +12,7 @@ import jp.osdn.gokigen.mangle.logcat.LogCatFragment
 import jp.osdn.gokigen.mangle.operation.CameraControl
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor
 import jp.osdn.gokigen.mangle.preference.MainPreferenceFragment
+import jp.osdn.gokigen.mangle.preference.PreferenceAccessWrapper
 import jp.osdn.gokigen.mangle.preview.PreviewFragment
 import jp.osdn.gokigen.mangle.utils.ConfirmationDialog
 import jp.osdn.gokigen.mangle.utils.ConfirmationDialog.Callback
@@ -64,10 +64,7 @@ class SceneChanger(private val activity: FragmentActivity, private val informati
     {
         try
         {
-            val isCameraXPreview  = PreferenceManager.getDefaultSharedPreferences(activity).getBoolean(
-                IPreferencePropertyAccessor.PREFERENCE_USE_CAMERA_X_PREVIEW,
-                IPreferencePropertyAccessor.PREFERENCE_USE_CAMERA_X_PREVIEW_DEFAULT_VALUE
-            )
+            val isCameraXPreview  = PreferenceAccessWrapper(activity).getBoolean(IPreferencePropertyAccessor.PREFERENCE_USE_CAMERA_X_PREVIEW, IPreferencePropertyAccessor.PREFERENCE_USE_CAMERA_X_PREVIEW_DEFAULT_VALUE)
             if (isCameraXPreview)
             {
                 initializeFragmentForPreview()

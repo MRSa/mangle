@@ -15,14 +15,8 @@ import jp.osdn.gokigen.mangle.R
 
 class MainPreferenceFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeListener, Preference.OnPreferenceClickListener
 {
-    private val TAG = toString()
     private lateinit var preferences : SharedPreferences
     private lateinit var changeScene : IChangeScene
-
-    companion object
-    {
-        fun newInstance() = MainPreferenceFragment().apply { }
-    }
 
     fun setSceneChanger(changer : IChangeScene)
     {
@@ -50,7 +44,7 @@ class MainPreferenceFragment : PreferenceFragmentCompat(), OnSharedPreferenceCha
         Log.v(TAG, " onAttach() : ")
 
         preferences = PreferenceManager.getDefaultSharedPreferences(context)
-        PreferenceValueInitializer().initializePreferences(preferences)
+        PreferenceValueInitializer().initializePreferences(context)
         preferences.registerOnSharedPreferenceChangeListener(this)
     }
 
@@ -81,5 +75,11 @@ class MainPreferenceFragment : PreferenceFragmentCompat(), OnSharedPreferenceCha
             else -> { Log.v(TAG, " onPreferenceClick() : " + preference?.key); ret = false; }
         }
         return (ret)
+    }
+
+    companion object
+    {
+        fun newInstance() = MainPreferenceFragment().apply { }
+        private val TAG = MainPreferenceFragment::class.java.simpleName
     }
 }

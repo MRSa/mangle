@@ -11,7 +11,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.preference.PreferenceManager
 import jp.osdn.gokigen.mangle.preference.PreferenceValueInitializer
 import jp.osdn.gokigen.mangle.scene.MainButtonHandler
 import jp.osdn.gokigen.mangle.scene.SceneChanger
@@ -19,7 +18,6 @@ import jp.osdn.gokigen.mangle.scene.ShowMessage
 
 class MainActivity : AppCompatActivity()
 {
-    private val TAG = toString()
     private val mainButtonHandler : MainButtonHandler = MainButtonHandler(this)
     private val showMessage : ShowMessage = ShowMessage(this)
     private val accessPermission : IScopedStorageAccessPermission? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) { StorageOperationWithPermission(this) } else { null }
@@ -38,11 +36,7 @@ class MainActivity : AppCompatActivity()
 
         try
         {
-           PreferenceValueInitializer().initializeStorageLocationPreferences(
-               PreferenceManager.getDefaultSharedPreferences(
-                   this
-               )
-           )
+           PreferenceValueInitializer().initializeStorageLocationPreferences(this)
         }
         catch (e: Exception)
         {
@@ -117,6 +111,8 @@ class MainActivity : AppCompatActivity()
 
     companion object
     {
+        private val TAG = MainActivity::class.java.simpleName
+
         private const val REQUEST_CODE_PERMISSIONS = 10
         const val REQUEST_CODE_MEDIA_EDIT = 12
         const val REQUEST_CODE_OPEN_DOCUMENT_TREE = 20

@@ -5,11 +5,11 @@ import android.util.Log
 import android.view.View
 import androidx.camera.core.ImageCapture
 import androidx.fragment.app.FragmentActivity
-import androidx.preference.PreferenceManager
 import jp.osdn.gokigen.mangle.IScopedStorageAccessPermission
 import jp.osdn.gokigen.mangle.R
 import jp.osdn.gokigen.mangle.liveview.storeimage.IStoreImage
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor
+import jp.osdn.gokigen.mangle.preference.PreferenceAccessWrapper
 
 class FileControl(private val context: FragmentActivity, private val storeImage : IStoreImage, accessRequest : IScopedStorageAccessPermission?) : View.OnClickListener
 {
@@ -41,7 +41,7 @@ class FileControl(private val context: FragmentActivity, private val storeImage 
         try
         {
             //  preferenceから設定を取得する
-            val preference = PreferenceManager.getDefaultSharedPreferences(context)
+            val preference = PreferenceAccessWrapper(context)
             val isLocalLocation  = preference.getBoolean(
                 IPreferencePropertyAccessor.PREFERENCE_SAVE_LOCAL_LOCATION,
                 IPreferencePropertyAccessor.PREFERENCE_SAVE_LOCAL_LOCATION_DEFAULT_VALUE
