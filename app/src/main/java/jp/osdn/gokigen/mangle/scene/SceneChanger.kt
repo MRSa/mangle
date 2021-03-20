@@ -51,7 +51,7 @@ class SceneChanger(private val activity: FragmentActivity, private val informati
         if (!::liveviewFragment.isInitialized)
         {
             liveviewFragment = LiveImageViewFragment.newInstance()
-            liveviewFragment.setCameraControl(cameraControl)
+            liveviewFragment.setCameraControl(true, cameraControl,true, cameraControl,true, cameraControl,true, cameraControl)
         }
         setDefaultFragment(liveviewFragment)
         cameraControl.startCamera(false)
@@ -85,13 +85,13 @@ class SceneChanger(private val activity: FragmentActivity, private val informati
         if (!::liveviewFragment.isInitialized)
         {
             liveviewFragment = LiveImageViewFragment.newInstance()
-            liveviewFragment.setCameraControl(cameraControl)
+            liveviewFragment.setCameraControl(true, cameraControl,true, cameraControl,true, cameraControl,true, cameraControl)
         }
         changeFragment(liveviewFragment)
     }
 
 
-    override fun changeToPreview()
+    override fun connectToCamera()
     {
         if (!::previewFragment.isInitialized)
         {

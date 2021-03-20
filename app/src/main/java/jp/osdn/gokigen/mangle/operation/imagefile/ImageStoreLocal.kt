@@ -27,7 +27,7 @@ class ImageStoreLocal(private val context: FragmentActivity)
         return (if (mediaDir != null && mediaDir.exists()) mediaDir else context.filesDir)
     }
 
-    fun takePhoto(imageCapture : ImageCapture?)
+    fun takePhoto(id : Int, imageCapture : ImageCapture?)
     {
         if (imageCapture == null)
         {
@@ -37,7 +37,7 @@ class ImageStoreLocal(private val context: FragmentActivity)
         Log.v(TAG, " takePhotoLocal()")
         try
         {
-            val photoFile = File(prepareLocalOutputDirectory(), "P" + SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(System.currentTimeMillis()) + ".jpg")
+            val photoFile = File(prepareLocalOutputDirectory(), "P" + SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(System.currentTimeMillis()) + "_" + id + ".jpg")
             val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
             imageCapture.takePicture(
                 outputOptions,

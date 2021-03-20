@@ -4,5 +4,5 @@ import androidx.camera.core.ImageCapture
 
 interface IImageStore
 {
-    fun takePhoto(imageCapture : ImageCapture?) : Boolean
+    fun takePhoto(id : Int, imageCapture : ImageCapture?) : Boolean
 }

@@ -4,5 +4,5 @@ import android.graphics.Bitmap
 
 interface IStoreImage
 {
-    fun doStore(target: Bitmap? = null)
+    fun doStore(id : Int = 0, target: Bitmap? = null)
 }

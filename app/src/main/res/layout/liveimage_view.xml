@@ -23,10 +23,60 @@
         android:visibility="visible"/>
 
     <view
-        class="jp.osdn.gokigen.mangle.liveview.LiveImageView"
         android:id="@+id/liveViewFinder0"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        class="jp.osdn.gokigen.mangle.liveview.LiveImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:scaleType="fitCenter"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="@id/liveViewFinder1"
+        app:layout_constraintTop_toTopOf="@id/liveViewFinder2" />
+
+    <view
+        class="jp.osdn.gokigen.mangle.liveview.LiveImageView"
+        android:id="@+id/liveViewFinder1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        app:layout_constraintRight_toRightOf="@id/liveViewFinder0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="@id/liveViewFinder3"
+        app:layout_constraintBottom_toBottomOf="parent"
+
+        android:gravity="center"
+        android:scaleType="fitCenter"
+        android:visibility="visible" />
+
+    <view
+        class="jp.osdn.gokigen.mangle.liveview.LiveImageView"
+        android:id="@+id/liveViewFinder2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="@id/liveViewFinder3"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/liveViewFinder0"
+
+        android:gravity="center"
+        android:scaleType="fitCenter"
+        android:visibility="visible" />
+
+    <view
+        class="jp.osdn.gokigen.mangle.liveview.LiveImageView"
+        android:id="@+id/liveViewFinder3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        app:layout_constraintRight_toRightOf="@id/liveViewFinder2"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/liveViewFinder1"
+
+
         android:gravity="center"
         android:scaleType="fitCenter"
         android:visibility="visible" />

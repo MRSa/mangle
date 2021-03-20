@@ -11,5 +11,5 @@ interface ICameraControl
     fun finishCamera()
 
     fun setRefresher(refresher : ILiveViewRefresher, imageView : ILiveView)
-    fun captureButtonReceiver() : View.OnClickListener
+    fun captureButtonReceiver(id : Int = 0) : View.OnClickListener
 }

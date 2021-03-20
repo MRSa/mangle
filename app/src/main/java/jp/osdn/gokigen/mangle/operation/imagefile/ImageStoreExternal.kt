@@ -70,7 +70,7 @@ class ImageStoreExternal(private val context: FragmentActivity, private val acce
         return (uriString)
     }
 
-    override fun takePhoto(imageCapture : ImageCapture?) : Boolean {
+    override fun takePhoto(id : Int, imageCapture : ImageCapture?) : Boolean {
         if ((!isExternalStorageWritable()) || (imageCapture == null)) {
             Log.v(TAG, " takePhotoExternal() : cannot write image to external.")
             return (false)
@@ -88,7 +88,7 @@ class ImageStoreExternal(private val context: FragmentActivity, private val acce
         val now = System.currentTimeMillis()
         val path =
             Environment.DIRECTORY_DCIM + File.separator + context.getString(R.string.app_location) // Environment.DIRECTORY_PICTURES  + File.separator + "gokigen" //"DCIM/aira01a/"
-        val photoFile = "P" + SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(now) + ".jpg"
+        val photoFile = "P" + SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(now) + "_" + id + ".jpg"
 
         val extStorageUri = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
         val values = ContentValues()

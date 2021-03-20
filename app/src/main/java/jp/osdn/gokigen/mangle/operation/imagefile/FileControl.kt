@@ -16,6 +16,7 @@ class FileControl(private val context: FragmentActivity, private val storeImage 
     private val storeLocal = ImageStoreLocal(context)
     private val storeExternal = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) { ImageStoreExternal(context, accessRequest) } else { ImageStoreExternalLegacy(context) }
     private var imageCapture: ImageCapture? = null
+    private var addId : Int = 0
 
     fun prepare() : ImageCapture?
     {
@@ -33,6 +34,11 @@ class FileControl(private val context: FragmentActivity, private val storeImage 
     fun finish()
     {
 
+    }
+
+    fun setId(id : Int)
+    {
+        addId = id
     }
 
     private fun takePhoto()
@@ -53,7 +59,7 @@ class FileControl(private val context: FragmentActivity, private val storeImage 
             if (captureBothCamera)
             {
                 // ライブビュー画像を保管する場合...
-                val thread = Thread { storeImage.doStore() }
+                val thread = Thread { storeImage.doStore(addId) }
                 try
                 {
                     thread.start()
@@ -75,12 +81,12 @@ class FileControl(private val context: FragmentActivity, private val storeImage 
             if (!isLocalLocation)
             {
                 // 共用フォルダに保存
-                isStoreLocal = !storeExternal.takePhoto(imageCapture)
+                isStoreLocal = !storeExternal.takePhoto(addId, imageCapture)
             }
             if (isStoreLocal)
             {
                 // アプリ専用フォルダに登録
-                storeLocal.takePhoto(imageCapture)
+                storeLocal.takePhoto(addId, imageCapture)
             }
         }
         catch (e: Exception)

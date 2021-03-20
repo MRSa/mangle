@@ -39,7 +39,7 @@ class MainButtonHandler(private val activity : AppCompatActivity) : View.OnClick
     private fun connect()
     {
         Log.v(TAG, " - - - - - - - - - CONNECT - - - - - - - - -")
-        sceneChanger.changeToPreview()
+        sceneChanger.connectToCamera()
     }
 
     private fun camera()

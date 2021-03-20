@@ -167,8 +167,16 @@ class CameraControl(private val activity : FragmentActivity, private val accessP
         fileControl.finish()
     }
 
-    override fun captureButtonReceiver() : View.OnClickListener
+    override fun captureButtonReceiver(id : Int) : View.OnClickListener
     {
+        try
+        {
+            fileControl.setId(id)
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
         return (fileControl)
     }
 

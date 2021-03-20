@@ -1,6 +1,5 @@
 package jp.osdn.gokigen.mangle.liveview.storeimage
 
-
 import android.content.ContentValues
 import android.database.DatabaseUtils
 import android.graphics.Bitmap
@@ -22,7 +21,7 @@ import java.util.*
 class StoreImage(private val context: FragmentActivity, private val imageProvider: IImageProvider, private val dumpLog : Boolean = false) : IStoreImage
 {
 
-    override fun doStore(target: Bitmap?)
+    override fun doStore(id : Int, target: Bitmap?)
     {
         try
         {
@@ -32,11 +31,11 @@ class StoreImage(private val context: FragmentActivity, private val imageProvide
             val isLocalLocation  = PreferenceAccessWrapper(context).getBoolean(IPreferencePropertyAccessor.PREFERENCE_SAVE_LOCAL_LOCATION, IPreferencePropertyAccessor.PREFERENCE_SAVE_LOCAL_LOCATION_DEFAULT_VALUE)
             if (isLocalLocation)
             {
-                saveImageLocal(bitmapToStore)
+                saveImageLocal(id, bitmapToStore)
             }
             else
             {
-                saveImageExternal(bitmapToStore)
+                saveImageExternal(id, bitmapToStore)
             }
 
             // 保存処理(プログレスダイアログ（「保存中...」）を削除
@@ -47,7 +46,7 @@ class StoreImage(private val context: FragmentActivity, private val imageProvide
         }
     }
 
-    private fun storeImageImpl(target: Bitmap)
+    private fun storeImageImpl(id : Int, target: Bitmap)
     {
 /*
         // 保存処理(プログレスダイアログ（「保存中...」）を表示して処理する)
@@ -78,11 +77,11 @@ class StoreImage(private val context: FragmentActivity, private val imageProvide
             val isLocalLocation  = PreferenceAccessWrapper(context).getBoolean(IPreferencePropertyAccessor.PREFERENCE_SAVE_LOCAL_LOCATION, IPreferencePropertyAccessor.PREFERENCE_SAVE_LOCAL_LOCATION_DEFAULT_VALUE)
             if (isLocalLocation)
             {
-                saveImageLocal(target)
+                saveImageLocal(id, target)
             }
             else
             {
-                saveImageExternal(target)
+                saveImageExternal(id, target)
             }
         }
         catch (t: Throwable)
@@ -103,11 +102,11 @@ class StoreImage(private val context: FragmentActivity, private val imageProvide
      *
      * @param targetImage  出力するビットマップイメージ
      */
-    private fun saveImageLocal(targetImage: Bitmap)
+    private fun saveImageLocal(id : Int, targetImage: Bitmap)
     {
         try
         {
-            val fileName = "L" + SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(System.currentTimeMillis()) + ".jpg"
+            val fileName = "L" + SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(System.currentTimeMillis()) + "_" + id + ".jpg"
             val photoFile = File(prepareLocalOutputDirectory(), fileName)
             val outputStream = FileOutputStream(photoFile)
             targetImage.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
@@ -122,7 +121,7 @@ class StoreImage(private val context: FragmentActivity, private val imageProvide
 
     private fun getExternalOutputDirectory(): File
     {
-        val directoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).path + "/" + context.getString(R.string.app_location) + "/"
+        @Suppress("DEPRECATION") val directoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).path + "/" + context.getString(R.string.app_location) + "/"
         val target = File(directoryPath)
         try
         {
@@ -144,14 +143,14 @@ class StoreImage(private val context: FragmentActivity, private val imageProvide
      *
      * @param targetImage  出力するビットマップイメージ
      */
-    private fun saveImageExternal(targetImage: Bitmap)
+    private fun saveImageExternal(id : Int, targetImage: Bitmap)
     {
         try
         {
             if (!isExternalStorageWritable())
             {
 
-                saveImageLocal(targetImage)
+                saveImageLocal(id, targetImage)
                 return
             }
 
@@ -160,7 +159,7 @@ class StoreImage(private val context: FragmentActivity, private val imageProvide
             val mimeType = "image/jpeg"
             val now = System.currentTimeMillis()
             val path = Environment.DIRECTORY_DCIM + File.separator + context.getString(R.string.app_location) // Environment.DIRECTORY_PICTURES  + File.separator + "gokigen" //"DCIM/aira01a/"
-            val fileName = "L" + SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(now) + ".jpg"
+            val fileName = "L" + SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(now) + "_" + id + ".jpg"
 
             val extStorageUri : Uri
             val values = ContentValues()

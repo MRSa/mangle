@@ -32,7 +32,7 @@ class ImageStoreExternalLegacy(private val context: FragmentActivity) : IImageSt
         return (target)
     }
 
-    override fun takePhoto(imageCapture : ImageCapture?) : Boolean
+    override fun takePhoto(id : Int, imageCapture : ImageCapture?) : Boolean
     {
         if ((!isExternalStorageWritable())||(imageCapture == null))
         {
@@ -46,7 +46,7 @@ class ImageStoreExternalLegacy(private val context: FragmentActivity) : IImageSt
             val outputDir = getExternalOutputDirectory()
 
             val mimeType = "image/jpeg"
-            val photoFile = "P" + SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(System.currentTimeMillis()) + ".jpg"
+            val photoFile = "P" + SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(System.currentTimeMillis()) + "_" + id + ".jpg"
 
             val extStorageUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
 
