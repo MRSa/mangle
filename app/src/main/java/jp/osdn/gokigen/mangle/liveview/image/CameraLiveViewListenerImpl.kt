@@ -22,17 +22,17 @@ class CameraLiveViewListenerImpl(private val context: Context) : IImageDataRecei
     private var maxCachePics : Int = 0
     //private var currentCachePics : Int = 0
     private lateinit var imageBitmap : Bitmap
-    private var bitmapConverter : IPreviewImageConverter
-    private lateinit var refresher : ILiveViewRefresher
+    private var bitmapConverter : IPreviewImageConverter = ImageConvertFactory().getImageConverter(0)
+    private val refresher = ArrayList<ILiveViewRefresher>()
 
     init
     {
-        bitmapConverter = ImageConvertFactory().getImageConverter(0)
+        refresher.clear()
     }
 
     fun setRefresher(refresher: ILiveViewRefresher)
     {
-        this.refresher = refresher
+        this.refresher.add(refresher)
         imageBitmap = BitmapFactory.decodeResource(context.resources, R.drawable.a01e1)
         setupLiveviewCache()
     }
@@ -175,9 +175,16 @@ class CameraLiveViewListenerImpl(private val context: Context) : IImageDataRecei
 
     private fun refresh()
     {
-        if (::refresher.isInitialized)
+        try
         {
-            refresher.refresh()
+            for (p in refresher)
+            {
+                p.refresh()
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
         }
     }
 

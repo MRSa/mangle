@@ -22,63 +22,66 @@
         android:elevation="2dp"
         android:visibility="visible"/>
 
-    <view
-        android:id="@+id/liveViewFinder0"
-        class="jp.osdn.gokigen.mangle.liveview.LiveImageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:scaleType="fitCenter"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintLeft_toLeftOf="@id/liveViewFinder1"
-        app:layout_constraintTop_toTopOf="@id/liveViewFinder2" />
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <view
-        class="jp.osdn.gokigen.mangle.liveview.LiveImageView"
-        android:id="@+id/liveViewFinder1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        <LinearLayout
+            android:id="@+id/liveview_upper_area"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:visibility="visible">
+            <view
+                android:id="@+id/liveViewFinder0"
+                class="jp.osdn.gokigen.mangle.liveview.LiveImageView"
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:scaleType="fitCenter"
+                android:layout_weight="1"
+                android:visibility="visible" />
 
-        app:layout_constraintRight_toRightOf="@id/liveViewFinder0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="@id/liveViewFinder3"
-        app:layout_constraintBottom_toBottomOf="parent"
+            <view
+                class="jp.osdn.gokigen.mangle.liveview.LiveImageView"
+                android:id="@+id/liveViewFinder1"
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:scaleType="fitCenter"
+                android:layout_weight="1"
+                android:visibility="visible" />
+        </LinearLayout>
 
-        android:gravity="center"
-        android:scaleType="fitCenter"
-        android:visibility="visible" />
+        <LinearLayout
+            android:id="@+id/liveview_lower_area"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:visibility="visible">
 
-    <view
-        class="jp.osdn.gokigen.mangle.liveview.LiveImageView"
-        android:id="@+id/liveViewFinder2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+            <view
+                class="jp.osdn.gokigen.mangle.liveview.LiveImageView"
+                android:id="@+id/liveViewFinder2"
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:scaleType="fitCenter"
+                android:visibility="visible" />
 
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="@id/liveViewFinder3"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/liveViewFinder0"
-
-        android:gravity="center"
-        android:scaleType="fitCenter"
-        android:visibility="visible" />
-
-    <view
-        class="jp.osdn.gokigen.mangle.liveview.LiveImageView"
-        android:id="@+id/liveViewFinder3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
-        app:layout_constraintRight_toRightOf="@id/liveViewFinder2"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/liveViewFinder1"
-
-
-        android:gravity="center"
-        android:scaleType="fitCenter"
-        android:visibility="visible" />
-
+            <view
+                android:id="@+id/liveViewFinder3"
+                class="jp.osdn.gokigen.mangle.liveview.LiveImageView"
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:scaleType="fitCenter"
+                android:visibility="visible" />
+        </LinearLayout>
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

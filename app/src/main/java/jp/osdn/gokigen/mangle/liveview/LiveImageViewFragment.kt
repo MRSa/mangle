@@ -104,6 +104,16 @@ class LiveImageViewFragment(private val contentLayoutId: Int = R.layout.liveimag
                     imageView3.visibility = View.GONE
                 }
             }
+            if ((!isCameraControl0)&&(!isCameraControl1))
+            {
+                val area = liveviewView.findViewById<LiveImageView>(R.id.liveview_upper_area)
+                area.visibility = View.GONE
+            }
+            if ((!isCameraControl2)&&(!isCameraControl3))
+            {
+                val area = liveviewView.findViewById<LiveImageView>(R.id.liveview_lower_area)
+                area.visibility = View.GONE
+            }
         }
         catch (e : Exception)
         {
@@ -128,19 +138,19 @@ class LiveImageViewFragment(private val contentLayoutId: Int = R.layout.liveimag
     {
         try
         {
-            if (::cameraControl0.isInitialized)
+            if ((::cameraControl0.isInitialized)&&(isCameraControl0))
             {
                 cameraControl0.captureButtonReceiver(0).onClick(v)
             }
-            if (::cameraControl1.isInitialized)
+            if ((::cameraControl1.isInitialized)&&(isCameraControl1))
             {
                 cameraControl1.captureButtonReceiver(1).onClick(v)
             }
-            if (::cameraControl2.isInitialized)
+            if ((::cameraControl2.isInitialized)&&(isCameraControl2))
             {
                 cameraControl2.captureButtonReceiver(2).onClick(v)
             }
-            if (::cameraControl3.isInitialized)
+            if ((::cameraControl3.isInitialized)&&(isCameraControl3))
             {
                 cameraControl3.captureButtonReceiver(3).onClick(v)
             }
