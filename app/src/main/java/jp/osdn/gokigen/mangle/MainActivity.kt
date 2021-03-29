@@ -11,23 +11,24 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import jp.osdn.gokigen.gokigenassets.scene.ShowMessage
+import jp.osdn.gokigen.gokigenassets.utils.IScopedStorageAccessPermission
 import jp.osdn.gokigen.mangle.preference.PreferenceValueInitializer
 import jp.osdn.gokigen.mangle.scene.MainButtonHandler
 import jp.osdn.gokigen.mangle.scene.SceneChanger
-import jp.osdn.gokigen.mangle.scene.ShowMessage
+
 
 class MainActivity : AppCompatActivity()
 {
-    private val mainButtonHandler : MainButtonHandler = MainButtonHandler(this)
+    private lateinit var mainButtonHandler : MainButtonHandler// = MainButtonHandler(this)
+    private lateinit var sceneChanger : SceneChanger// = SceneChanger(this, showMessage)
     private val showMessage : ShowMessage = ShowMessage(this)
     private val accessPermission : IScopedStorageAccessPermission? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) { StorageOperationWithPermission(this) } else { null }
-    private val sceneChanger : SceneChanger = SceneChanger(this, showMessage, accessPermission)
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
         Log.v(TAG, " ----- onCreate() -----")
         super.onCreate(savedInstanceState)
-        mainButtonHandler.setSceneChanger(sceneChanger)
 
         setContentView(R.layout.activity_main)
 
@@ -36,6 +37,9 @@ class MainActivity : AppCompatActivity()
 
         try
         {
+            mainButtonHandler = MainButtonHandler(this)
+            sceneChanger  = SceneChanger(this, showMessage)
+            mainButtonHandler.setSceneChanger(sceneChanger)
             PreferenceValueInitializer().initializePreferences(this)
         }
         catch (e: Exception)

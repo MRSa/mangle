@@ -10,10 +10,10 @@ import android.provider.MediaStore
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentActivity
-import jp.osdn.gokigen.mangle.operation.imagefile.IImageStoreGrant
+import jp.osdn.gokigen.gokigenassets.operation.imagefile.IImageStoreGrant
+import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
+import jp.osdn.gokigen.gokigenassets.utils.IScopedStorageAccessPermission
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor
-import jp.osdn.gokigen.mangle.preference.PreferenceAccessWrapper
 import java.io.File
 
 /**
@@ -21,7 +21,7 @@ import java.io.File
  *
  */
 @RequiresApi(api = Build.VERSION_CODES.R)
-class StorageOperationWithPermission(private val activity: FragmentActivity) : IScopedStorageAccessPermission
+class StorageOperationWithPermission(private val activity: AppCompatActivity) : IScopedStorageAccessPermission
 {
     private var callbackOwner : IImageStoreGrant? = null
 

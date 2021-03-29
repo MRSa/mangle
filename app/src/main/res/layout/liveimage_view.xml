@@ -36,7 +36,7 @@
             android:visibility="visible">
             <view
                 android:id="@+id/liveViewFinder0"
-                class="jp.osdn.gokigen.mangle.liveview.LiveImageView"
+                class="jp.osdn.gokigen.gokigenassets.liveview.LiveImageView"
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -45,7 +45,7 @@
                 android:visibility="visible" />
 
             <view
-                class="jp.osdn.gokigen.mangle.liveview.LiveImageView"
+                class="jp.osdn.gokigen.gokigenassets.liveview.LiveImageView"
                 android:id="@+id/liveViewFinder1"
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
@@ -64,7 +64,7 @@
             android:visibility="visible">
 
             <view
-                class="jp.osdn.gokigen.mangle.liveview.LiveImageView"
+                class="jp.osdn.gokigen.gokigenassets.liveview.LiveImageView"
                 android:id="@+id/liveViewFinder2"
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
@@ -75,7 +75,7 @@
 
             <view
                 android:id="@+id/liveViewFinder3"
-                class="jp.osdn.gokigen.mangle.liveview.LiveImageView"
+                class="jp.osdn.gokigen.gokigenassets.liveview.LiveImageView"
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

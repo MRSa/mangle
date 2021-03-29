@@ -1,0 +1,16 @@
+package jp.osdn.gokigen.gokigenassets.operation
+
+import android.view.View
+import androidx.camera.core.CameraSelector
+import jp.osdn.gokigen.gokigenassets.liveview.ILiveView
+import jp.osdn.gokigen.gokigenassets.liveview.ILiveViewRefresher
+
+interface ICameraControl
+{
+    fun initialize()
+    fun startCamera(isPreviewView : Boolean = true, cameraSelector : CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA)
+    fun finishCamera()
+
+    fun setRefresher(refresher : ILiveViewRefresher, imageView : ILiveView)
+    fun captureButtonReceiver(id : Int = 0) : View.OnClickListener
+}

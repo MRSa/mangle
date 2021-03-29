@@ -2,24 +2,30 @@ package jp.osdn.gokigen.mangle.scene
 
 import android.graphics.Color
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
+import androidx.camera.core.CameraSelector
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
-import jp.osdn.gokigen.mangle.IScopedStorageAccessPermission
+import jp.osdn.gokigen.gokigenassets.liveview.LiveImageViewFragment
+import jp.osdn.gokigen.gokigenassets.operation.CameraControl
+import jp.osdn.gokigen.gokigenassets.preference.MainPreferenceFragment
+import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
+import jp.osdn.gokigen.gokigenassets.preview.PreviewFragment
+import jp.osdn.gokigen.gokigenassets.scene.IChangeSceneBasic
+import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
+import jp.osdn.gokigen.gokigenassets.utils.ConfirmationDialog
+import jp.osdn.gokigen.gokigenassets.utils.logcat.LogCatFragment
 import jp.osdn.gokigen.mangle.R
-import jp.osdn.gokigen.mangle.liveview.LiveImageViewFragment
-import jp.osdn.gokigen.mangle.logcat.LogCatFragment
-import jp.osdn.gokigen.mangle.operation.CameraControl
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor
-import jp.osdn.gokigen.mangle.preference.MainPreferenceFragment
-import jp.osdn.gokigen.mangle.preference.PreferenceAccessWrapper
-import jp.osdn.gokigen.mangle.preview.PreviewFragment
-import jp.osdn.gokigen.mangle.utils.ConfirmationDialog
-import jp.osdn.gokigen.mangle.utils.ConfirmationDialog.Callback
+import jp.osdn.gokigen.mangle.preference.PreferenceChanger
+import jp.osdn.gokigen.mangle.preference.PreferenceValueInitializer
 
-class SceneChanger(private val activity: FragmentActivity, private val informationNotify: IInformationReceiver, accessRequest : IScopedStorageAccessPermission?) : IChangeScene
+
+class SceneChanger(private val activity: AppCompatActivity, private val informationNotify: IInformationReceiver) : IChangeScene, IChangeSceneBasic
 {
-    private val cameraControl: CameraControl
+    private val cameraControl0: CameraControl
+    private val cameraControl1: CameraControl
+    private val preferenceChanger = PreferenceChanger(activity, this)
     private lateinit var liveviewFragment : LiveImageViewFragment
     private lateinit var previewFragment : PreviewFragment
     private lateinit var logCatFragment : LogCatFragment
@@ -28,22 +34,24 @@ class SceneChanger(private val activity: FragmentActivity, private val informati
     init
     {
         Log.v(TAG, " SceneChanger is created. ")
-        cameraControl = CameraControl(activity, accessRequest)
-        cameraControl.initialize()
+        cameraControl0 = CameraControl(activity)
+        cameraControl0.initialize()
+
+        cameraControl1 = CameraControl(activity)
+        cameraControl1.initialize()
     }
 
     private fun initializeFragmentForPreview()
     {
         if (!::previewFragment.isInitialized)
         {
-            previewFragment = PreviewFragment.newInstance()
-            previewFragment.setCameraControl(cameraControl)
+            previewFragment = PreviewFragment.newInstance(cameraControl0)
         }
         setDefaultFragment(previewFragment)
-        cameraControl.startCamera()
+        cameraControl0.startCamera()
 
         val msg = activity.getString(R.string.app_name) + " : " + " camerax"
-        informationNotify.updateMessage(msg, false, true, Color.LTGRAY)
+        informationNotify.updateMessage(msg, isBold = false, isColor = true, color = Color.LTGRAY)
     }
 
     private fun initializeFragmentForLiveView()
@@ -51,13 +59,20 @@ class SceneChanger(private val activity: FragmentActivity, private val informati
         if (!::liveviewFragment.isInitialized)
         {
             liveviewFragment = LiveImageViewFragment.newInstance()
-            liveviewFragment.setCameraControl(true, cameraControl,false, cameraControl,false, cameraControl,false, cameraControl)
+            liveviewFragment.setCameraControl(true, cameraControl0,true, cameraControl0,true, cameraControl1,true, cameraControl1)
         }
         setDefaultFragment(liveviewFragment)
-        cameraControl.startCamera(false)
+        cameraControl0.startCamera(
+            isPreviewView = false,
+            cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
+        )
+        cameraControl1.startCamera(
+            isPreviewView = false,
+            cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+        )
 
         val msg = activity.getString(R.string.app_name) + " : " + " STARTED."
-        informationNotify.updateMessage(msg, false, true, Color.LTGRAY)
+        informationNotify.updateMessage(msg, isBold = false, isColor = true, color = Color.LTGRAY)
     }
 
     override fun initializeFragment()
@@ -85,7 +100,7 @@ class SceneChanger(private val activity: FragmentActivity, private val informati
         if (!::liveviewFragment.isInitialized)
         {
             liveviewFragment = LiveImageViewFragment.newInstance()
-            liveviewFragment.setCameraControl(true, cameraControl,true, cameraControl,true, cameraControl,true, cameraControl)
+            liveviewFragment.setCameraControl(true, cameraControl0,true, cameraControl0,true, cameraControl1,true, cameraControl1)
         }
         changeFragment(liveviewFragment)
     }
@@ -95,19 +110,17 @@ class SceneChanger(private val activity: FragmentActivity, private val informati
     {
         if (!::previewFragment.isInitialized)
         {
-            previewFragment = PreviewFragment.newInstance()
-            previewFragment.setCameraControl(cameraControl)
+            previewFragment = PreviewFragment.newInstance(cameraControl0)
         }
         changeFragment(previewFragment)
-        cameraControl.startCamera()
+        cameraControl0.startCamera()
     }
 
     override fun changeToConfiguration()
     {
         if (!::mainPreferenceFragment.isInitialized)
         {
-            mainPreferenceFragment = MainPreferenceFragment.newInstance()
-            mainPreferenceFragment.setSceneChanger(this)
+            mainPreferenceFragment = MainPreferenceFragment.newInstance(preferenceChanger, PreferenceValueInitializer())
         }
         changeFragment(mainPreferenceFragment)
     }
@@ -127,7 +140,7 @@ class SceneChanger(private val activity: FragmentActivity, private val informati
         dialog.show(
             R.string.dialog_title_exit_application,
             R.string.dialog_message_exit_application,
-            object : Callback {
+            object : ConfirmationDialog.ConfirmationCallback {
                 override fun confirm()
                 {
                     activity.finish()
@@ -154,7 +167,8 @@ class SceneChanger(private val activity: FragmentActivity, private val informati
 
     fun finish()
     {
-        cameraControl.finishCamera()
+        cameraControl0.finishCamera()
+        cameraControl1.finishCamera()
     }
 
     companion object

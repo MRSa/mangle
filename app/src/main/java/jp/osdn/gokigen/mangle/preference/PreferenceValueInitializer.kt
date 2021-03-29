@@ -2,8 +2,8 @@ package jp.osdn.gokigen.mangle.preference
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.net.Uri
 import androidx.preference.PreferenceManager
+import jp.osdn.gokigen.gokigenassets.preference.IPreferenceValueInitializer
 
 class PreferenceValueInitializer() : IPreferenceValueInitializer
 {
