@@ -44,6 +44,13 @@ interface IApplicationConstantConvert
         const val ID_VIEW_UPPER_AREA = R.id.liveview_upper_area
         const val ID_VIEW_LOWER_AREA = R.id.liveview_lower_area
 
+        const val ID_CACHE_SEEKBAR_0 = R.id.liveview_cache_seekbar0
+        const val ID_CACHE_SEEKBAR_1 = R.id.liveview_cache_seekbar1
+        const val ID_CACHE_SEEKBAR_2 = R.id.liveview_cache_seekbar2
+        const val ID_CACHE_SEEKBAR_3 = R.id.liveview_cache_seekbar3
+
+        const val MAX_VALUE_SEEKBAR = 1000
+
         const val ID_BUTTON_SHUTTER = R.id.button_camera
         const val ID_PREVIEW_VIEW_BUTTON_SHUTTER = R.id.camera_capture_button
 

@@ -1,14 +1,22 @@
 package jp.osdn.gokigen.gokigenassets.liveview
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.SeekBar
 import androidx.fragment.app.Fragment
+import androidx.preference.PreferenceManager
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_BUTTON_SHUTTER
+import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_CACHE_SEEKBAR_0
+import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_CACHE_SEEKBAR_1
+import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_CACHE_SEEKBAR_2
+import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_CACHE_SEEKBAR_3
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_LIVE_VIEW_LAYOUT_DEFAULT
+import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_CACHE_LIVE_VIEW_PICTURES
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_FINDER_0
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_FINDER_1
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_FINDER_2
@@ -31,6 +39,8 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
     private var isCameraControl2 = false
     private var isCameraControl3 = false
 
+    private var isCacheImage = false
+
     companion object
     {
         private val TAG = LiveImageViewFragment::class.java.simpleName
@@ -50,6 +60,7 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
 
         this.isCameraControl3 = isCameraControl3
         this.cameraControl3 = cameraControl3
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View
@@ -63,12 +74,30 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
 
         try
         {
+            val preferences : SharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
+            this.isCacheImage = preferences.getBoolean(ID_PREFERENCE_CACHE_LIVE_VIEW_PICTURES, false)
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+
+        try
+        {
             if (::cameraControl0.isInitialized)
             {
+                val imageCache0 = liveviewView.findViewById<SeekBar>(ID_CACHE_SEEKBAR_0)
+                imageCache0.visibility = View.GONE
+
                 val imageView0 = liveviewView.findViewById<LiveImageView>(ID_VIEW_FINDER_0)
                 if (isCameraControl0)
                 {
                     cameraControl0.setRefresher(imageView0, imageView0)
+                    if (isCacheImage)
+                    {
+                        imageCache0.visibility = View.VISIBLE
+                        imageCache0.setOnSeekBarChangeListener(imageView0)
+                    }
                 }
                 else
                 {
@@ -77,10 +106,18 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
             }
             if (::cameraControl1.isInitialized)
             {
+                val imageCache1 = liveviewView.findViewById<SeekBar>(ID_CACHE_SEEKBAR_1)
+                imageCache1.visibility = View.GONE
+
                 val imageView1 = liveviewView.findViewById<LiveImageView>(ID_VIEW_FINDER_1)
                 if (isCameraControl1)
                 {
                     cameraControl1.setRefresher(imageView1, imageView1)
+                    if (isCacheImage)
+                    {
+                        imageCache1.visibility = View.VISIBLE
+                        imageCache1.setOnSeekBarChangeListener(imageView1)
+                    }
                 }
                 else
                 {
@@ -89,10 +126,18 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
             }
             if (::cameraControl2.isInitialized)
             {
+                val imageCache2 = liveviewView.findViewById<SeekBar>(ID_CACHE_SEEKBAR_2)
+                imageCache2.visibility = View.GONE
+
                 val imageView2 = liveviewView.findViewById<LiveImageView>(ID_VIEW_FINDER_2)
                 if (isCameraControl2)
                 {
                     cameraControl2.setRefresher(imageView2, imageView2)
+                    if (isCacheImage)
+                    {
+                        imageCache2.visibility = View.VISIBLE
+                        imageCache2.setOnSeekBarChangeListener(imageView2)
+                    }
                 }
                 else
                 {
@@ -101,10 +146,18 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
             }
             if (::cameraControl3.isInitialized)
             {
+                val imageCache3 = liveviewView.findViewById<SeekBar>(ID_CACHE_SEEKBAR_3)
+                imageCache3.visibility = View.GONE
+
                 val imageView3 = liveviewView.findViewById<LiveImageView>(ID_VIEW_FINDER_3)
                 if (isCameraControl3)
                 {
                     cameraControl3.setRefresher(imageView3, imageView3)
+                    if (isCacheImage)
+                    {
+                        imageCache3.visibility = View.VISIBLE
+                        imageCache3.setOnSeekBarChangeListener(imageView3)
+                    }
                 }
                 else
                 {

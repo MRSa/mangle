@@ -43,12 +43,12 @@
             android:key="capture_only_live_view"
             android:title="@string/pref_capture_only_live_view"
             android:summary="@string/pref_summary_capture_only_live_view" />
-
+-->
         <SwitchPreferenceCompat
             android:key="cache_live_view_pictures"
             android:title="@string/pref_cache_live_view_pictures"
             android:summary="@string/pref_summary_cache_live_view_pictures" />
-
+<!--
         <EditTextPreference
             android:key="number_of_cache_pictures"
             android:title="@string/pref_number_of_cache_pictures"

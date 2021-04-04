@@ -59,7 +59,7 @@ class SceneChanger(private val activity: AppCompatActivity, private val informat
         if (!::liveviewFragment.isInitialized)
         {
             liveviewFragment = LiveImageViewFragment.newInstance()
-            liveviewFragment.setCameraControl(true, cameraControl0,true, cameraControl0,true, cameraControl1,true, cameraControl1)
+            liveviewFragment.setCameraControl(true, cameraControl1,true, cameraControl1,true, cameraControl1,true, cameraControl1)
         }
         setDefaultFragment(liveviewFragment)
         cameraControl0.startCamera(

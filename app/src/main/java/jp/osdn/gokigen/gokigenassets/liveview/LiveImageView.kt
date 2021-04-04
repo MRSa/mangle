@@ -7,6 +7,9 @@ import android.os.Looper
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
+import android.widget.SeekBar
+import android.widget.SeekBar.OnSeekBarChangeListener
+import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.MAX_VALUE_SEEKBAR
 import jp.osdn.gokigen.gokigenassets.liveview.focusframe.FocusFrameDrawer
 import jp.osdn.gokigen.gokigenassets.liveview.gridframe.GridFrameFactory
 import jp.osdn.gokigen.gokigenassets.liveview.gridframe.IGridFrameDrawer
@@ -16,13 +19,14 @@ import jp.osdn.gokigen.gokigenassets.liveview.message.IMessageDrawer
 import jp.osdn.gokigen.gokigenassets.liveview.message.InformationDrawer
 import kotlin.math.min
 
-class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame
+class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSeekBarChangeListener
 {
     companion object
     {
         private val TAG = LiveImageView::class.java.simpleName
     }
 
+    private var sliderPosition : Float = 0.0f
     private var rotationDegrees : Int = 0
     private var showGrid : Boolean = false
     private lateinit var imageProvider : IImageProvider
@@ -30,19 +34,21 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame
     private lateinit var focusFrameDrawer : FocusFrameDrawer
     private lateinit var informationDrawer : InformationDrawer
 
-
     constructor(context: Context) : super(context)
     {
         initComponent(context)
     }
+
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
     {
         initComponent(context)
     }
+
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
     {
         initComponent(context)
     }
+
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int, defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes)
     {
         initComponent(context)
@@ -122,7 +128,7 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame
                 addDegrees = 90
             }
         }
-        catch (e : Exception)
+        catch (e: Exception)
         {
             e.printStackTrace()
         }
@@ -193,11 +199,38 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame
         val halfHeight = dstHeight * 0.5f
         return (if (rotationDegrees == 0 || rotationDegrees == 180)
         {
-            RectF((centerX - halfWidth), (centerY - halfHeight), ((centerX - halfWidth) + dstWidth), ((centerY - halfHeight) + dstHeight))
+            RectF(
+                (centerX - halfWidth),
+                (centerY - halfHeight),
+                ((centerX - halfWidth) + dstWidth),
+                ((centerY - halfHeight) + dstHeight)
+            )
         }
         else
         {
-            RectF((centerX - halfHeight), (centerY - halfWidth), ((centerX - halfHeight) + dstHeight), ((centerY - halfWidth) + dstWidth))
+            RectF(
+                (centerX - halfHeight),
+                (centerY - halfWidth),
+                ((centerX - halfHeight) + dstHeight),
+                ((centerY - halfWidth) + dstWidth)
+            )
         })
+    }
+
+    override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean)
+    {
+        Log.v(TAG, " onProgressChanged() Progress: $progress (fromUser:$fromUser)")
+        sliderPosition = (((progress).toFloat()) / ((MAX_VALUE_SEEKBAR).toFloat()))
+        refreshCanvas()
+    }
+
+    override fun onStartTrackingTouch(seekBar: SeekBar?)
+    {
+        Log.v(TAG, " onStartTrackingTouch() ")
+    }
+
+    override fun onStopTrackingTouch(seekBar: SeekBar?)
+    {
+        Log.v(TAG, " onStopTrackingTouch() ")
     }
 }
