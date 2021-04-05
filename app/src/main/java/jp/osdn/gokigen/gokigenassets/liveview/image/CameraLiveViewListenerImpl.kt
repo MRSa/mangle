@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
 import android.graphics.ImageFormat.NV21
+import android.util.Log
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_DRAWABLE_SPLASH_IMAGE
@@ -11,6 +12,7 @@ import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Compa
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_NUMBER_OF_CACHE_PICTURES
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_NUMBER_OF_CACHE_PICTURES_DEFAULT_VALUE
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveViewRefresher
+import jp.osdn.gokigen.gokigenassets.liveview.LiveImageView
 import jp.osdn.gokigen.gokigenassets.liveview.bitmapconvert.IPreviewImageConverter
 import jp.osdn.gokigen.gokigenassets.liveview.bitmapconvert.ImageConvertFactory
 import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
@@ -26,6 +28,11 @@ class CameraLiveViewListenerImpl(private val context: Context) : IImageDataRecei
     private lateinit var imageBitmap : Bitmap
     private var bitmapConverter : IPreviewImageConverter = ImageConvertFactory().getImageConverter(0)
     private val refresher = ArrayList<ILiveViewRefresher>()
+
+    companion object
+    {
+        private val TAG = CameraLiveViewListenerImpl::class.java.simpleName
+    }
 
     init
     {
@@ -172,6 +179,7 @@ class CameraLiveViewListenerImpl(private val context: Context) : IImageDataRecei
 
     override fun getImage(position: Float) : Bitmap
     {
+        Log.v(TAG, " getImage (pos: $position)")
         return (imageBitmap)
     }
 
@@ -198,7 +206,7 @@ class CameraLiveViewListenerImpl(private val context: Context) : IImageDataRecei
             return
         }
 
-        cachePics = ArrayList()
+        cachePics.clear()
         val nofCachePics = preference.getString(ID_PREFERENCE_NUMBER_OF_CACHE_PICTURES, ID_PREFERENCE_NUMBER_OF_CACHE_PICTURES_DEFAULT_VALUE)
         maxCachePics = try {
             nofCachePics.toInt()

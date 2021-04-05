@@ -117,7 +117,7 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
         paint.strokeWidth = 1.0f
         paint.style = Paint.Style.STROKE
 
-        val imageBitmap = imageProvider.getImage()
+        val imageBitmap = imageProvider.getImage(sliderPosition)
 
         var addDegrees = 0
         try
