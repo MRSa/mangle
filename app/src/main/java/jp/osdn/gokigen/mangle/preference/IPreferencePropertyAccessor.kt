@@ -16,7 +16,7 @@ interface IPreferencePropertyAccessor
         const val CACHE_LIVE_VIEW_PICTURES = "cache_live_view_pictures"
         const val CACHE_LIVE_VIEW_PICTURES_DEFAULT_VALUE = false
 
-        const val NUMBER_OF_CACHE_PICTURES = "nof_cache_pictures"
+        const val NUMBER_OF_CACHE_PICTURES = "number_of_cache_pictures"
         const val NUMBER_OF_CACHE_PICTURES_DEFAULT_VALUE = "500"
 
         const val CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW = "capture_both_camera_and_live_view"

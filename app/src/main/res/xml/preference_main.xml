@@ -48,7 +48,7 @@
             android:key="cache_live_view_pictures"
             android:title="@string/pref_cache_live_view_pictures"
             android:summary="@string/pref_summary_cache_live_view_pictures" />
-<!--
+
         <EditTextPreference
             android:key="number_of_cache_pictures"
             android:title="@string/pref_number_of_cache_pictures"
@@ -56,7 +56,7 @@
             android:inputType="numberDecimal"
             android:digits="0123456789"
             android:summary="@string/pref_summary_number_of_cache_pictures" />
--->
+
     </PreferenceCategory>
 
     <PreferenceCategory

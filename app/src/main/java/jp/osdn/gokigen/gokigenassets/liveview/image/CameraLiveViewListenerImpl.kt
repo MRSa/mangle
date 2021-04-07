@@ -12,7 +12,6 @@ import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Compa
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_NUMBER_OF_CACHE_PICTURES
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_NUMBER_OF_CACHE_PICTURES_DEFAULT_VALUE
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveViewRefresher
-import jp.osdn.gokigen.gokigenassets.liveview.LiveImageView
 import jp.osdn.gokigen.gokigenassets.liveview.bitmapconvert.IPreviewImageConverter
 import jp.osdn.gokigen.gokigenassets.liveview.bitmapconvert.ImageConvertFactory
 import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
@@ -20,12 +19,12 @@ import java.io.ByteArrayOutputStream
 import java.util.*
 
 
+data class MyImageByteArray(val imageData : ByteArray, val rotationDegrees: Int)
+
 class CameraLiveViewListenerImpl(private val context: Context) : IImageDataReceiver, IImageProvider, ImageAnalysis.Analyzer
 {
-    private var cachePics = ArrayList<ByteArray>()
+    private var cachePics = ArrayList<MyImageByteArray>()
     private var maxCachePics : Int = 0
-    //private var currentCachePics : Int = 0
-    private lateinit var imageBitmap : Bitmap
     private var bitmapConverter : IPreviewImageConverter = ImageConvertFactory().getImageConverter(0)
     private val refresher = ArrayList<ILiveViewRefresher>()
 
@@ -42,7 +41,6 @@ class CameraLiveViewListenerImpl(private val context: Context) : IImageDataRecei
     fun setRefresher(refresher: ILiveViewRefresher)
     {
         this.refresher.add(refresher)
-        imageBitmap = BitmapFactory.decodeResource(context.resources, ID_DRAWABLE_SPLASH_IMAGE)
         setupLiveviewCache()
     }
 
@@ -114,9 +112,8 @@ class CameraLiveViewListenerImpl(private val context: Context) : IImageDataRecei
 
         val out = ByteArrayOutputStream()
         yuvImage.compressToJpeg(Rect(0, 0, width, height), 100, out)
-        val imageBytes = out.toByteArray()
-        imageBitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-        rotateImageBitmap(rotationDegrees)
+
+        insertCache(out.toByteArray(), rotationDegrees)
         imageProxy.close()
         refresh()
     }
@@ -146,28 +143,19 @@ class CameraLiveViewListenerImpl(private val context: Context) : IImageDataRecei
         val yuvImage = YuvImage(nv21, NV21, width, height, null)
         yuvImage.compressToJpeg(Rect(0, 0, width, height), 100, out)
 
-        val imageBytes = out.toByteArray()
-        imageBitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-        rotateImageBitmap(rotationDegrees)
+        insertCache(out.toByteArray(), rotationDegrees)
         imageProxy.close()
         refresh()
     }
 
-    private fun rotateImageBitmap(rotationDegrees: Int)
+    private fun getImageBitmap(image: MyImageByteArray) : Bitmap?
     {
+        var imageBitmap : Bitmap? = null
         try
         {
-/*
-            var addDegrees = 0
-            val config = context.resources.configuration
-            if (config.orientation == Configuration.ORIENTATION_LANDSCAPE)
-            {
-                addDegrees = 90
-            }
-            val rotationDegrees = degrees + addDegrees
-*/
             val rotationMatrix = Matrix()
-            rotationMatrix.postRotate(rotationDegrees.toFloat())
+            rotationMatrix.postRotate(image.rotationDegrees.toFloat())
+            imageBitmap = BitmapFactory.decodeByteArray(image.imageData, 0, image.imageData.size)
             imageBitmap = Bitmap.createBitmap(imageBitmap, 0, 0, imageBitmap.width, imageBitmap.height, rotationMatrix, true)
             System.gc()
         }
@@ -175,12 +163,52 @@ class CameraLiveViewListenerImpl(private val context: Context) : IImageDataRecei
         {
             t.printStackTrace()
         }
+        return (imageBitmap)
+    }
+
+    private fun insertCache(byteArray : ByteArray, rotationDegrees: Int)
+    {
+        try
+        {
+            if ((cachePics.size != 0)&&(cachePics.size >= maxCachePics))
+            {
+                cachePics.removeAt(0)
+            }
+            cachePics.add(MyImageByteArray(byteArray, rotationDegrees))
+            Log.v(TAG, " -=-=- cache image : ${cachePics.size} / $maxCachePics")
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
     }
 
     override fun getImage(position: Float) : Bitmap
     {
-        Log.v(TAG, " getImage (pos: $position)")
-        return (imageBitmap)
+        try
+        {
+            val pos = (position * maxCachePics.toFloat()).toInt()
+            //Log.v(TAG, " getImage (pos: $position : $pos)")
+            val image : MyImageByteArray =
+            if (pos >= cachePics.size)
+            {
+                cachePics[cachePics.size - 1]
+            }
+            else
+            {
+                cachePics[pos]
+            }
+            val imageBitmap = getImageBitmap(image)
+            if (imageBitmap != null)
+            {
+                return (imageBitmap)
+            }
+        }
+        catch (e : Throwable)
+        {
+            e.printStackTrace()
+        }
+        return (BitmapFactory.decodeResource(context.resources, ID_DRAWABLE_SPLASH_IMAGE))
     }
 
     private fun refresh()
