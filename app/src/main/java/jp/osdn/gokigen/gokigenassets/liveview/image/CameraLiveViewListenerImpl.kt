@@ -60,14 +60,21 @@ class CameraLiveViewListenerImpl(private val context: Context) : IImageDataRecei
             {
                 // from I420 format
                 convertToBitmapI420(imageProxy, rotationDegrees)
+                //Log.v(TAG, " convertToBitmapI420 $rotationDegrees ")
                 return
             }
             if (imageProxy.format == ImageFormat.YUV_420_888)
             {
-                convertToBitmapYUV420888(imageProxy, rotationDegrees)
-                return
+                if (imageProxy.image?.planes?.get(1)?.rowStride != imageProxy.image?.width)
+                {
+                    //  Format : NV12, YU12, YV12  YUV_420_888
+                    convertToBitmapYUV420888(imageProxy, rotationDegrees)
+                    //Log.v(TAG, " convertToBitmapYUV420888 $rotationDegrees ")
+                    return
+                }
             }
-            convertToBitmapYUV420888(imageProxy, rotationDegrees)
+            convertToBitmapYUV420888NV21(imageProxy, rotationDegrees)
+            //Log.v(TAG, " convertToBitmapYUV420888NV21 $rotationDegrees ")
         }
         catch (e: Throwable)
         {
@@ -118,9 +125,115 @@ class CameraLiveViewListenerImpl(private val context: Context) : IImageDataRecei
         refresh()
     }
 
+
     private fun convertToBitmapYUV420888(imageProxy: ImageProxy, rotationDegrees: Int)
     {
-        //Log.v(TAG, " convertToBitmap(YUV420) $rotationDegrees ")
+        //Log.v(TAG, " convertToBitmap(YUV420-888) $rotationDegrees ")
+
+        val yBuffer = imageProxy.planes[0].buffer
+        val uBuffer = imageProxy.planes[1].buffer
+        val vBuffer = imageProxy.planes[2].buffer
+
+        val ySize = yBuffer.remaining()
+        val uSize = uBuffer.remaining()
+        val vSize = vBuffer.remaining()
+
+        val nv21 = ByteArray(ySize + uSize + vSize)
+        var outputOffset = 0
+
+        /////////  Y BUFFER  /////////
+        if (imageProxy.planes[0].pixelStride != 1)
+        {
+            Log.v(TAG, " [0] pixelStride = ${imageProxy.planes[0].pixelStride}, rowStride = ${imageProxy.planes[0].rowStride}, width = ${imageProxy.width}")
+            val rowBuffer1 = ByteArray(imageProxy.planes[0].rowStride)
+            for (row in 0 until (imageProxy.height / imageProxy.planes[0].pixelStride))
+            {
+                yBuffer.position(row * imageProxy.planes[0].rowStride)
+                yBuffer.get(rowBuffer1, 0, imageProxy.planes[0].pixelStride)
+                if (outputOffset > 0)
+                {
+                    for (col in 0 until imageProxy.width)
+                    {
+                        nv21[outputOffset] = rowBuffer1[col * imageProxy.planes[0].pixelStride]
+                        outputOffset += imageProxy.planes[0].pixelStride
+                    }
+                }
+            }
+        }
+        else
+        {
+            //  imageProxy.planes[0].pixelStride == 1
+            for (row in 0 until imageProxy.height)
+            {
+                yBuffer.position(row * imageProxy.planes[0].rowStride)
+                yBuffer.get(nv21, outputOffset, imageProxy.width)
+                outputOffset += imageProxy.width
+            }
+        }
+
+        /////////  V BUFFER  /////////
+        try
+        {
+            val rowBuffer2 = ByteArray(imageProxy.width)
+            for (row in 0 until (imageProxy.height / imageProxy.planes[2].pixelStride))
+            {
+                vBuffer.position(row * imageProxy.planes[2].rowStride)
+                //vBuffer.position(row * image.width)
+                vBuffer.get(rowBuffer2, 0, imageProxy.width)
+                if (outputOffset > 0)
+                {
+                    for (col in 0 until (imageProxy.width / imageProxy.planes[2].pixelStride))
+                    {
+                        nv21[outputOffset] = rowBuffer2[col * imageProxy.planes[2].pixelStride]
+                        outputOffset += imageProxy.planes[2].pixelStride
+                    }
+                }
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+
+        /////////  U BUFFER  /////////
+        try
+        {
+            val rowBuffer3 = ByteArray(imageProxy.width)
+            for (row in 0 until (imageProxy.height / imageProxy.planes[1].pixelStride))
+            {
+                uBuffer.position(row * imageProxy.planes[1].rowStride)
+                //uBuffer.position(row * image.width)
+                uBuffer.get(rowBuffer3, 0, imageProxy.width)
+                if (outputOffset > 0)
+                {
+                    for (col in 0 until (imageProxy.width / imageProxy.planes[1].pixelStride))
+                    {
+                        nv21[outputOffset] = rowBuffer3[col * imageProxy.planes[1].pixelStride]
+                        outputOffset += imageProxy.planes[1].pixelStride
+                    }
+                }
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+
+        val out = ByteArrayOutputStream()
+        val width = imageProxy.width
+        val height = imageProxy.height
+        val yuvImage = YuvImage(nv21, NV21, width, height, null)
+        yuvImage.compressToJpeg(Rect(0, 0, width, height), 100, out)
+
+        insertCache(out.toByteArray(), rotationDegrees)
+        imageProxy.close()
+        refresh()
+    }
+
+
+    private fun convertToBitmapYUV420888NV21(imageProxy: ImageProxy, rotationDegrees: Int)
+    {
+        //Log.v(TAG, " convertToBitmap(YUV420-NV21) $rotationDegrees ")
 
         //  ImageFormat.YUV_420_888 : 35
         val yBuffer = imageProxy.planes[0].buffer
@@ -175,7 +288,10 @@ class CameraLiveViewListenerImpl(private val context: Context) : IImageDataRecei
                 cachePics.removeAt(0)
             }
             cachePics.add(MyImageByteArray(byteArray, rotationDegrees))
-            Log.v(TAG, " -=-=- cache image : ${cachePics.size} / $maxCachePics")
+            if ((maxCachePics > 0)&&(cachePics.size != maxCachePics))
+            {
+                Log.v(TAG, " -=-=- image cache : ${cachePics.size} / $maxCachePics")
+            }
         }
         catch (e : Exception)
         {
@@ -187,6 +303,12 @@ class CameraLiveViewListenerImpl(private val context: Context) : IImageDataRecei
     {
         try
         {
+            if (cachePics.size == 0)
+            {
+                // 画像が入っていない...
+                return (BitmapFactory.decodeResource(context.resources, ID_DRAWABLE_SPLASH_IMAGE))
+            }
+
             val pos = (position * maxCachePics.toFloat()).toInt()
             //Log.v(TAG, " getImage (pos: $position : $pos)")
             val image : MyImageByteArray =
