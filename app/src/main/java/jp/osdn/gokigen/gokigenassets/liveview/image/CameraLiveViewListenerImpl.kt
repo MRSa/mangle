@@ -168,32 +168,19 @@ class CameraLiveViewListenerImpl(private val context: Context) : IImageDataRecei
             for (row in 0 until imageProxy.height)
             {
                 yBuffer.position(row * imageProxy.planes[0].rowStride)
-                //yBuffer.get(nv21, outputOffset, imageProxy.planes[0].rowStride)
-                //yBuffer.position(row * imageProxy.width)
                 yBuffer.get(nv21, outputOffset, imageProxy.width)
                 outputOffset += imageProxy.width
             }
         }
 
-
         /////////  V BUFFER  /////////
         try
         {
-            val rowBuffer2 = ByteArray(imageProxy.planes[2].rowStride)
             for (row in 0 until ((imageProxy.height / imageProxy.planes[2].pixelStride) - 1))
             {
                 vBuffer.position(row * imageProxy.planes[2].rowStride)
-                //vBuffer.get(rowBuffer2, 0, imageProxy.planes[2].rowStride)
-                //vBuffer.position(row * imageProxy.width)
-                vBuffer.get(rowBuffer2, 0, imageProxy.width)
-                if (outputOffset > 0)
-                {
-                    for (col in 0 until (imageProxy.width / imageProxy.planes[2].pixelStride))
-                    {
-                        nv21[outputOffset] = rowBuffer2[col * imageProxy.planes[2].pixelStride]
-                        outputOffset += imageProxy.planes[2].pixelStride
-                    }
-                }
+                vBuffer.get(nv21, outputOffset, imageProxy.width)
+                outputOffset += imageProxy.width
             }
         }
         catch (e : Exception)
@@ -204,22 +191,11 @@ class CameraLiveViewListenerImpl(private val context: Context) : IImageDataRecei
         /////////  U BUFFER  /////////
         try
         {
-            val rowBuffer3 = ByteArray(imageProxy.planes[1].rowStride)
             for (row in 0 until ((imageProxy.height / imageProxy.planes[1].pixelStride) - 1))
             {
-                //Log.v(TAG, " ROW : $row / ${(imageProxy.height / imageProxy.planes[1].pixelStride)}")
                 uBuffer.position(row * imageProxy.planes[1].rowStride)
-                //uBuffer.get(rowBuffer3, 0, imageProxy.planes[1].rowStride)
-                //uBuffer.position(row * imageProxy.width)
-                uBuffer.get(rowBuffer3, 0, imageProxy.width)
-                if (outputOffset > 0)
-                {
-                    for (col in 0 until (imageProxy.width / imageProxy.planes[1].pixelStride))
-                    {
-                        nv21[outputOffset] = rowBuffer3[col * imageProxy.planes[1].pixelStride]
-                        outputOffset += imageProxy.planes[1].pixelStride
-                    }
-                }
+                uBuffer.get(nv21, outputOffset, imageProxy.width)
+                outputOffset += imageProxy.width
             }
         }
         catch (e : Exception)
