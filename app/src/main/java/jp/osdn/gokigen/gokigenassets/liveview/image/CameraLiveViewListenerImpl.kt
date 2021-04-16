@@ -74,6 +74,7 @@ class CameraLiveViewListenerImpl(private val context: Context) : IImageDataRecei
                 }
             }
             convertToBitmapYUV420888NV21(imageProxy, rotationDegrees)
+            //convertToBitmapYUV420888(imageProxy, rotationDegrees)
             //Log.v(TAG, " convertToBitmapYUV420888NV21 $rotationDegrees ")
         }
         catch (e: Throwable)
@@ -144,7 +145,7 @@ class CameraLiveViewListenerImpl(private val context: Context) : IImageDataRecei
         /////////  Y BUFFER  /////////
         if (imageProxy.planes[0].pixelStride != 1)
         {
-            Log.v(TAG, " [0] pixelStride = ${imageProxy.planes[0].pixelStride}, rowStride = ${imageProxy.planes[0].rowStride}, width = ${imageProxy.width}")
+            //Log.v(TAG, " [0] pixelStride = ${imageProxy.planes[0].pixelStride}, rowStride = ${imageProxy.planes[0].rowStride}, width = ${imageProxy.width}")
             val rowBuffer1 = ByteArray(imageProxy.planes[0].rowStride)
             for (row in 0 until (imageProxy.height / imageProxy.planes[0].pixelStride))
             {
@@ -163,22 +164,27 @@ class CameraLiveViewListenerImpl(private val context: Context) : IImageDataRecei
         else
         {
             //  imageProxy.planes[0].pixelStride == 1
+            //Log.v(TAG, " [0] pixelStride = ${imageProxy.planes[0].pixelStride}, rowStride = ${imageProxy.planes[0].rowStride}, width = ${imageProxy.width}, height = ${imageProxy.height}")
             for (row in 0 until imageProxy.height)
             {
                 yBuffer.position(row * imageProxy.planes[0].rowStride)
+                //yBuffer.get(nv21, outputOffset, imageProxy.planes[0].rowStride)
+                //yBuffer.position(row * imageProxy.width)
                 yBuffer.get(nv21, outputOffset, imageProxy.width)
                 outputOffset += imageProxy.width
             }
         }
 
+
         /////////  V BUFFER  /////////
         try
         {
-            val rowBuffer2 = ByteArray(imageProxy.width)
-            for (row in 0 until (imageProxy.height / imageProxy.planes[2].pixelStride))
+            val rowBuffer2 = ByteArray(imageProxy.planes[2].rowStride)
+            for (row in 0 until ((imageProxy.height / imageProxy.planes[2].pixelStride) - 1))
             {
                 vBuffer.position(row * imageProxy.planes[2].rowStride)
-                //vBuffer.position(row * image.width)
+                //vBuffer.get(rowBuffer2, 0, imageProxy.planes[2].rowStride)
+                //vBuffer.position(row * imageProxy.width)
                 vBuffer.get(rowBuffer2, 0, imageProxy.width)
                 if (outputOffset > 0)
                 {
@@ -198,11 +204,13 @@ class CameraLiveViewListenerImpl(private val context: Context) : IImageDataRecei
         /////////  U BUFFER  /////////
         try
         {
-            val rowBuffer3 = ByteArray(imageProxy.width)
-            for (row in 0 until (imageProxy.height / imageProxy.planes[1].pixelStride))
+            val rowBuffer3 = ByteArray(imageProxy.planes[1].rowStride)
+            for (row in 0 until ((imageProxy.height / imageProxy.planes[1].pixelStride) - 1))
             {
+                //Log.v(TAG, " ROW : $row / ${(imageProxy.height / imageProxy.planes[1].pixelStride)}")
                 uBuffer.position(row * imageProxy.planes[1].rowStride)
-                //uBuffer.position(row * image.width)
+                //uBuffer.get(rowBuffer3, 0, imageProxy.planes[1].rowStride)
+                //uBuffer.position(row * imageProxy.width)
                 uBuffer.get(rowBuffer3, 0, imageProxy.width)
                 if (outputOffset > 0)
                 {
