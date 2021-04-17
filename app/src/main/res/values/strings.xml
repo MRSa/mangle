@@ -47,4 +47,20 @@
     <string name="pref_number_of_cache_pictures">Max number of cache pictures</string>
     <string name="pref_summary_number_of_cache_pictures">Set number of cache pictures. (Default:500, enables after restart.)</string>
 
+
+    <string name="connect_start">start</string>
+    <string name="connect_check_wifi">check WIFI</string>
+    <string name="connect_connect">connecting</string>
+    <string name="connect_connecting">connecting&#8230;</string>
+    <string name="connect_connected">connected</string>
+    <string name="connect_change_run_mode">changeRunMode</string>
+    <string name="connect_restore_camera_settings">restoreCameraSettings</string>
+
+    <string name="camera_not_found">Not Found&#8230;</string>
+    <string name="camera_connect_response_ng">Camera replies NG.</string>
+
+    <string name="dialog_title_connect_failed">Connect failed.</string>
+    <string name="dialog_button_retry">Retry</string>
+    <string name="dialog_button_network_settings">WiFi Settings</string>
+
 </resources>

@@ -90,9 +90,20 @@ class PreferenceValueInitializer() : IPreferenceValueInitializer
                     IPreferencePropertyAccessor.CAPTURE_ONLY_LIVE_VIEW_DEFAULT_VALUE
                 )
             }
+            if (!items.containsKey(IPreferencePropertyAccessor.CAPTURE_ONLY_EXTERNAL_CAMERA))
+            {
+                editor.putBoolean(
+                    IPreferencePropertyAccessor.CAPTURE_ONLY_EXTERNAL_CAMERA,
+                    IPreferencePropertyAccessor.CAPTURE_ONLY_EXTERNAL_CAMERA_DEFAULT_VALUE
+                )
+            }
             if (!items.containsKey(IPreferencePropertyAccessor.EXTERNAL_STORAGE_LOCATION))
             {
                 editor.putString(IPreferencePropertyAccessor.EXTERNAL_STORAGE_LOCATION, IPreferencePropertyAccessor.EXTERNAL_STORAGE_LOCATION_DEFAULT_VALUE)
+            }
+            if (!items.containsKey(IPreferencePropertyAccessor.THETA_LIVEVIEW_RESOLUTION))
+            {
+                editor.putString(IPreferencePropertyAccessor.THETA_LIVEVIEW_RESOLUTION, IPreferencePropertyAccessor.THETA_LIVEVIEW_RESOLUTION_DEFAULT_VALUE)
             }
             editor.apply()
         }

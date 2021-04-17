@@ -14,6 +14,7 @@ import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Compa
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_SAVE_LOCAL_LOCATION_DEFAULT_VALUE
 import jp.osdn.gokigen.gokigenassets.liveview.image.IImageProvider
 import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
@@ -22,7 +23,7 @@ import java.util.*
 class StoreImage(private val context: FragmentActivity, private val imageProvider: IImageProvider, private val dumpLog : Boolean = false) : IStoreImage
 {
 
-    override fun doStore(id : Int, target: Bitmap?)
+    override fun doStore(id : Int, isEquirectangular : Boolean,  target: Bitmap?)
     {
         try
         {
@@ -36,54 +37,10 @@ class StoreImage(private val context: FragmentActivity, private val imageProvide
             }
             else
             {
-                saveImageExternal(id, bitmapToStore)
+                saveImageExternal(id, bitmapToStore, isEquirectangular)
             }
 
             // 保存処理(プログレスダイアログ（「保存中...」）を削除
-        }
-        catch (t: Throwable)
-        {
-            t.printStackTrace()
-        }
-    }
-
-    private fun storeImageImpl(id : Int, target: Bitmap)
-    {
-/*
-        // 保存処理(プログレスダイアログ（「保存中...」）を表示して処理する)
-        val saveDialog = ProgressDialog(context)
-        saveDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER)
-        saveDialog.setMessage(context!!.getString(R.string.data_saving))
-        saveDialog.isIndeterminate = true
-        saveDialog.setCancelable(false)
-        saveDialog.show()
-        val thread = Thread {
-            System.gc()
-            saveImageImpl(target)
-            System.gc()
-            saveDialog.dismiss()
-        }
-        try
-        {
-            thread.start()
-        }
-        catch (t: Throwable)
-        {
-            t.printStackTrace()
-            System.gc()
-        }
-*/
-        try
-        {
-            val isLocalLocation  = PreferenceAccessWrapper(context).getBoolean(ID_PREFERENCE_SAVE_LOCAL_LOCATION, ID_PREFERENCE_SAVE_LOCAL_LOCATION_DEFAULT_VALUE)
-            if (isLocalLocation)
-            {
-                saveImageLocal(id, target)
-            }
-            else
-            {
-                saveImageExternal(id, target)
-            }
         }
         catch (t: Throwable)
         {
@@ -144,7 +101,7 @@ class StoreImage(private val context: FragmentActivity, private val imageProvide
      *
      * @param targetImage  出力するビットマップイメージ
      */
-    private fun saveImageExternal(id : Int, targetImage: Bitmap)
+    private fun saveImageExternal(id : Int, targetImage: Bitmap, isEquirectangular : Boolean)
     {
         try
         {
@@ -198,9 +155,41 @@ class StoreImage(private val context: FragmentActivity, private val imageProvide
                 val outputStream = resolver.openOutputStream(imageUri)
                 if (outputStream != null)
                 {
-                    targetImage.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-                    outputStream.flush()
-                    outputStream.close()
+                    if (isEquirectangular)
+                    {
+                        val xmpValue = "http://ns.adobe.com/xap/1.0/"
+                        val xmpValue1 =
+                            "<?xpacket begin=\"" + "\" ?> <x:xmpmeta xmlns:x=\"adobe:ns:meta/\" xmptk=\"EquirectangularPics\">" +
+                                    "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><rdf:Description rdf:about=\"\" xmlns:GPano=\"http://ns.google.com/photos/1.0/panorama/\">" +
+                                    "<GPano:UsePanoramaViewer>True</GPano:UsePanoramaViewer><GPano:ProjectionType>equirectangular</GPano:ProjectionType>" +
+                                    "<GPano:FullPanoWidthPixels>${targetImage.width}</GPano:FullPanoWidthPixels><GPano:FullPanoHeightPixels>${targetImage.height}</GPano:FullPanoHeightPixels>" +
+                                    "<GPano:CroppedAreaImageWidthPixels>${targetImage.width}</GPano:CroppedAreaImageWidthPixels><GPano:CroppedAreaImageHeightPixels>${targetImage.height}</GPano:CroppedAreaImageHeightPixels>" +
+                                    "<GPano:CroppedAreaLeftPixels>0</GPano:CroppedAreaLeftPixels><GPano:CroppedAreaTopPixels>0</GPano:CroppedAreaTopPixels></rdf:Description></rdf:RDF></x:xmpmeta><?xpacket end=\"r\"?>"
+                        val xmpLength = xmpValue.length + xmpValue1.length + 3
+                        val byteArrayStream = ByteArrayOutputStream()
+                        targetImage.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayStream)
+                        val jpegImage = byteArrayStream.toByteArray()
+
+                        outputStream.write(jpegImage, 0, 20)
+                        outputStream.write(0xff)
+                        outputStream.write(0xe1)
+                        outputStream.write((xmpLength and 0xff00) shr 8)
+                        outputStream.write((xmpLength and 0x00ff))
+                        outputStream.write(xmpValue.toByteArray())
+                        outputStream.write(0x00)
+                        outputStream.write(xmpValue1.toByteArray())
+                        outputStream.write(jpegImage, 20, (jpegImage.size - 20))
+
+                        //targetImage.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+                        outputStream.flush()
+                        outputStream.close()
+                    }
+                    else
+                    {
+                        targetImage.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+                        outputStream.flush()
+                        outputStream.close()
+                    }
                 }
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
                 {

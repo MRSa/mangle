@@ -24,6 +24,7 @@ data class MyImageByteArray(val imageData : ByteArray, val rotationDegrees: Int)
 class CameraLiveViewListenerImpl(private val context: Context) : IImageDataReceiver, IImageProvider, ImageAnalysis.Analyzer
 {
     private var cachePics = ArrayList<MyImageByteArray>()
+    private var isImageReceived = false
     private var maxCachePics : Int = 0
     private var bitmapConverter : IPreviewImageConverter = ImageConvertFactory().getImageConverter(0)
     private val refresher = ArrayList<ILiveViewRefresher>()
@@ -46,7 +47,17 @@ class CameraLiveViewListenerImpl(private val context: Context) : IImageDataRecei
 
     override fun onUpdateLiveView(data: ByteArray, metadata: Map<String, Any>?)
     {
-        refresh()
+        try
+        {
+            //Log.v(TAG, "onUpdateLiveView()")
+            insertCache(data, 0)
+            isImageReceived = true
+            refresh()
+        }
+        catch (t : Throwable)
+        {
+            t.printStackTrace()
+        }
     }
 
     @SuppressLint("UnsafeExperimentalUsageError")
@@ -55,6 +66,7 @@ class CameraLiveViewListenerImpl(private val context: Context) : IImageDataRecei
         try
         {
             val rotationDegrees = imageProxy.imageInfo.rotationDegrees
+            isImageReceived = true
 
             if (imageProxy.image?.planes?.get(1)?.pixelStride == 1)
             {
@@ -315,6 +327,11 @@ class CameraLiveViewListenerImpl(private val context: Context) : IImageDataRecei
             e.printStackTrace()
         }
         return (BitmapFactory.decodeResource(context.resources, ID_DRAWABLE_SPLASH_IMAGE))
+    }
+
+    fun isImageReceived() : Boolean
+    {
+        return (isImageReceived)
     }
 
     private fun refresh()

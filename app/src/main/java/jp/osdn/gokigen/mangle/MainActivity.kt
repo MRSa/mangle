@@ -5,12 +5,18 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.util.Log
 import android.view.WindowManager
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnectionStatus
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
+import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import jp.osdn.gokigen.gokigenassets.scene.ShowMessage
 import jp.osdn.gokigen.gokigenassets.utils.IScopedStorageAccessPermission
 import jp.osdn.gokigen.mangle.preference.PreferenceValueInitializer
@@ -18,10 +24,11 @@ import jp.osdn.gokigen.mangle.scene.MainButtonHandler
 import jp.osdn.gokigen.mangle.scene.SceneChanger
 
 
-class MainActivity : AppCompatActivity()
+class MainActivity : AppCompatActivity(), IVibrator, ICameraStatusReceiver
 {
     private lateinit var mainButtonHandler : MainButtonHandler// = MainButtonHandler(this)
     private lateinit var sceneChanger : SceneChanger// = SceneChanger(this, showMessage)
+    private var connectionStatus : ICameraConnectionStatus.CameraConnectionStatus = ICameraConnectionStatus.CameraConnectionStatus.UNKNOWN
     private val showMessage : ShowMessage = ShowMessage(this)
     private val accessPermission : IScopedStorageAccessPermission? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) { StorageOperationWithPermission(this) } else { null }
 
@@ -38,7 +45,7 @@ class MainActivity : AppCompatActivity()
         try
         {
             mainButtonHandler = MainButtonHandler(this)
-            sceneChanger  = SceneChanger(this, showMessage)
+            sceneChanger  = SceneChanger(this, showMessage, this, this)
             mainButtonHandler.setSceneChanger(sceneChanger)
             PreferenceValueInitializer().initializePreferences(this)
         }
@@ -113,6 +120,137 @@ class MainActivity : AppCompatActivity()
         }
     }
 
+    override fun vibrate(vibratePattern: IVibrator.VibratePattern)
+    {
+        try
+        {
+            // バイブレータをつかまえる
+            val vibrator = getSystemService(VIBRATOR_SERVICE) as Vibrator
+            if (!vibrator.hasVibrator())
+            {
+                Log.v(TAG, " not have Vibrator...")
+                return
+            }
+            @Suppress("DEPRECATION") val thread = Thread {
+                try
+                {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                    {
+                        vibrator.vibrate(VibrationEffect.createOneShot(30, VibrationEffect.DEFAULT_AMPLITUDE))
+                    }
+                    else
+                    {
+                        when (vibratePattern)
+                        {
+                            IVibrator.VibratePattern.SIMPLE_SHORT_SHORT -> vibrator.vibrate(30)
+                            IVibrator.VibratePattern.SIMPLE_SHORT ->  vibrator.vibrate(50)
+                            IVibrator.VibratePattern.SIMPLE_MIDDLE -> vibrator.vibrate(100)
+                            IVibrator.VibratePattern.SIMPLE_LONG ->  vibrator.vibrate(150)
+                            else -> { }
+                        }
+                    }
+                }
+                catch (e : Exception)
+                {
+                    e.printStackTrace()
+                }
+            }
+            thread.start()
+        }
+        catch (e: java.lang.Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    override fun onStatusNotify(message: String?)
+    {
+        Log.v(TAG, " onStatusNotify() $message ")
+        updateConnectionIcon(ICameraConnectionStatus.CameraConnectionStatus.CONNECTING)
+
+        try
+        {
+            runOnUiThread {
+                //if (liveView != null) {
+                //    liveView.invalidate()
+                //}
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    override fun onCameraConnected()
+    {
+        Log.v(TAG, " onCameraConnected() ")
+        updateConnectionIcon(ICameraConnectionStatus.CameraConnectionStatus.CONNECTED)
+
+        try
+        {
+            runOnUiThread {
+                //if (liveView != null) {
+                //    liveView.invalidate()
+                //}
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    override fun onCameraDisconnected()
+    {
+        Log.v(TAG, " onCameraDisconnected() ")
+        try
+        {
+            updateConnectionIcon(ICameraConnectionStatus.CameraConnectionStatus.DISCONNECTED)
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    override fun onCameraConnectError(msg: String?)
+    {
+        Log.v(TAG, " onCameraConnectError() $msg ")
+    }
+
+    private fun updateConnectionIcon(connectionStatus : ICameraConnectionStatus.CameraConnectionStatus)
+    {
+        Log.v(TAG, " updateConnectionIcon() $connectionStatus")
+        this.connectionStatus = connectionStatus
+        try
+        {
+            runOnUiThread {
+                try
+                {
+                    val view : ImageButton = this.findViewById(R.id.button_connect)
+                    val iconId = when (connectionStatus)
+                    {
+                        ICameraConnectionStatus.CameraConnectionStatus.DISCONNECTED -> { R.drawable.ic_baseline_cloud_off_24 }
+                        ICameraConnectionStatus.CameraConnectionStatus.UNKNOWN -> { R.drawable.ic_baseline_cloud_off_24 }
+                        ICameraConnectionStatus.CameraConnectionStatus.CONNECTING -> { R.drawable.ic_baseline_cloud_queue_24 }
+                        ICameraConnectionStatus.CameraConnectionStatus.CONNECTED -> { R.drawable.ic_baseline_cloud_done_24 }
+                    }
+                    view.setImageDrawable(ContextCompat.getDrawable(this, iconId))
+                    view.invalidate()
+                }
+                catch (e : Exception)
+                {
+                    e.printStackTrace()
+                }
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
     companion object
     {
         private val TAG = MainActivity::class.java.simpleName
@@ -125,7 +263,10 @@ class MainActivity : AppCompatActivity()
             Manifest.permission.CAMERA,
             Manifest.permission.VIBRATE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_EXTERNAL_STORAGE
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.INTERNET,
+            Manifest.permission.ACCESS_NETWORK_STATE,
+            Manifest.permission.ACCESS_WIFI_STATE,
         )
     }
 }

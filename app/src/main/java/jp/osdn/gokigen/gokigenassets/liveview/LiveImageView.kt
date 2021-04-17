@@ -58,7 +58,7 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
     {
         gridFrameDrawer = GridFrameFactory().getGridFrameDrawer(0)
         focusFrameDrawer = FocusFrameDrawer(context)
-        informationDrawer = InformationDrawer()
+        informationDrawer = InformationDrawer(this)
     }
 
     override fun getMessageDrawer() : IMessageDrawer

@@ -25,6 +25,10 @@ interface IPreferencePropertyAccessor
         const val CAPTURE_ONLY_LIVE_VIEW = "capture_only_live_view"
         const val CAPTURE_ONLY_LIVE_VIEW_DEFAULT_VALUE = false
 
+        const val CAPTURE_ONLY_EXTERNAL_CAMERA = "capture_only_external_camera"
+        const val CAPTURE_ONLY_EXTERNAL_CAMERA_DEFAULT_VALUE = false
+
+
         // --- SCREEN TRANSACTION LABEL ---
         const val LABEL_EXIT_APPLICATION = "exit_application"
         const val LABEL_WIFI_SETTINGS = "wifi_settings"
@@ -37,6 +41,12 @@ interface IPreferencePropertyAccessor
         const val SHOW_GRID_STATUS_DEFAULT_VALUE = false
         const val EXTERNAL_STORAGE_LOCATION = "external_storage_location"
         const val EXTERNAL_STORAGE_LOCATION_DEFAULT_VALUE = ""
+
+
+        // --- Camera Specific Preferences
+        const val THETA_LIVEVIEW_RESOLUTION = "theta_liveview_resolution"
+        const val THETA_LIVEVIEW_RESOLUTION_DEFAULT_VALUE = "{\"width\": 640, \"height\": 320, \"framerate\": 30}"
+
     }
 
 }

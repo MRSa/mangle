@@ -26,6 +26,11 @@ class CameraControl(private val activity : AppCompatActivity) : ICameraControl
     private lateinit var storeImage : StoreImage
     private var cameraIsStarted = false
 
+    override fun getConnectionMethod(): String
+    {
+        return ("CAMERA_X")
+    }
+
     override fun initialize()
     {
         Log.v(TAG, " initialize()")
@@ -33,6 +38,16 @@ class CameraControl(private val activity : AppCompatActivity) : ICameraControl
         cameraExecutor = Executors.newSingleThreadExecutor()
         storeImage = StoreImage(activity, liveViewListener)
         fileControl = FileControl(activity, storeImage)
+    }
+
+    override fun connectToCamera()
+    {
+        Log.v(TAG, " connectToCamera() : camerax ")
+    }
+
+    override fun changeCaptureMode(mode : String)
+    {
+        Log.v(TAG, " changeCaptureMode() : $mode ")
     }
 
     override fun setRefresher(refresher: ILiveViewRefresher, imageView : ILiveView)

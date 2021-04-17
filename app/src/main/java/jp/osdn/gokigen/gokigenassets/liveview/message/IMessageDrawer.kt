@@ -16,4 +16,5 @@ interface IMessageDrawer
 
     fun setMessageToShow(message: String, area: MessageArea, color: Int = Color.WHITE, size: Int = 8)
     fun setLevelToShow(value: Float, area: LevelArea)
+    fun invalidate()
 }

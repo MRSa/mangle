@@ -7,9 +7,14 @@ import jp.osdn.gokigen.gokigenassets.liveview.ILiveViewRefresher
 
 interface ICameraControl
 {
+    fun getConnectionMethod() : String
     fun initialize()
+
+    fun connectToCamera()
     fun startCamera(isPreviewView : Boolean = true, cameraSelector : CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA)
     fun finishCamera()
+
+    fun changeCaptureMode(mode : String)
 
     fun setRefresher(refresher : ILiveViewRefresher, imageView : ILiveView)
     fun captureButtonReceiver(id : Int = 0) : View.OnClickListener

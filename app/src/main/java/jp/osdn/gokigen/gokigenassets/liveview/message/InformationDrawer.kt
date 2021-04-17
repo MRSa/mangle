@@ -4,10 +4,11 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
+import jp.osdn.gokigen.gokigenassets.liveview.ILiveView
 import jp.osdn.gokigen.gokigenassets.liveview.message.LevelHolder.Companion.LEVEL_GAUGE_THRESHOLD_MIDDLE
 import jp.osdn.gokigen.gokigenassets.liveview.message.LevelHolder.Companion.LEVEL_GAUGE_THRESHOLD_OVER
 
-class InformationDrawer : IMessageDrawer, IInformationDrawer
+class InformationDrawer(private val liveview: ILiveView?) : IMessageDrawer, IInformationDrawer
 {
     private val topLeftMessage: MessageHolder = MessageHolder()
     private val topCenterMessage: MessageHolder = MessageHolder()
@@ -21,6 +22,11 @@ class InformationDrawer : IMessageDrawer, IInformationDrawer
 
     private val horizontalAngleLevel: LevelHolder = LevelHolder()
     private val verticalAngleLevel: LevelHolder = LevelHolder()
+
+    override fun invalidate()
+    {
+        liveview?.invalidate()
+    }
 
     override fun setMessageToShow(message: String, area: IMessageDrawer.MessageArea, color: Int, size: Int)
     {

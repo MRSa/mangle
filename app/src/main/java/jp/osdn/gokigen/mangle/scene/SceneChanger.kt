@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
+import jp.osdn.gokigen.gokigenassets.camera.theta.ThetaCameraControl
 import jp.osdn.gokigen.gokigenassets.liveview.LiveImageViewFragment
 import jp.osdn.gokigen.gokigenassets.operation.CameraControl
 import jp.osdn.gokigen.gokigenassets.preference.MainPreferenceFragment
@@ -13,6 +15,7 @@ import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
 import jp.osdn.gokigen.gokigenassets.preview.PreviewFragment
 import jp.osdn.gokigen.gokigenassets.scene.IChangeSceneBasic
 import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
+import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import jp.osdn.gokigen.gokigenassets.utils.ConfirmationDialog
 import jp.osdn.gokigen.gokigenassets.utils.logcat.LogCatFragment
 import jp.osdn.gokigen.mangle.R
@@ -21,10 +24,12 @@ import jp.osdn.gokigen.mangle.preference.PreferenceChanger
 import jp.osdn.gokigen.mangle.preference.PreferenceValueInitializer
 
 
-class SceneChanger(private val activity: AppCompatActivity, private val informationNotify: IInformationReceiver) : IChangeScene, IChangeSceneBasic
+class SceneChanger(private val activity: AppCompatActivity, private val informationNotify: IInformationReceiver, vibrator : IVibrator, statusReceiver : ICameraStatusReceiver) : IChangeScene, IChangeSceneBasic
 {
     private val cameraControl0: CameraControl
     private val cameraControl1: CameraControl
+    private val cameraControl2 = ThetaCameraControl(activity, vibrator, statusReceiver)
+
     private val preferenceChanger = PreferenceChanger(activity, this)
     private lateinit var liveviewFragment : LiveImageViewFragment
     private lateinit var previewFragment : PreviewFragment
@@ -39,6 +44,9 @@ class SceneChanger(private val activity: AppCompatActivity, private val informat
 
         cameraControl1 = CameraControl(activity)
         cameraControl1.initialize()
+
+        cameraControl2.initialize()
+        cameraControl2.connectToCamera()
     }
 
     private fun initializeFragmentForPreview()
@@ -59,14 +67,19 @@ class SceneChanger(private val activity: AppCompatActivity, private val informat
         if (!::liveviewFragment.isInitialized)
         {
             liveviewFragment = LiveImageViewFragment.newInstance()
-            liveviewFragment.setCameraControl(true, cameraControl1,true, cameraControl1,true, cameraControl1,true, cameraControl1)
+            liveviewFragment.setCameraControl(true, cameraControl1,true, cameraControl1,true, cameraControl1,true, cameraControl2)
         }
         setDefaultFragment(liveviewFragment)
+
         cameraControl0.startCamera(
             isPreviewView = false,
             cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
         )
         cameraControl1.startCamera(
+            isPreviewView = false,
+            cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+        )
+        cameraControl2.startCamera(
             isPreviewView = false,
             cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
         )
@@ -108,12 +121,14 @@ class SceneChanger(private val activity: AppCompatActivity, private val informat
 
     override fun connectToCamera()
     {
-        if (!::previewFragment.isInitialized)
+        try
         {
-            previewFragment = PreviewFragment.newInstance(cameraControl0)
+            cameraControl2.connectToCamera()
         }
-        changeFragment(previewFragment)
-        cameraControl0.startCamera()
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
     }
 
     override fun changeToConfiguration()
@@ -169,10 +184,11 @@ class SceneChanger(private val activity: AppCompatActivity, private val informat
     {
         cameraControl0.finishCamera()
         cameraControl1.finishCamera()
+        cameraControl2.finishCamera()
     }
 
     companion object
     {
-        private val  TAG = this.toString()
+        private val  TAG = SceneChanger::class.java.simpleName
     }
 }

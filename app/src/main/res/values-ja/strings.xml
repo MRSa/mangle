@@ -47,5 +47,19 @@
     <string name="pref_number_of_cache_pictures">ライブビュー画像の遅延最大数</string>
     <string name="pref_summary_number_of_cache_pictures">ライブビューを遅らせる画像の最大枚数を指定します。(初期値:500、再起動後に有効)</string>
 
+    <string name="connect_start">開始</string>
+    <string name="connect_check_wifi">WIFI確認中</string>
+    <string name="connect_connect">接続</string>
+    <string name="connect_connecting">接続中&#8230;</string>
+    <string name="connect_connected">接続完了</string>
+    <string name="connect_change_run_mode">モード変更</string>
+    <string name="connect_restore_camera_settings">カメラ設定調整</string>
+
+    <string name="camera_not_found">Not Found&#8230;</string>
+    <string name="camera_connect_response_ng">カメラに接続できませんでした。</string>
+
+    <string name="dialog_title_connect_failed">接続失敗</string>
+    <string name="dialog_button_retry">再試行</string>
+    <string name="dialog_button_network_settings">WiFi設定</string>
 
 </resources>
