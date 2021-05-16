@@ -1,4 +1,4 @@
-package jp.osdn.gokigen.gokigenassets.operation.imagefile
+package jp.osdn.gokigen.gokigenassets.utils.imagefile
 
 
 interface IImageStoreGrant

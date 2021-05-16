@@ -1,4 +1,4 @@
-package jp.osdn.gokigen.gokigenassets.operation
+package jp.osdn.gokigen.gokigenassets.camera.camerax.operation
 
 import android.util.Log
 import android.view.Surface
@@ -14,7 +14,8 @@ import jp.osdn.gokigen.gokigenassets.liveview.ILiveView
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveViewRefresher
 import jp.osdn.gokigen.gokigenassets.liveview.image.CameraLiveViewListenerImpl
 import jp.osdn.gokigen.gokigenassets.liveview.storeimage.StoreImage
-import jp.osdn.gokigen.gokigenassets.operation.imagefile.FileControl
+import jp.osdn.gokigen.gokigenassets.utils.imagefile.FileControl
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraControl
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 

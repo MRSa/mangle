@@ -2,6 +2,8 @@ package jp.osdn.gokigen.gokigenassets.camera.theta.status
 
 import android.graphics.Color
 import android.util.Log
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusUpdateNotify
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusWatcher
 import jp.osdn.gokigen.gokigenassets.liveview.message.IMessageDrawer
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
 import org.json.JSONObject
@@ -108,6 +110,11 @@ class ThetaCameraStatusWatcher(private val sessionIdProvider: IThetaSessionIdPro
         {
             e.printStackTrace()
         }
+    }
+
+    override fun startStatusWatch(notifier: ICameraStatusUpdateNotify)
+    {
+        startStatusWatch(null)
     }
 
     private fun checkStatus0(response: String)

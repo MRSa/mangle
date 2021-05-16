@@ -9,10 +9,10 @@ import androidx.fragment.app.FragmentTransaction
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
 import jp.osdn.gokigen.gokigenassets.camera.theta.ThetaCameraControl
 import jp.osdn.gokigen.gokigenassets.liveview.LiveImageViewFragment
-import jp.osdn.gokigen.gokigenassets.operation.CameraControl
+import jp.osdn.gokigen.gokigenassets.camera.camerax.operation.CameraControl
 import jp.osdn.gokigen.gokigenassets.preference.MainPreferenceFragment
 import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
-import jp.osdn.gokigen.gokigenassets.preview.PreviewFragment
+import jp.osdn.gokigen.gokigenassets.camera.camerax.preview.PreviewFragment
 import jp.osdn.gokigen.gokigenassets.scene.IChangeSceneBasic
 import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator

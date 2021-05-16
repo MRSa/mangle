@@ -8,6 +8,7 @@ import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.C
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.CAPTURE_ONLY_EXTERNAL_CAMERA_DEFAULT_VALUE
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.EXTERNAL_STORAGE_LOCATION
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.EXTERNAL_STORAGE_LOCATION_DEFAULT_VALUE
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.GR2_LCD_SLEEP
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.LABEL_DEBUG_INFO
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.LABEL_EXIT_APPLICATION
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.LABEL_WIFI_SETTINGS
@@ -15,6 +16,7 @@ import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.N
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.NUMBER_OF_CACHE_PICTURES_DEFAULT_VALUE
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_SAVE_LOCAL_LOCATION
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_SAVE_LOCAL_LOCATION_DEFAULT_VALUE
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.USE_GR2_SPECIAL_COMMAND
 
 /**
      アプリケーションの依存
@@ -32,6 +34,10 @@ interface IApplicationConstantConvert
 
         const val ID_LAYOUT_CAMERA_CAPTURE = R.layout.camera_capture
         const val ID_LAYOUT_PREFERENCE = R.xml.preference_main
+
+        const val ID_DIALOG_TITLE_CONFIRMATION = R.string.dialog_title_confirmation
+        const val ID_DIALOG_EXIT_APPLICATION = R.string.dialog_message_exit_application
+        const val ID_DIALOG_EXIT_POWER_OFF = R.string.dialog_message_power_off
 
         const val ID_DIALOG_BUTTON_LABEL_POSITIVE = R.string.dialog_positive_execute
         const val ID_DIALOG_BUTTON_LABEL_NEGATIVE = R.string.dialog_negative_cancel
@@ -64,7 +70,6 @@ interface IApplicationConstantConvert
         const val ID_LABEL_TITLE_CONFIRMATION_FOR_EXPORT_LOG = R.string.dialog_confirm_title_output_log
         const val ID_LABEL_MESSAGE_CONFIRMATION_FOR_EXPORT_LOG = R.string.dialog_confirm_message_output_log
 
-
         const val ID_PREFERENCE_LABEL_EXIT_APPLICATION = LABEL_EXIT_APPLICATION
         const val ID_PREFERENCE_LABEL_WIFI_SETTINGS = LABEL_WIFI_SETTINGS
         const val ID_PREFERENCE_LABEL_DEBUG_INFO = LABEL_DEBUG_INFO
@@ -84,6 +89,9 @@ interface IApplicationConstantConvert
         const val ID_PREFERENCE_CACHE_LIVE_VIEW_PICTURES = CACHE_LIVE_VIEW_PICTURES
         const val ID_PREFERENCE_NUMBER_OF_CACHE_PICTURES = NUMBER_OF_CACHE_PICTURES
         const val ID_PREFERENCE_NUMBER_OF_CACHE_PICTURES_DEFAULT_VALUE = NUMBER_OF_CACHE_PICTURES_DEFAULT_VALUE
+
+        const val ID_PREFERENCE_RICOH_GR2_LCD_SLEEP = GR2_LCD_SLEEP
+        const val ID_PREFERENCE_USE_GR2_SPECIAL_COMMAND = USE_GR2_SPECIAL_COMMAND
 
     }
 

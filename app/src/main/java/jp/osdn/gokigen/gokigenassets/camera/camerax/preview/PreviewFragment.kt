@@ -1,4 +1,4 @@
-package jp.osdn.gokigen.gokigenassets.preview
+package jp.osdn.gokigen.gokigenassets.camera.camerax.preview
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,7 +8,7 @@ import android.widget.ImageButton
 import androidx.fragment.app.Fragment
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_LAYOUT_CAMERA_CAPTURE
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREVIEW_VIEW_BUTTON_SHUTTER
-import jp.osdn.gokigen.gokigenassets.operation.ICameraControl
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraControl
 
 class PreviewFragment(private val contentLayoutId: Int = ID_LAYOUT_CAMERA_CAPTURE) : Fragment(contentLayoutId)
 {

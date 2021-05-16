@@ -62,4 +62,8 @@
     <string name="dialog_button_retry">再試行</string>
     <string name="dialog_button_network_settings">WiFi設定</string>
 
+    <string name="dialog_title_confirmation">確認</string>
+    <string name="dialog_message_power_off">カメラの電源を切り、アプリケーションを終了します。</string>
+    <string name="dialog_message_exit">アプリケーションを終了します。</string>
+
 </resources>

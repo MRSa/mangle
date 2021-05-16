@@ -10,7 +10,7 @@ import android.provider.MediaStore
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import jp.osdn.gokigen.gokigenassets.operation.imagefile.IImageStoreGrant
+import jp.osdn.gokigen.gokigenassets.utils.imagefile.IImageStoreGrant
 import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
 import jp.osdn.gokigen.gokigenassets.utils.IScopedStorageAccessPermission
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor

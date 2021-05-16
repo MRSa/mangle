@@ -28,7 +28,6 @@ interface IPreferencePropertyAccessor
         const val CAPTURE_ONLY_EXTERNAL_CAMERA = "capture_only_external_camera"
         const val CAPTURE_ONLY_EXTERNAL_CAMERA_DEFAULT_VALUE = false
 
-
         // --- SCREEN TRANSACTION LABEL ---
         const val LABEL_EXIT_APPLICATION = "exit_application"
         const val LABEL_WIFI_SETTINGS = "wifi_settings"
@@ -46,6 +45,11 @@ interface IPreferencePropertyAccessor
         // --- Camera Specific Preferences
         const val THETA_LIVEVIEW_RESOLUTION = "theta_liveview_resolution"
         const val THETA_LIVEVIEW_RESOLUTION_DEFAULT_VALUE = "{\"width\": 640, \"height\": 320, \"framerate\": 30}"
+
+
+        // --- RICOH/PENTAX
+        const val GR2_LCD_SLEEP = "gr2_lcd_sleep"
+        const val USE_GR2_SPECIAL_COMMAND = "use_gr2_command"
 
     }
 

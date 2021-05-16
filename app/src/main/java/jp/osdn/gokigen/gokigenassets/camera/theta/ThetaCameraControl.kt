@@ -26,11 +26,12 @@ import jp.osdn.gokigen.gokigenassets.liveview.ILiveViewRefresher
 import jp.osdn.gokigen.gokigenassets.liveview.image.CameraLiveViewListenerImpl
 import jp.osdn.gokigen.gokigenassets.liveview.message.IMessageDrawer
 import jp.osdn.gokigen.gokigenassets.liveview.storeimage.StoreImage
-import jp.osdn.gokigen.gokigenassets.operation.ICameraControl
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraControl
 import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 
-class ThetaCameraControl(private val context: AppCompatActivity, private val vibrator : IVibrator, statusReceiver : ICameraStatusReceiver) : ILiveViewController, ICameraControl, View.OnClickListener, ICaptureModeReceiver, ICameraShutter
+class ThetaCameraControl(private val context: AppCompatActivity, private val vibrator : IVibrator, statusReceiver : ICameraStatusReceiver) : ILiveViewController,
+    ICameraControl, View.OnClickListener, ICaptureModeReceiver, ICameraShutter
 {
     private val sessionIdHolder = ThetaSessionHolder()
     private val cameraConnection = ThetaCameraConnection(context, statusReceiver, sessionIdHolder, sessionIdHolder, this)

@@ -63,4 +63,7 @@
     <string name="dialog_button_retry">Retry</string>
     <string name="dialog_button_network_settings">WiFi Settings</string>
 
+    <string name="dialog_title_confirmation">Confirmation</string>
+    <string name="dialog_message_power_off">Power Off</string>
+    <string name="dialog_message_exit">Exit Application</string>
 </resources>

@@ -1,4 +1,4 @@
-package jp.osdn.gokigen.gokigenassets.operation
+package jp.osdn.gokigen.gokigenassets.camera.interfaces
 
 import android.view.View
 import androidx.camera.core.CameraSelector

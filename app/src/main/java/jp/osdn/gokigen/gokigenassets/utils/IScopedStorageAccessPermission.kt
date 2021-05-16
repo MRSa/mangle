@@ -2,7 +2,7 @@ package jp.osdn.gokigen.gokigenassets.utils
 
 import android.content.Intent
 import android.net.Uri
-import jp.osdn.gokigen.gokigenassets.operation.imagefile.IImageStoreGrant
+import jp.osdn.gokigen.gokigenassets.utils.imagefile.IImageStoreGrant
 
 interface IScopedStorageAccessPermission
 {

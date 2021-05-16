@@ -4,8 +4,9 @@ import android.content.Context
 import android.graphics.*
 import android.util.DisplayMetrics
 import android.util.TypedValue
+import android.view.MotionEvent
 
-class FocusFrameDrawer(private val context : Context): IFocusFrameDrawer, IFocusFrameControl
+class FocusFrameDrawer(private val context : Context): IFocusFrameDrawer, IAutoFocusFrameDisplay
 {
     override fun drawFocusFrame(canvas: Canvas)
     {
@@ -38,7 +39,23 @@ class FocusFrameDrawer(private val context : Context): IFocusFrameDrawer, IFocus
 */
     }
 
-    override fun showFocusFrame(rect : RectF, status : IFocusFrameControl.FocusFrameStatus, duration : Float)
+    override fun getContentSizeWidth(): Float {
+        TODO("Not yet implemented")
+    }
+
+    override fun getContentSizeHeight(): Float {
+        TODO("Not yet implemented")
+    }
+
+    override fun getPointWithEvent(event: MotionEvent?): PointF? {
+        TODO("Not yet implemented")
+    }
+
+    override fun isContainsPoint(point: PointF?): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun showFocusFrame(rect : RectF?, status : IAutoFocusFrameDisplay.FocusFrameStatus?, duration : Float)
     {
 
     }
@@ -95,8 +112,8 @@ class FocusFrameDrawer(private val context : Context): IFocusFrameDrawer, IFocus
 
     private fun convertPointFromImageArea(point: PointF, imageBitmap : Bitmap, imageRotationDegrees : Int): PointF
     {
-        var viewPointX = point.x
-        var viewPointY = point.y
+        val viewPointX = point.x
+        val viewPointY = point.y
 /*
         val imageSizeWidth: Float
         val imageSizeHeight: Float
