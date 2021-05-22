@@ -10,8 +10,9 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceManager
 import jp.osdn.gokigen.gokigenassets.preference.IActionReceiver
 import jp.osdn.gokigen.gokigenassets.scene.IChangeSceneBasic
+import jp.osdn.gokigen.mangle.scene.IChangeScene
 
-class PreferenceChanger(private val activity : AppCompatActivity, private val changeSceneBasic : IChangeSceneBasic) : SharedPreferences.OnSharedPreferenceChangeListener, Preference.OnPreferenceClickListener, IActionReceiver
+class PreferenceChanger(private val activity : AppCompatActivity, private val changeSceneBasic : IChangeSceneBasic, private val changeScene : IChangeScene) : SharedPreferences.OnSharedPreferenceChangeListener, Preference.OnPreferenceClickListener, IActionReceiver
 {
     private var preferences : SharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
 
@@ -42,6 +43,7 @@ class PreferenceChanger(private val activity : AppCompatActivity, private val ch
             )
             IPreferencePropertyAccessor.LABEL_EXIT_APPLICATION -> changeSceneBasic.exitApplication()
             IPreferencePropertyAccessor.LABEL_DEBUG_INFO -> changeSceneBasic.changeToDebugInformation()
+            IPreferencePropertyAccessor.PREFERENCE_CONNECTION_METHOD -> changeScene.selectConnectionMethod()
             else -> { Log.v(TAG, " onPreferenceClick() : " + preference?.key); ret = false; }
         }
         return (ret)

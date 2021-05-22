@@ -47,6 +47,14 @@
     <string name="pref_number_of_cache_pictures">ライブビュー画像の遅延最大数</string>
     <string name="pref_summary_number_of_cache_pictures">ライブビューを遅らせる画像の最大枚数を指定します。(初期値:500、再起動後に有効)</string>
 
+    <string name="pref_connection_method">接続方式設定</string>
+    <string name="pref_summary_connection_method">接続するカメラを設定します。</string>
+
+    <string name="label_connection_method1">カメラ 1</string>
+    <string name="label_connection_method2">カメラ 2</string>
+    <string name="label_connection_method3">カメラ 3</string>
+    <string name="label_connection_method4">カメラ 4</string>
+
     <string name="connect_start">開始</string>
     <string name="connect_check_wifi">WIFI確認中</string>
     <string name="connect_connect">接続</string>

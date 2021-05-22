@@ -105,6 +105,22 @@ class PreferenceValueInitializer() : IPreferenceValueInitializer
             {
                 editor.putString(IPreferencePropertyAccessor.THETA_LIVEVIEW_RESOLUTION, IPreferencePropertyAccessor.THETA_LIVEVIEW_RESOLUTION_DEFAULT_VALUE)
             }
+            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_1))
+            {
+                editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_1, IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_1_DEFAULT_VALUE)
+            }
+            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_2))
+            {
+                editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_2, IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_2_DEFAULT_VALUE)
+            }
+            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_3))
+            {
+                editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_3, IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_3_DEFAULT_VALUE)
+            }
+            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_4))
+            {
+                editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_4, IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_4_DEFAULT_VALUE)
+            }
             editor.apply()
         }
         catch (e : Exception)

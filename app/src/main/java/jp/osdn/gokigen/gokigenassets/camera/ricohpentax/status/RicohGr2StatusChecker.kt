@@ -34,16 +34,8 @@ class RicohGr2StatusChecker
         this.useGR2command = useGR2command
     }
 
-    override fun startStatusWatch(indicator: IMessageDrawer?)
+    override fun startStatusWatch(indicator : IMessageDrawer?, notifier: ICameraStatusUpdateNotify?)
     {
-        TODO("Not yet implemented")
-    }
-
-    /**
-     *
-     *
-     */
-    override fun startStatusWatch(notifier: ICameraStatusUpdateNotify) {
         Log.v(TAG, "startStatusWatch()")
         try {
             statusHolder = RicohGr2StatusHolder(notifier)

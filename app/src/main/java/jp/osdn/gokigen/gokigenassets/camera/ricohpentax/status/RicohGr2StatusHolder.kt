@@ -9,7 +9,7 @@ import java.util.*
  *
  *
  */
-internal class RicohGr2StatusHolder(private val notifier: ICameraStatusUpdateNotify)
+class RicohGr2StatusHolder(private val notifier: ICameraStatusUpdateNotify?)
 {
     private var latestResultObject: JSONObject? = null
     private var focused = false
@@ -53,8 +53,12 @@ internal class RicohGr2StatusHolder(private val notifier: ICameraStatusUpdateNot
         return ""
     }
 
-    private fun getStatusString(obj: JSONObject, name: String): String {
+    private fun getStatusString(obj: JSONObject?, name: String): String {
         try {
+            if (obj == null)
+            {
+                return ""
+            }
             return obj.getString(name)
         } catch (e: Exception) {
             //e.printStackTrace();
@@ -62,8 +66,12 @@ internal class RicohGr2StatusHolder(private val notifier: ICameraStatusUpdateNot
         return ""
     }
 
-    private fun getBooleanStatus(obj: JSONObject, name: String): Boolean {
+    private fun getBooleanStatus(obj: JSONObject?, name: String): Boolean {
         try {
+            if (obj == null)
+            {
+                return false
+            }
             return obj.getBoolean(name)
         } catch (e: Exception) {
             //e.printStackTrace();
@@ -82,49 +90,49 @@ internal class RicohGr2StatusHolder(private val notifier: ICameraStatusUpdateNot
         }
         try {
             latestResultObject = JSONObject(replyString)
-            val result = getStatusString(latestResultObject!!, "errMsg")
-            val av = getStatusString(latestResultObject!!, "av")
-            val tv = getStatusString(latestResultObject!!, "tv")
-            val xv = getStatusString(latestResultObject!!, "xv")
-            val exposureMode = getStatusString(latestResultObject!!, "exposureMode")
-            val meteringMode = getStatusString(latestResultObject!!, "meteringMode")
-            val wbMode = getStatusString(latestResultObject!!, "WBMode")
-            val battery = getStatusString(latestResultObject!!, "battery")
-            val focus = getBooleanStatus(latestResultObject!!, "focused")
-            val focusLock = getBooleanStatus(latestResultObject!!, "focusLocked")
+            val result = getStatusString(latestResultObject, "errMsg")
+            val av = getStatusString(latestResultObject, "av")
+            val tv = getStatusString(latestResultObject, "tv")
+            val xv = getStatusString(latestResultObject, "xv")
+            val exposureMode = getStatusString(latestResultObject, "exposureMode")
+            val meteringMode = getStatusString(latestResultObject, "meteringMode")
+            val wbMode = getStatusString(latestResultObject, "WBMode")
+            val battery = getStatusString(latestResultObject, "battery")
+            val focus = getBooleanStatus(latestResultObject, "focused")
+            val focusLock = getBooleanStatus(latestResultObject, "focusLocked")
             if (result.contains("OK")) {
                 if (avStatus != av) {
                     avStatus = av
-                    notifier.updatedAperture(avStatus)
+                    notifier?.updatedAperture(avStatus)
                 }
                 if (tvStatus != tv) {
                     tvStatus = tv
-                    notifier.updatedShutterSpeed(tvStatus)
+                    notifier?.updatedShutterSpeed(tvStatus)
                 }
                 if (xvStatus != xv) {
                     xvStatus = xv
-                    notifier.updatedExposureCompensation(xvStatus)
+                    notifier?.updatedExposureCompensation(xvStatus)
                 }
                 if (exposureModeStatus != exposureMode) {
                     exposureModeStatus = exposureMode
-                    notifier.updatedTakeMode(exposureModeStatus)
+                    notifier?.updatedTakeMode(exposureModeStatus)
                 }
                 if (meteringModeStatus != meteringMode) {
                     meteringModeStatus = meteringMode
-                    notifier.updatedMeteringMode(meteringModeStatus)
+                    notifier?.updatedMeteringMode(meteringModeStatus)
                 }
                 if (wbModeStatus != wbMode) {
                     wbModeStatus = wbMode
-                    notifier.updatedWBMode(wbModeStatus)
+                    notifier?.updatedWBMode(wbModeStatus)
                 }
                 if (batteryStatus != battery) {
                     batteryStatus = battery
-                    notifier.updateRemainBattery(batteryStatus.toInt())
+                    notifier?.updateRemainBattery(batteryStatus.toInt())
                 }
                 if (focus != focused || focusLock != focusLocked) {
                     focused = focus
                     focusLocked = focusLock
-                    notifier.updateFocusedStatus(focused, focusLocked)
+                    notifier?.updateFocusedStatus(focused, focusLocked)
                 }
             }
             System.gc()

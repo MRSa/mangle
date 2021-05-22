@@ -6,6 +6,7 @@ interface IChangeScene
     fun changeToLiveView()
     fun connectToCamera()
     fun changeToConfiguration()
+    fun selectConnectionMethod()
     //fun changeToDebugInformation()
     //fun exitApplication()
 }

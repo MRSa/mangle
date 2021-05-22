@@ -38,6 +38,12 @@
             android:key="capture_both_camera_and_live_view"
             android:title="@string/pref_capture_both_camera_and_live_view"
             android:summary="@string/pref_summary_capture_both_live_view"/>
+
+        <PreferenceScreen
+            android:key="connection_method"
+            android:title="@string/pref_connection_method"
+            android:summary="@string/pref_summary_connection_method" />
+
 <!--
         <SwitchPreferenceCompat
             android:key="capture_only_live_view"

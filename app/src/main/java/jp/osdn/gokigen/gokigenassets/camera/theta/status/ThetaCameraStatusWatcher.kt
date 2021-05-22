@@ -25,7 +25,7 @@ class ThetaCameraStatusWatcher(private val sessionIdProvider: IThetaSessionIdPro
 
     private var showInformation: IMessageDrawer? = null
 
-    override fun startStatusWatch(indicator : IMessageDrawer?)
+    override fun startStatusWatch(indicator : IMessageDrawer?, notifier: ICameraStatusUpdateNotify?)
     {
         if (whileFetching)
         {
@@ -110,11 +110,6 @@ class ThetaCameraStatusWatcher(private val sessionIdProvider: IThetaSessionIdPro
         {
             e.printStackTrace()
         }
-    }
-
-    override fun startStatusWatch(notifier: ICameraStatusUpdateNotify)
-    {
-        startStatusWatch(null)
     }
 
     private fun checkStatus0(response: String)

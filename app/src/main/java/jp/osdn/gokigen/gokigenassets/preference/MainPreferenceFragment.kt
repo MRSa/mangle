@@ -9,6 +9,7 @@ import androidx.preference.PreferenceManager
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_LAYOUT_PREFERENCE
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_LABEL_DEBUG_INFO
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_LABEL_EXIT_APPLICATION
+import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_LABEL_SELECT_CAMERA_CONNECTION_METHOD
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_LABEL_WIFI_SETTINGS
 
 class MainPreferenceFragment : PreferenceFragmentCompat()
@@ -41,6 +42,7 @@ class MainPreferenceFragment : PreferenceFragmentCompat()
         prepareClickListener(ID_PREFERENCE_LABEL_EXIT_APPLICATION)
         prepareClickListener(ID_PREFERENCE_LABEL_WIFI_SETTINGS)
         prepareClickListener(ID_PREFERENCE_LABEL_DEBUG_INFO)
+        prepareClickListener(ID_PREFERENCE_LABEL_SELECT_CAMERA_CONNECTION_METHOD)
     }
 
     private fun prepareChangeListener(context: Context)

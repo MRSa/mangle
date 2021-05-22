@@ -51,6 +51,21 @@ interface IPreferencePropertyAccessor
         const val GR2_LCD_SLEEP = "gr2_lcd_sleep"
         const val USE_GR2_SPECIAL_COMMAND = "use_gr2_command"
 
+        // --- CONNECTION METHOD
+        const val PREFERENCE_CAMERA_METHOD_NONE = "none"
+        const val PREFERENCE_CONNECTION_METHOD = "connection_method"
+        const val PREFERENCE_CAMERA_METHOD_1 = "camera_method1"
+        const val PREFERENCE_CAMERA_METHOD_1_DEFAULT_VALUE = "camerax"
+
+        const val PREFERENCE_CAMERA_METHOD_2 = "camera_method2"
+        const val PREFERENCE_CAMERA_METHOD_2_DEFAULT_VALUE = "camerax"
+
+        const val PREFERENCE_CAMERA_METHOD_3 = "camera_method3"
+        const val PREFERENCE_CAMERA_METHOD_3_DEFAULT_VALUE = "camerax"
+
+        const val PREFERENCE_CAMERA_METHOD_4 = "camera_method4"
+        const val PREFERENCE_CAMERA_METHOD_4_DEFAULT_VALUE = "camerax"
+
     }
 
 }

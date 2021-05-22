@@ -275,7 +275,7 @@ class ThetaCameraControl(private val context: AppCompatActivity, private val vib
         {
             if (!isStatusWatch)
             {
-                statusWatcher.startStatusWatch(indicator)
+                statusWatcher.startStatusWatch(indicator, null)
                 isStatusWatch = true
             }
             liveViewControl.setSessionIdProvider(sessionIdHolder)

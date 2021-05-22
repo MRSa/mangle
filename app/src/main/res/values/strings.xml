@@ -47,6 +47,13 @@
     <string name="pref_number_of_cache_pictures">Max number of cache pictures</string>
     <string name="pref_summary_number_of_cache_pictures">Set number of cache pictures. (Default:500, enables after restart.)</string>
 
+    <string name="pref_connection_method">Camera Connection Method</string>
+    <string name="pref_summary_connection_method"> </string>
+
+    <string name="label_connection_method1">CAMERA 1</string>
+    <string name="label_connection_method2">CAMERA 2</string>
+    <string name="label_connection_method3">CAMERA 3</string>
+    <string name="label_connection_method4">CAMERA 4</string>
 
     <string name="connect_start">start</string>
     <string name="connect_check_wifi">check WIFI</string>

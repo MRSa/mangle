@@ -14,6 +14,7 @@ import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.L
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.LABEL_WIFI_SETTINGS
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.NUMBER_OF_CACHE_PICTURES
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.NUMBER_OF_CACHE_PICTURES_DEFAULT_VALUE
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CONNECTION_METHOD
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_SAVE_LOCAL_LOCATION
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_SAVE_LOCAL_LOCATION_DEFAULT_VALUE
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.USE_GR2_SPECIAL_COMMAND
@@ -51,6 +52,10 @@ interface IApplicationConstantConvert
         const val ID_VIEW_FINDER_3 = R.id.liveViewFinder3
         const val ID_VIEW_UPPER_AREA = R.id.liveview_upper_area
         const val ID_VIEW_LOWER_AREA = R.id.liveview_lower_area
+        const val ID_VIEW_AREA_0 = R.id.panelLayout0
+        const val ID_VIEW_AREA_1 = R.id.panelLayout1
+        const val ID_VIEW_AREA_2 = R.id.panelLayout2
+        const val ID_VIEW_AREA_3 = R.id.panelLayout3
 
         const val ID_CACHE_SEEKBAR_0 = R.id.liveview_cache_seekbar0
         const val ID_CACHE_SEEKBAR_1 = R.id.liveview_cache_seekbar1
@@ -92,6 +97,8 @@ interface IApplicationConstantConvert
 
         const val ID_PREFERENCE_RICOH_GR2_LCD_SLEEP = GR2_LCD_SLEEP
         const val ID_PREFERENCE_USE_GR2_SPECIAL_COMMAND = USE_GR2_SPECIAL_COMMAND
+
+        const val ID_PREFERENCE_LABEL_SELECT_CAMERA_CONNECTION_METHOD = PREFERENCE_CONNECTION_METHOD
 
     }
 
