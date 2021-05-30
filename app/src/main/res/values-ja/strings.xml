@@ -55,6 +55,60 @@
     <string name="label_connection_method3">カメラ 3</string>
     <string name="label_connection_method4">カメラ 4</string>
 
+    <string name="pref_connection_method1">接続タイプ</string>
+    <string name="pref_connection_method2">接続タイプ</string>
+    <string name="pref_connection_method3">接続タイプ</string>
+    <string name="pref_connection_method4">接続タイプ</string>
+
+    <string name="pref_connection_sequence1">接続シーケンス</string>
+    <string name="pref_connection_sequence2">接続シーケンス</string>
+    <string name="pref_connection_sequence3">接続シーケンス</string>
+    <string name="pref_connection_sequence4">接続シーケンス</string>
+
+    <string name="pref_camera_option11">オプション1</string>
+    <string name="pref_summary_camera_option11"> </string>
+    <string name="pref_camera_option21">オプション2</string>
+    <string name="pref_summary_camera_option21"> </string>
+    <string name="pref_camera_option31">オプション3</string>
+    <string name="pref_summary_camera_option31"> </string>
+    <string name="pref_camera_option41">オプション4</string>
+    <string name="pref_summary_camera_option41"> </string>
+    <string name="pref_camera_option51">オプション5</string>
+    <string name="pref_summary_camera_option51"> </string>
+
+    <string name="pref_camera_option12">オプション1</string>
+    <string name="pref_summary_camera_option12"> </string>
+    <string name="pref_camera_option22">オプション2</string>
+    <string name="pref_summary_camera_option22"> </string>
+    <string name="pref_camera_option32">オプション3</string>
+    <string name="pref_summary_camera_option32"> </string>
+    <string name="pref_camera_option42">オプション4</string>
+    <string name="pref_summary_camera_option42"> </string>
+    <string name="pref_camera_option52">オプション5</string>
+    <string name="pref_summary_camera_option52"> </string>
+
+    <string name="pref_camera_option13">オプション1</string>
+    <string name="pref_summary_camera_option13"> </string>
+    <string name="pref_camera_option23">オプション2</string>
+    <string name="pref_summary_camera_option23"> </string>
+    <string name="pref_camera_option33">オプション3</string>
+    <string name="pref_summary_camera_option33"> </string>
+    <string name="pref_camera_option43">オプション4</string>
+    <string name="pref_summary_camera_option43"> </string>
+    <string name="pref_camera_option53">オプション5</string>
+    <string name="pref_summary_camera_option53"> </string>
+
+    <string name="pref_camera_option14">オプション1</string>
+    <string name="pref_summary_camera_option14"> </string>
+    <string name="pref_camera_option24">オプション2</string>
+    <string name="pref_summary_camera_option24"> </string>
+    <string name="pref_camera_option34">オプション3</string>
+    <string name="pref_summary_camera_option34"> </string>
+    <string name="pref_camera_option44">オプション4</string>
+    <string name="pref_summary_camera_option44"> </string>
+    <string name="pref_camera_option54">オプション5</string>
+    <string name="pref_summary_camera_option54"> </string>
+
     <string name="connect_start">開始</string>
     <string name="connect_check_wifi">WIFI確認中</string>
     <string name="connect_connect">接続</string>

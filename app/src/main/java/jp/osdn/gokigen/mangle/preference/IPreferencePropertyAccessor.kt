@@ -54,18 +54,70 @@ interface IPreferencePropertyAccessor
         // --- CONNECTION METHOD
         const val PREFERENCE_CAMERA_METHOD_NONE = "none"
         const val PREFERENCE_CONNECTION_METHOD = "connection_method"
+
+        // --- CAMERA 1  PREFERENCES
         const val PREFERENCE_CAMERA_METHOD_1 = "camera_method1"
         const val PREFERENCE_CAMERA_METHOD_1_DEFAULT_VALUE = "camerax"
+        const val PREFERENCE_CAMERA_SEQUENCE_1 = "camera_sequence1"
+        const val PREFERENCE_CAMERA_SEQUENCE_1_DEFAULT_VALUE = "0"
+        const val PREFERENCE_CAMERA_OPTION1_1 = "camera_option11"
+        const val PREFERENCE_CAMERA_OPTION1_1_DEFAULT_VALUE = ""
+        const val PREFERENCE_CAMERA_OPTION2_1 = "camera_option21"
+        const val PREFERENCE_CAMERA_OPTION2_1_DEFAULT_VALUE = ""
+        const val PREFERENCE_CAMERA_OPTION3_1 = "camera_option31"
+        const val PREFERENCE_CAMERA_OPTION3_1_DEFAULT_VALUE = ""
+        const val PREFERENCE_CAMERA_OPTION4_1 = "camera_option41"
+        const val PREFERENCE_CAMERA_OPTION4_1_DEFAULT_VALUE = ""
+        const val PREFERENCE_CAMERA_OPTION5_1 = "camera_option51"
+        const val PREFERENCE_CAMERA_OPTION5_1_DEFAULT_VALUE = ""
 
+        // --- CAMERA 2  PREFERENCES
         const val PREFERENCE_CAMERA_METHOD_2 = "camera_method2"
         const val PREFERENCE_CAMERA_METHOD_2_DEFAULT_VALUE = "camerax"
+        const val PREFERENCE_CAMERA_SEQUENCE_2 = "camera_sequence2"
+        const val PREFERENCE_CAMERA_SEQUENCE_2_DEFAULT_VALUE = "0"
+        const val PREFERENCE_CAMERA_OPTION1_2 = "camera_option12"
+        const val PREFERENCE_CAMERA_OPTION1_2_DEFAULT_VALUE = ""
+        const val PREFERENCE_CAMERA_OPTION2_2 = "camera_option22"
+        const val PREFERENCE_CAMERA_OPTION2_2_DEFAULT_VALUE = ""
+        const val PREFERENCE_CAMERA_OPTION3_2 = "camera_option32"
+        const val PREFERENCE_CAMERA_OPTION3_2_DEFAULT_VALUE = ""
+        const val PREFERENCE_CAMERA_OPTION4_2 = "camera_option42"
+        const val PREFERENCE_CAMERA_OPTION4_2_DEFAULT_VALUE = ""
+        const val PREFERENCE_CAMERA_OPTION5_2 = "camera_option52"
+        const val PREFERENCE_CAMERA_OPTION5_2_DEFAULT_VALUE = ""
 
+        // --- CAMERA 3  PREFERENCES
         const val PREFERENCE_CAMERA_METHOD_3 = "camera_method3"
         const val PREFERENCE_CAMERA_METHOD_3_DEFAULT_VALUE = "camerax"
+        const val PREFERENCE_CAMERA_SEQUENCE_3 = "camera_sequence3"
+        const val PREFERENCE_CAMERA_SEQUENCE_3_DEFAULT_VALUE = "0"
+        const val PREFERENCE_CAMERA_OPTION1_3 = "camera_option13"
+        const val PREFERENCE_CAMERA_OPTION1_3_DEFAULT_VALUE = ""
+        const val PREFERENCE_CAMERA_OPTION2_3 = "camera_option23"
+        const val PREFERENCE_CAMERA_OPTION2_3_DEFAULT_VALUE = ""
+        const val PREFERENCE_CAMERA_OPTION3_3 = "camera_option33"
+        const val PREFERENCE_CAMERA_OPTION3_3_DEFAULT_VALUE = ""
+        const val PREFERENCE_CAMERA_OPTION4_3 = "camera_option43"
+        const val PREFERENCE_CAMERA_OPTION4_3_DEFAULT_VALUE = ""
+        const val PREFERENCE_CAMERA_OPTION5_3 = "camera_option53"
+        const val PREFERENCE_CAMERA_OPTION5_3_DEFAULT_VALUE = ""
 
+        // --- CAMERA 4  PREFERENCES
         const val PREFERENCE_CAMERA_METHOD_4 = "camera_method4"
         const val PREFERENCE_CAMERA_METHOD_4_DEFAULT_VALUE = "camerax"
-
+        const val PREFERENCE_CAMERA_SEQUENCE_4 = "camera_sequence4"
+        const val PREFERENCE_CAMERA_SEQUENCE_4_DEFAULT_VALUE = "0"
+        const val PREFERENCE_CAMERA_OPTION1_4 = "camera_option14"
+        const val PREFERENCE_CAMERA_OPTION1_4_DEFAULT_VALUE = ""
+        const val PREFERENCE_CAMERA_OPTION2_4 = "camera_option24"
+        const val PREFERENCE_CAMERA_OPTION2_4_DEFAULT_VALUE = ""
+        const val PREFERENCE_CAMERA_OPTION3_4 = "camera_option34"
+        const val PREFERENCE_CAMERA_OPTION3_4_DEFAULT_VALUE = ""
+        const val PREFERENCE_CAMERA_OPTION4_4 = "camera_option44"
+        const val PREFERENCE_CAMERA_OPTION4_4_DEFAULT_VALUE = ""
+        const val PREFERENCE_CAMERA_OPTION5_4 = "camera_option54"
+        const val PREFERENCE_CAMERA_OPTION5_4_DEFAULT_VALUE = ""
     }
 
 }

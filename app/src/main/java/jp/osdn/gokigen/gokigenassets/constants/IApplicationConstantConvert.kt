@@ -14,6 +14,34 @@ import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.L
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.LABEL_WIFI_SETTINGS
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.NUMBER_OF_CACHE_PICTURES
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.NUMBER_OF_CACHE_PICTURES_DEFAULT_VALUE
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_METHOD_1
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_METHOD_2
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_METHOD_3
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_METHOD_4
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION1_1
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION1_2
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION1_3
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION1_4
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION2_1
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION2_2
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION2_3
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION2_4
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION3_1
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION3_2
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION3_3
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION3_4
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION4_1
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION4_2
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION4_3
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION4_4
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION5_1
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION5_2
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION5_3
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION5_4
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_SEQUENCE_1
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_SEQUENCE_2
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_SEQUENCE_3
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_SEQUENCE_4
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CONNECTION_METHOD
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_SAVE_LOCAL_LOCATION
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_SAVE_LOCAL_LOCATION_DEFAULT_VALUE
@@ -99,6 +127,38 @@ interface IApplicationConstantConvert
         const val ID_PREFERENCE_USE_GR2_SPECIAL_COMMAND = USE_GR2_SPECIAL_COMMAND
 
         const val ID_PREFERENCE_LABEL_SELECT_CAMERA_CONNECTION_METHOD = PREFERENCE_CONNECTION_METHOD
+
+        const val ID_PREFERENCE_CAMERA_METHOD_1 = PREFERENCE_CAMERA_METHOD_1
+        const val ID_PREFERENCE_CAMERA_SEQUENCE_1 = PREFERENCE_CAMERA_SEQUENCE_1
+        const val ID_PREFERENCE_CAMERA_OPTION1_1 = PREFERENCE_CAMERA_OPTION1_1
+        const val ID_PREFERENCE_CAMERA_OPTION2_1 = PREFERENCE_CAMERA_OPTION2_1
+        const val ID_PREFERENCE_CAMERA_OPTION3_1 = PREFERENCE_CAMERA_OPTION3_1
+        const val ID_PREFERENCE_CAMERA_OPTION4_1 = PREFERENCE_CAMERA_OPTION4_1
+        const val ID_PREFERENCE_CAMERA_OPTION5_1 = PREFERENCE_CAMERA_OPTION5_1
+
+        const val ID_PREFERENCE_CAMERA_METHOD_2 = PREFERENCE_CAMERA_METHOD_2
+        const val ID_PREFERENCE_CAMERA_SEQUENCE_2 = PREFERENCE_CAMERA_SEQUENCE_2
+        const val ID_PREFERENCE_CAMERA_OPTION1_2 = PREFERENCE_CAMERA_OPTION1_2
+        const val ID_PREFERENCE_CAMERA_OPTION2_2 = PREFERENCE_CAMERA_OPTION2_2
+        const val ID_PREFERENCE_CAMERA_OPTION3_2 = PREFERENCE_CAMERA_OPTION3_2
+        const val ID_PREFERENCE_CAMERA_OPTION4_2 = PREFERENCE_CAMERA_OPTION4_2
+        const val ID_PREFERENCE_CAMERA_OPTION5_2 = PREFERENCE_CAMERA_OPTION5_2
+
+        const val ID_PREFERENCE_CAMERA_METHOD_3 = PREFERENCE_CAMERA_METHOD_3
+        const val ID_PREFERENCE_CAMERA_SEQUENCE_3 = PREFERENCE_CAMERA_SEQUENCE_3
+        const val ID_PREFERENCE_CAMERA_OPTION1_3 = PREFERENCE_CAMERA_OPTION1_3
+        const val ID_PREFERENCE_CAMERA_OPTION2_3 = PREFERENCE_CAMERA_OPTION2_3
+        const val ID_PREFERENCE_CAMERA_OPTION3_3 = PREFERENCE_CAMERA_OPTION3_3
+        const val ID_PREFERENCE_CAMERA_OPTION4_3 = PREFERENCE_CAMERA_OPTION4_3
+        const val ID_PREFERENCE_CAMERA_OPTION5_3 = PREFERENCE_CAMERA_OPTION5_3
+
+        const val ID_PREFERENCE_CAMERA_METHOD_4 = PREFERENCE_CAMERA_METHOD_4
+        const val ID_PREFERENCE_CAMERA_SEQUENCE_4 = PREFERENCE_CAMERA_SEQUENCE_4
+        const val ID_PREFERENCE_CAMERA_OPTION1_4 = PREFERENCE_CAMERA_OPTION1_4
+        const val ID_PREFERENCE_CAMERA_OPTION2_4 = PREFERENCE_CAMERA_OPTION2_4
+        const val ID_PREFERENCE_CAMERA_OPTION3_4 = PREFERENCE_CAMERA_OPTION3_4
+        const val ID_PREFERENCE_CAMERA_OPTION4_4 = PREFERENCE_CAMERA_OPTION4_4
+        const val ID_PREFERENCE_CAMERA_OPTION5_4 = PREFERENCE_CAMERA_OPTION5_4
 
     }
 

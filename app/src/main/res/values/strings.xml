@@ -55,6 +55,60 @@
     <string name="label_connection_method3">CAMERA 3</string>
     <string name="label_connection_method4">CAMERA 4</string>
 
+    <string name="pref_connection_method1">CONNECTION METHOD</string>
+    <string name="pref_connection_method2">CONNECTION METHOD</string>
+    <string name="pref_connection_method3">CONNECTION METHOD</string>
+    <string name="pref_connection_method4">CONNECTION METHOD</string>
+
+    <string name="pref_connection_sequence1">CONNECTION SEQUENCE</string>
+    <string name="pref_connection_sequence2">CONNECTION SEQUENCE</string>
+    <string name="pref_connection_sequence3">CONNECTION SEQUENCE</string>
+    <string name="pref_connection_sequence4">CONNECTION SEQUENCE</string>
+
+    <string name="pref_camera_option11">OPTION1</string>
+    <string name="pref_summary_camera_option11"> </string>
+    <string name="pref_camera_option21">OPTION2</string>
+    <string name="pref_summary_camera_option21"> </string>
+    <string name="pref_camera_option31">OPTION3</string>
+    <string name="pref_summary_camera_option31"> </string>
+    <string name="pref_camera_option41">OPTION4</string>
+    <string name="pref_summary_camera_option41"> </string>
+    <string name="pref_camera_option51">OPTION5</string>
+    <string name="pref_summary_camera_option51"> </string>
+
+    <string name="pref_camera_option12">OPTION1</string>
+    <string name="pref_summary_camera_option12"> </string>
+    <string name="pref_camera_option22">OPTION2</string>
+    <string name="pref_summary_camera_option22"> </string>
+    <string name="pref_camera_option32">OPTION3</string>
+    <string name="pref_summary_camera_option32"> </string>
+    <string name="pref_camera_option42">OPTION4</string>
+    <string name="pref_summary_camera_option42"> </string>
+    <string name="pref_camera_option52">OPTION5</string>
+    <string name="pref_summary_camera_option52"> </string>
+
+    <string name="pref_camera_option13">OPTION1</string>
+    <string name="pref_summary_camera_option13"> </string>
+    <string name="pref_camera_option23">OPTION2</string>
+    <string name="pref_summary_camera_option23"> </string>
+    <string name="pref_camera_option33">OPTION3</string>
+    <string name="pref_summary_camera_option33"> </string>
+    <string name="pref_camera_option43">OPTION4</string>
+    <string name="pref_summary_camera_option43"> </string>
+    <string name="pref_camera_option53">OPTION5</string>
+    <string name="pref_summary_camera_option53"> </string>
+
+    <string name="pref_camera_option14">OPTION1</string>
+    <string name="pref_summary_camera_option14"> </string>
+    <string name="pref_camera_option24">OPTION2</string>
+    <string name="pref_summary_camera_option24"> </string>
+    <string name="pref_camera_option34">OPTION3</string>
+    <string name="pref_summary_camera_option34"> </string>
+    <string name="pref_camera_option44">OPTION4</string>
+    <string name="pref_summary_camera_option44"> </string>
+    <string name="pref_camera_option54">OPTION5</string>
+    <string name="pref_summary_camera_option54"> </string>
+
     <string name="connect_start">start</string>
     <string name="connect_check_wifi">check WIFI</string>
     <string name="connect_connect">connecting</string>

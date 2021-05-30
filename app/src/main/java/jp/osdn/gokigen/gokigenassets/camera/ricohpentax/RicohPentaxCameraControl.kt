@@ -84,7 +84,7 @@ class RicohPentaxCameraControl(private val context: AppCompatActivity, private v
 
     override fun getConnectionMethod(): String
     {
-        return ("PENTAX")
+        return ("RICOH")
     }
 
     override fun initialize()

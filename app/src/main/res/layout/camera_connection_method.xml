@@ -34,7 +34,6 @@
             android:padding="6dp"
             android:textSize="9pt"
             />
-
     </LinearLayout>
 
     <View
