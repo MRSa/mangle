@@ -9,6 +9,7 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
+import jp.osdn.gokigen.gokigenassets.camera.ICameraPreferenceProvider
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_CAMERA_X_PREVIEW_LAYOUT
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveView
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveViewRefresher
@@ -19,7 +20,7 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraControl
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class CameraControl(private val activity : AppCompatActivity) : ICameraControl
+class CameraControl(private val activity : AppCompatActivity, private val preference: ICameraPreferenceProvider) : ICameraControl
 {
     private lateinit var cameraExecutor: ExecutorService
     private lateinit var liveViewListener : CameraLiveViewListenerImpl

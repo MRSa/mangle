@@ -6,11 +6,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
-import jp.osdn.gokigen.gokigenassets.camera.DummyCameraControl
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
-import jp.osdn.gokigen.gokigenassets.camera.theta.ThetaCameraControl
 import jp.osdn.gokigen.gokigenassets.liveview.LiveImageViewFragment
-import jp.osdn.gokigen.gokigenassets.camera.camerax.operation.CameraControl
 import jp.osdn.gokigen.gokigenassets.preference.MainPreferenceFragment
 import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
 import jp.osdn.gokigen.gokigenassets.camera.camerax.preview.PreviewFragment
@@ -31,8 +28,9 @@ import jp.osdn.gokigen.mangle.preference.PreferenceValueInitializer
 
 class SceneChanger(private val activity: AppCompatActivity, private val informationNotify: IInformationReceiver, vibrator : IVibrator, statusReceiver : ICameraStatusReceiver) : IChangeScene, IChangeSceneBasic
 {
-    private var cameraXisCreated = false
-    private lateinit var cameraControl: ICameraControl
+    private val cameraProvider = CameraProvider(activity, informationNotify, vibrator, statusReceiver)
+
+    private val cameraControl0 = cameraProvider.getCameraXControl()
     private val cameraControl1: ICameraControl
     private val cameraControl2: ICameraControl
     private val cameraControl3: ICameraControl
@@ -48,10 +46,10 @@ class SceneChanger(private val activity: AppCompatActivity, private val informat
     {
         Log.v(TAG, " SceneChanger is created. ")
 
-        cameraControl1 = DummyCameraControl() //decideCameraControl(PREFERENCE_CAMERA_METHOD_1, activity, vibrator, statusReceiver)
-        cameraControl2 = decideCameraControl(PREFERENCE_CAMERA_METHOD_2, activity, vibrator, statusReceiver)
-        cameraControl3 = decideCameraControl(PREFERENCE_CAMERA_METHOD_3, activity, vibrator, statusReceiver)
-        cameraControl4 = DummyCameraControl() //decideCameraControl(PREFERENCE_CAMERA_METHOD_4, activity, vibrator, statusReceiver)
+        cameraControl1 = cameraProvider.decideCameraControl(PREFERENCE_CAMERA_METHOD_1)
+        cameraControl2 = cameraProvider.decideCameraControl(PREFERENCE_CAMERA_METHOD_2)
+        cameraControl3 = cameraProvider.decideCameraControl(PREFERENCE_CAMERA_METHOD_3)
+        cameraControl4 = cameraProvider.decideCameraControl(PREFERENCE_CAMERA_METHOD_4)
 
         cameraControl1.initialize()
         cameraControl2.initialize()
@@ -59,39 +57,14 @@ class SceneChanger(private val activity: AppCompatActivity, private val informat
         cameraControl4.initialize()
     }
 
-    private fun decideCameraControl(preferenceKey : String, activity: AppCompatActivity, vibrator : IVibrator, statusReceiver : ICameraStatusReceiver) : ICameraControl
-    {
-        try
-        {
-            if ((cameraXisCreated)&&(::cameraControl.isInitialized))
-            {
-                return (cameraControl)
-            }
-            cameraControl = CameraControl(activity)
-            cameraXisCreated = true
-            return (cameraControl)
-        }
-        catch (e : Exception)
-        {
-            e.printStackTrace()
-        }
-        return (DummyCameraControl())
-    }
-
-
     private fun initializeFragmentForPreview()
     {
-        if (!::cameraControl.isInitialized)
-        {
-            cameraControl = CameraControl(activity)
-            cameraXisCreated = true
-        }
         if (!::previewFragment.isInitialized)
         {
-            previewFragment = PreviewFragment.newInstance(cameraControl)
+            previewFragment = PreviewFragment.newInstance(cameraControl0)
         }
         setDefaultFragment(previewFragment)
-        cameraControl.startCamera()
+        cameraControl0.startCamera()
 
         val msg = activity.getString(R.string.app_name) + " : " + " camerax"
         informationNotify.updateMessage(msg, isBold = false, isColor = true, color = Color.LTGRAY)

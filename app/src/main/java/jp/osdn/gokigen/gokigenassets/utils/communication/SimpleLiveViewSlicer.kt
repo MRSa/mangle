@@ -89,7 +89,12 @@ class SimpleLiveViewSlicer
             mHttpConn?.connect()
             if (mHttpConn?.responseCode == HttpURLConnection.HTTP_OK)
             {
+                Log.v(TAG, " LIVEVIEW REQUEST ACCEPTED : ${mHttpConn?.responseCode}")
                 mInputStream = mHttpConn?.inputStream
+            }
+            else
+            {
+                Log.v(TAG, " LIVEVIEW REQUEST RESPONSE NG : ${mHttpConn?.responseCode}")
             }
         }
         catch (e: Exception)

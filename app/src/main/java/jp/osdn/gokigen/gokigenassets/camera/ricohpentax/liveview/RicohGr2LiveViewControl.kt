@@ -29,95 +29,119 @@ class RicohGr2LiveViewControl(context: Context, executeUrl : String = "http://19
         private const val FETCH_ERROR_MAX = 30
     }
 
-    override fun setUseGR2Command(useGR2cmd: Boolean, useCameraScreen: Boolean) {
-        this.useGR2command = useGR2cmd
+    override fun setUseGR2Command(useGR2Command: Boolean, useCameraScreen: Boolean)
+    {
+        this.useGR2command = useGR2Command
         this.useCameraScreen = useCameraScreen
     }
 
-/*
-    fun changeLiveViewSize(size: String?) {
-        //
-    }
-*/
-
-    override fun startLiveView() {
+    override fun startLiveView()
+    {
         val isCameraScreen = useGR2command && useCameraScreen
-        Log.v(TAG, "startLiveView()")
-        try {
+        Log.v(TAG, "startLiveView() : $isCameraScreen ($useGR2command)")
+        try
+        {
             val thread = Thread {
-                try {
-                    if (isCameraScreen) {
+                try
+                {
+                    if (isCameraScreen)
+                    {
                         start(cameraDisplayUrl)
-                    } else {
+                    }
+                    else
+                    {
                         start(liveViewUrl)
                     }
-                } catch (e: Exception) {
+                }
+                catch (e: Exception)
+                {
                     e.printStackTrace()
                 }
             }
             thread.start()
-        } catch (e: Exception) {
+        }
+        catch (e: Exception)
+        {
             e.printStackTrace()
         }
     }
 
-    override fun stopLiveView() {
+    override fun stopLiveView()
+    {
         Log.v(TAG, "stopLiveView()")
         whileFetching = false
     }
 
-    private fun start(streamUrl: String) {
-        if (whileFetching) {
+    private fun start(streamUrl: String)
+    {
+        if (whileFetching)
+        {
             Log.v(TAG, "start() already starting.")
         }
         whileFetching = true
 
-        // A thread for retrieving liveview data from server.
-        try {
+        try
+        {
             val thread = Thread {
                 Log.d(TAG, "Starting retrieving streaming data from server.")
                 var slicer: SimpleLiveViewSlicer? = null
                 var continuousNullDataReceived = 0
-                try {
-                    // Create Slicer to open the stream and parse it.
+                try
+                {
                     slicer = SimpleLiveViewSlicer()
                     slicer.open(streamUrl)
-                    while (whileFetching) {
+                    while (whileFetching)
+                    {
                         val payload: SimpleLiveViewSlicer.Payload? = slicer.nextPayloadForMotionJpeg()
-                        if (payload == null) {
-                            //Log.v(TAG, "Liveview Payload is null.");
+                        if (payload == null)
+                        {
+                            Log.v(TAG, "Liveview Payload is null.")
                             continuousNullDataReceived++
-                            if (continuousNullDataReceived > FETCH_ERROR_MAX) {
+                            if (continuousNullDataReceived > FETCH_ERROR_MAX)
+                            {
                                 Log.d(TAG, " FETCH ERROR MAX OVER ")
                                 break
                             }
                             continue
                         }
                         val jpegData = payload.getJpegData()
-                        if (jpegData != null) {
+                        if (jpegData != null)
+                        {
                             liveViewListener.onUpdateLiveView(jpegData, null)
+                        }
+                        else
+                        {
+                            Log.v(TAG, " jpegData is NULL...")
                         }
                         continuousNullDataReceived = 0
                     }
-                } catch (e: Exception) {
+                }
+                catch (e: Exception)
+                {
                     e.printStackTrace()
-                } finally {
-                    try {
+                }
+                finally
+                {
+                    try
+                    {
                         slicer?.close()
-                    } catch (e: Exception) {
+                    }
+                    catch (e: Exception)
+                    {
                         e.printStackTrace()
                     }
-                    //mJpegQueue.clear();
-                    if (!whileFetching && continuousNullDataReceived > FETCH_ERROR_MAX) {
+                    if (!whileFetching && continuousNullDataReceived > FETCH_ERROR_MAX)
+                    {
                         // 再度ライブビューのスタートをやってみる。
                         whileFetching = false
-                        //continuousNullDataReceived = 0;
                         start(streamUrl)
                     }
                 }
             }
             thread.start()
-        } catch (e: Exception) {
+        }
+        catch (e: Exception)
+        {
             e.printStackTrace()
         }
     }

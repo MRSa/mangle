@@ -50,9 +50,6 @@ interface IPreferencePropertyAccessor
         // --- RICOH/PENTAX
         const val GR2_LCD_SLEEP = "gr2_lcd_sleep"
         const val USE_GR2_SPECIAL_COMMAND = "use_gr2_command"
-
-        // --- CONNECTION METHOD
-        const val PREFERENCE_CAMERA_METHOD_NONE = "none"
         const val PREFERENCE_CONNECTION_METHOD = "connection_method"
 
         // --- CAMERA 1  PREFERENCES

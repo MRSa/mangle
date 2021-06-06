@@ -105,6 +105,8 @@ class PreferenceValueInitializer() : IPreferenceValueInitializer
             {
                 editor.putString(IPreferencePropertyAccessor.THETA_LIVEVIEW_RESOLUTION, IPreferencePropertyAccessor.THETA_LIVEVIEW_RESOLUTION_DEFAULT_VALUE)
             }
+
+            ///// CAMERA METHOD /////
             if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_1))
             {
                 editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_1, IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_1_DEFAULT_VALUE)
@@ -121,6 +123,8 @@ class PreferenceValueInitializer() : IPreferenceValueInitializer
             {
                 editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_4, IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_4_DEFAULT_VALUE)
             }
+
+            ///// CONNECTION SEQUENCE /////
             if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_SEQUENCE_1))
             {
                 editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_SEQUENCE_1, IPreferencePropertyAccessor.PREFERENCE_CAMERA_SEQUENCE_1_DEFAULT_VALUE)
@@ -138,6 +142,7 @@ class PreferenceValueInitializer() : IPreferenceValueInitializer
                 editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_SEQUENCE_4, IPreferencePropertyAccessor.PREFERENCE_CAMERA_SEQUENCE_4_DEFAULT_VALUE)
             }
 
+            ////////// CAMERA 1 //////////
             if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION1_1))
             {
                 editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION1_1, IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION1_1_DEFAULT_VALUE)
@@ -159,6 +164,7 @@ class PreferenceValueInitializer() : IPreferenceValueInitializer
                 editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION5_1, IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION5_1_DEFAULT_VALUE)
             }
 
+            ////////// CAMERA 2 //////////
             if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION1_2))
             {
                 editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION1_2, IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION1_2_DEFAULT_VALUE)
@@ -180,6 +186,7 @@ class PreferenceValueInitializer() : IPreferenceValueInitializer
                 editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION5_2, IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION5_2_DEFAULT_VALUE)
             }
 
+            ////////// CAMERA 3 //////////
             if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION1_3))
             {
                 editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION1_3, IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION1_3_DEFAULT_VALUE)
@@ -201,6 +208,7 @@ class PreferenceValueInitializer() : IPreferenceValueInitializer
                 editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION5_3, IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION5_3_DEFAULT_VALUE)
             }
 
+            ////////// CAMERA 4 //////////
             if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION1_4))
             {
                 editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION1_4, IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION1_4_DEFAULT_VALUE)

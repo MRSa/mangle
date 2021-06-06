@@ -4,6 +4,7 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
+import jp.osdn.gokigen.gokigenassets.camera.ICameraPreferenceProvider
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnectionStatus
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ILiveViewController
@@ -30,7 +31,7 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraControl
 import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 
-class ThetaCameraControl(private val context: AppCompatActivity, private val vibrator : IVibrator, statusReceiver : ICameraStatusReceiver) : ILiveViewController,
+class ThetaCameraControl(private val context: AppCompatActivity, private val vibrator : IVibrator, private val preference: ICameraPreferenceProvider, statusReceiver : ICameraStatusReceiver) : ILiveViewController,
     ICameraControl, View.OnClickListener, ICaptureModeReceiver, ICameraShutter
 {
     private val sessionIdHolder = ThetaSessionHolder()

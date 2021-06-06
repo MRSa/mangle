@@ -5,6 +5,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.fragment.app.FragmentActivity
+import jp.osdn.gokigen.gokigenassets.camera.ICameraPreferenceProvider
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.*
 import jp.osdn.gokigen.gokigenassets.camera.theta.status.ICaptureModeReceiver
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveView
@@ -25,14 +26,14 @@ import jp.osdn.gokigen.gokigenassets.liveview.focusframe.IAutoFocusFrameDisplay
 import jp.osdn.gokigen.gokigenassets.liveview.image.CameraLiveViewListenerImpl
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 
-class RicohPentaxCameraControl(private val context: AppCompatActivity, private val vibrator : IVibrator, statusReceiver : ICameraStatusReceiver)  : ILiveViewController, ICameraControl, View.OnClickListener,
+class RicohPentaxCameraControl(private val context: AppCompatActivity, private val vibrator : IVibrator, private val preference: ICameraPreferenceProvider, statusReceiver : ICameraStatusReceiver)  : ILiveViewController, ICameraControl, View.OnClickListener,
     ICaptureModeReceiver, ICameraShutter, IDisplayInjector, IUseGR2CommandNotify
 {
 
     //private final Activity activity;
     //private final ICameraStatusReceiver provider;
     private var liveViewListener = CameraLiveViewListenerImpl(context)
-    private val gr2Connection = RicohGr2Connection(context, statusReceiver, this)
+    private val gr2Connection = RicohGr2Connection(context, statusReceiver, this, this)
     private val buttonControl = RicohGr2CameraButtonControl()
     private val statusChecker = RicohGr2StatusChecker(500)
     private val playbackControl = RicohGr2PlaybackControl(communicationTimeoutMs)
@@ -72,9 +73,15 @@ class RicohPentaxCameraControl(private val context: AppCompatActivity, private v
 
     override fun stopLiveView()
     {
+        Log.v(TAG, " stopLiveView() ")
         try
         {
             liveViewControl.stopLiveView()
+            if (isStatusWatch)
+            {
+                statusChecker.stopStatusWatch()
+                isStatusWatch = false
+            }
         }
         catch (e : Exception)
         {
@@ -176,12 +183,12 @@ class RicohPentaxCameraControl(private val context: AppCompatActivity, private v
 
     override fun changeCaptureMode(mode: String)
     {
-        TODO("Not yet implemented")
+        //TODO("Not yet implemented")
     }
 
     override fun changedCaptureMode(captureMode: String)
     {
-        TODO("Not yet implemented")
+        //TODO("Not yet implemented")
     }
 
     override fun doShutter()

@@ -49,7 +49,6 @@ class CameraLiveViewListenerImpl(private val context: Context) : IImageDataRecei
     {
         try
         {
-            //Log.v(TAG, "onUpdateLiveView()")
             insertCache(data, 0)
             isImageReceived = true
             refresh()
@@ -60,7 +59,7 @@ class CameraLiveViewListenerImpl(private val context: Context) : IImageDataRecei
         }
     }
 
-    @SuppressLint("UnsafeExperimentalUsageError")
+    @SuppressLint("UnsafeExperimentalUsageError", "UnsafeOptInUsageError")
     override fun analyze(imageProxy: ImageProxy)
     {
         try
