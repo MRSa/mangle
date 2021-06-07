@@ -18,4 +18,6 @@ interface ICameraControl
 
     fun setRefresher(refresher : ILiveViewRefresher, imageView : ILiveView)
     fun captureButtonReceiver(id : Int = 0) : View.OnClickListener
+
+    fun getDisplayInjector() : IDisplayInjector?
 }

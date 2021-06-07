@@ -12,10 +12,8 @@ import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleLiveViewSlicer
  *
  *
  */
-class RicohGr2LiveViewControl(context: Context, executeUrl : String = "http://192.168.0.1") : ILiveViewController, IUseGR2CommandNotify
+class RicohGr2LiveViewControl(private val liveViewListener: CameraLiveViewListenerImpl, context: Context, executeUrl : String = "http://192.168.0.1") : ILiveViewController, IUseGR2CommandNotify
 {
-
-    private val liveViewListener = CameraLiveViewListenerImpl(context)
     private val cameraDisplayUrl = "$executeUrl/v1/display" //  カメラの画面をコピーする場合...
     private val liveViewUrl = "$executeUrl/v1/liveview" //  何も表示しない（ライブビューモード）の場合...
     //private var cropScale = 1.0f

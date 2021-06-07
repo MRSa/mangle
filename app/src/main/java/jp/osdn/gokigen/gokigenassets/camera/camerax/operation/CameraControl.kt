@@ -17,6 +17,7 @@ import jp.osdn.gokigen.gokigenassets.liveview.image.CameraLiveViewListenerImpl
 import jp.osdn.gokigen.gokigenassets.liveview.storeimage.StoreImage
 import jp.osdn.gokigen.gokigenassets.utils.imagefile.FileControl
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraControl
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.IDisplayInjector
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -194,6 +195,11 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
             e.printStackTrace()
         }
         return (fileControl)
+    }
+
+    override fun getDisplayInjector(): IDisplayInjector?
+    {
+        return (null)
     }
 
     companion object

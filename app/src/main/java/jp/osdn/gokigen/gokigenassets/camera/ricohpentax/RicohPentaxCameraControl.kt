@@ -24,6 +24,8 @@ import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert
 import jp.osdn.gokigen.gokigenassets.liveview.IIndicatorControl
 import jp.osdn.gokigen.gokigenassets.liveview.focusframe.IAutoFocusFrameDisplay
 import jp.osdn.gokigen.gokigenassets.liveview.image.CameraLiveViewListenerImpl
+import jp.osdn.gokigen.gokigenassets.liveview.storeimage.StoreImage
+import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 
 class RicohPentaxCameraControl(private val context: AppCompatActivity, private val vibrator : IVibrator, private val preference: ICameraPreferenceProvider, statusReceiver : ICameraStatusReceiver)  : ILiveViewController, ICameraControl, View.OnClickListener,
@@ -42,13 +44,14 @@ class RicohPentaxCameraControl(private val context: AppCompatActivity, private v
 
     //private final boolean useGrCommand;
     private val pentaxCaptureAfterAf: Boolean = false
-    private val liveViewControl = RicohGr2LiveViewControl(context)
+    private val liveViewControl = RicohGr2LiveViewControl(liveViewListener, context)
     private var captureControl: RicohGr2CameraCaptureControl? = null
     private var focusControl: RicohGr2CameraFocusControl? = null
     private var useGR2Command = false
     private var useGR2CommandUpdated = false
     private var useCameraScreen = false
     private var isStatusWatch = false
+    private val storeImage = StoreImage(context, liveViewListener)
     private var cameraPositionId = 0
 
     private val zoomControl = RicohGr2CameraZoomLensControl()
@@ -168,6 +171,11 @@ class RicohPentaxCameraControl(private val context: AppCompatActivity, private v
         return (this)
     }
 
+    override fun getDisplayInjector(): IDisplayInjector
+    {
+        return (this)
+    }
+
     override fun onClick(v: View?)
     {
         if (v == null)
@@ -196,6 +204,17 @@ class RicohPentaxCameraControl(private val context: AppCompatActivity, private v
         try
         {
             Log.v(TAG, " doShutter()")
+            val isNotDriveShutter = captureImageLiveView()
+            if (isNotDriveShutter)
+            {
+                //  シャッターを駆動させない(けど、バイブレーションで通知する)
+                vibrator.vibrate(IVibrator.VibratePattern.SIMPLE_SHORT)
+                return
+            }
+            if (captureControl == null)
+            {
+                Log.v(TAG, " captureControl is NULL.")
+            }
             captureControl?.doCapture(0)
         }
         catch (e : Exception)
@@ -215,6 +234,41 @@ class RicohPentaxCameraControl(private val context: AppCompatActivity, private v
         {
             e.printStackTrace()
         }
+    }
+
+    private fun captureImageLiveView() : Boolean
+    {
+        try
+        {
+            //  preferenceから設定を取得する
+            val captureBothCamera = PreferenceAccessWrapper(context).getBoolean(
+                IApplicationConstantConvert.ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW,
+                IApplicationConstantConvert.ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW_DEFAULT_VALUE
+            )
+            val notUseShutter = PreferenceAccessWrapper(context).getBoolean(
+                IApplicationConstantConvert.ID_PREFERENCE_CAPTURE_ONLY_EXTERNAL_CAMERA,
+                IApplicationConstantConvert.ID_PREFERENCE_CAPTURE_ONLY_EXTERNAL_CAMERA_DEFAULT_VALUE
+            )
+            if ((captureBothCamera)&&(liveViewListener.isImageReceived()))
+            {
+                // ライブビュー画像を保管する場合...
+                val thread = Thread { storeImage.doStore(cameraPositionId, true) }
+                try
+                {
+                    thread.start()
+                }
+                catch (e: Exception)
+                {
+                    e.printStackTrace()
+                }
+            }
+            return (notUseShutter)
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+        return (false)
     }
 
     override fun setUseGR2Command(useGR2Command: Boolean, useCameraScreen: Boolean)

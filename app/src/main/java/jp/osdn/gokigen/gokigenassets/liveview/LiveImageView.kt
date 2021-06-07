@@ -9,6 +9,8 @@ import android.util.Log
 import android.view.View
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraControl
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.IFocusingModeNotify
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.MAX_VALUE_SEEKBAR
 import jp.osdn.gokigen.gokigenassets.liveview.focusframe.FocusFrameDrawer
 import jp.osdn.gokigen.gokigenassets.liveview.gridframe.GridFrameFactory
@@ -19,7 +21,7 @@ import jp.osdn.gokigen.gokigenassets.liveview.message.IMessageDrawer
 import jp.osdn.gokigen.gokigenassets.liveview.message.InformationDrawer
 import kotlin.math.min
 
-class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSeekBarChangeListener
+class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSeekBarChangeListener, IFocusingModeNotify
 {
     companion object
     {
@@ -33,6 +35,7 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
     private lateinit var gridFrameDrawer : IGridFrameDrawer
     private lateinit var focusFrameDrawer : FocusFrameDrawer
     private lateinit var informationDrawer : InformationDrawer
+    private lateinit var indicatorControl: IndicatorControl
 
     constructor(context: Context) : super(context)
     {
@@ -59,6 +62,12 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
         gridFrameDrawer = GridFrameFactory().getGridFrameDrawer(0)
         focusFrameDrawer = FocusFrameDrawer(context)
         informationDrawer = InformationDrawer(this)
+        indicatorControl = IndicatorControl()
+    }
+
+    fun injectDisplay(cameraControl: ICameraControl)
+    {
+        cameraControl.getDisplayInjector()?.injectDisplay(focusFrameDrawer, indicatorControl, this)
     }
 
     override fun getMessageDrawer() : IMessageDrawer
@@ -232,5 +241,10 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
     override fun onStopTrackingTouch(seekBar: SeekBar?)
     {
         Log.v(TAG, " onStopTrackingTouch() ")
+    }
+
+    override fun changedFocusingMode()
+    {
+        Log.v(TAG, " changedFocusingMode()")
     }
 }

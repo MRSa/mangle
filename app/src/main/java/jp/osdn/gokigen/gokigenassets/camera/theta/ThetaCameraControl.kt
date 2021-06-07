@@ -5,10 +5,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import jp.osdn.gokigen.gokigenassets.camera.ICameraPreferenceProvider
-import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnectionStatus
-import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
-import jp.osdn.gokigen.gokigenassets.camera.interfaces.ILiveViewController
-import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraShutter
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.*
 import jp.osdn.gokigen.gokigenassets.camera.theta.connection.ThetaCameraConnection
 import jp.osdn.gokigen.gokigenassets.camera.theta.liveview.ThetaLiveViewControl
 import jp.osdn.gokigen.gokigenassets.camera.theta.operation.ThetaMovieRecordingControl
@@ -27,7 +24,6 @@ import jp.osdn.gokigen.gokigenassets.liveview.ILiveViewRefresher
 import jp.osdn.gokigen.gokigenassets.liveview.image.CameraLiveViewListenerImpl
 import jp.osdn.gokigen.gokigenassets.liveview.message.IMessageDrawer
 import jp.osdn.gokigen.gokigenassets.liveview.storeimage.StoreImage
-import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraControl
 import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 
@@ -305,6 +301,11 @@ class ThetaCameraControl(private val context: AppCompatActivity, private val vib
     {
         cameraPositionId = id
         return (this)
+    }
+
+    override fun getDisplayInjector(): IDisplayInjector?
+    {
+        return (null)
     }
 
 }

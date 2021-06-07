@@ -89,6 +89,7 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
                 if (isCameraControl0)
                 {
                     cameraControl0.setRefresher(imageView0, imageView0)
+                    imageView0.injectDisplay(cameraControl0)
                     if (isCacheImage)
                     {
                         imageCache0.visibility = View.VISIBLE
@@ -112,6 +113,7 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
                 if (isCameraControl1)
                 {
                     cameraControl1.setRefresher(imageView1, imageView1)
+                    imageView1.injectDisplay(cameraControl1)
                     if (isCacheImage)
                     {
                         imageCache1.visibility = View.VISIBLE
@@ -135,6 +137,7 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
                 if (isCameraControl2)
                 {
                     cameraControl2.setRefresher(imageView2, imageView2)
+                    imageView2.injectDisplay(cameraControl2)
                     if (isCacheImage)
                     {
                         imageCache2.visibility = View.VISIBLE
@@ -158,6 +161,7 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
                 if (isCameraControl3)
                 {
                     cameraControl3.setRefresher(imageView3, imageView3)
+                    imageView3.injectDisplay(cameraControl3)
                     if (isCacheImage)
                     {
                         imageCache3.visibility = View.VISIBLE
