@@ -33,10 +33,12 @@ class RicohGr2AutoFocusControl(private val frameDisplayer: IAutoFocusFrameDispla
     fun lockAutoFocus(point: PointF)
     {
         Log.v(TAG, "lockAutoFocus() : [" + point.x + ", " + point.y + "]")
-        try {
+        try
+        {
             val thread = Thread {
                 val preFocusFrameRect = getPreFocusFrameRect(point)
-                try {
+                try
+                {
                     showFocusFrame(
                         preFocusFrameRect,
                         IAutoFocusFrameDisplay.FocusFrameStatus.Running,
@@ -81,21 +83,28 @@ class RicohGr2AutoFocusControl(private val frameDisplayer: IAutoFocusFrameDispla
                             1.0f
                         )
                     }
-                } catch (e: Exception) {
+                }
+                catch (e: Exception)
+                {
                     e.printStackTrace()
-                    try {
+                    try
+                    {
                         showFocusFrame(
                             preFocusFrameRect,
                             IAutoFocusFrameDisplay.FocusFrameStatus.Errored,
                             1.0f
                         )
-                    } catch (ee: Exception) {
+                    }
+                    catch (ee: Exception)
+                    {
                         ee.printStackTrace()
                     }
                 }
             }
             thread.start()
-        } catch (e: Exception) {
+        }
+        catch (e: Exception)
+        {
             e.printStackTrace()
         }
     }
@@ -106,23 +115,30 @@ class RicohGr2AutoFocusControl(private val frameDisplayer: IAutoFocusFrameDispla
      */
     fun unlockAutoFocus() {
         Log.v(TAG, "unlockAutoFocus()")
-        try {
+        try
+        {
             val thread = Thread {
-                try {
+                try
+                {
                     val result: String? = httpClient.httpPost(unlockAutoFocusUrl, "", timeoutMs)
-                    if (result == null || result.length < 1) {
+                    if (result == null || result.isEmpty())
+                    {
                         Log.v(
                             TAG,
                             "cancelTouchAFPosition() reply is null."
                         )
                     }
                     hideFocusFrame()
-                } catch (e: Exception) {
+                }
+                catch (e: Exception)
+                {
                     e.printStackTrace()
                 }
             }
             thread.start()
-        } catch (e: Exception) {
+        }
+        catch (e: Exception)
+        {
             e.printStackTrace()
         }
     }
@@ -150,7 +166,8 @@ class RicohGr2AutoFocusControl(private val frameDisplayer: IAutoFocusFrameDispla
      *
      *
      */
-    private fun getPreFocusFrameRect(point: PointF): RectF {
+    private fun getPreFocusFrameRect(point: PointF): RectF
+    {
         val imageWidth: Float = frameDisplayer.getContentSizeWidth()
         val imageHeight: Float = frameDisplayer.getContentSizeHeight()
 

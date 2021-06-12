@@ -5,23 +5,30 @@ import android.content.res.Configuration
 import android.graphics.*
 import android.os.Looper
 import android.util.AttributeSet
+import android.util.DisplayMetrics
 import android.util.Log
+import android.util.TypedValue
+import android.view.MotionEvent
 import android.view.View
+import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraControl
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.IFocusingModeNotify
+import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_DRAWABLE_BACKGROUND_IMAGE
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.MAX_VALUE_SEEKBAR
-import jp.osdn.gokigen.gokigenassets.liveview.focusframe.FocusFrameDrawer
+import jp.osdn.gokigen.gokigenassets.liveview.focusframe.IAutoFocusFrameDisplay
+import jp.osdn.gokigen.gokigenassets.liveview.focusframe.IFocusFrameDrawer
 import jp.osdn.gokigen.gokigenassets.liveview.gridframe.GridFrameFactory
 import jp.osdn.gokigen.gokigenassets.liveview.gridframe.IGridFrameDrawer
 import jp.osdn.gokigen.gokigenassets.liveview.gridframe.IShowGridFrame
 import jp.osdn.gokigen.gokigenassets.liveview.image.IImageProvider
 import jp.osdn.gokigen.gokigenassets.liveview.message.IMessageDrawer
 import jp.osdn.gokigen.gokigenassets.liveview.message.InformationDrawer
+import java.util.*
 import kotlin.math.min
 
-class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSeekBarChangeListener, IFocusingModeNotify
+class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSeekBarChangeListener, IFocusingModeNotify, IFocusFrameDrawer, IAutoFocusFrameDisplay
 {
     companion object
     {
@@ -29,13 +36,19 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
     }
 
     private var sliderPosition : Float = 0.0f
-    private var rotationDegrees : Int = 0
+    private var imageRotationDegrees : Int = 0
     private var showGrid : Boolean = false
+    private var showingFocusFrame = false
+    private val imageScaleType: ImageView.ScaleType = ImageView.ScaleType.FIT_CENTER
+    private lateinit var imageBitmap: Bitmap
+    private var focusFrameStatus: IAutoFocusFrameDisplay.FocusFrameStatus = IAutoFocusFrameDisplay.FocusFrameStatus.None
     private lateinit var imageProvider : IImageProvider
     private lateinit var gridFrameDrawer : IGridFrameDrawer
-    private lateinit var focusFrameDrawer : FocusFrameDrawer
+    //private lateinit var focusFrameDrawer : FocusFrameDrawer
     private lateinit var informationDrawer : InformationDrawer
     private lateinit var indicatorControl: IndicatorControl
+    private var focusFrameRect: RectF? = null
+    private var focusFrameHideTimer: Timer? = null
 
     constructor(context: Context) : super(context)
     {
@@ -60,14 +73,15 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
     private fun initComponent(context: Context)
     {
         gridFrameDrawer = GridFrameFactory().getGridFrameDrawer(0)
-        focusFrameDrawer = FocusFrameDrawer(context)
+        //focusFrameDrawer = FocusFrameDrawer(context)
         informationDrawer = InformationDrawer(this)
         indicatorControl = IndicatorControl()
+        imageBitmap = BitmapFactory.decodeResource(context.getResources(), ID_DRAWABLE_BACKGROUND_IMAGE)
     }
 
     fun injectDisplay(cameraControl: ICameraControl)
     {
-        cameraControl.getDisplayInjector()?.injectDisplay(focusFrameDrawer, indicatorControl, this)
+        cameraControl.getDisplayInjector()?.injectDisplay(this, indicatorControl, this)
     }
 
     override fun getMessageDrawer() : IMessageDrawer
@@ -87,7 +101,7 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
 
     override fun updateImageRotation(degrees: Int)
     {
-        this.rotationDegrees = degrees
+        this.imageRotationDegrees = degrees
         refreshCanvas()
     }
 
@@ -106,9 +120,9 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
         {
             gridFrameDrawer.drawFramingGrid(canvas, imageRectF)
         }
-        focusFrameDrawer.drawFocusFrame(canvas)
+        this.drawFocusFrame(canvas,imageRectF.width(), imageRectF.height())
         informationDrawer.drawInformationMessages(canvas, imageRectF)
-        informationDrawer.drawLevelGauge(canvas, rotationDegrees)
+        informationDrawer.drawLevelGauge(canvas, imageRotationDegrees)
     }
 
     override fun showGridFrame(isShowGrid: Boolean)
@@ -126,7 +140,7 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
         paint.strokeWidth = 1.0f
         paint.style = Paint.Style.STROKE
 
-        val imageBitmap = imageProvider.getImage(sliderPosition)
+        imageBitmap = imageProvider.getImage(sliderPosition)
 
         var addDegrees = 0
         try
@@ -141,10 +155,11 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
         {
             e.printStackTrace()
         }
-        val degrees = rotationDegrees + addDegrees
-
+        val degrees = imageRotationDegrees + addDegrees
         val viewRect = decideViewRect(canvas, imageBitmap, degrees)
-        val imageRect = Rect(0, 0, imageBitmap.width, imageBitmap.height)
+        val width : Int = imageBitmap.width
+        val height : Int = imageBitmap.height
+        val imageRect = Rect(0, 0, width, height)
 
         //Log.v(TAG, " canvas:   ${canvas.width} x ${canvas.height} (D: ${rotationDegrees}) ")
         //Log.v(TAG, " bitmap:   ${imageBitmap.width} x ${imageBitmap.height} (D: ${rotationDegrees}) ")
@@ -171,8 +186,12 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
         }
     }
 
-    private fun decideViewRect(canvas: Canvas, bitmapToShow: Bitmap, rotationDegrees: Int): RectF
+    private fun decideViewRect(canvas: Canvas, bitmapToShow: Bitmap?, rotationDegrees: Int): RectF
     {
+        if (bitmapToShow == null)
+        {
+            return (RectF(0.0f, 0.0f, 1.0f, 1.0f))
+        }
         val srcWidth: Int
         val srcHeight: Int
         if ((rotationDegrees == 0)||(rotationDegrees == 180))
@@ -247,4 +266,304 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
     {
         Log.v(TAG, " changedFocusingMode()")
     }
+
+    override fun drawFocusFrame(canvas: Canvas, imageWidth : Float, imageHeight : Float)
+    {
+
+        val focusRectOnImage: RectF = convertRectOnViewfinderIntoLiveImage(
+            focusFrameRect,
+            imageWidth,
+            imageHeight,
+            imageRotationDegrees
+        )
+        val focusRectOnView: RectF = convertRectFromImageArea(focusRectOnImage)
+        // Draw a rectangle to the canvas.
+        // Draw a rectangle to the canvas.
+        val focusFramePaint = Paint()
+        focusFramePaint.style = Paint.Style.STROKE
+        when (focusFrameStatus) {
+            IAutoFocusFrameDisplay.FocusFrameStatus.Running -> focusFramePaint.color = Color.WHITE
+            IAutoFocusFrameDisplay.FocusFrameStatus.Focused -> focusFramePaint.color = Color.GREEN
+            IAutoFocusFrameDisplay.FocusFrameStatus.Failed -> focusFramePaint.color = Color.RED
+            IAutoFocusFrameDisplay.FocusFrameStatus.Errored -> focusFramePaint.color = Color.YELLOW
+        }
+        val focusFrameStrokeWidth = 2.0f
+        val dm: DisplayMetrics = context.getResources().getDisplayMetrics()
+        val strokeWidth =
+            TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, focusFrameStrokeWidth, dm)
+        focusFramePaint.strokeWidth = strokeWidth
+        canvas.drawRect(focusRectOnView, focusFramePaint)
+    }
+
+    override fun getContentSizeWidth(): Float
+    {
+        return (imageBitmap.width).toFloat()
+    }
+
+    override fun getContentSizeHeight(): Float
+    {
+        return (imageBitmap.height).toFloat()
+    }
+
+    override fun getPointWithEvent(event: MotionEvent?): PointF? {
+        if (event == null)
+        {
+            return null
+        }
+
+        val pointOnView = PointF(event.x - getX(), event.y - getY()) // Viewの表示位置に補正
+
+        val pointOnImage: PointF = convertPointFromViewArea(pointOnView)
+        val imageWidth: Float
+        val imageHeight: Float
+        if (imageRotationDegrees == 0 || imageRotationDegrees == 180) {
+            imageWidth = imageBitmap.getWidth().toFloat()
+            imageHeight = imageBitmap.getHeight().toFloat()
+        } else {
+            imageWidth = imageBitmap.getHeight().toFloat()
+            imageHeight = imageBitmap.getWidth().toFloat()
+        }
+        return convertPointOnLiveImageIntoViewfinder(
+            pointOnImage,
+            imageWidth,
+            imageHeight,
+            imageRotationDegrees
+        )
+    }
+
+    override fun isContainsPoint(point: PointF?): Boolean
+    {
+        return point != null && RectF(0.0f, 0.0f, 1.0f, 1.0f).contains(point.x, point.y)
+    }
+
+    override fun showFocusFrame(rect : RectF?, status : IAutoFocusFrameDisplay.FocusFrameStatus, duration : Float)
+    {
+        try
+        {
+            if (focusFrameHideTimer != null) {
+                focusFrameHideTimer?.cancel()
+                focusFrameHideTimer = null
+            }
+
+            showingFocusFrame = true
+            focusFrameStatus = status
+            focusFrameRect = rect
+
+            refreshCanvas()
+
+            if (duration > 0) {
+                focusFrameHideTimer = Timer()
+                focusFrameHideTimer?.schedule(object : TimerTask() {
+                    override fun run() {
+                        hideFocusFrame()
+                    }
+                }, (duration * 1000).toLong())
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    override fun hideFocusFrame()
+    {
+        try
+        {
+            if (focusFrameHideTimer != null)
+            {
+                focusFrameHideTimer?.cancel()
+                focusFrameHideTimer = null
+            }
+            showingFocusFrame = false
+            refreshCanvas()
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+
+    private fun convertRectOnViewfinderIntoLiveImage(
+        rect: RectF?,
+        width: Float,
+        height: Float,
+        rotatedDegrees: Int
+    ): RectF
+    {
+        var top = 0.0f
+        var bottom = 1.0f
+        var left = 0.0f
+        var right = 1.0f
+        try
+        {
+            if (rect != null)
+            {
+                if (rotatedDegrees == 0 || rotatedDegrees == 180)
+                {
+                    top = rect.top * height
+                    bottom = rect.bottom * height
+                    left = rect.left * width
+                    right = rect.right * width
+                }
+                else
+                {
+                    left = rect.top * height
+                    right = rect.bottom * height
+                    top = rect.left * width
+                    bottom = rect.right * width
+                }
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+        return RectF(left, top, right, bottom)
+    }
+
+    private fun convertRectFromImageArea(rect: RectF): RectF
+    {
+        val imageTopLeft = PointF(rect.left, rect.top)
+        val imageBottomRight = PointF(rect.right, rect.bottom)
+        val viewTopLeft: PointF = convertPointFromImageArea(imageTopLeft)
+        val viewBottomRight: PointF = convertPointFromImageArea(imageBottomRight)
+        return RectF(viewTopLeft.x, viewTopLeft.y, viewBottomRight.x, viewBottomRight.y)
+    }
+
+    private fun convertPointFromImageArea(point: PointF): PointF
+    {
+        var viewPointX = point.x
+        var viewPointY = point.y
+        val imageSizeWidth: Float
+        val imageSizeHeight: Float
+        if (imageRotationDegrees == 0 || imageRotationDegrees == 180)
+        {
+            imageSizeWidth = (imageBitmap.width).toFloat()
+            imageSizeHeight = (imageBitmap.height).toFloat()
+        }
+        else
+        {
+            imageSizeWidth = imageBitmap.height.toFloat()
+            imageSizeHeight = imageBitmap.width.toFloat()
+        }
+        val viewSizeWidth: Float = this.width.toFloat()
+        val viewSizeHeight: Float = this.height.toFloat()
+        val ratioX = viewSizeWidth / imageSizeWidth
+        val ratioY = viewSizeHeight / imageSizeHeight
+        val scale: Float
+        when (imageScaleType)
+        {
+            ImageView.ScaleType.FIT_XY -> {
+                viewPointX *= ratioX
+                viewPointY *= ratioY
+            }
+            ImageView.ScaleType.FIT_CENTER, ImageView.ScaleType.CENTER_INSIDE -> {
+                scale = Math.min(ratioX, ratioY)
+                viewPointX *= scale
+                viewPointY *= scale
+                viewPointX += (viewSizeWidth - imageSizeWidth * scale) / 2.0f
+                viewPointY += (viewSizeHeight - imageSizeHeight * scale) / 2.0f
+            }
+            ImageView.ScaleType.CENTER_CROP -> {
+                scale = Math.max(ratioX, ratioY)
+                viewPointX *= scale
+                viewPointY *= scale
+                viewPointX += (viewSizeWidth - imageSizeWidth * scale) / 2.0f
+                viewPointY += (viewSizeHeight - imageSizeHeight * scale) / 2.0f
+            }
+            ImageView.ScaleType.CENTER -> {
+                viewPointX += (viewSizeWidth / 2.0f - imageSizeWidth / 2.0f)
+                viewPointY += (viewSizeHeight / 2.0f - imageSizeHeight / 2.0f)
+            }
+            else -> {
+            }
+        }
+        return PointF(viewPointX, viewPointY)
+    }
+
+    /**
+     * 　　ライブビュー座標系の点座標をビューファインダー座標系の点座標に変換
+     *
+     */
+    private fun convertPointOnLiveImageIntoViewfinder(point: PointF, width: Float, height: Float, rotatedDegrees: Int): PointF
+    {
+        var viewFinderPointX = 0.5f
+        var viewFinderPointY = 0.5f
+        try
+        {
+            if (rotatedDegrees == 0 || rotatedDegrees == 180) {
+                viewFinderPointX = point.x / width
+                viewFinderPointY = point.y / height
+            } else {
+                viewFinderPointX = point.y / width
+                viewFinderPointY = point.x / height
+            }
+        }
+        catch (e: java.lang.Exception)
+        {
+            e.printStackTrace()
+        }
+        return PointF(viewFinderPointX, viewFinderPointY)
+    }
+
+    /**
+     * Converts a point on view area to a point on image area.
+     *
+     * @param point A point on view area. (e.g. a touch panel view)
+     * @return A point on image area. (e.g. a live preview image)
+     */
+    private fun convertPointFromViewArea(point: PointF): PointF
+    {
+        if (imageBitmap == null)
+        {
+            return PointF()
+        }
+        var imagePointX = point.x
+        var imagePointY = point.y
+        val imageSizeWidth: Float
+        val imageSizeHeight: Float
+        if (imageRotationDegrees == 0 || imageRotationDegrees == 180) {
+            imageSizeWidth = imageBitmap?.width.toFloat()
+            imageSizeHeight = imageBitmap?.height.toFloat()
+        } else {
+            imageSizeWidth = imageBitmap?.height.toFloat()
+            imageSizeHeight = imageBitmap?.width.toFloat()
+        }
+        val viewSizeWidth = this.width.toFloat()
+        val viewSizeHeight = this.height.toFloat()
+        val ratioX = viewSizeWidth / imageSizeWidth
+        val ratioY = viewSizeHeight / imageSizeHeight
+        val scale: Float // = 1.0f;
+        when (imageScaleType) {
+            ImageView.ScaleType.FIT_XY -> {
+                imagePointX /= ratioX
+                imagePointY /= ratioY
+            }
+            ImageView.ScaleType.FIT_CENTER, ImageView.ScaleType.CENTER_INSIDE -> {
+                scale = Math.min(ratioX, ratioY)
+                imagePointX = imagePointX - (viewSizeWidth - imageSizeWidth * scale) / 2.0f
+                imagePointY = imagePointY - (viewSizeHeight - imageSizeHeight * scale) / 2.0f
+                imagePointX = imagePointX / scale
+                imagePointY = imagePointY / scale
+            }
+            ImageView.ScaleType.CENTER_CROP -> {
+                scale = Math.max(ratioX, ratioY)
+                imagePointX -= (viewSizeWidth - imageSizeWidth * scale) / 2.0f
+                imagePointY -= (viewSizeHeight - imageSizeHeight * scale) / 2.0f
+                imagePointX /= scale
+                imagePointY /= scale
+            }
+            ImageView.ScaleType.CENTER -> {
+                imagePointX -= (viewSizeWidth - imageSizeWidth) / 2.0f
+                imagePointY -= (viewSizeHeight - imageSizeHeight) / 2.0f
+            }
+            else -> {
+            }
+        }
+        return PointF(imagePointX, imagePointY)
+    }
+
+
 }

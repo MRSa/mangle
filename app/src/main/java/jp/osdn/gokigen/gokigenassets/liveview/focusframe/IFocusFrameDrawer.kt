@@ -4,5 +4,5 @@ import android.graphics.Canvas
 
 interface IFocusFrameDrawer
 {
-    fun drawFocusFrame(canvas: Canvas)
+    fun drawFocusFrame(canvas: Canvas, imageWidth: Float, imageHeight: Float)
 }

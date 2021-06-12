@@ -57,6 +57,7 @@ interface IApplicationConstantConvert
         const val ID_AREA_MESSAGE = R.id.message
 
         const val ID_DRAWABLE_SPLASH_IMAGE = R.drawable.a01e1
+        const val ID_DRAWABLE_BACKGROUND_IMAGE = R.drawable.background
 
         const val ID_LABEL_APP_NAME = R.string.app_name
         const val ID_LABEL_APP_LOCATION = R.string.app_location
