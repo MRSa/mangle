@@ -2,6 +2,7 @@ package jp.osdn.gokigen.mangle.scene
 
 import android.graphics.Color
 import android.util.Log
+import android.view.KeyEvent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.fragment.app.Fragment
@@ -17,6 +18,7 @@ import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import jp.osdn.gokigen.gokigenassets.utils.ConfirmationDialog
 import jp.osdn.gokigen.gokigenassets.utils.logcat.LogCatFragment
+import jp.osdn.gokigen.mangle.MainActivity
 import jp.osdn.gokigen.mangle.R
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_METHOD_1
@@ -37,6 +39,7 @@ class SceneChanger(private val activity: AppCompatActivity, private val informat
     private val cameraControl4: ICameraControl
 
     private val preferenceChanger = PreferenceChanger(activity, this, this)
+    private var isActivateLiveViewFragment = false
     private lateinit var liveviewFragment : LiveImageViewFragment
     private lateinit var previewFragment : PreviewFragment
     private lateinit var logCatFragment : LogCatFragment
@@ -83,10 +86,11 @@ class SceneChanger(private val activity: AppCompatActivity, private val informat
             liveviewFragment.setCameraControl(isEnableCamera1, cameraControl1, isEnableCamera2, cameraControl2, isEnableCamera3, cameraControl3, isEnableCamera4, cameraControl4)
         }
         setDefaultFragment(liveviewFragment)
+        isActivateLiveViewFragment = true
 
         cameraControl1.startCamera(
             isPreviewView = false,
-            cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
+            cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
         )
         cameraControl2.startCamera(
             isPreviewView = false,
@@ -98,7 +102,7 @@ class SceneChanger(private val activity: AppCompatActivity, private val informat
         )
         cameraControl4.startCamera(
             isPreviewView = false,
-            cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+            cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
         )
 
         val msg = activity.getString(R.string.app_name) + " : " + " STARTED."
@@ -141,6 +145,7 @@ class SceneChanger(private val activity: AppCompatActivity, private val informat
                 isEnableCamera4, cameraControl4
             )
         }
+        isActivateLiveViewFragment = true
         changeFragment(liveviewFragment)
     }
 
@@ -163,6 +168,7 @@ class SceneChanger(private val activity: AppCompatActivity, private val informat
         {
             mainPreferenceFragment = MainPreferenceFragment.newInstance(preferenceChanger, PreferenceValueInitializer())
         }
+        isActivateLiveViewFragment = false
         changeFragment(mainPreferenceFragment)
     }
 
@@ -172,6 +178,7 @@ class SceneChanger(private val activity: AppCompatActivity, private val informat
         {
             logCatFragment = LogCatFragment.newInstance()
         }
+        isActivateLiveViewFragment = false
         changeFragment(logCatFragment)
     }
 
@@ -225,6 +232,23 @@ class SceneChanger(private val activity: AppCompatActivity, private val informat
         cameraControl2.finishCamera()
         cameraControl3.finishCamera()
         cameraControl4.finishCamera()
+    }
+
+    fun handleKeyDown(keyCode: Int, event: KeyEvent): Boolean
+    {
+        try
+        {
+            if ((isActivateLiveViewFragment)&&(::liveviewFragment.isInitialized))
+            {
+                Log.v(TAG, "handleKeyDown() $keyCode")
+                return (liveviewFragment.handleKeyDown(keyCode, event))
+            }
+        }
+        catch (e : java.lang.Exception)
+        {
+            e.printStackTrace()
+        }
+        return (false)
     }
 
     companion object

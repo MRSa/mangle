@@ -1,6 +1,7 @@
 package jp.osdn.gokigen.gokigenassets.camera.theta
 
 import android.util.Log
+import android.view.KeyEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
@@ -28,7 +29,7 @@ import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 
 class ThetaCameraControl(private val context: AppCompatActivity, private val vibrator : IVibrator, private val preference: ICameraPreferenceProvider, statusReceiver : ICameraStatusReceiver) : ILiveViewController,
-    ICameraControl, View.OnClickListener, ICaptureModeReceiver, ICameraShutter
+    ICameraControl, View.OnClickListener, ICaptureModeReceiver, ICameraShutter, IKeyDown
 {
     private val sessionIdHolder = ThetaSessionHolder()
     private val cameraConnection = ThetaCameraConnection(context, statusReceiver, sessionIdHolder, sessionIdHolder, this)
@@ -303,9 +304,25 @@ class ThetaCameraControl(private val context: AppCompatActivity, private val vib
         return (this)
     }
 
+    override fun keyDownReceiver(id: Int): IKeyDown
+    {
+        cameraPositionId = id
+        return (this)
+    }
+
     override fun getDisplayInjector(): IDisplayInjector?
     {
         return (null)
+    }
+
+    override fun handleKeyDown(keyCode: Int, event: KeyEvent): Boolean
+    {
+        if ((event.action == KeyEvent.ACTION_DOWN)&&((keyCode == KeyEvent.KEYCODE_VOLUME_UP)||(keyCode == KeyEvent.KEYCODE_CAMERA)))
+        {
+            doShutter()
+            return (true)
+        }
+        return (false)
     }
 
 }

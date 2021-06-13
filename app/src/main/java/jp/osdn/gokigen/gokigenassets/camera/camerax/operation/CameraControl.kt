@@ -18,6 +18,7 @@ import jp.osdn.gokigen.gokigenassets.liveview.storeimage.StoreImage
 import jp.osdn.gokigen.gokigenassets.utils.imagefile.FileControl
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraControl
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.IDisplayInjector
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.IKeyDown
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -196,6 +197,20 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
         }
         return (fileControl)
     }
+
+    override fun keyDownReceiver(id: Int): IKeyDown
+    {
+        try
+        {
+            fileControl.setId(id)
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+        return (fileControl)
+    }
+
 
     override fun getDisplayInjector(): IDisplayInjector?
     {

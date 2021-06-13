@@ -3,6 +3,7 @@ package jp.osdn.gokigen.gokigenassets.liveview
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import android.widget.LinearLayout
 import android.widget.SeekBar
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraControl
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_BUTTON_SHUTTER
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_CACHE_SEEKBAR_0
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_CACHE_SEEKBAR_1
@@ -18,17 +20,16 @@ import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Compa
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_CACHE_SEEKBAR_3
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_LIVE_VIEW_LAYOUT_DEFAULT
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_CACHE_LIVE_VIEW_PICTURES
+import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_AREA_0
+import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_AREA_1
+import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_AREA_2
+import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_AREA_3
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_FINDER_0
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_FINDER_1
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_FINDER_2
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_FINDER_3
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_LOWER_AREA
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_UPPER_AREA
-import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraControl
-import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_AREA_0
-import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_AREA_1
-import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_AREA_2
-import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_AREA_3
 
 class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYOUT_DEFAULT) : Fragment(contentLayoutId), View.OnClickListener
 {
@@ -252,5 +253,38 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
         {
             e.printStackTrace()
         }
+    }
+
+    fun handleKeyDown(keyCode: Int, event: KeyEvent?): Boolean
+    {
+        Log.v(TAG, "onKey() : $keyCode")
+        try
+        {
+            if ((event?.action == KeyEvent.ACTION_DOWN)&&((keyCode == KeyEvent.KEYCODE_VOLUME_UP)||(keyCode == KeyEvent.KEYCODE_CAMERA)))
+            {
+                if ((::cameraControl0.isInitialized)&&(isCameraControl0))
+                {
+                    cameraControl0.keyDownReceiver(0).handleKeyDown(keyCode, event)
+                }
+                if ((::cameraControl1.isInitialized)&&(isCameraControl1))
+                {
+                    cameraControl1.keyDownReceiver(1).handleKeyDown(keyCode, event)
+                }
+                if ((::cameraControl2.isInitialized)&&(isCameraControl2))
+                {
+                    cameraControl2.keyDownReceiver(2).handleKeyDown(keyCode, event)
+                }
+                if ((::cameraControl3.isInitialized)&&(isCameraControl3))
+                {
+                    cameraControl3.keyDownReceiver(3).handleKeyDown(keyCode, event)
+                }
+                return (true)
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+        return (false)
     }
 }

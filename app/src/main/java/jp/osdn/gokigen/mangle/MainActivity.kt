@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.Log
+import android.view.KeyEvent
 import android.view.WindowManager
 import android.widget.ImageButton
 import android.widget.Toast
@@ -84,12 +85,9 @@ class MainActivity : AppCompatActivity(), IVibrator, ICameraStatusReceiver
         }
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    )
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray)
     {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_CODE_PERMISSIONS)
         {
             if (allPermissionsGranted())
@@ -217,6 +215,26 @@ class MainActivity : AppCompatActivity(), IVibrator, ICameraStatusReceiver
     override fun onCameraConnectError(msg: String?)
     {
         Log.v(TAG, " onCameraConnectError() $msg ")
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean
+    {
+        try
+        {
+            if (event.action == KeyEvent.ACTION_DOWN && (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_CAMERA))
+            {
+                Log.v(TAG, "onKeyDown() $keyCode")
+                if (::sceneChanger.isInitialized)
+                {
+                    return (sceneChanger.handleKeyDown(keyCode, event))
+                }
+            }
+        }
+        catch (e: java.lang.Exception)
+        {
+            e.printStackTrace()
+        }
+        return super.onKeyDown(keyCode, event)
     }
 
     private fun updateConnectionIcon(connectionStatus : ICameraConnectionStatus.CameraConnectionStatus)

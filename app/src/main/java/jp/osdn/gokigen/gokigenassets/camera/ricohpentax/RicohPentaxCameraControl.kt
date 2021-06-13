@@ -1,6 +1,7 @@
 package jp.osdn.gokigen.gokigenassets.camera.ricohpentax
 
 import android.util.Log
+import android.view.KeyEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
@@ -28,8 +29,7 @@ import jp.osdn.gokigen.gokigenassets.liveview.storeimage.StoreImage
 import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 
-class RicohPentaxCameraControl(private val context: AppCompatActivity, private val vibrator : IVibrator, private val preference: ICameraPreferenceProvider, statusReceiver : ICameraStatusReceiver)  : ILiveViewController, ICameraControl, View.OnClickListener,
-    ICaptureModeReceiver, ICameraShutter, IDisplayInjector, IUseGR2CommandNotify
+class RicohPentaxCameraControl(private val context: AppCompatActivity, private val vibrator : IVibrator, private val preference: ICameraPreferenceProvider, statusReceiver : ICameraStatusReceiver)  : ILiveViewController, ICameraControl, View.OnClickListener, ICaptureModeReceiver, ICameraShutter, IDisplayInjector, IUseGR2CommandNotify, IKeyDown
 {
 
     //private final Activity activity;
@@ -171,6 +171,12 @@ class RicohPentaxCameraControl(private val context: AppCompatActivity, private v
         return (this)
     }
 
+    override fun keyDownReceiver(id: Int): IKeyDown
+    {
+        cameraPositionId = id
+        return (this)
+    }
+
     override fun getDisplayInjector(): IDisplayInjector
     {
         return (this)
@@ -277,16 +283,6 @@ class RicohPentaxCameraControl(private val context: AppCompatActivity, private v
         this.useCameraScreen = useCameraScreen
     }
 
-    /**
-     *
-     *
-     */
-    companion object
-    {
-        private val TAG = RicohPentaxCameraControl::class.java.simpleName
-        private const val communicationTimeoutMs = 5000
-    }
-
     override fun injectDisplay(frameDisplayer: IAutoFocusFrameDisplay, indicator: IIndicatorControl, focusingModeNotify: IFocusingModeNotify)
     {
         Log.v(TAG, "injectDisplay()")
@@ -299,4 +295,23 @@ class RicohPentaxCameraControl(private val context: AppCompatActivity, private v
         }
     }
 
+    override fun handleKeyDown(keyCode: Int, event: KeyEvent): Boolean
+    {
+        if ((event.action == KeyEvent.ACTION_DOWN)&&((keyCode == KeyEvent.KEYCODE_VOLUME_UP)||(keyCode == KeyEvent.KEYCODE_CAMERA)))
+        {
+            doShutter()
+            return (true)
+        }
+        return (false)
+    }
+
+    /**
+     *
+     *
+     */
+    companion object
+    {
+        private val TAG = RicohPentaxCameraControl::class.java.simpleName
+        private const val communicationTimeoutMs = 5000
+    }
 }

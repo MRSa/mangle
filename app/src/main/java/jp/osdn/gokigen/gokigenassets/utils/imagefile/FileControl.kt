@@ -2,9 +2,11 @@ package jp.osdn.gokigen.gokigenassets.utils.imagefile
 
 import android.os.Build
 import android.util.Log
+import android.view.KeyEvent
 import android.view.View
 import androidx.camera.core.ImageCapture
 import androidx.fragment.app.FragmentActivity
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.IKeyDown
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_BUTTON_SHUTTER
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW_DEFAULT_VALUE
@@ -15,7 +17,7 @@ import jp.osdn.gokigen.gokigenassets.liveview.storeimage.IStoreImage
 import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
 
 
-class FileControl(private val context: FragmentActivity, private val storeImage : IStoreImage) : View.OnClickListener
+class FileControl(private val context: FragmentActivity, private val storeImage : IStoreImage) : View.OnClickListener, IKeyDown
 {
     private val storeLocal = ImageStoreLocal(context)
     private val storeExternal = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) { ImageStoreExternal(context) } else { ImageStoreExternalLegacy(context) }
@@ -102,6 +104,23 @@ class FileControl(private val context: FragmentActivity, private val storeImage 
             ID_BUTTON_SHUTTER -> takePhoto()
             else -> Log.v(TAG, " Unknown ID : " + v?.id)
         }
+    }
+
+    override fun handleKeyDown(keyCode: Int, event: KeyEvent): Boolean
+    {
+        try
+        {
+            if (event.action == KeyEvent.ACTION_DOWN && (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_CAMERA))
+            {
+                takePhoto()
+                return (true)
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+        return (false)
     }
 
     companion object
