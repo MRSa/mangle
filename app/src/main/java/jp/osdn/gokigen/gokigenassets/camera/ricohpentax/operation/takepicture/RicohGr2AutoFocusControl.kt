@@ -7,6 +7,7 @@ import jp.osdn.gokigen.gokigenassets.liveview.focusframe.IAutoFocusFrameDisplay
 import jp.osdn.gokigen.gokigenassets.liveview.IIndicatorControl
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
 import org.json.JSONObject
+import kotlin.math.roundToInt
 
 /**
  *
@@ -39,38 +40,24 @@ class RicohGr2AutoFocusControl(private val frameDisplayer: IAutoFocusFrameDispla
                 val preFocusFrameRect = getPreFocusFrameRect(point)
                 try
                 {
-                    showFocusFrame(
-                        preFocusFrameRect,
-                        IAutoFocusFrameDisplay.FocusFrameStatus.Running,
-                        0.0f
-                    )
+                    showFocusFrame(preFocusFrameRect, IAutoFocusFrameDisplay.FocusFrameStatus.Running, 0.0f)
 
                     //int posX = (int) (Math.round(point.x * 100.0));
                     //int posY = (int) (Math.round(point.y * 100.0));
                     val focusUrl = if (useGR2command) lockAutoFocusUrl else autoFocusUrl
                     val postData =
-                        "pos=" + Math.round(point.x * 100.0).toInt() + "," + Math.round(
-                            point.y * 100.0
-                        ).toInt()
+                        "pos=" + (point.x * 100.0).roundToInt() + "," + (point.y * 100.0).roundToInt()
                     Log.v(TAG, "AF ($postData)")
-                    val result: String? =
-                        httpClient.httpPost(focusUrl, postData, timeoutMs)
-                    if (result == null || result.isEmpty()) {
-                        Log.v(
-                            TAG,
-                            "setTouchAFPosition() reply is null."
-                        )
-                    } else if (findTouchAFPositionResult(result)) {
+                    val result: String? = httpClient.httpPost(focusUrl, postData, timeoutMs)
+                    if (result == null || result.isEmpty())
+                    {
+                        Log.v(TAG, "setTouchAFPosition() reply is null.")
+                    }
+                    else if (findTouchAFPositionResult(result))
+                    {
                         // AF FOCUSED
-                        Log.v(
-                            TAG,
-                            "lockAutoFocus() : FOCUSED"
-                        )
-                        showFocusFrame(
-                            preFocusFrameRect,
-                            IAutoFocusFrameDisplay.FocusFrameStatus.Focused,
-                            1.0f
-                        ) // いったん1秒だけ表示
+                        Log.v(TAG, "lockAutoFocus() : FOCUSED")
+                        showFocusFrame(preFocusFrameRect, IAutoFocusFrameDisplay.FocusFrameStatus.Focused, 1.0f) // いったん1秒だけ表示
                     } else {
                         // AF ERROR
                         Log.v(
@@ -174,11 +161,15 @@ class RicohGr2AutoFocusControl(private val frameDisplayer: IAutoFocusFrameDispla
         // Display a provisional focus frame at the touched point.
         val focusWidth = 0.125f // 0.125 is rough estimate.
         var focusHeight = 0.125f
-        focusHeight *= if (imageWidth > imageHeight) {
+        focusHeight *= if (imageWidth > imageHeight)
+        {
             imageWidth / imageHeight
-        } else {
+        }
+        else
+        {
             imageHeight / imageWidth
         }
+        //Log.v(TAG, " getPreFocusFrameRect ($point) --> [$focusWidth | $focusHeight] ($imageWidth,$imageHeight)")
         return RectF(
             point.x - focusWidth / 2.0f, point.y - focusHeight / 2.0f,
             point.x + focusWidth / 2.0f, point.y + focusHeight / 2.0f
@@ -197,6 +188,7 @@ class RicohGr2AutoFocusControl(private val frameDisplayer: IAutoFocusFrameDispla
             var afResult = false
             try
             {
+                Log.v(TAG, " findTouchAFPositionResult() : $replyString")
                 val resultObject = JSONObject(replyString)
                 val result = resultObject.getString("errMsg")
                 val focused = resultObject.getBoolean("focused")

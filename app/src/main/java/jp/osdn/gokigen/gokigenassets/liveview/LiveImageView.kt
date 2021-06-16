@@ -269,18 +269,15 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
     override fun drawFocusFrame(canvas: Canvas, imageWidth : Float, imageHeight : Float)
     {
 
-        val focusRectOnImage: RectF = convertRectOnViewfinderIntoLiveImage(
-            focusFrameRect,
-            imageWidth,
-            imageHeight,
-            imageRotationDegrees
-        )
+        val focusRectOnImage: RectF = convertRectOnViewfinderIntoLiveImage(focusFrameRect, imageWidth, imageHeight, imageRotationDegrees)
         val focusRectOnView: RectF = convertRectFromImageArea(focusRectOnImage)
+
         // Draw a rectangle to the canvas.
         // Draw a rectangle to the canvas.
         val focusFramePaint = Paint()
         focusFramePaint.style = Paint.Style.STROKE
-        when (focusFrameStatus) {
+        when (focusFrameStatus)
+        {
             IAutoFocusFrameDisplay.FocusFrameStatus.Running -> focusFramePaint.color = Color.WHITE
             IAutoFocusFrameDisplay.FocusFrameStatus.Focused -> focusFramePaint.color = Color.GREEN
             IAutoFocusFrameDisplay.FocusFrameStatus.Failed -> focusFramePaint.color = Color.RED
@@ -289,9 +286,9 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
         }
         val focusFrameStrokeWidth = 2.0f
         val dm: DisplayMetrics = context.resources.displayMetrics
-        val strokeWidth =
-            TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, focusFrameStrokeWidth, dm)
+        val strokeWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, focusFrameStrokeWidth, dm)
         focusFramePaint.strokeWidth = strokeWidth
+
         canvas.drawRect(focusRectOnView, focusFramePaint)
     }
 
@@ -417,6 +414,7 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
         {
             e.printStackTrace()
         }
+        //Log.v(TAG, " [$left,$top]-[$right,$bottom]")
         return RectF(left, top, right, bottom)
     }
 
@@ -458,9 +456,9 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
             }
             ImageView.ScaleType.FIT_CENTER, ImageView.ScaleType.CENTER_INSIDE -> {
                 scale = ratioX.coerceAtMost(ratioY)
-                viewPointX *= scale
-                viewPointY *= scale
-                viewPointX += (viewSizeWidth - imageSizeWidth * scale) / 2.0f
+                //viewPointX *= scale
+                //viewPointY *= scale
+                viewPointX += (viewSizeWidth - imageSizeWidth * scale)  / 2.0f
                 viewPointY += (viewSizeHeight - imageSizeHeight * scale) / 2.0f
             }
             ImageView.ScaleType.CENTER_CROP -> {
@@ -477,6 +475,7 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
             else -> {
             }
         }
+        // Log.v(TAG, "(viewPointX : $viewPointX, viewPointY : $viewPointY) : $imageSizeWidth x $imageSizeHeight")
         return PointF(viewPointX, viewPointY)
     }
 
@@ -557,6 +556,4 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
         }
         return PointF(imagePointX, imagePointY)
     }
-
-
 }

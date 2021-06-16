@@ -315,6 +315,11 @@ class ThetaCameraControl(private val context: AppCompatActivity, private val vib
         return (null)
     }
 
+    override fun getFocusingControl(id: Int): IFocusingControl?
+    {
+        return (null)
+    }
+
     override fun handleKeyDown(keyCode: Int, event: KeyEvent): Boolean
     {
         if ((event.action == KeyEvent.ACTION_DOWN)&&((keyCode == KeyEvent.KEYCODE_VOLUME_UP)||(keyCode == KeyEvent.KEYCODE_CAMERA)))

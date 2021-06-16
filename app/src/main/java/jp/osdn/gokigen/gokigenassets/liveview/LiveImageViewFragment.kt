@@ -1,5 +1,6 @@
 package jp.osdn.gokigen.gokigenassets.liveview
 
+import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
@@ -70,6 +71,7 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
         updateCameraLayout()
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun updateCameraLayout()
     {
         if (!::liveviewView.isInitialized)
@@ -91,6 +93,7 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
                 {
                     cameraControl0.setRefresher(imageView0, imageView0)
                     imageView0.injectDisplay(cameraControl0)
+                    imageView0.setOnTouchListener(LiveViewOnTouchListener(cameraControl0, 0))
                     if (isCacheImage)
                     {
                         imageCache0.visibility = View.VISIBLE
@@ -115,6 +118,7 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
                 {
                     cameraControl1.setRefresher(imageView1, imageView1)
                     imageView1.injectDisplay(cameraControl1)
+                    imageView1.setOnTouchListener(LiveViewOnTouchListener(cameraControl1, 1))
                     if (isCacheImage)
                     {
                         imageCache1.visibility = View.VISIBLE
@@ -139,6 +143,7 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
                 {
                     cameraControl2.setRefresher(imageView2, imageView2)
                     imageView2.injectDisplay(cameraControl2)
+                    imageView2.setOnTouchListener(LiveViewOnTouchListener(cameraControl2, 2))
                     if (isCacheImage)
                     {
                         imageCache2.visibility = View.VISIBLE
@@ -163,6 +168,7 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
                 {
                     cameraControl3.setRefresher(imageView3, imageView3)
                     imageView3.injectDisplay(cameraControl3)
+                    imageView3.setOnTouchListener(LiveViewOnTouchListener(cameraControl3, 3))
                     if (isCacheImage)
                     {
                         imageCache3.visibility = View.VISIBLE

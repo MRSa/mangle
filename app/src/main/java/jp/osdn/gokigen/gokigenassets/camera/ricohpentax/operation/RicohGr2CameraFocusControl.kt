@@ -31,7 +31,7 @@ class RicohGr2CameraFocusControl(private val frameDisplay: IAutoFocusFrameDispla
      *
      */
     override fun driveAutoFocus(motionEvent: MotionEvent?): Boolean {
-        Log.v(TAG, "driveAutoFocus()")
+        //Log.v(TAG, "driveAutoFocus()")
         if ((motionEvent == null)||(motionEvent.action != MotionEvent.ACTION_DOWN))
         {
             return false
@@ -41,6 +41,7 @@ class RicohGr2CameraFocusControl(private val frameDisplay: IAutoFocusFrameDispla
             val point: PointF? = frameDisplay.getPointWithEvent(motionEvent)
             if ((point != null)&&(frameDisplay.isContainsPoint(point)))
             {
+                //Log.v(TAG, "driveAutoFocus() : [$point.x, $point.y]")
                 afControl.lockAutoFocus(point)
             }
         }

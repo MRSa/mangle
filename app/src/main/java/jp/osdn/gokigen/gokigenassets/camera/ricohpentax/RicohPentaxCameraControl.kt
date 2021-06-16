@@ -177,6 +177,12 @@ class RicohPentaxCameraControl(private val context: AppCompatActivity, private v
         return (this)
     }
 
+    override fun getFocusingControl(id: Int): IFocusingControl?
+    {
+        cameraPositionId = id
+        return (focusControl)
+    }
+
     override fun getDisplayInjector(): IDisplayInjector
     {
         return (this)
@@ -258,7 +264,7 @@ class RicohPentaxCameraControl(private val context: AppCompatActivity, private v
             if ((captureBothCamera)&&(liveViewListener.isImageReceived()))
             {
                 // ライブビュー画像を保管する場合...
-                val thread = Thread { storeImage.doStore(cameraPositionId, true) }
+                val thread = Thread { storeImage.doStore(cameraPositionId, false) }
                 try
                 {
                     thread.start()

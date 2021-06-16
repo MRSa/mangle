@@ -20,5 +20,7 @@ interface ICameraControl
     fun captureButtonReceiver(id : Int = 0) : View.OnClickListener
     fun keyDownReceiver(id : Int = 0) : IKeyDown
 
+    fun getFocusingControl(id : Int = 0) : IFocusingControl?
+
     fun getDisplayInjector() : IDisplayInjector?
 }
