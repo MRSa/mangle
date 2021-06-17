@@ -37,8 +37,9 @@ class RicohGr2CameraConnectSequence(private val context: Activity, private val c
                     val response0: String? = httpClient.httpPost(grCommandUrl, postData, TIMEOUT_MS)
                     Log.v(TAG, "$grCommandUrl $response0")
 
+
                     // GR2 専用コマンドを受け付けられるかどうかで、Preference を書き換える
-                    val enableGr2Command = response0 != null
+                    val enableGr2Command = !response0.isNullOrBlank()
                     try
                     {
                         val editor = preferences.edit()

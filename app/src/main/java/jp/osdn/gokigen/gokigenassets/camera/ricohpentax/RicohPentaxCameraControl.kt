@@ -5,7 +5,6 @@ import android.view.KeyEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
-import androidx.fragment.app.FragmentActivity
 import jp.osdn.gokigen.gokigenassets.camera.ICameraPreferenceProvider
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.*
 import jp.osdn.gokigen.gokigenassets.camera.theta.status.ICaptureModeReceiver
@@ -18,9 +17,6 @@ import jp.osdn.gokigen.gokigenassets.camera.ricohpentax.operation.*
 import jp.osdn.gokigen.gokigenassets.camera.ricohpentax.status.RicohGr2StatusChecker
 import jp.osdn.gokigen.gokigenassets.camera.ricohpentax.wrapper.RicohGr2RunMode
 import jp.osdn.gokigen.gokigenassets.camera.ricohpentax.wrapper.playback.RicohGr2PlaybackControl
-import jp.osdn.gokigen.gokigenassets.camera.theta.ThetaCameraControl
-import jp.osdn.gokigen.gokigenassets.camera.theta.operation.ThetaMovieRecordingControl
-import jp.osdn.gokigen.gokigenassets.camera.theta.operation.ThetaSingleShotControl
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert
 import jp.osdn.gokigen.gokigenassets.liveview.IIndicatorControl
 import jp.osdn.gokigen.gokigenassets.liveview.focusframe.IAutoFocusFrameDisplay
@@ -285,8 +281,18 @@ class RicohPentaxCameraControl(private val context: AppCompatActivity, private v
 
     override fun setUseGR2Command(useGR2Command: Boolean, useCameraScreen: Boolean)
     {
-        this.useGR2Command = useGR2Command
-        this.useCameraScreen = useCameraScreen
+        try
+        {
+            Log.v(TAG, " setUseGR2Command : $useGR2Command , $useCameraScreen")
+            this.useGR2Command = useGR2Command
+            this.useCameraScreen = useCameraScreen
+            captureControl?.setUseGR2Command(useGR2Command)
+            focusControl?.setUseGR2Command(useGR2Command)
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
     }
 
     override fun injectDisplay(frameDisplayer: IAutoFocusFrameDisplay, indicator: IIndicatorControl, focusingModeNotify: IFocusingModeNotify)
@@ -294,11 +300,8 @@ class RicohPentaxCameraControl(private val context: AppCompatActivity, private v
         Log.v(TAG, "injectDisplay()")
         focusControl = RicohGr2CameraFocusControl(frameDisplayer, indicator)
         captureControl = RicohGr2CameraCaptureControl(pentaxCaptureAfterAf, frameDisplayer, statusChecker)
-        if (useGR2CommandUpdated)
-        {
-            captureControl?.setUseGR2Command(useGR2Command)
-            focusControl?.setUseGR2Command(useGR2Command)
-        }
+        captureControl?.setUseGR2Command(useGR2Command)
+        focusControl?.setUseGR2Command(useGR2Command)
     }
 
     override fun handleKeyDown(keyCode: Int, event: KeyEvent): Boolean
