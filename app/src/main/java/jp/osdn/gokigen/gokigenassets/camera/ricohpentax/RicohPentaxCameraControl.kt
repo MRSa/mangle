@@ -4,7 +4,6 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.CameraSelector
 import jp.osdn.gokigen.gokigenassets.camera.ICameraPreferenceProvider
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.*
 import jp.osdn.gokigen.gokigenassets.camera.theta.status.ICaptureModeReceiver
@@ -254,8 +253,8 @@ class RicohPentaxCameraControl(private val context: AppCompatActivity, private v
                 IApplicationConstantConvert.ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW_DEFAULT_VALUE
             )
             val notUseShutter = PreferenceAccessWrapper(context).getBoolean(
-                IApplicationConstantConvert.ID_PREFERENCE_CAPTURE_ONLY_EXTERNAL_CAMERA,
-                IApplicationConstantConvert.ID_PREFERENCE_CAPTURE_ONLY_EXTERNAL_CAMERA_DEFAULT_VALUE
+                IApplicationConstantConvert.ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE,
+                IApplicationConstantConvert.ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE_DEFAULT_VALUE
             )
             if ((captureBothCamera)&&(liveViewListener.isImageReceived()))
             {

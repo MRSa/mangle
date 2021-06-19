@@ -7,17 +7,21 @@ import android.view.View
 import androidx.camera.core.ImageCapture
 import androidx.fragment.app.FragmentActivity
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.IKeyDown
+import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_BUTTON_SHUTTER
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW_DEFAULT_VALUE
+import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE
+import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE_DEFAULT_VALUE
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_SAVE_LOCAL_LOCATION
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_SAVE_LOCAL_LOCATION_DEFAULT_VALUE
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREVIEW_VIEW_BUTTON_SHUTTER
 import jp.osdn.gokigen.gokigenassets.liveview.storeimage.IStoreImage
 import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
+import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 
 
-class FileControl(private val context: FragmentActivity, private val storeImage : IStoreImage) : View.OnClickListener, IKeyDown
+class FileControl(private val context: FragmentActivity, private val storeImage : IStoreImage, private val vibrator : IVibrator) : View.OnClickListener, IKeyDown
 {
     private val storeLocal = ImageStoreLocal(context)
     private val storeExternal = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) { ImageStoreExternal(context) } else { ImageStoreExternalLegacy(context) }
@@ -56,6 +60,8 @@ class FileControl(private val context: FragmentActivity, private val storeImage 
             val preference = PreferenceAccessWrapper(context)
             val isLocalLocation  = preference.getBoolean(ID_PREFERENCE_SAVE_LOCAL_LOCATION, ID_PREFERENCE_SAVE_LOCAL_LOCATION_DEFAULT_VALUE)
             val captureBothCamera  = preference.getBoolean(ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW, ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW_DEFAULT_VALUE)
+            val notUseShutter = preference.getBoolean(ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE, ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE_DEFAULT_VALUE)
+
             if (captureBothCamera)
             {
                 // ライブビュー画像を保管する場合...
@@ -68,6 +74,13 @@ class FileControl(private val context: FragmentActivity, private val storeImage 
                 {
                     e.printStackTrace()
                 }
+            }
+
+            if (notUseShutter)
+            {
+                //  シャッターを駆動させない(けど、バイブレーションで通知する)
+                vibrator.vibrate(IVibrator.VibratePattern.SIMPLE_SHORT)
+                return
             }
 
             // 保管用クラスが準備できていない場合は、何もしない。

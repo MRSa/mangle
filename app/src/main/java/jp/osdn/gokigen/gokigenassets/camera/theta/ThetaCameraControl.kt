@@ -4,7 +4,6 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.CameraSelector
 import jp.osdn.gokigen.gokigenassets.camera.ICameraPreferenceProvider
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.*
 import jp.osdn.gokigen.gokigenassets.camera.theta.connection.ThetaCameraConnection
@@ -18,8 +17,8 @@ import jp.osdn.gokigen.gokigenassets.camera.theta.status.ThetaSessionHolder
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_BUTTON_SHUTTER
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW_DEFAULT_VALUE
-import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_CAPTURE_ONLY_EXTERNAL_CAMERA
-import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_CAPTURE_ONLY_EXTERNAL_CAMERA_DEFAULT_VALUE
+import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE
+import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE_DEFAULT_VALUE
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveView
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveViewRefresher
 import jp.osdn.gokigen.gokigenassets.liveview.image.CameraLiveViewListenerImpl
@@ -236,8 +235,8 @@ class ThetaCameraControl(private val context: AppCompatActivity, private val vib
                 ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW_DEFAULT_VALUE
             )
             val notUseShutter = PreferenceAccessWrapper(context).getBoolean(
-                ID_PREFERENCE_CAPTURE_ONLY_EXTERNAL_CAMERA,
-                ID_PREFERENCE_CAPTURE_ONLY_EXTERNAL_CAMERA_DEFAULT_VALUE
+                ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE,
+                ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE_DEFAULT_VALUE
             )
             if ((captureBothCamera)&&(liveViewListener.isImageReceived()))
             {

@@ -4,8 +4,8 @@ import jp.osdn.gokigen.mangle.R
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.CACHE_LIVE_VIEW_PICTURES
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW_DEFAULT_VALUE
-import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.CAPTURE_ONLY_EXTERNAL_CAMERA
-import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.CAPTURE_ONLY_EXTERNAL_CAMERA_DEFAULT_VALUE
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.CAPTURE_ONLY_LIVE_VIEW
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.CAPTURE_ONLY_LIVE_VIEW_DEFAULT_VALUE
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.EXTERNAL_STORAGE_LOCATION
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.EXTERNAL_STORAGE_LOCATION_DEFAULT_VALUE
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.GR2_LCD_SLEEP
@@ -114,8 +114,8 @@ interface IApplicationConstantConvert
         const val ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW = CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW
         const val ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW_DEFAULT_VALUE = CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW_DEFAULT_VALUE
 
-        const val ID_PREFERENCE_CAPTURE_ONLY_EXTERNAL_CAMERA = CAPTURE_ONLY_EXTERNAL_CAMERA
-        const val ID_PREFERENCE_CAPTURE_ONLY_EXTERNAL_CAMERA_DEFAULT_VALUE = CAPTURE_ONLY_EXTERNAL_CAMERA_DEFAULT_VALUE
+        const val ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE = CAPTURE_ONLY_LIVE_VIEW
+        const val ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE_DEFAULT_VALUE = CAPTURE_ONLY_LIVE_VIEW_DEFAULT_VALUE
 
         const val ID_PREFERENCE_EXTERNAL_STORAGE_LOCATION = EXTERNAL_STORAGE_LOCATION
         const val ID_PREFERENCE_EXTERNAL_STORAGE_LOCATION_DEFAULT_VALUE = EXTERNAL_STORAGE_LOCATION_DEFAULT_VALUE

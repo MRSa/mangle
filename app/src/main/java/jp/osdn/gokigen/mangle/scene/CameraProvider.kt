@@ -1,7 +1,6 @@
 package jp.osdn.gokigen.mangle.scene
 
 import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.CameraSelector
 import jp.osdn.gokigen.gokigenassets.camera.CameraPreference
 import jp.osdn.gokigen.gokigenassets.camera.DummyCameraControl
 import jp.osdn.gokigen.gokigenassets.camera.ICameraPreferenceProvider
@@ -207,7 +206,7 @@ class CameraProvider(private val activity: AppCompatActivity, private val inform
         {
             return (cameraXControl)
         }
-        cameraXControl = CameraControl(activity, cameraPreference)
+        cameraXControl = CameraControl(activity, cameraPreference, vibrator)
         cameraXisCreated = true
         return (cameraXControl)
     }
