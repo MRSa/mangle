@@ -101,7 +101,7 @@ class ThetaCameraControl(private val context: AppCompatActivity, private val vib
         // TODO("Not yet implemented")
     }
 
-    override fun startCamera(isPreviewView : Boolean, cameraSelector : CameraSelector)
+    override fun startCamera(isPreviewView : Boolean, cameraSequence : Int)
     {
         try
         {

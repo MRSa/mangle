@@ -4,7 +4,6 @@ import android.graphics.Color
 import android.util.Log
 import android.view.KeyEvent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.CameraSelector
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
@@ -18,13 +17,16 @@ import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import jp.osdn.gokigen.gokigenassets.utils.ConfirmationDialog
 import jp.osdn.gokigen.gokigenassets.utils.logcat.LogCatFragment
-import jp.osdn.gokigen.mangle.MainActivity
 import jp.osdn.gokigen.mangle.R
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_METHOD_1
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_METHOD_2
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_METHOD_3
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_METHOD_4
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_SEQUENCE_1
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_SEQUENCE_2
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_SEQUENCE_3
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_SEQUENCE_4
 import jp.osdn.gokigen.mangle.preference.PreferenceChanger
 import jp.osdn.gokigen.mangle.preference.PreferenceValueInitializer
 
@@ -90,19 +92,19 @@ class SceneChanger(private val activity: AppCompatActivity, private val informat
 
         cameraControl1.startCamera(
             isPreviewView = false,
-            cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+            cameraSequence = cameraProvider.getCameraSelection(PREFERENCE_CAMERA_SEQUENCE_1)
         )
         cameraControl2.startCamera(
             isPreviewView = false,
-            cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+            cameraSequence = cameraProvider.getCameraSelection(PREFERENCE_CAMERA_SEQUENCE_2)
         )
         cameraControl3.startCamera(
             isPreviewView = false,
-            cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+            cameraSequence = cameraProvider.getCameraSelection(PREFERENCE_CAMERA_SEQUENCE_3)
         )
         cameraControl4.startCamera(
             isPreviewView = false,
-            cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
+            cameraSequence = cameraProvider.getCameraSelection(PREFERENCE_CAMERA_SEQUENCE_4)
         )
 
         val msg = activity.getString(R.string.app_name) + " : " + " STARTED."

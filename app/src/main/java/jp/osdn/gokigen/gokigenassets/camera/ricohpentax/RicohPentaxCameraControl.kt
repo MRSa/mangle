@@ -111,7 +111,7 @@ class RicohPentaxCameraControl(private val context: AppCompatActivity, private v
         }
     }
 
-    override fun startCamera(isPreviewView: Boolean, cameraSelector: CameraSelector)
+    override fun startCamera(isPreviewView: Boolean, cameraSequence: Int)
     {
         try
         {

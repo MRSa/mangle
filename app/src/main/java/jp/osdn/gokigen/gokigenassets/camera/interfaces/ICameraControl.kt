@@ -1,7 +1,6 @@
 package jp.osdn.gokigen.gokigenassets.camera.interfaces
 
 import android.view.View
-import androidx.camera.core.CameraSelector
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveView
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveViewRefresher
 
@@ -11,7 +10,7 @@ interface ICameraControl
     fun initialize()
 
     fun connectToCamera()
-    fun startCamera(isPreviewView : Boolean = true, cameraSelector : CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA)
+    fun startCamera(isPreviewView : Boolean = true, cameraSequence : Int = 0)
     fun finishCamera()
 
     fun changeCaptureMode(mode : String)

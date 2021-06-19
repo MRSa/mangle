@@ -15,7 +15,7 @@ class DummyCameraControl() : ICameraControl, View.OnClickListener, IKeyDown
     override fun getConnectionMethod(): String { return ("NONE") }
     override fun initialize() { }
     override fun connectToCamera() { }
-    override fun startCamera(isPreviewView: Boolean, cameraSelector: CameraSelector) { }
+    override fun startCamera(isPreviewView: Boolean, cameraSequence : Int) { }
     override fun finishCamera() { }
     override fun changeCaptureMode(mode: String) { }
     override fun setRefresher(refresher: ILiveViewRefresher, imageView: ILiveView) { }

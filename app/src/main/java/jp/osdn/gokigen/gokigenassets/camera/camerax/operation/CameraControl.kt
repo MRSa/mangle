@@ -61,9 +61,14 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
         imageView.setImageProvider(liveViewListener)
     }
 
-    override fun startCamera(isPreviewView : Boolean, cameraSelector : CameraSelector)
+    override fun startCamera(isPreviewView : Boolean, cameraSequence : Int)
     {
         Log.v(TAG, " startCamera()")
+        val cameraSelector : CameraSelector = when (cameraSequence) {
+                1 -> CameraSelector.DEFAULT_FRONT_CAMERA
+                else -> CameraSelector.DEFAULT_BACK_CAMERA
+        }
+
         if (cameraIsStarted)
         {
             Log.v(TAG, " ALREADY STARTED...")
