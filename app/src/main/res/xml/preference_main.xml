@@ -68,6 +68,16 @@
     <PreferenceCategory
         app:title="@string/label_connection_method1">
 
+
+        <DropDownPreference
+            android:entries="@array/connection_method"
+            android:entryValues="@array/connection_method_value"
+            android:key="camera_method1"
+            android:title="@string/pref_connection_method1"
+            android:defaultValue="camerax"
+            />
+
+<!--
         <ListPreference
             android:title="@string/pref_connection_method1"
             android:entryValues="@array/connection_method_value"
@@ -81,6 +91,15 @@
             android:entries="@array/connection_sequence"
             android:key="camera_sequence1"
             android:defaultValue="0"/>
+-->
+
+        <DropDownPreference
+            android:entries="@array/connection_sequence"
+            android:entryValues="@array/connection_sequence_value"
+            android:key="camera_sequence1"
+            android:title="@string/pref_connection_sequence1"
+            android:defaultValue="0"
+            />
 
         <EditTextPreference
             android:key="camera_option11"
@@ -117,19 +136,21 @@
     <PreferenceCategory
         app:title="@string/label_connection_method2">
 
-        <ListPreference
-            android:title="@string/pref_connection_method2"
-            android:entryValues="@array/connection_method_value"
+        <DropDownPreference
             android:entries="@array/connection_method"
+            android:entryValues="@array/connection_method_value"
             android:key="camera_method2"
-            android:defaultValue="camerax"/>
+            android:title="@string/pref_connection_method2"
+            android:defaultValue="camerax"
+            />
 
-        <ListPreference
-            android:title="@string/pref_connection_sequence2"
-            android:entryValues="@array/connection_sequence_value"
+        <DropDownPreference
             android:entries="@array/connection_sequence"
+            android:entryValues="@array/connection_sequence_value"
             android:key="camera_sequence2"
-            android:defaultValue="0"/>
+            android:title="@string/pref_connection_sequence2"
+            android:defaultValue="0"
+            />
 
         <EditTextPreference
             android:key="camera_option12"
@@ -165,19 +186,21 @@
     <PreferenceCategory
         app:title="@string/label_connection_method3">
 
-        <ListPreference
-            android:title="@string/pref_connection_method3"
-            android:entryValues="@array/connection_method_value"
+        <DropDownPreference
             android:entries="@array/connection_method"
+            android:entryValues="@array/connection_method_value"
             android:key="camera_method3"
-            android:defaultValue="camerax"/>
+            android:title="@string/pref_connection_method3"
+            android:defaultValue="camerax"
+            />
 
-        <ListPreference
-            android:title="@string/pref_connection_sequence3"
-            android:entryValues="@array/connection_sequence_value"
+        <DropDownPreference
             android:entries="@array/connection_sequence"
+            android:entryValues="@array/connection_sequence_value"
             android:key="camera_sequence3"
-            android:defaultValue="0"/>
+            android:title="@string/pref_connection_sequence3"
+            android:defaultValue="0"
+            />
 
         <EditTextPreference
             android:key="camera_option13"
@@ -214,19 +237,21 @@
     <PreferenceCategory
         app:title="@string/label_connection_method4">
 
-        <ListPreference
-            android:title="@string/pref_connection_method4"
-            android:entryValues="@array/connection_method_value"
+        <DropDownPreference
             android:entries="@array/connection_method"
+            android:entryValues="@array/connection_method_value"
             android:key="camera_method4"
-            android:defaultValue="camerax"/>
+            android:title="@string/pref_connection_method4"
+            android:defaultValue="camerax"
+            />
 
-        <ListPreference
-            android:title="@string/pref_connection_sequence4"
-            android:entryValues="@array/connection_sequence_value"
+        <DropDownPreference
             android:entries="@array/connection_sequence"
+            android:entryValues="@array/connection_sequence_value"
             android:key="camera_sequence4"
-            android:defaultValue="0"/>
+            android:title="@string/pref_connection_sequence4"
+            android:defaultValue="0"
+            />
 
         <EditTextPreference
             android:key="camera_option14"

@@ -129,6 +129,11 @@ interface IApplicationConstantConvert
 
         const val ID_PREFERENCE_LABEL_SELECT_CAMERA_CONNECTION_METHOD = PREFERENCE_CONNECTION_METHOD
 
+        const val ID_PREFERENCE_ARRAY_CAMERA_METHOD = R.array.connection_method
+        const val ID_PREFERENCE_ARRAY_CAMERA_SEQUENCE = R.array.connection_sequence
+        const val ID_PREFERENCE_ARRAY_CAMERA_METHOD_VALUE = R.array.connection_method_value
+        const val ID_PREFERENCE_ARRAY_CAMERA_SEQUENCE_VALUE = R.array.connection_sequence_value
+
         const val ID_PREFERENCE_CAMERA_METHOD_1 = PREFERENCE_CAMERA_METHOD_1
         const val ID_PREFERENCE_CAMERA_SEQUENCE_1 = PREFERENCE_CAMERA_SEQUENCE_1
         const val ID_PREFERENCE_CAMERA_OPTION1_1 = PREFERENCE_CAMERA_OPTION1_1
