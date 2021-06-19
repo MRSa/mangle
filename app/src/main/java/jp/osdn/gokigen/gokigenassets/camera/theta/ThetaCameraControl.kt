@@ -297,6 +297,8 @@ class ThetaCameraControl(private val context: AppCompatActivity, private val vib
         }
     }
 
+    override fun needRotateImage(): Boolean { return (false) }
+
     override fun captureButtonReceiver(id : Int) : View.OnClickListener
     {
         cameraPositionId = id

@@ -278,6 +278,8 @@ class RicohPentaxCameraControl(private val context: AppCompatActivity, private v
         return (false)
     }
 
+    override fun needRotateImage(): Boolean { return (false) }
+
     override fun setUseGR2Command(useGR2Command: Boolean, useCameraScreen: Boolean)
     {
         try

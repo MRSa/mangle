@@ -48,6 +48,7 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
     private lateinit var indicatorControl: IndicatorControl
     private var focusFrameRect: RectF? = null
     private var focusFrameHideTimer: Timer? = null
+    private var isRotationImage = false
 
     constructor(context: Context) : super(context)
     {
@@ -80,6 +81,7 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
 
     fun injectDisplay(cameraControl: ICameraControl)
     {
+        isRotationImage = cameraControl.needRotateImage()
         cameraControl.getDisplayInjector()?.injectDisplay(this, indicatorControl, this)
     }
 
@@ -142,17 +144,20 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
         imageBitmap = imageProvider.getImage(sliderPosition)
 
         var addDegrees = 0
-        try
+        if (isRotationImage)
         {
-            val config = context.resources.configuration
-            if (config.orientation == Configuration.ORIENTATION_LANDSCAPE)
+            try
             {
-                addDegrees = 90
+                val config = context.resources.configuration
+                if (config.orientation == Configuration.ORIENTATION_LANDSCAPE)
+                {
+                    addDegrees = 90
+                }
             }
-        }
-        catch (e: Exception)
-        {
-            e.printStackTrace()
+            catch (e: Exception)
+            {
+                e.printStackTrace()
+            }
         }
         val degrees = imageRotationDegrees + addDegrees
         val viewRect = decideViewRect(canvas, imageBitmap, degrees)

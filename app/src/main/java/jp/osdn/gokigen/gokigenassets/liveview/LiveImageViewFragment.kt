@@ -2,12 +2,10 @@ package jp.osdn.gokigen.gokigenassets.liveview
 
 import android.annotation.SuppressLint
 import android.content.SharedPreferences
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
-import android.view.KeyEvent
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.SeekBar
@@ -47,6 +45,7 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
     private var isCameraControl3 = false
 
     private var isCacheImage = false
+    private var rotationDegrees = 0
 
     companion object
     {
@@ -225,7 +224,8 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
     override fun onResume()
     {
         super.onResume()
-        Log.v(TAG, " onResume() : ")
+
+        Log.v(TAG, " onResume() : orientation ${getRotation()}")
     }
 
     override fun onPause()
@@ -292,5 +292,23 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
             e.printStackTrace()
         }
         return (false)
+    }
+
+    private fun getRotation(): Int
+    {
+        var rotation = 0
+        try
+        {
+            rotation = when (resources.configuration.orientation) {
+                Configuration.ORIENTATION_LANDSCAPE -> 90
+                Configuration.ORIENTATION_PORTRAIT -> 0
+                else -> 0
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+        return (rotation)
     }
 }

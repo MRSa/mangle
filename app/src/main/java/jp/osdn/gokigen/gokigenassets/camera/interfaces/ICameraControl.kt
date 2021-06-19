@@ -14,12 +14,12 @@ interface ICameraControl
     fun finishCamera()
 
     fun changeCaptureMode(mode : String)
+    fun needRotateImage() : Boolean
 
     fun setRefresher(refresher : ILiveViewRefresher, imageView : ILiveView)
     fun captureButtonReceiver(id : Int = 0) : View.OnClickListener
     fun keyDownReceiver(id : Int = 0) : IKeyDown
 
     fun getFocusingControl(id : Int = 0) : IFocusingControl?
-
     fun getDisplayInjector() : IDisplayInjector?
 }

@@ -18,6 +18,7 @@ class DummyCameraControl() : ICameraControl, View.OnClickListener, IKeyDown
     override fun startCamera(isPreviewView: Boolean, cameraSequence : Int) { }
     override fun finishCamera() { }
     override fun changeCaptureMode(mode: String) { }
+    override fun needRotateImage(): Boolean { return (false) }
     override fun setRefresher(refresher: ILiveViewRefresher, imageView: ILiveView) { }
     override fun captureButtonReceiver(id: Int): View.OnClickListener { return (this) }
     override fun keyDownReceiver(id: Int): IKeyDown { return (this) }

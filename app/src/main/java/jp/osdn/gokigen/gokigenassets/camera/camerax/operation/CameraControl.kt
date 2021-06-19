@@ -56,6 +56,11 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
         Log.v(TAG, " changeCaptureMode() : $mode ")
     }
 
+    override fun needRotateImage(): Boolean
+    {
+        return (true)
+    }
+
     override fun setRefresher(refresher: ILiveViewRefresher, imageView : ILiveView)
     {
         liveViewListener.setRefresher(refresher)
