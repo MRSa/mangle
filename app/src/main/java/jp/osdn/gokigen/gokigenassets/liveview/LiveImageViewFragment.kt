@@ -184,12 +184,12 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
             }
             if ((!isCameraControl0)&&(!isCameraControl1))
             {
-                val area = liveviewView.findViewById<LiveImageView>(ID_VIEW_UPPER_AREA)
+                val area = liveviewView.findViewById<View>(ID_VIEW_UPPER_AREA)
                 area.visibility = View.GONE
             }
             if ((!isCameraControl2)&&(!isCameraControl3))
             {
-                val area = liveviewView.findViewById<LiveImageView>(ID_VIEW_LOWER_AREA)
+                val area = liveviewView.findViewById<View>(ID_VIEW_LOWER_AREA)
                 area.visibility = View.GONE
             }
             liveviewView.postInvalidate()

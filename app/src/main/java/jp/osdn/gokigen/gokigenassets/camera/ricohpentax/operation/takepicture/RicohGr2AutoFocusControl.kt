@@ -188,14 +188,23 @@ class RicohGr2AutoFocusControl(private val frameDisplayer: IAutoFocusFrameDispla
             var afResult = false
             try
             {
-                Log.v(TAG, " findTouchAFPositionResult() : $replyString")
+                //Log.v(TAG, " findTouchAFPositionResult() : $replyString")
                 val resultObject = JSONObject(replyString)
                 val result = resultObject.getString("errMsg")
-                val focused = resultObject.getBoolean("focused")
-                if (result.contains("OK"))
+                try
                 {
-                    afResult = focused
-                    Log.v(TAG, "AF Result : $afResult")
+                    val focused = resultObject.getBoolean("focused")
+                    if (result.contains("OK"))
+                    {
+                        afResult = focused
+                        Log.v(TAG, "AF drive Result : $afResult")
+                    }
+                }
+                catch (e : Exception)
+                {
+                    // GR3 は、 focusedを返してくれないので、
+                    Log.v(TAG, " AF Result : $replyString")
+                    afResult = result.contains("OK")
                 }
             }
             catch (e: Exception)
