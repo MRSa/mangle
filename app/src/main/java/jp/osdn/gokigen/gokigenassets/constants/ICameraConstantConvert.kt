@@ -21,6 +21,12 @@ interface ICameraConstantConvert
         const val ID_STRING_CONNECT_CONNECTING = R.string.connect_connecting
         const val ID_STRING_CONNECT_CONNECTED = R.string.connect_connected
         const val ID_STRING_CONNECT_CHANGE_RUN_MODE = R.string.connect_change_run_mode
+        const val ID_STRING_CONNECT_CAMERA_DETECTED = R.string.connect_camera_detected
+        const val ID_STRING_CONNECT_CAMERA_SEARCH_REQUEST = R.string.connect_camera_search_request
+        const val ID_STRING_CONNECT_CAMERA_FOUND = R.string.connect_camera_found
+        const val ID_STRING_CONNECT_WAIT_REPLY_CAMERA = R.string.connect_camera_wait_reply
+        const val ID_STRING_CONNECT_CAMERA_RECEIVED_REPLY = R.string.connect_camera_received_reply
+        const val ID_STRING_CONNECT_CAMERA_REJECTED = R.string.connect_camera_rejected
 
 
         const val ID_PREFERENCE_THETA_LIVEVIEW_RESOLUTION = IPreferencePropertyAccessor.THETA_LIVEVIEW_RESOLUTION

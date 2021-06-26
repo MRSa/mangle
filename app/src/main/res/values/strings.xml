@@ -116,9 +116,15 @@
     <string name="connect_connected">connected</string>
     <string name="connect_change_run_mode">changeRunMode</string>
     <string name="connect_restore_camera_settings">restoreCameraSettings</string>
+    <string name="connect_camera_detected">Detected a camera</string>
+    <string name="connect_camera_search_request">Camera Search</string>
+    <string name="connect_camera_found">Found a camera</string>
+    <string name="connect_camera_wait_reply">Wait reply from a camera</string>
+    <string name="connect_camera_received_reply">Received reply from a camera</string>
 
     <string name="camera_not_found">Not Found&#8230;</string>
     <string name="camera_connect_response_ng">Camera replies NG.</string>
+    <string name="connect_camera_rejected">Camera rejected.</string>
 
     <string name="dialog_title_connect_failed">Connect failed.</string>
     <string name="dialog_button_retry">Retry</string>

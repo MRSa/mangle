@@ -1,7 +1,6 @@
 package jp.osdn.gokigen.gokigenassets.camera.ricohpentax.operation
 
 import android.graphics.PointF
-import android.util.Log
 import android.view.MotionEvent
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.IFocusingControl
 import jp.osdn.gokigen.gokigenassets.camera.ricohpentax.operation.takepicture.RicohGr2AutoFocusControl

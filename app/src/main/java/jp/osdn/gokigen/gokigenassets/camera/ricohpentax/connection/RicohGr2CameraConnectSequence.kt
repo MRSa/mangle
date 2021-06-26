@@ -12,7 +12,8 @@ import jp.osdn.gokigen.gokigenassets.constants.ICameraConstantConvert.Companion.
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConstantConvert.Companion.ID_STRING_CONNECT_CONNECTED
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
 
-class RicohGr2CameraConnectSequence(private val context: Activity, private val cameraStatusReceiver: ICameraStatusReceiver, private val cameraConnection: ICameraConnection, private val gr2CommandNotify: IUseGR2CommandNotify, private val executeUrl : String = "http://192.168.0.1") : Runnable {
+class RicohGr2CameraConnectSequence(private val context: Activity, private val cameraStatusReceiver: ICameraStatusReceiver, private val cameraConnection: ICameraConnection, private val gr2CommandNotify: IUseGR2CommandNotify, private val executeUrl : String = "http://192.168.0.1") : Runnable
+{
 
     companion object
     {
