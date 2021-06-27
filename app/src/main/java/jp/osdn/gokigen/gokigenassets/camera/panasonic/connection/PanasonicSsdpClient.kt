@@ -40,11 +40,7 @@ class PanasonicSsdpClient(private val context: Context, private val callback: IS
     init
     {
         this.sendRepeatCount = if (sendRepeatCount > 0) sendRepeatCount else SEND_TIMES_DEFAULT
-        ssdpRequest = """
-             M-SEARCH * HTTP/1.1
-             ${java.lang.String.format(Locale.US, "HOST: %s:%d\r\n", SSDP_ADDR, SSDP_PORT)}MAN: "ssdp:discover"
-             ${java.lang.String.format(Locale.US, "MX: %d\r\n", SSDP_MX)}${String.format("ST: %s\r\n", SSDP_ST)}
-             """.trimIndent()
+        ssdpRequest = "M-SEARCH * HTTP/1.1\r\nHOST: $SSDP_ADDR:$SSDP_PORT\r\nMAN: \"ssdp:discover\"\r\nMX: $SSDP_MX\r\nST: $SSDP_ST\r\n\r\n"
     }
 
     fun search()
