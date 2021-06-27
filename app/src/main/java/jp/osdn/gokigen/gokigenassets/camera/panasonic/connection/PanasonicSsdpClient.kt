@@ -27,9 +27,9 @@ class PanasonicSsdpClient(private val context: Context, private val callback: IS
     {
         private val TAG = PanasonicSsdpClient::class.java.simpleName
         private const val SEND_TIMES_DEFAULT = 3
-        private const val SEND_WAIT_DURATION_MS = 100
+        private const val SEND_WAIT_DURATION_MS = 300
         private const val SSDP_RECEIVE_TIMEOUT = 4 * 1000 // msec
-        private const val PACKET_BUFFER_SIZE = 2048
+        private const val PACKET_BUFFER_SIZE = 4096
         private const val SSDP_PORT = 1900
         private const val SSDP_MX = 2
         private const val SSDP_ADDR = "239.255.255.250"
@@ -39,7 +39,7 @@ class PanasonicSsdpClient(private val context: Context, private val callback: IS
 
     init
     {
-        this.sendRepeatCount = if (sendRepeatCount >= 0) sendRepeatCount else SEND_TIMES_DEFAULT
+        this.sendRepeatCount = if (sendRepeatCount > 0) sendRepeatCount else SEND_TIMES_DEFAULT
         ssdpRequest = """
              M-SEARCH * HTTP/1.1
              ${java.lang.String.format(Locale.US, "HOST: %s:%d\r\n", SSDP_ADDR, SSDP_PORT)}MAN: "ssdp:discover"
@@ -70,6 +70,7 @@ class PanasonicSsdpClient(private val context: Context, private val callback: IS
                 socket.send(packet)
                 Thread.sleep(SEND_WAIT_DURATION_MS.toLong())
             }
+            Log.v(TAG, " SSDP : SEND")
         }
         catch (e: Exception)
         {
@@ -89,7 +90,7 @@ class PanasonicSsdpClient(private val context: Context, private val callback: IS
         var currentTime = System.currentTimeMillis()
         val foundDevices: MutableList<String?> = ArrayList()
         val array = ByteArray(PACKET_BUFFER_SIZE)
-        val http = SimpleHttpClient()
+
         try
         {
             cameraStatusReceiver.onStatusNotify(context.getString(ID_STRING_CONNECT_WAIT_REPLY_CAMERA))
@@ -112,6 +113,7 @@ class PanasonicSsdpClient(private val context: Context, private val callback: IS
                         //// Fetch Device Description XML and parse it.
                         if (ddLocation != null)
                         {
+                            val http = SimpleHttpClient()
                             cameraStatusReceiver.onStatusNotify("LOCATION : $ddLocation")
                             val device: IPanasonicCamera? = searchPanasonicCameraDevice(ddLocation)
                             if (device != null)

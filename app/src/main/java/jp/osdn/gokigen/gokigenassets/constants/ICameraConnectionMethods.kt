@@ -9,5 +9,6 @@ interface ICameraConnectionMethods
         const val PREFERENCE_CAMERA_METHOD_CAMERAX = "camerax"
         const val PREFERENCE_CAMERA_METHOD_THETA = "THETA"
         const val PREFERENCE_CAMERA_METHOD_PENTAX = "RICOH"
+        const val PREFERENCE_CAMERA_METHOD_PANASONIC = "PANASONIC"
     }
 }

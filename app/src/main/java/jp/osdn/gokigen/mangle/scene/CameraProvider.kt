@@ -5,12 +5,13 @@ import jp.osdn.gokigen.gokigenassets.camera.CameraPreference
 import jp.osdn.gokigen.gokigenassets.camera.DummyCameraControl
 import jp.osdn.gokigen.gokigenassets.camera.ICameraPreferenceProvider
 import jp.osdn.gokigen.gokigenassets.camera.camerax.operation.CameraControl
-import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraControl
-import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.*
+import jp.osdn.gokigen.gokigenassets.camera.panasonic.wrapper.PanasonicCameraControl
 import jp.osdn.gokigen.gokigenassets.camera.ricohpentax.RicohPentaxCameraControl
 import jp.osdn.gokigen.gokigenassets.camera.theta.ThetaCameraControl
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_CAMERAX
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_NONE
+import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_PANASONIC
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_PENTAX
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_THETA
 import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
@@ -95,6 +96,7 @@ class CameraProvider(private val activity: AppCompatActivity, private val inform
                 PREFERENCE_CAMERA_METHOD_CAMERAX -> prepareCameraXControl(cameraPreference)
                 PREFERENCE_CAMERA_METHOD_THETA -> prepareThetaCameraControl(cameraPreference)
                 PREFERENCE_CAMERA_METHOD_PENTAX -> preparePentaxCameraControl(cameraPreference)
+                PREFERENCE_CAMERA_METHOD_PANASONIC -> preparePanasonicCameraControl(cameraPreference)
                 else -> DummyCameraControl()
             })
         }
@@ -198,6 +200,11 @@ class CameraProvider(private val activity: AppCompatActivity, private val inform
     private fun preparePentaxCameraControl(cameraPreference : ICameraPreferenceProvider) : ICameraControl
     {
         return (RicohPentaxCameraControl(activity, vibrator, cameraPreference, statusReceiver))
+    }
+
+    private fun preparePanasonicCameraControl(cameraPreference : ICameraPreferenceProvider) : ICameraControl
+    {
+        return (PanasonicCameraControl(activity, vibrator, cameraPreference, statusReceiver))
     }
 
     private fun prepareCameraXControl(cameraPreference : ICameraPreferenceProvider): ICameraControl

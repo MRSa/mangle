@@ -2,31 +2,65 @@ package jp.osdn.gokigen.gokigenassets.camera.panasonic.status
 
 import android.content.Context
 import android.util.Log
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusUpdateNotify
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusWatcher
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICardSlotSelector
 import jp.osdn.gokigen.gokigenassets.camera.panasonic.ICameraChangeListener
 import jp.osdn.gokigen.gokigenassets.camera.panasonic.IPanasonicCamera
+import jp.osdn.gokigen.gokigenassets.liveview.message.IMessageDrawer
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
+import java.util.ArrayList
 
-
-class CameraEventObserver(context: Context, private val remote: IPanasonicCamera, cardSlotSelector: ICardSlotSelector): ICameraEventObserver
+class CameraEventObserver(context: Context, private val remote: IPanasonicCamera, cardSlotSelector: ICardSlotSelector) : ICameraStatusWatcher, ICameraStatus
 {
     private val statusHolder = CameraStatusHolder(context, remote, cardSlotSelector)
     private var isEventMonitoring = false
     private var isActive = false
 
-    override fun start(): Boolean
+
+    override fun startStatusWatch(indicator : IMessageDrawer?, notifier: ICameraStatusUpdateNotify?)
+    {
+        try
+        {
+            isActive = true
+            start()
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    override fun stopStatusWatch()
+    {
+        try
+        {
+            isEventMonitoring = false
+            isActive = false
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+
+    private fun start(): Boolean
     {
         if (!isActive)
         {
             Log.w(TAG, "start() observer is not active.")
             return false
         }
-        if (isEventMonitoring) {
+        if (isEventMonitoring)
+        {
             Log.w(TAG, "start() already starting.")
             return false
         }
         isEventMonitoring = true
-        try {
+        try
+        {
             val http = SimpleHttpClient()
             val thread: Thread = object : Thread() {
                 override fun run() {
@@ -59,16 +93,7 @@ class CameraEventObserver(context: Context, private val remote: IPanasonicCamera
         return true
     }
 
-    override fun stop() {
-        isEventMonitoring = false
-    }
-
-    override fun release() {
-        isEventMonitoring = false
-        isActive = false
-    }
-
-    override fun setEventListener(listener: ICameraChangeListener)
+    fun setEventListener(listener: ICameraChangeListener)
     {
         try
         {
@@ -80,21 +105,65 @@ class CameraEventObserver(context: Context, private val remote: IPanasonicCamera
         }
     }
 
-    override fun clearEventListener() {
-        try {
+    private fun clearEventListener()
+    {
+        try
+        {
             statusHolder.clearEventChangeListener()
-        } catch (e: Exception) {
+        }
+        catch (e: Exception)
+        {
             e.printStackTrace()
         }
     }
 
-    override fun getCameraStatusHolder(): ICameraStatusHolder {
+    private fun getCameraStatusHolder(): ICameraStatusHolder
+    {
         return statusHolder
     }
 
-    override fun activate()
+    private fun activate()
     {
         isActive = true
+    }
+
+    override fun getStatusList(key: String): List<String>
+    {
+        try
+        {
+            val listKey = key + "List"
+            return statusHolder.getAvailableItemList(listKey)
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+        return ArrayList()
+    }
+
+    override fun getStatus(key: String): String
+    {
+        try
+        {
+            return statusHolder.getItemStatus(key)
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+        return ""
+    }
+
+    override fun setStatus(key: String, value: String)
+    {
+        try
+        {
+            Log.v(TAG, " setStatus(key:$key, value:$value)")
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
     }
 
     companion object
@@ -102,5 +171,4 @@ class CameraEventObserver(context: Context, private val remote: IPanasonicCamera
         private val TAG = CameraEventObserver::class.java.simpleName
         private const val TIMEOUT_MS = 3000
     }
-
 }

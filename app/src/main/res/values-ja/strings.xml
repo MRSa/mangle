@@ -123,7 +123,7 @@
     <string name="connect_camera_received_reply">カメラ応答受信</string>
     <string name="connect_camera_rejected">カメラ接続拒否</string>
 
-    <string name="camera_not_found">Not Found&#8230;</string>
+    <string name="camera_not_found">カメラが見つかりませんでした&#8230;</string>
     <string name="camera_connect_response_ng">カメラに接続できませんでした。</string>
 
     <string name="dialog_title_connect_failed">接続失敗</string>

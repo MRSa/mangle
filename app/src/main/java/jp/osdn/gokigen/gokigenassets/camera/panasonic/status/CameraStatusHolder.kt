@@ -7,6 +7,7 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICardSlotSelector
 import jp.osdn.gokigen.gokigenassets.camera.panasonic.ICameraChangeListener
 import jp.osdn.gokigen.gokigenassets.camera.panasonic.IPanasonicCamera
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
+import java.util.ArrayList
 
 
 class CameraStatusHolder(private val context: Context, private val remote: IPanasonicCamera, private val cardSlotSelector: ICardSlotSelector) : ICardSlotSelectionReceiver, ICameraStatusHolder
@@ -16,8 +17,10 @@ class CameraStatusHolder(private val context: Context, private val remote: IPana
     private var isInitialized = false
     private var isDualSlot = false
 
-    fun parse(reply: String) {
-        try {
+    fun parse(reply: String)
+    {
+        try
+        {
             // Log.v(TAG, " getState : " + reply);
             var isEnableDualSlot = false
             if (reply.contains("<sd_memory>set</sd_memory>") && reply.contains("<sd2_memory>set</sd2_memory>")) {
@@ -37,33 +40,43 @@ class CameraStatusHolder(private val context: Context, private val remote: IPana
                 isDualSlot = isEnableDualSlot
             }
             checkCurrentSlot(reply)
-        } catch (e: Exception) {
+        }
+        catch (e: Exception)
+        {
             e.printStackTrace()
         }
     }
 
-    private fun checkCurrentSlot(reply: String) {
-        try {
+    private fun checkCurrentSlot(reply: String)
+    {
+        try
+        {
             val header = "<current_sd>"
             val indexStart = reply.indexOf(header)
             val indexEnd = reply.indexOf("</current_sd>")
-            if (indexStart > 0 && indexEnd > 0 && indexStart < indexEnd) {
+            if (indexStart > 0 && indexEnd > 0 && indexStart < indexEnd)
+            {
                 val currentSlot = reply.substring(indexStart + header.length, indexEnd)
-                if (current_sd != currentSlot) {
+                if (current_sd != currentSlot)
+                {
                     current_sd = currentSlot
                     cardSlotSelector.changedCardSlot(current_sd)
                 }
             }
-        } catch (e: Exception) {
+        }
+        catch (e: Exception)
+        {
             e.printStackTrace()
         }
     }
 
-    fun setEventChangeListener(listener: ICameraChangeListener) {
+    fun setEventChangeListener(listener: ICameraChangeListener)
+    {
         this.listener = listener
     }
 
-    fun clearEventChangeListener() {
+    fun clearEventChangeListener()
+    {
         listener = null
     }
 
@@ -75,7 +88,8 @@ class CameraStatusHolder(private val context: Context, private val remote: IPana
         return false
     }
 
-    override fun getShootMode(): String? {
+    override fun getShootMode(): String?
+    {
         return null
     }
 
@@ -91,38 +105,90 @@ class CameraStatusHolder(private val context: Context, private val remote: IPana
         return current_sd
     }
 
-    override fun slotSelected(slotId: String) {
+    override fun slotSelected(slotId: String)
+    {
         Log.v(TAG, " slotSelected : $slotId")
-        if (current_sd != slotId) {
+        if (current_sd != slotId)
+        {
             // スロットを変更したい！
             requestToChangeSlot(slotId)
         }
     }
-
-    private fun requestToChangeSlot(slotId: String) {
-        try {
-            val thread = Thread {
+    /**
+     *
+     *
+     */
+    fun getAvailableItemList(key: String): List<String>
+    {
+        val itemList: MutableList<String> = ArrayList()
+        try
+        {
+/*
+            val array = latestResultObject!!.getJSONArray(key) ?: return itemList
+            val nofItems = array.length()
+            for (index in 0 until nofItems) {
                 try {
-                    var loop = true
-                    val http = SimpleHttpClient()
-                    while (loop) {
-                        val reply: String = http.httpGet(
-                            remote.getCmdUrl() + "cam.cgi?mode=setsetting&type=current_sd&value=" + slotId,
-                            TIMEOUT_MS
-                        )
-                        if (reply.indexOf("<result>ok</result>") > 0) {
-                            loop = false
-                            cardSlotSelector.selectSlot(slotId)
-                        } else {
-                            Thread.sleep(1000) // 1秒待つ
-                        }
-                    }
+                    itemList.add(array.getString(index))
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
             }
+*/
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+        return itemList
+    }
+
+    fun getItemStatus(key: String): String
+    {
+/*
+        try
+        {
+            return latestResultObject!!.getString(key)
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+*/
+        return ""
+    }
+
+    private fun requestToChangeSlot(slotId: String)
+    {
+        try
+        {
+            val thread = Thread {
+                try
+                {
+                    var loop = true
+                    val http = SimpleHttpClient()
+                    while (loop)
+                    {
+                        val reply: String = http.httpGet(remote.getCmdUrl() + "cam.cgi?mode=setsetting&type=current_sd&value=" + slotId, TIMEOUT_MS)
+                        if (reply.indexOf("<result>ok</result>") > 0)
+                        {
+                            loop = false
+                            cardSlotSelector.selectSlot(slotId)
+                        }
+                        else
+                        {
+                            Thread.sleep(1000) // 1秒待つ
+                        }
+                    }
+                }
+                catch (e: Exception)
+                {
+                    e.printStackTrace()
+                }
+            }
             thread.start()
-        } catch (e: Exception) {
+        }
+        catch (e: Exception)
+        {
             e.printStackTrace()
         }
     }

@@ -1,7 +1,6 @@
 package jp.osdn.gokigen.gokigenassets.camera.panasonic.liveview
 
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
 import jp.osdn.gokigen.gokigenassets.camera.panasonic.IPanasonicCamera
 import jp.osdn.gokigen.gokigenassets.liveview.image.CameraLiveViewListenerImpl
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
@@ -10,9 +9,8 @@ import java.net.DatagramSocket
 import java.util.*
 
 
-class PanasonicLiveViewControl(private val activity : AppCompatActivity, private val camera: IPanasonicCamera)
+class PanasonicLiveViewControl(private val liveViewListener : CameraLiveViewListenerImpl, private val camera: IPanasonicCamera)
 {
-    private val liveViewListener = CameraLiveViewListenerImpl(activity)
     private var receiverSocket: DatagramSocket? = null
     private var whileStreamReceive = false
     private var errorOccur = 0
@@ -198,7 +196,7 @@ class PanasonicLiveViewControl(private val activity : AppCompatActivity, private
             }
         }
         val offset = startPosition - startmarker.size
-        liveViewListener.onUpdateLiveView(Arrays.copyOfRange(receivedData, offset, dataLength), null)
+        liveViewListener.onUpdateLiveView(receivedData.copyOfRange(offset, dataLength), null)
     }
 
     private fun receiverThread()
@@ -250,13 +248,6 @@ class PanasonicLiveViewControl(private val activity : AppCompatActivity, private
         Log.v(TAG, "  ----- startReceiveStream() : Finished.")
         System.gc()
     }
-
-/*
-    fun getLiveViewListener(): ILiveViewListener
-    {
-        return liveViewListener
-    }
-*/
 
     private fun closeReceiveSocket()
     {
