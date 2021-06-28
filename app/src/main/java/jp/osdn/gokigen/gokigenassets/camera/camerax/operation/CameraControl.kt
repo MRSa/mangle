@@ -1,6 +1,7 @@
 package jp.osdn.gokigen.gokigenassets.camera.camerax.operation
 
 import android.util.Log
+import android.util.Size
 import android.view.Surface
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -151,17 +152,52 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
 */
             //val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
             val imageCapture = fileControl.prepare()
-
+            val option1 = preference.getCameraOption1()  // プレビューサイズを設定する
+            val previewSize = if (option1.isNotBlank()) {
+                when (option1) {
+                    "_4K"   -> Size(4096, 2160)
+                    "_WQHD" -> Size(2560, 1440)
+                    "_2K" -> Size(2048, 1080)
+                    "_FHD" -> Size(1920, 1080)
+                    "_SXGA" -> Size(1280, 1024) // SXGA : 1600x1200 @ Pixel3a
+                    "_XGA" -> Size(1024, 768)   // XGA  : 1600x1200 @ Pixel3a
+                    "_SVGA" -> Size(800, 600)   // SVGA : 1280x960  @ Pixel3a
+                    "_VGA" -> Size(640, 480)   // SVGA : 1280x960  @ Pixel3a
+                    "4K"   -> Size(2160, 4096)
+                    "WQHD" -> Size(1440, 2560)
+                    "2K" -> Size(1080, 2048)
+                    "FHD" -> Size(1080, 1920)
+                    "SXGA" -> Size(1024, 1280)
+                    "XGA" -> Size(768, 1024)
+                    "SVGA" -> Size(600, 800)
+                    "VGA" -> Size(480, 640)
+                    else -> Size(480, 640)     // VGA : 1024x768   @ Pixel3a
+                }
+            }
+            else
+            {
+                Size(640, 480)
+            }
             try
             {
-                val imageAnalyzer = ImageAnalysis.Builder()
-                    //.setTargetResolution(Size(800, 600))
-                    .setTargetRotation(getImageRotation())
-                    .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                    .build()
-                    .also {
-                        it.setAnalyzer(cameraExecutor, liveViewListener)
-                    }
+                val imageAnalyzer = if (option1.isNotBlank()) {
+                    ImageAnalysis.Builder()
+                        .setTargetResolution(previewSize)
+                        .setTargetRotation(getImageRotation())
+                        .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                        .build()
+                        .also {
+                            it.setAnalyzer(cameraExecutor, liveViewListener)
+                        }
+                } else {
+                    ImageAnalysis.Builder()
+                        .setTargetRotation(getImageRotation())
+                        .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                        .build()
+                        .also {
+                            it.setAnalyzer(cameraExecutor, liveViewListener)
+                        }
+                }
                 cameraProvider.unbindAll()
                 cameraProvider.bindToLifecycle(activity, cameraSelector, imageCapture, imageAnalyzer)
             }
@@ -170,6 +206,7 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
                 Log.e(TAG, "Use case binding failed", e)
                 e.printStackTrace()
             }
+
         }, ContextCompat.getMainExecutor(activity))
     }
 

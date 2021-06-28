@@ -77,7 +77,8 @@ import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.P
 class CameraProvider(private val activity: AppCompatActivity, private val informationNotify: IInformationReceiver, private val vibrator : IVibrator, private val statusReceiver : ICameraStatusReceiver)
 {
     private var cameraXisCreated = false
-    private lateinit var cameraXControl: ICameraControl
+    private lateinit var cameraXControl0: ICameraControl
+    private lateinit var cameraXControl1: ICameraControl
 
     fun decideCameraControl(preferenceKey : String) : ICameraControl
     {
@@ -209,12 +210,14 @@ class CameraProvider(private val activity: AppCompatActivity, private val inform
 
     private fun prepareCameraXControl(cameraPreference : ICameraPreferenceProvider): ICameraControl
     {
-        if ((cameraXisCreated)&&(::cameraXControl.isInitialized))
+        if ((cameraXisCreated)&&(::cameraXControl0.isInitialized))
         {
-            return (cameraXControl)
+            cameraXControl1 = CameraControl(activity, cameraPreference, vibrator)
+            cameraXisCreated = true
+            return (cameraXControl1)
         }
-        cameraXControl = CameraControl(activity, cameraPreference, vibrator)
+        cameraXControl0 = CameraControl(activity, cameraPreference, vibrator)
         cameraXisCreated = true
-        return (cameraXControl)
+        return (cameraXControl0)
     }
 }
