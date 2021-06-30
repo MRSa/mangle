@@ -21,7 +21,7 @@ import java.util.*
 
 data class MyImageByteArray(val imageData : ByteArray, val rotationDegrees: Int)
 
-class CameraLiveViewListenerImpl(private val context: Context) : IImageDataReceiver, IImageProvider, ImageAnalysis.Analyzer
+class CameraLiveViewListenerImpl(private val context: Context, private val isDisableCache : Boolean = false) : IImageDataReceiver, IImageProvider, ImageAnalysis.Analyzer
 {
     private var cachePics = ArrayList<MyImageByteArray>()
     private var isImageReceived = false
@@ -351,7 +351,7 @@ class CameraLiveViewListenerImpl(private val context: Context) : IImageDataRecei
     private fun setupLiveviewCache()
     {
         val preference = PreferenceAccessWrapper(context)
-        if (!preference.getBoolean(ID_PREFERENCE_CACHE_LIVE_VIEW_PICTURES, false))
+        if ((!preference.getBoolean(ID_PREFERENCE_CACHE_LIVE_VIEW_PICTURES, false))||(isDisableCache))
         {
             return
         }

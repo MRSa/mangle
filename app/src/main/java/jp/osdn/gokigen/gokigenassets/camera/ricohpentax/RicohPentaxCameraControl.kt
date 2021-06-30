@@ -24,7 +24,7 @@ import jp.osdn.gokigen.gokigenassets.liveview.storeimage.StoreImage
 import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 
-class RicohPentaxCameraControl(private val context: AppCompatActivity, private val vibrator : IVibrator, private val preference: ICameraPreferenceProvider, statusReceiver : ICameraStatusReceiver)  : ILiveViewController, ICameraControl, View.OnClickListener, ICaptureModeReceiver, ICameraShutter, IDisplayInjector, IUseGR2CommandNotify, IKeyDown
+class RicohPentaxCameraControl(private val context: AppCompatActivity, private val vibrator : IVibrator, private val preference: ICameraPreferenceProvider, statusReceiver : ICameraStatusReceiver)  : ILiveViewController, ICameraControl, View.OnClickListener, View.OnLongClickListener, ICaptureModeReceiver, ICameraShutter, IDisplayInjector, IUseGR2CommandNotify, IKeyDown
 {
 
     //private final Activity activity;
@@ -161,6 +161,12 @@ class RicohPentaxCameraControl(private val context: AppCompatActivity, private v
     }
 
     override fun captureButtonReceiver(id: Int): View.OnClickListener
+    {
+        cameraPositionId = id
+        return (this)
+    }
+
+    override fun onLongClickReceiver(id: Int): View.OnLongClickListener
     {
         cameraPositionId = id
         return (this)
@@ -315,6 +321,11 @@ class RicohPentaxCameraControl(private val context: AppCompatActivity, private v
         return (false)
     }
 
+    override fun onLongClick(v: View?): Boolean
+    {
+        return (false)
+    }
+
     /**
      *
      *
@@ -324,4 +335,5 @@ class RicohPentaxCameraControl(private val context: AppCompatActivity, private v
         private val TAG = RicohPentaxCameraControl::class.java.simpleName
         private const val communicationTimeoutMs = 5000
     }
+
 }

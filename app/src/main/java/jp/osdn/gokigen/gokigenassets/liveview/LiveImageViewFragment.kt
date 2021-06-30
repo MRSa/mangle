@@ -30,7 +30,7 @@ import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Compa
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_LOWER_AREA
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_UPPER_AREA
 
-class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYOUT_DEFAULT) : Fragment(contentLayoutId), View.OnClickListener
+class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYOUT_DEFAULT) : Fragment(contentLayoutId), View.OnClickListener, View.OnLongClickListener
 {
     private lateinit var liveviewView : View
 
@@ -92,6 +92,7 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
                 {
                     cameraControl0.setRefresher(imageView0, imageView0)
                     imageView0.injectDisplay(cameraControl0)
+                    imageView0.setOnLongClickListener(this)
                     imageView0.setOnTouchListener(LiveViewOnTouchListener(cameraControl0, 0))
                     if (isCacheImage)
                     {
@@ -117,6 +118,7 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
                 {
                     cameraControl1.setRefresher(imageView1, imageView1)
                     imageView1.injectDisplay(cameraControl1)
+                    imageView1.setOnLongClickListener(this)
                     imageView1.setOnTouchListener(LiveViewOnTouchListener(cameraControl1, 1))
                     if (isCacheImage)
                     {
@@ -142,6 +144,7 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
                 {
                     cameraControl2.setRefresher(imageView2, imageView2)
                     imageView2.injectDisplay(cameraControl2)
+                    imageView2.setOnLongClickListener(this)
                     imageView2.setOnTouchListener(LiveViewOnTouchListener(cameraControl2, 2))
                     if (isCacheImage)
                     {
@@ -167,6 +170,7 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
                 {
                     cameraControl3.setRefresher(imageView3, imageView3)
                     imageView3.injectDisplay(cameraControl3)
+                    imageView3.setOnLongClickListener(this)
                     imageView3.setOnTouchListener(LiveViewOnTouchListener(cameraControl3, 3))
                     if (isCacheImage)
                     {
@@ -310,5 +314,39 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
             e.printStackTrace()
         }
         return (rotation)
+    }
+
+    override fun onLongClick(v: View?): Boolean
+    {
+        var ret = false
+        try
+        {
+            val id = v?.id
+            if ((::cameraControl0.isInitialized)&&(isCameraControl0)&&(id == ID_VIEW_FINDER_0))
+            {
+                cameraControl0.onLongClickReceiver(0).onLongClick(v)
+                ret = true
+            }
+            if ((::cameraControl1.isInitialized)&&(isCameraControl1)&&(id == ID_VIEW_FINDER_1))
+            {
+                cameraControl1.onLongClickReceiver(1).onLongClick(v)
+                ret = true
+            }
+            if ((::cameraControl2.isInitialized)&&(isCameraControl2)&&(id == ID_VIEW_FINDER_2))
+            {
+                cameraControl2.onLongClickReceiver(2).onLongClick(v)
+                ret = true
+            }
+            if ((::cameraControl3.isInitialized)&&(isCameraControl3)&&(id == ID_VIEW_FINDER_3))
+            {
+                cameraControl3.onLongClickReceiver(3).onLongClick(v)
+                ret = true
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+        return (ret)
     }
 }

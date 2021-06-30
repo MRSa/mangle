@@ -15,7 +15,6 @@ import jp.osdn.gokigen.gokigenassets.camera.panasonic.operation.PanasonicCameraC
 import jp.osdn.gokigen.gokigenassets.camera.panasonic.operation.PanasonicCameraFocusControl
 import jp.osdn.gokigen.gokigenassets.camera.panasonic.operation.PanasonicCameraZoomLensControl
 import jp.osdn.gokigen.gokigenassets.camera.panasonic.status.CameraEventObserver
-import jp.osdn.gokigen.gokigenassets.camera.theta.status.ICaptureModeReceiver
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert
 import jp.osdn.gokigen.gokigenassets.liveview.IIndicatorControl
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveView
@@ -27,7 +26,7 @@ import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
 
-class PanasonicCameraControl(private val context: AppCompatActivity, private val vibrator : IVibrator, private val preference: ICameraPreferenceProvider,  private val provider: ICameraStatusReceiver) : IPanasonicCameraHolder, IDisplayInjector,ILiveViewController, ICameraControl, View.OnClickListener, ICaptureModeReceiver, ICameraShutter, IKeyDown
+class PanasonicCameraControl(private val context: AppCompatActivity, private val vibrator : IVibrator, private val preference: ICameraPreferenceProvider,  private val provider: ICameraStatusReceiver) : IPanasonicCameraHolder, IDisplayInjector,ILiveViewController, ICameraControl, View.OnClickListener, View.OnLongClickListener, ICameraShutter, IKeyDown
 {
     private val cardSlotSelector = PanasonicCardSlotSelector()
     private val liveViewListener = CameraLiveViewListenerImpl(context)
@@ -221,11 +220,6 @@ class PanasonicCameraControl(private val context: AppCompatActivity, private val
         // TODO("Not yet implemented")
     }
 
-    override fun changedCaptureMode(captureMode: String)
-    {
-        //TODO("Not yet implemented")
-    }
-
     override fun needRotateImage(): Boolean
     {
         return (false)
@@ -245,6 +239,12 @@ class PanasonicCameraControl(private val context: AppCompatActivity, private val
     }
 
     override fun captureButtonReceiver(id: Int): View.OnClickListener
+    {
+        cameraPositionId = id
+        return (this)
+    }
+
+    override fun onLongClickReceiver(id: Int): View.OnLongClickListener
     {
         cameraPositionId = id
         return (this)
@@ -400,4 +400,8 @@ class PanasonicCameraControl(private val context: AppCompatActivity, private val
         return (false)
     }
 
+    override fun onLongClick(v: View?): Boolean
+    {
+        return (false)
+    }
 }

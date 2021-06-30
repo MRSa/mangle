@@ -28,7 +28,7 @@ import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 
 class ThetaCameraControl(private val context: AppCompatActivity, private val vibrator : IVibrator, private val preference: ICameraPreferenceProvider, statusReceiver : ICameraStatusReceiver) : ILiveViewController,
-    ICameraControl, View.OnClickListener, ICaptureModeReceiver, ICameraShutter, IKeyDown
+    ICameraControl, View.OnClickListener, View.OnLongClickListener, ICaptureModeReceiver, ICameraShutter, IKeyDown
 {
     private val sessionIdHolder = ThetaSessionHolder()
     private val cameraConnection = ThetaCameraConnection(context, statusReceiver, sessionIdHolder, sessionIdHolder, this)
@@ -305,6 +305,12 @@ class ThetaCameraControl(private val context: AppCompatActivity, private val vib
         return (this)
     }
 
+    override fun onLongClickReceiver(id: Int): View.OnLongClickListener
+    {
+        cameraPositionId = id
+        return (this)
+    }
+
     override fun keyDownReceiver(id: Int): IKeyDown
     {
         cameraPositionId = id
@@ -328,6 +334,11 @@ class ThetaCameraControl(private val context: AppCompatActivity, private val vib
             doShutter()
             return (true)
         }
+        return (false)
+    }
+
+    override fun onLongClick(v: View?): Boolean
+    {
         return (false)
     }
 

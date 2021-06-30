@@ -18,6 +18,7 @@ interface ICameraControl
 
     fun setRefresher(refresher : ILiveViewRefresher, imageView : ILiveView)
     fun captureButtonReceiver(id : Int = 0) : View.OnClickListener
+    fun onLongClickReceiver(id : Int = 0) : View.OnLongClickListener
     fun keyDownReceiver(id : Int = 0) : IKeyDown
 
     fun getFocusingControl(id : Int = 0) : IFocusingControl?

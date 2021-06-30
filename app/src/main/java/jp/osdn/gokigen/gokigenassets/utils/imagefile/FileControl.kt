@@ -7,7 +7,6 @@ import android.view.View
 import androidx.camera.core.ImageCapture
 import androidx.fragment.app.FragmentActivity
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.IKeyDown
-import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_BUTTON_SHUTTER
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW_DEFAULT_VALUE
@@ -21,12 +20,12 @@ import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 
 
-class FileControl(private val context: FragmentActivity, private val storeImage : IStoreImage, private val vibrator : IVibrator) : View.OnClickListener, IKeyDown
+class FileControl(private val context: FragmentActivity, private val storeImage : IStoreImage, private val vibrator : IVibrator) : View.OnClickListener, View.OnLongClickListener, IKeyDown
 {
     private val storeLocal = ImageStoreLocal(context)
     private val storeExternal = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) { ImageStoreExternal(context) } else { ImageStoreExternalLegacy(context) }
     private var imageCapture: ImageCapture? = null
-    private var addId : Int = 0
+    private var cameraId : Int = 0
 
     fun prepare() : ImageCapture?
     {
@@ -48,7 +47,7 @@ class FileControl(private val context: FragmentActivity, private val storeImage 
 
     fun setId(id : Int)
     {
-        addId = id
+        cameraId = id
     }
 
     private fun takePhoto()
@@ -65,7 +64,7 @@ class FileControl(private val context: FragmentActivity, private val storeImage 
             if (captureBothCamera)
             {
                 // ライブビュー画像を保管する場合...
-                val thread = Thread { storeImage.doStore(addId) }
+                val thread = Thread { storeImage.doStore(cameraId, false) }
                 try
                 {
                     thread.start()
@@ -94,12 +93,12 @@ class FileControl(private val context: FragmentActivity, private val storeImage 
             if (!isLocalLocation)
             {
                 // 共用フォルダに保存
-                isStoreLocal = !storeExternal.takePhoto(addId, imageCapture)
+                isStoreLocal = !storeExternal.takePhoto(cameraId, imageCapture)
             }
             if (isStoreLocal)
             {
                 // アプリ専用フォルダに登録
-                storeLocal.takePhoto(addId, imageCapture)
+                storeLocal.takePhoto(cameraId, imageCapture)
             }
         }
         catch (e: Exception)
@@ -139,5 +138,10 @@ class FileControl(private val context: FragmentActivity, private val storeImage 
     companion object
     {
         private val TAG = FileControl::class.java.simpleName
+    }
+
+    override fun onLongClick(v: View?): Boolean
+    {
+        return (false)
     }
 }

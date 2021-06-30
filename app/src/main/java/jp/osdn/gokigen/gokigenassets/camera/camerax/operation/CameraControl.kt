@@ -115,7 +115,6 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
                 .also {
                     it.setSurfaceProvider(activity.findViewById<androidx.camera.view.PreviewView>(ID_CAMERA_X_PREVIEW_LAYOUT).surfaceProvider)
                 }
-            //val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
             val imageCapture = fileControl.prepare()
 
             try
@@ -143,18 +142,12 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
         val cameraProviderFuture = ProcessCameraProvider.getInstance(activity)
         cameraProviderFuture.addListener( {
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
-/*
-            val preview = Preview.Builder()
-                .build()
-                .also {
-                    it.setSurfaceProvider(activity.findViewById<androidx.camera.view.PreviewView>(R.id.viewFinder).createSurfaceProvider())
-                }
-*/
-            //val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
             val imageCapture = fileControl.prepare()
             val option1 = preference.getCameraOption1()  // プレビューサイズを設定する
             val previewSize = if (option1.isNotBlank()) {
                 when (option1) {
+                    "_8K" -> Size(4320, 7680)
+                    "_6K" -> Size(3384, 6016)
                     "_4K"   -> Size(4096, 2160)
                     "_WQHD" -> Size(2560, 1440)
                     "_2K" -> Size(2048, 1080)
@@ -163,6 +156,8 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
                     "_XGA" -> Size(1024, 768)   // XGA  : 1600x1200 @ Pixel3a
                     "_SVGA" -> Size(800, 600)   // SVGA : 1280x960  @ Pixel3a
                     "_VGA" -> Size(640, 480)   // SVGA : 1280x960  @ Pixel3a
+                    "8K" -> Size(7680, 4320)
+                    "6K" -> Size(6016, 3384)
                     "4K"   -> Size(2160, 4096)
                     "WQHD" -> Size(1440, 2560)
                     "2K" -> Size(1080, 2048)
@@ -235,6 +230,19 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
     }
 
     override fun captureButtonReceiver(id : Int) : View.OnClickListener
+    {
+        try
+        {
+            fileControl.setId(id)
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+        return (fileControl)
+    }
+
+    override fun onLongClickReceiver(id: Int): View.OnLongClickListener
     {
         try
         {

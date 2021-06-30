@@ -1,7 +1,17 @@
 package jp.osdn.gokigen.gokigenassets.camera
 
-class CameraPreference(private val method : String, private val sequence : String = "0", private val option1 : String = "", private val option2 : String = "", private val option3 : String = "", private val option4 : String = "", private val option5 : String = "") : ICameraPreferenceProvider
+import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
+
+class CameraPreference(private val wrapper : PreferenceAccessWrapper, method0 : String, sequence0 : String = "0", option1_ : String = "", option2_ : String = "", option3_ : String = "", option4_ : String = "", option5_ : String = "", private val keySet : CameraPreferenceKeySet? = null) : ICameraPreferenceProvider, ICameraPreferenceUpdater
 {
+    private var method = method0
+    private var sequence = sequence0
+    private var option1 = option1_
+    private var option2 = option2_
+    private var option3 = option3_
+    private var option4 = option4_
+    private var option5 = option5_
+
     override fun getCameraMethod(): String
     {
         return (method)
@@ -35,5 +45,50 @@ class CameraPreference(private val method : String, private val sequence : Strin
     override fun getCameraOption5(): String
     {
         return (option5)
+    }
+
+    override fun setCameraOption1(value: String)
+    {
+        option1 = value
+        if (keySet != null)
+        {
+            wrapper.putString(keySet.getOption1Key(), option1)
+        }
+    }
+
+    override fun setCameraOption2(value: String)
+    {
+        option2 = value
+        if (keySet != null)
+        {
+            wrapper.putString(keySet.getOption2Key(), option2)
+        }
+    }
+
+    override fun setCameraOption3(value: String)
+    {
+        option3 = value
+        if (keySet != null)
+        {
+            wrapper.putString(keySet.getOption3Key(), option3)
+        }
+    }
+
+    override fun setCameraOption4(value: String)
+    {
+        option4 = value
+        if (keySet != null)
+        {
+            wrapper.putString(keySet.getOption4Key(), option4)
+        }
+    }
+
+    override fun setCameraOption5(value: String)
+    {
+        option5 = value
+        if (keySet != null)
+        {
+            wrapper.putString(keySet.getOption5Key(), option5)
+        }
     }
 }
