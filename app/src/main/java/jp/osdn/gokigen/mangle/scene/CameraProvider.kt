@@ -156,7 +156,7 @@ class CameraProvider(private val activity: AppCompatActivity, private val inform
         val option4  = wrapper.getString(PREFERENCE_CAMERA_OPTION4_1, PREFERENCE_CAMERA_OPTION4_1_DEFAULT_VALUE)
         val option5  = wrapper.getString(PREFERENCE_CAMERA_OPTION5_1, PREFERENCE_CAMERA_OPTION5_1_DEFAULT_VALUE)
 
-        return (CameraPreference(wrapper, method, sequence, option1, option2, option3, option4, option5, CameraPreferenceKeySet(PREFERENCE_CAMERA_OPTION1_1, PREFERENCE_CAMERA_OPTION2_1, PREFERENCE_CAMERA_OPTION3_1, PREFERENCE_CAMERA_OPTION4_1, PREFERENCE_CAMERA_OPTION5_1)))
+        return (CameraPreference(wrapper, method, false, sequence, option1, option2, option3, option4, option5, CameraPreferenceKeySet(PREFERENCE_CAMERA_OPTION1_1, PREFERENCE_CAMERA_OPTION2_1, PREFERENCE_CAMERA_OPTION3_1, PREFERENCE_CAMERA_OPTION4_1, PREFERENCE_CAMERA_OPTION5_1)))
     }
 
     private fun setupCameraPreference2(wrapper : PreferenceAccessWrapper) : ICameraPreferenceProvider
@@ -169,7 +169,7 @@ class CameraProvider(private val activity: AppCompatActivity, private val inform
         val option4  = wrapper.getString(PREFERENCE_CAMERA_OPTION4_2, PREFERENCE_CAMERA_OPTION4_2_DEFAULT_VALUE)
         val option5  = wrapper.getString(PREFERENCE_CAMERA_OPTION5_2, PREFERENCE_CAMERA_OPTION5_2_DEFAULT_VALUE)
 
-        return (CameraPreference(wrapper, method, sequence, option1, option2, option3, option4, option5, CameraPreferenceKeySet(PREFERENCE_CAMERA_OPTION1_2, PREFERENCE_CAMERA_OPTION2_2, PREFERENCE_CAMERA_OPTION3_2, PREFERENCE_CAMERA_OPTION4_2, PREFERENCE_CAMERA_OPTION5_2)))
+        return (CameraPreference(wrapper, method, false, sequence, option1, option2, option3, option4, option5, CameraPreferenceKeySet(PREFERENCE_CAMERA_OPTION1_2, PREFERENCE_CAMERA_OPTION2_2, PREFERENCE_CAMERA_OPTION3_2, PREFERENCE_CAMERA_OPTION4_2, PREFERENCE_CAMERA_OPTION5_2)))
     }
 
     private fun setupCameraPreference3(wrapper : PreferenceAccessWrapper) : ICameraPreferenceProvider
@@ -182,7 +182,7 @@ class CameraProvider(private val activity: AppCompatActivity, private val inform
         val option4  = wrapper.getString(PREFERENCE_CAMERA_OPTION4_3, PREFERENCE_CAMERA_OPTION4_3_DEFAULT_VALUE)
         val option5  = wrapper.getString(PREFERENCE_CAMERA_OPTION5_3, PREFERENCE_CAMERA_OPTION5_3_DEFAULT_VALUE)
 
-        return (CameraPreference(wrapper, method, sequence, option1, option2, option3, option4, option5, CameraPreferenceKeySet(PREFERENCE_CAMERA_OPTION1_3, PREFERENCE_CAMERA_OPTION2_3, PREFERENCE_CAMERA_OPTION3_3, PREFERENCE_CAMERA_OPTION4_3, PREFERENCE_CAMERA_OPTION5_3)))
+        return (CameraPreference(wrapper, method, false, sequence, option1, option2, option3, option4, option5, CameraPreferenceKeySet(PREFERENCE_CAMERA_OPTION1_3, PREFERENCE_CAMERA_OPTION2_3, PREFERENCE_CAMERA_OPTION3_3, PREFERENCE_CAMERA_OPTION4_3, PREFERENCE_CAMERA_OPTION5_3)))
     }
 
     private fun setupCameraPreference4(wrapper : PreferenceAccessWrapper) : ICameraPreferenceProvider
@@ -195,7 +195,7 @@ class CameraProvider(private val activity: AppCompatActivity, private val inform
         val option4  = wrapper.getString(PREFERENCE_CAMERA_OPTION4_4, PREFERENCE_CAMERA_OPTION4_4_DEFAULT_VALUE)
         val option5  = wrapper.getString(PREFERENCE_CAMERA_OPTION5_4, PREFERENCE_CAMERA_OPTION5_4_DEFAULT_VALUE)
 
-        return (CameraPreference(wrapper, method, sequence, option1, option2, option3, option4, option5, CameraPreferenceKeySet(PREFERENCE_CAMERA_OPTION1_4, PREFERENCE_CAMERA_OPTION2_4, PREFERENCE_CAMERA_OPTION3_4, PREFERENCE_CAMERA_OPTION4_4, PREFERENCE_CAMERA_OPTION5_4)))
+        return (CameraPreference(wrapper, method, false, sequence, option1, option2, option3, option4, option5, CameraPreferenceKeySet(PREFERENCE_CAMERA_OPTION1_4, PREFERENCE_CAMERA_OPTION2_4, PREFERENCE_CAMERA_OPTION3_4, PREFERENCE_CAMERA_OPTION4_4, PREFERENCE_CAMERA_OPTION5_4)))
     }
 
     private fun prepareThetaCameraControl(cameraPreference : ICameraPreferenceProvider) : ICameraControl

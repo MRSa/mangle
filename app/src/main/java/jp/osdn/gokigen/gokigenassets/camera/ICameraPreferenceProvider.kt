@@ -10,4 +10,6 @@ interface ICameraPreferenceProvider
     fun getCameraOption3() : String
     fun getCameraOption4() : String
     fun getCameraOption5() : String
+
+    fun getUpdator() : ICameraPreferenceUpdater?
 }

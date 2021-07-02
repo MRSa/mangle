@@ -2,7 +2,7 @@ package jp.osdn.gokigen.gokigenassets.camera
 
 import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
 
-class CameraPreference(private val wrapper : PreferenceAccessWrapper, method0 : String, sequence0 : String = "0", option1_ : String = "", option2_ : String = "", option3_ : String = "", option4_ : String = "", option5_ : String = "", private val keySet : CameraPreferenceKeySet? = null) : ICameraPreferenceProvider, ICameraPreferenceUpdater
+class CameraPreference(private val wrapper : PreferenceAccessWrapper, method0 : String, private val isReadonly : Boolean = false, sequence0 : String = "0", option1_ : String = "", option2_ : String = "", option3_ : String = "", option4_ : String = "", option5_ : String = "", private val keySet : CameraPreferenceKeySet? = null) : ICameraPreferenceProvider, ICameraPreferenceUpdater
 {
     private var method = method0
     private var sequence = sequence0
@@ -45,6 +45,15 @@ class CameraPreference(private val wrapper : PreferenceAccessWrapper, method0 : 
     override fun getCameraOption5(): String
     {
         return (option5)
+    }
+
+    override fun getUpdator(): ICameraPreferenceUpdater?
+    {
+        if (isReadonly)
+        {
+            return (null)
+        }
+        return (this)
     }
 
     override fun setCameraOption1(value: String)
