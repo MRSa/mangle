@@ -125,25 +125,19 @@ class ExamplePictureControl(private val context: AppCompatActivity, private val 
                 val fis: InputStream? = context.contentResolver.openInputStream(uri)
                 if (fis != null)
                 {
-                    val bos = ByteArrayOutputStream()
-                    var data: Int
-                    while (fis.read().also { data = it } != -1)
-                    {
-                        bos.write(data)
-                    }
                     if (isStoreUri)
                     {
                         preference.getUpdator()?.setCameraOption1(uri.toString())
                         vibrator.vibrate(IVibrator.VibratePattern.SIMPLE_LONG)
                     }
-                    liveViewListener.onUpdateLiveView(bos.toByteArray(), null)
+                    liveViewListener.onUpdateLiveView(fis.readBytes(), null)
                     if (::refresher.isInitialized)
                     {
                         refresher.refresh()
                     }
                 }
             }
-            catch (e: Exception)
+            catch (e: Throwable)
             {
                 e.printStackTrace()
             }
