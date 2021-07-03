@@ -1,6 +1,5 @@
 package jp.osdn.gokigen.mangle.preference
 
-
 import android.content.Intent
 import android.content.SharedPreferences
 import android.provider.Settings
@@ -9,12 +8,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.Preference
 import androidx.preference.PreferenceManager
 import jp.osdn.gokigen.gokigenassets.preference.IActionReceiver
+import jp.osdn.gokigen.gokigenassets.preference.IPreferenceViewUpdater
 import jp.osdn.gokigen.gokigenassets.scene.IChangeSceneBasic
 import jp.osdn.gokigen.mangle.scene.IChangeScene
 
 class PreferenceChanger(private val activity : AppCompatActivity, private val changeSceneBasic : IChangeSceneBasic, private val changeScene : IChangeScene) : SharedPreferences.OnSharedPreferenceChangeListener, Preference.OnPreferenceClickListener, IActionReceiver
 {
     private var preferences : SharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
+    private lateinit var preferenceViewUpdater : IPreferenceViewUpdater
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?)
     {
@@ -30,6 +31,20 @@ class PreferenceChanger(private val activity : AppCompatActivity, private val ch
             // else -> Log.v(TAG, " onSharedPreferenceChanged() : + $key ")
         }
         Log.v(TAG, " onSharedPreferenceChanged() : + $key, $value")
+        try
+        {
+            if (key != null)
+            {
+                if (::preferenceViewUpdater.isInitialized)
+                {
+                    preferenceViewUpdater.onPreferenceUpdated(key)
+                }
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
     }
 
     override fun onPreferenceClick(preference: Preference?): Boolean
@@ -59,9 +74,13 @@ class PreferenceChanger(private val activity : AppCompatActivity, private val ch
         return (this)
     }
 
+    override fun setPreferenceViewUpdater(updater: IPreferenceViewUpdater)
+    {
+        preferenceViewUpdater = updater
+    }
+
     companion object
     {
         private val TAG = PreferenceChanger::class.java.simpleName
     }
-
 }

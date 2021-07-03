@@ -7,4 +7,5 @@ interface IActionReceiver
 {
     fun getPreferenceChangeListener() : SharedPreferences.OnSharedPreferenceChangeListener
     fun getPreferenceClickListener() : Preference.OnPreferenceClickListener
+    fun setPreferenceViewUpdater(updater: IPreferenceViewUpdater)
 }

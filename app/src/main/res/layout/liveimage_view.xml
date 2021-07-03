@@ -42,7 +42,6 @@
                 android:visibility="visible"
                 android:orientation="vertical">
 
-
                 <view
                     android:id="@+id/liveViewFinder0"
                     class="jp.osdn.gokigen.gokigenassets.liveview.LiveImageView"
@@ -59,7 +58,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:max="1000"
-                    android:minHeight="11pt"
+                    android:minHeight="14pt"
                     android:layout_marginTop="1dp"
                     android:layout_marginBottom="1dp"
                     android:visibility="visible" />
@@ -89,7 +88,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:minHeight="11pt"
+                    android:minHeight="14pt"
                     android:layout_marginTop="1dp"
                     android:layout_marginBottom="1dp"
                     android:max="1000"
@@ -130,7 +129,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:max="1000"
-                    android:minHeight="11pt"
+                    android:minHeight="14pt"
                     android:layout_marginTop="1dp"
                     android:layout_marginBottom="1dp"
                     android:visibility="visible" />
@@ -161,7 +160,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:max="1000"
-                    android:minHeight="11pt"
+                    android:minHeight="14pt"
                     android:layout_marginTop="1dp"
                     android:layout_marginBottom="1dp"
                     android:visibility="visible" />

@@ -21,6 +21,7 @@
         <item>Ricoh GR / PENTAX</item>
         <item>Ricoh Theta(OSC)</item>
         <item>Panasonic (MFT)</item>
+<!--
         <item>OPC(Olympus Air)</item>
         <item>Olympus(OM-D/PEN)</item>
         <item>KODAK PIXPRO</item>
@@ -28,6 +29,7 @@
         <item>Sony</item>
         <item>Canon</item>
         <item>Nikon</item>
+-->
     </string-array>
 
     <string-array name="connection_method_value">
@@ -37,6 +39,7 @@
         <item>RICOH</item>
         <item>THETA</item>
         <item>PANASONIC</item>
+<!--
         <item>OPC</item>
         <item>OLYMPUS</item>
         <item>PIXPRO</item>
@@ -44,6 +47,7 @@
         <item>SONY</item>
         <item>CANON</item>
         <item>NIKON</item>
+-->
     </string-array>
 
     <string-array name="connection_sequence">

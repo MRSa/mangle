@@ -50,10 +50,10 @@
     <string name="pref_connection_method">Camera Connection Method</string>
     <string name="pref_summary_connection_method"> </string>
 
-    <string name="label_connection_method1">CAMERA 1</string>
-    <string name="label_connection_method2">CAMERA 2</string>
-    <string name="label_connection_method3">CAMERA 3</string>
-    <string name="label_connection_method4">CAMERA 4</string>
+    <string name="label_connection_method1">CAMERA 1 (LEFT UP)</string>
+    <string name="label_connection_method2">CAMERA 2 (RIGHT UP)</string>
+    <string name="label_connection_method3">CAMERA 3 (LEFT DOWN)</string>
+    <string name="label_connection_method4">CAMERA 4 (RIGHT DOWN)</string>
 
     <string name="pref_connection_method1">CONNECTION METHOD</string>
     <string name="pref_connection_method2">CONNECTION METHOD</string>

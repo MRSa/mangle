@@ -5,7 +5,7 @@ interface ICameraConnectionMethods
     companion object
     {
         // --- CONNECTION METHOD
-        const val PREFERENCE_CAMERA_METHOD_NONE = "none"
+        const val PREFERENCE_CAMERA_METHOD_NONE = "NONE"
         const val PREFERENCE_CAMERA_METHOD_EXAMPLE = "EXAMPLE"
         const val PREFERENCE_CAMERA_METHOD_CAMERAX = "camerax"
         const val PREFERENCE_CAMERA_METHOD_THETA = "THETA"

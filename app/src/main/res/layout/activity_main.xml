@@ -15,6 +15,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginRight="2dp"
         android:src="@drawable/ic_baseline_cloud_off_24"
+        android:visibility="visible"
         />
 
     <ImageButton
@@ -38,6 +39,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginRight="2dp"
         android:src="@drawable/ic_baseline_settings_24"
+        android:visibility="visible"
         />
 
     <ImageButton
@@ -50,6 +52,7 @@
         android:layout_alignTop="@id/button_configure"
         android:layout_alignParentBottom="true"
         android:src="@drawable/ic_baseline_camera_alt_24"
+        android:visibility="invisible"
         />
 
     <ImageButton
@@ -79,6 +82,7 @@
         android:layout_toLeftOf="@id/button_camera"
         android:layout_alignTop="@id/button_camera"
         android:layout_marginRight="2dp"
+        android:visibility="visible"
         />
 
     <FrameLayout
@@ -91,6 +95,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_above="@id/message"
+        android:visibility="visible"
         />
 
 </RelativeLayout>

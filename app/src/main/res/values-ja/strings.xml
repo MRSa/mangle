@@ -50,10 +50,10 @@
     <string name="pref_connection_method">接続方式設定</string>
     <string name="pref_summary_connection_method">接続するカメラを設定します。</string>
 
-    <string name="label_connection_method1">カメラ 1</string>
-    <string name="label_connection_method2">カメラ 2</string>
-    <string name="label_connection_method3">カメラ 3</string>
-    <string name="label_connection_method4">カメラ 4</string>
+    <string name="label_connection_method1">カメラ 1 (左上)</string>
+    <string name="label_connection_method2">カメラ 2 (右上)</string>
+    <string name="label_connection_method3">カメラ 3 (左下)</string>
+    <string name="label_connection_method4">カメラ 4 (右下)</string>
 
     <string name="pref_connection_method1">接続タイプ</string>
     <string name="pref_connection_method2">接続タイプ</string>

@@ -13,4 +13,59 @@
         <item >180</item>
         <item >270</item>
     </string-array>
+
+    <string-array name="connection_method">
+        <item>未使用</item>
+        <item>作例表示</item>
+        <item>内蔵カメラ</item>
+        <item>Ricoh GR / PENTAX</item>
+        <item>Ricoh Theta(OSC)</item>
+        <item>Panasonic (MFT)</item>
+<!--
+        <item>OPC(Olympus Air)</item>
+        <item>Olympus(OM-D/PEN)</item>
+        <item>KODAK PIXPRO</item>
+        <item>Fuji X Series</item>
+        <item>Sony</item>
+        <item>Canon</item>
+        <item>Nikon</item>
+-->
+    </string-array>
+
+    <string-array name="connection_method_value">
+        <item>NONE</item>
+        <item>EXAMPLE</item>
+        <item>camerax</item>
+        <item>RICOH</item>
+        <item>THETA</item>
+        <item>PANASONIC</item>
+<!--
+        <item>OPC</item>
+        <item>OLYMPUS</item>
+        <item>PIXPRO</item>
+        <item>FUJI_X</item>
+        <item>SONY</item>
+        <item>CANON</item>
+        <item>NIKON</item>
+-->
+    </string-array>
+
+    <string-array name="connection_sequence">
+        <item>TYPE0</item>
+        <item>TYPE1</item>
+        <item>TYPE2</item>
+        <item>TYPE3</item>
+        <item>TYPE4</item>
+        <item>TYPE5</item>
+    </string-array>
+
+    <string-array name="connection_sequence_value">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+
 </resources>
