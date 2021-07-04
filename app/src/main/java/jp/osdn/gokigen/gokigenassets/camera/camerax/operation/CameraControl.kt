@@ -5,6 +5,7 @@ import android.util.Size
 import android.view.Surface
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
@@ -31,7 +32,9 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
     private lateinit var liveViewListener : CameraLiveViewListenerImpl
     private lateinit var fileControl : FileControl
     private lateinit var storeImage : StoreImage
+    private lateinit var cameraXCamera : Camera
     private var cameraIsStarted = false
+    private val cameraXCameraControl = CameraXCameraControl()
 
     override fun getConnectionMethod(): String
     {
@@ -120,7 +123,8 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
             try
             {
                 cameraProvider.unbindAll()
-                cameraProvider.bindToLifecycle(activity, cameraSelector, preview, imageCapture)
+                cameraXCamera = cameraProvider.bindToLifecycle(activity, cameraSelector, preview, imageCapture)
+                cameraXCameraControl.setCameraControl(cameraXCamera.cameraControl)
             }
             catch(e : Exception)
             {
@@ -194,7 +198,8 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
                         }
                 }
                 cameraProvider.unbindAll()
-                cameraProvider.bindToLifecycle(activity, cameraSelector, imageCapture, imageAnalyzer)
+                cameraXCamera = cameraProvider.bindToLifecycle(activity, cameraSelector, imageCapture, imageAnalyzer)
+                cameraXCameraControl.setCameraControl(cameraXCamera.cameraControl)
             }
             catch(e : Exception)
             {
@@ -268,14 +273,14 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
         return (fileControl)
     }
 
-    override fun getFocusingControl(id: Int): IFocusingControl?
+    override fun getFocusingControl(id: Int): IFocusingControl
     {
-        return (null)
+        return (cameraXCameraControl)
     }
 
-    override fun getDisplayInjector(): IDisplayInjector?
+    override fun getDisplayInjector(): IDisplayInjector
     {
-        return (null)
+        return (cameraXCameraControl)
     }
 
     companion object

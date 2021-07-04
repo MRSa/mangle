@@ -37,6 +37,9 @@
     <string name="data_saving">保存中、お待ちください&#8230;</string>
     <string name="save_image_failure">画像保存に失敗しました。</string>
 
+    <string name="pref_cat_internal_camera_settings">内蔵カメラ設定</string>
+    <string name="pref_only_one_camera_x">内蔵カメラは１つだけ使用する</string>
+
     <string name="pref_cat_camera">カメラ設定</string>
     <string name="pref_capture_both_camera_and_live_view">ライブビュー画像を撮影する</string>
     <string name="pref_summary_capture_both_live_view">シャッターボタンを押すとライブビュー画像を保存します。</string>

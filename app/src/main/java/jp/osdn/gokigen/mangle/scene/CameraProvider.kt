@@ -76,19 +76,25 @@ import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.P
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_SEQUENCE_3_DEFAULT_VALUE
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_SEQUENCE_4
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_SEQUENCE_4_DEFAULT_VALUE
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.USE_ONLY_SINGLE_CAMERA_X
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.USE_ONLY_SINGLE_CAMERA_X_DEFAULT_VALUE
 
 class CameraProvider(private val activity: AppCompatActivity, private val informationNotify: IInformationReceiver, private val vibrator : IVibrator, private val statusReceiver : ICameraStatusReceiver)
 {
     private var cameraXisCreated = false
-    private val isMultiCamera = false
+    private var isOnlySingleCamera = false
     private lateinit var cameraXControl0: ICameraControl
     private lateinit var cameraXControl1: ICameraControl
+    private lateinit var cameraXControl2: ICameraControl
+    private lateinit var cameraXControl3: ICameraControl
 
     fun decideCameraControl(preferenceKey : String) : ICameraControl
     {
         try
         {
             val wrapper = PreferenceAccessWrapper(activity)
+            isOnlySingleCamera = wrapper.getBoolean(USE_ONLY_SINGLE_CAMERA_X, USE_ONLY_SINGLE_CAMERA_X_DEFAULT_VALUE)
+
             val cameraPreference = when (preferenceKey) {
                 PREFERENCE_CAMERA_METHOD_1 -> setupCameraPreference1(wrapper)
                 PREFERENCE_CAMERA_METHOD_2 -> setupCameraPreference2(wrapper)
@@ -222,11 +228,30 @@ class CameraProvider(private val activity: AppCompatActivity, private val inform
     {
         if ((cameraXisCreated)&&(::cameraXControl0.isInitialized))
         {
-            if (isMultiCamera)
+            if (!isOnlySingleCamera)
             {
-                cameraXControl1 = CameraControl(activity, cameraPreference, vibrator)
-                cameraXisCreated = true
-                return (cameraXControl1)
+                try
+                {
+                    if (!::cameraXControl1.isInitialized)
+                    {
+                        cameraXControl1 = CameraControl(activity, cameraPreference, vibrator)
+                        return (cameraXControl1)
+                    }
+                    if (!::cameraXControl2.isInitialized)
+                    {
+                        cameraXControl2 = CameraControl(activity, cameraPreference, vibrator)
+                        return (cameraXControl2)
+                    }
+                    if (!::cameraXControl3.isInitialized)
+                    {
+                        cameraXControl3 = CameraControl(activity, cameraPreference, vibrator)
+                        return (cameraXControl3)
+                    }
+                }
+                catch (e : Exception)
+                {
+                    e.printStackTrace()
+                }
             }
             return (cameraXControl0)
         }

@@ -30,7 +30,7 @@ import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.P
 import jp.osdn.gokigen.mangle.preference.PreferenceChanger
 import jp.osdn.gokigen.mangle.preference.PreferenceValueInitializer
 
-class SceneChanger(private val activity: AppCompatActivity, private val informationNotify: IInformationReceiver, vibrator : IVibrator, statusReceiver : ICameraStatusReceiver) : IChangeScene, IChangeSceneBasic
+class SceneChanger(private val activity: AppCompatActivity, private val informationNotify: IInformationReceiver, private val vibrator : IVibrator, statusReceiver : ICameraStatusReceiver) : IChangeScene, IChangeSceneBasic
 {
     private val cameraProvider = CameraProvider(activity, informationNotify, vibrator, statusReceiver)
 
@@ -171,6 +171,14 @@ class SceneChanger(private val activity: AppCompatActivity, private val informat
             mainPreferenceFragment = MainPreferenceFragment.newInstance(preferenceChanger, PreferenceValueInitializer())
         }
         isActivateLiveViewFragment = false
+        try
+        {
+            vibrator.vibrate(IVibrator.VibratePattern.SIMPLE_MIDDLE)
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
         changeFragment(mainPreferenceFragment)
     }
 

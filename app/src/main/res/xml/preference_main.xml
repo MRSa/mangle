@@ -41,7 +41,6 @@
             android:title="@string/pref_connection_method"
             app:isPreferenceVisible="false"
             android:summary="@string/pref_summary_connection_method" />
-
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -68,7 +67,16 @@
             android:inputType="numberDecimal"
             android:digits="0123456789"
             android:summary="@string/pref_summary_number_of_cache_pictures" />
+    </PreferenceCategory>
 
+    <PreferenceCategory
+        app:title="@string/pref_cat_internal_camera_settings"
+        app:isPreferenceVisible="true"
+        >
+        <SwitchPreferenceCompat
+            android:key="only_one_camera_x"
+            app:isPreferenceVisible="true"
+            android:title="@string/pref_only_one_camera_x"/>
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -125,7 +133,6 @@
             android:defaultValue=""
             app:isPreferenceVisible="false"
             android:summary="@string/pref_summary_camera_option51" />
-
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -182,8 +189,8 @@
             android:defaultValue=""
             app:isPreferenceVisible="false"
             android:summary="@string/pref_summary_camera_option52" />
-
     </PreferenceCategory>
+
     <PreferenceCategory
         app:title="@string/label_connection_method3">
 
@@ -295,7 +302,6 @@
             android:defaultValue=""
             app:isPreferenceVisible="false"
             android:summary="@string/pref_summary_camera_option54" />
-
     </PreferenceCategory>
 
     <PreferenceCategory
