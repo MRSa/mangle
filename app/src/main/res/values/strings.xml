@@ -39,6 +39,9 @@
 
     <string name="pref_cat_internal_camera_settings">Internal Camera Settings</string>
     <string name="pref_only_one_camera_x">Use ONLY single cameraX</string>
+    <string name="pref_summary_only_one_camera_x">If you cannot use camera simultaneously, please set this switch on.</string>
+
+    <string name="pref_self_timer_count">Self Timer Seconds</string>
 
     <string name="pref_cat_camera">Camera</string>
     <string name="pref_capture_both_camera_and_live_view">Capture LiveView Image</string>

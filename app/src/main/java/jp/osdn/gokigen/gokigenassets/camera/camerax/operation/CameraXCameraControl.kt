@@ -87,6 +87,7 @@ class CameraXCameraControl : IFocusingControl, IDisplayInjector
                                 SurfaceOrientedMeteringPointFactory(1.0f, 1.0f).createPoint(.5f, .5f)
                             val action =
                                 FocusMeteringAction.Builder(autoFocusPoint, FocusMeteringAction.FLAG_AF)
+                                    //.addPoint(autoFocusPoint, FocusMeteringAction.FLAG_AE)
                                     .apply { disableAutoCancel() }.build()
                             cameraXCameraControl.startFocusAndMetering(action)
                         } else {
@@ -117,6 +118,8 @@ class CameraXCameraControl : IFocusingControl, IDisplayInjector
                         SurfaceOrientedMeteringPointFactory(1.0f, 1.0f).createPoint(point.x, point.y)
                     val action =
                         FocusMeteringAction.Builder(autoFocusPoint, FocusMeteringAction.FLAG_AF)
+                        //FocusMeteringAction.Builder(autoFocusPoint)
+                            //    .addPoint(autoFocusPoint, FocusMeteringAction.FLAG_AE)
                             .apply { disableAutoCancel() }.build()
                     cameraXCameraControl.startFocusAndMetering(action)
 

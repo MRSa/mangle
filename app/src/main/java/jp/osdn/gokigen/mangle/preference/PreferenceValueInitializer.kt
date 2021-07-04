@@ -104,6 +104,13 @@ class PreferenceValueInitializer() : IPreferenceValueInitializer
                     IPreferencePropertyAccessor.USE_ONLY_SINGLE_CAMERA_X_DEFAULT_VALUE
                 )
             }
+            if (!items.containsKey(IPreferencePropertyAccessor.USE_SELF_TIMER))
+            {
+                editor.putString(
+                    IPreferencePropertyAccessor.USE_SELF_TIMER,
+                    IPreferencePropertyAccessor.USE_SELF_TIMER_DEFAULT_VALUE
+                )
+            }
             if (!items.containsKey(IPreferencePropertyAccessor.EXTERNAL_STORAGE_LOCATION))
             {
                 editor.putString(IPreferencePropertyAccessor.EXTERNAL_STORAGE_LOCATION, IPreferencePropertyAccessor.EXTERNAL_STORAGE_LOCATION_DEFAULT_VALUE)

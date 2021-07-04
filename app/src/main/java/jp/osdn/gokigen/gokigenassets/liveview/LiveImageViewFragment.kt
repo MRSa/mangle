@@ -3,6 +3,7 @@ package jp.osdn.gokigen.gokigenassets.liveview
 import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import android.content.res.Configuration
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -19,6 +20,8 @@ import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Compa
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_CACHE_SEEKBAR_3
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_LIVE_VIEW_LAYOUT_DEFAULT
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_CACHE_LIVE_VIEW_PICTURES
+import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_SELF_TIMER_SECONDS
+import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_SELF_TIMER_SECONDS_DEFAULT_VALUE
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_AREA_0
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_AREA_1
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_AREA_2
@@ -29,6 +32,8 @@ import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Compa
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_FINDER_3
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_LOWER_AREA
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_UPPER_AREA
+import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
+import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 
 class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYOUT_DEFAULT) : Fragment(contentLayoutId), View.OnClickListener, View.OnLongClickListener
 {
@@ -39,6 +44,9 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
     private lateinit var cameraControl2: ICameraControl
     private lateinit var cameraControl3: ICameraControl
 
+    private lateinit var wrapper: PreferenceAccessWrapper
+    private lateinit var informationReceiver: IInformationReceiver
+
     private var isCameraControl0 = false
     private var isCameraControl1 = false
     private var isCameraControl2 = false
@@ -46,6 +54,9 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
 
     private var isCacheImage = false
     private var rotationDegrees = 0
+    private var isSelfTimerIssued = false
+    private var selfTimerCount = 0
+    private var isActive = false
 
     companion object
     {
@@ -53,8 +64,15 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
         fun newInstance() = LiveImageViewFragment().apply { }
     }
 
-    fun setCameraControl(isCameraControl0 : Boolean, cameraControl0 : ICameraControl, isCameraControl1 : Boolean, cameraControl1 : ICameraControl, isCameraControl2 : Boolean, cameraControl2 : ICameraControl, isCameraControl3 : Boolean, cameraControl3 : ICameraControl)
+    fun isActive() : Boolean
     {
+        return (isActive)
+    }
+
+    fun setCameraControl(informationReceiver: IInformationReceiver, isCameraControl0 : Boolean, cameraControl0 : ICameraControl, isCameraControl1 : Boolean, cameraControl1 : ICameraControl, isCameraControl2 : Boolean, cameraControl2 : ICameraControl, isCameraControl3 : Boolean, cameraControl3 : ICameraControl)
+    {
+        this.informationReceiver = informationReceiver
+
         this.isCameraControl0 = isCameraControl0
         this.cameraControl0 = cameraControl0
 
@@ -214,8 +232,17 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
 
         try
         {
-            val preferences : SharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
-            this.isCacheImage = preferences.getBoolean(ID_PREFERENCE_CACHE_LIVE_VIEW_PICTURES, false)
+            val context = context
+            if (context != null)
+            {
+                wrapper = PreferenceAccessWrapper(context)
+                this.isCacheImage = wrapper.getBoolean(ID_PREFERENCE_CACHE_LIVE_VIEW_PICTURES, false)
+            }
+            else
+            {
+                val preferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
+                this.isCacheImage = preferences.getBoolean(ID_PREFERENCE_CACHE_LIVE_VIEW_PICTURES, false)
+            }
         }
         catch (e : Exception)
         {
@@ -228,20 +255,105 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
     override fun onResume()
     {
         super.onResume()
-
-        Log.v(TAG, " onResume() : orientation ${getRotation()}")
+        isActive = true
+        if (::wrapper.isInitialized)
+        {
+            selfTimerCount = 0
+            selfTimerCount = try {
+                val selfTimerCountStr = wrapper.getString(ID_PREFERENCE_SELF_TIMER_SECONDS, ID_PREFERENCE_SELF_TIMER_SECONDS_DEFAULT_VALUE)
+                selfTimerCountStr.toInt()
+            } catch (e : Exception) {
+                e.printStackTrace()
+                0
+            }
+        }
+        Log.v(TAG, " onResume() : orientation ${getRotation()}, Self Timer: $selfTimerCount sec.")
     }
 
     override fun onPause()
     {
         super.onPause()
+        isActive = false
         Log.v(TAG, " onPause() : ")
     }
 
     override fun onClick(v: View?)
     {
+        if (isSelfTimerIssued)
+        {
+            // セルフタイマー動作中...なにもしない
+            Log.v(TAG, "onClick() : ${v?.id}, $isSelfTimerIssued")
+            return
+        }
+        if (selfTimerCount > 0)
+        {
+            // セルフタイマーを駆動させる
+            driveSelfShutterOnClick(v)
+            return
+        }
+        issueOnClick(v)
+    }
+
+    fun handleKeyDown(keyCode: Int, event: KeyEvent?): Boolean
+    {
+        //Log.v(TAG, "onKey() : $keyCode")
+        if (isSelfTimerIssued)
+        {
+            // セルフタイマー動作中...イベントを食べる
+            return (true)
+        }
+        if ((event == null)||((event.action != KeyEvent.ACTION_DOWN)||((keyCode != KeyEvent.KEYCODE_VOLUME_UP)&&(keyCode != KeyEvent.KEYCODE_CAMERA))))
+        {
+            // もしくは、シャッターボタンが押されたわけではない...場合は、何もしない
+           Log.v(TAG, "handleKeyDown() : $keyCode, $event, $isSelfTimerIssued")
+            return (false)
+        }
+        if (selfTimerCount > 0)
+        {
+            // セルフタイマーを駆動させる
+            driveSelfShutterOnKeyDown(keyCode, event)
+            return (true)
+        }
+        return (issueKeyDown(keyCode, event))
+    }
+
+    private fun issueKeyDown(keyCode: Int, event: KeyEvent) : Boolean
+    {
+        //Log.v(TAG, "issueKeyDown() keyCode: $keyCode")
         try
         {
+            // キーが押された時...
+            if ((::cameraControl0.isInitialized)&&(isCameraControl0))
+            {
+                cameraControl0.keyDownReceiver(0).handleKeyDown(keyCode, event)
+            }
+            if ((::cameraControl1.isInitialized)&&(isCameraControl1))
+            {
+                cameraControl1.keyDownReceiver(1).handleKeyDown(keyCode, event)
+            }
+            if ((::cameraControl2.isInitialized)&&(isCameraControl2))
+            {
+                cameraControl2.keyDownReceiver(2).handleKeyDown(keyCode, event)
+            }
+            if ((::cameraControl3.isInitialized)&&(isCameraControl3))
+            {
+                cameraControl3.keyDownReceiver(3).handleKeyDown(keyCode, event)
+            }
+            return (true)
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+        return (false)
+    }
+
+    private fun issueOnClick(v: View?)
+    {
+        //Log.v(TAG, "issueOnClick() : ${v?.id}, delay: $selfTimerCount")
+        try
+        {
+            //  シャッターボタンがクリックされたとき...
             if ((::cameraControl0.isInitialized)&&(isCameraControl0))
             {
                 cameraControl0.captureButtonReceiver(0).onClick(v)
@@ -265,37 +377,70 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
         }
     }
 
-    fun handleKeyDown(keyCode: Int, event: KeyEvent?): Boolean
+    private fun driveSelfShutterOnClick(v: View?)
     {
-        Log.v(TAG, "onKey() : $keyCode")
+        Log.v(TAG, "driveSelfShutterOnClick() : ${v?.id}, delay: $selfTimerCount")
         try
         {
-            if ((event?.action == KeyEvent.ACTION_DOWN)&&((keyCode == KeyEvent.KEYCODE_VOLUME_UP)||(keyCode == KeyEvent.KEYCODE_CAMERA)))
-            {
-                if ((::cameraControl0.isInitialized)&&(isCameraControl0))
+            val thread = Thread {
+                isSelfTimerIssued = true
+                for (count in selfTimerCount downTo 1)
                 {
-                    cameraControl0.keyDownReceiver(0).handleKeyDown(keyCode, event)
+                    val color = if (count < 4) { Color.MAGENTA } else { Color.BLUE }
+                    updateMessage("WAIT $count sec.",color)
+                    Thread.sleep(1000)
                 }
-                if ((::cameraControl1.isInitialized)&&(isCameraControl1))
-                {
-                    cameraControl1.keyDownReceiver(1).handleKeyDown(keyCode, event)
+
+                activity?.runOnUiThread {
+                    issueOnClick(v)
+                    isSelfTimerIssued = false
                 }
-                if ((::cameraControl2.isInitialized)&&(isCameraControl2))
-                {
-                    cameraControl2.keyDownReceiver(2).handleKeyDown(keyCode, event)
-                }
-                if ((::cameraControl3.isInitialized)&&(isCameraControl3))
-                {
-                    cameraControl3.keyDownReceiver(3).handleKeyDown(keyCode, event)
-                }
-                return (true)
+                updateMessage("", Color.LTGRAY)
             }
+            thread.start()
         }
         catch (e : Exception)
         {
             e.printStackTrace()
+            isSelfTimerIssued = false
         }
-        return (false)
+    }
+
+    private fun driveSelfShutterOnKeyDown(keyCode: Int, event: KeyEvent)
+    {
+        Log.v(TAG, "driveSelfShutterOnKeyDown() : $keyCode, delay: $selfTimerCount")
+        try
+        {
+            val thread = Thread {
+                isSelfTimerIssued = true
+                for (count in selfTimerCount downTo 1)
+                {
+                    val color = if (count < 4) { Color.MAGENTA } else { Color.BLUE }
+                    updateMessage("WAIT $count sec.",color)
+                    Thread.sleep(1000)
+                }
+
+                activity?.runOnUiThread {
+                    issueKeyDown(keyCode, event)
+                    isSelfTimerIssued = false
+                }
+                updateMessage("", Color.LTGRAY)
+            }
+            thread.start()
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+            isSelfTimerIssued = false
+        }
+    }
+
+    private fun updateMessage(msg : String, color: Int)
+    {
+        if (::informationReceiver.isInitialized)
+        {
+            informationReceiver.updateMessage(msg, isBold = false, isColor = true, color)
+        }
     }
 
     private fun getRotation(): Int

@@ -68,4 +68,20 @@
         <item>5</item>
     </string-array>
 
+    <string-array name="self_timer_count">
+        <item>切</item>
+        <item>3秒</item>
+        <item>7秒</item>
+        <item>10秒</item>
+        <item>15秒</item>
+    </string-array>
+
+    <string-array name="self_timer_count_value">
+        <item>0</item>
+        <item>3</item>
+        <item>7</item>
+        <item>10</item>
+        <item>15</item>
+    </string-array>
+
 </resources>

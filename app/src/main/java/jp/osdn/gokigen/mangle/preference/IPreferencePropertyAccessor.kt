@@ -31,6 +31,10 @@ interface IPreferencePropertyAccessor
         const val CAPTURE_ONLY_EXTERNAL_CAMERA = "capture_only_external_camera"
         const val CAPTURE_ONLY_EXTERNAL_CAMERA_DEFAULT_VALUE = false
 
+        const val USE_SELF_TIMER = "self_timer_count"
+        const val USE_SELF_TIMER_DEFAULT_VALUE = "0"
+
+
         // --- SCREEN TRANSACTION LABEL ---
         const val LABEL_EXIT_APPLICATION = "exit_application"
         const val LABEL_WIFI_SETTINGS = "wifi_settings"

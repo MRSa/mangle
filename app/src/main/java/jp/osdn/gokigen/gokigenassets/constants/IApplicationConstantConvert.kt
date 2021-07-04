@@ -46,6 +46,8 @@ import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.P
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_SAVE_LOCAL_LOCATION
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_SAVE_LOCAL_LOCATION_DEFAULT_VALUE
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.USE_GR2_SPECIAL_COMMAND
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.USE_SELF_TIMER
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.USE_SELF_TIMER_DEFAULT_VALUE
 
 /**
      アプリケーションの依存
@@ -126,6 +128,11 @@ interface IApplicationConstantConvert
 
         const val ID_PREFERENCE_RICOH_GR2_LCD_SLEEP = GR2_LCD_SLEEP
         const val ID_PREFERENCE_USE_GR2_SPECIAL_COMMAND = USE_GR2_SPECIAL_COMMAND
+
+        const val ID_PREFERENCE_SELF_TIMER_SECONDS = USE_SELF_TIMER
+        const val ID_PREFERENCE_SELF_TIMER_SECONDS_DEFAULT_VALUE = USE_SELF_TIMER_DEFAULT_VALUE
+        const val ID_PREFERENCE_SELF_TIMER_ARRAY = R.array.self_timer_count
+        const val ID_PREFERENCE_SELF_TIMER_ARRAY_VALUE = R.array.self_timer_count_value
 
         const val ID_PREFERENCE_LABEL_SELECT_CAMERA_CONNECTION_METHOD = PREFERENCE_CONNECTION_METHOD
 

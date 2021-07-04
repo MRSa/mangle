@@ -41,7 +41,6 @@ class SceneChanger(private val activity: AppCompatActivity, private val informat
     private val cameraControl4: ICameraControl
 
     private val preferenceChanger = PreferenceChanger(activity, this, this)
-    private var isActivateLiveViewFragment = false
     private lateinit var liveviewFragment : LiveImageViewFragment
     private lateinit var previewFragment : PreviewFragment
     private lateinit var logCatFragment : LogCatFragment
@@ -85,10 +84,9 @@ class SceneChanger(private val activity: AppCompatActivity, private val informat
             val isEnableCamera4 = cameraControl4.getConnectionMethod() != "NONE"
 
             liveviewFragment = LiveImageViewFragment.newInstance()
-            liveviewFragment.setCameraControl(isEnableCamera1, cameraControl1, isEnableCamera2, cameraControl2, isEnableCamera3, cameraControl3, isEnableCamera4, cameraControl4)
+            liveviewFragment.setCameraControl(informationNotify, isEnableCamera1, cameraControl1, isEnableCamera2, cameraControl2, isEnableCamera3, cameraControl3, isEnableCamera4, cameraControl4)
         }
         setDefaultFragment(liveviewFragment)
-        isActivateLiveViewFragment = true
 
         cameraControl1.startCamera(
             isPreviewView = false,
@@ -107,7 +105,7 @@ class SceneChanger(private val activity: AppCompatActivity, private val informat
             cameraSequence = cameraProvider.getCameraSelection(PREFERENCE_CAMERA_SEQUENCE_4)
         )
 
-        val msg = activity.getString(R.string.app_name) + " : " + " STARTED."
+        val msg = activity.getString(R.string.app_name)
         informationNotify.updateMessage(msg, isBold = false, isColor = true, color = Color.LTGRAY)
     }
 
@@ -141,13 +139,13 @@ class SceneChanger(private val activity: AppCompatActivity, private val informat
             val isEnableCamera4 = cameraControl4.getConnectionMethod() != "NONE"
             liveviewFragment = LiveImageViewFragment.newInstance()
             liveviewFragment.setCameraControl(
+                informationNotify,
                 isEnableCamera1, cameraControl1,
                 isEnableCamera2, cameraControl2,
                 isEnableCamera3, cameraControl3,
                 isEnableCamera4, cameraControl4
             )
         }
-        isActivateLiveViewFragment = true
         changeFragment(liveviewFragment)
     }
 
@@ -170,7 +168,6 @@ class SceneChanger(private val activity: AppCompatActivity, private val informat
         {
             mainPreferenceFragment = MainPreferenceFragment.newInstance(preferenceChanger, PreferenceValueInitializer())
         }
-        isActivateLiveViewFragment = false
         try
         {
             vibrator.vibrate(IVibrator.VibratePattern.SIMPLE_MIDDLE)
@@ -188,7 +185,6 @@ class SceneChanger(private val activity: AppCompatActivity, private val informat
         {
             logCatFragment = LogCatFragment.newInstance()
         }
-        isActivateLiveViewFragment = false
         changeFragment(logCatFragment)
     }
 
@@ -248,10 +244,14 @@ class SceneChanger(private val activity: AppCompatActivity, private val informat
     {
         try
         {
-            if ((isActivateLiveViewFragment)&&(::liveviewFragment.isInitialized))
+            if ((::liveviewFragment.isInitialized)&&(liveviewFragment.isActive()))
             {
                 Log.v(TAG, "handleKeyDown() $keyCode")
                 return (liveviewFragment.handleKeyDown(keyCode, event))
+            }
+            else
+            {
+                Log.v(TAG, "handleKeyDown : liveviewFragment is not Active...")
             }
         }
         catch (e : java.lang.Exception)

@@ -38,7 +38,10 @@
     <string name="save_image_failure">画像保存に失敗しました。</string>
 
     <string name="pref_cat_internal_camera_settings">内蔵カメラ設定</string>
-    <string name="pref_only_one_camera_x">内蔵カメラは１つだけ使用する</string>
+    <string name="pref_only_one_camera_x">内蔵カメラを１つだけ使用する</string>
+    <string name="pref_summary_only_one_camera_x">内蔵カメラが同時に使用できない場合は、このスイッチをオンにしてください。</string>
+
+    <string name="pref_self_timer_count">セルフタイマー秒数</string>
 
     <string name="pref_cat_camera">カメラ設定</string>
     <string name="pref_capture_both_camera_and_live_view">ライブビュー画像を撮影する</string>
