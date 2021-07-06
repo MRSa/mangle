@@ -17,7 +17,7 @@ interface IPreferencePropertyAccessor
         const val CACHE_LIVE_VIEW_PICTURES_DEFAULT_VALUE = false
 
         const val USE_ONLY_SINGLE_CAMERA_X = "only_one_camera_x"
-        const val USE_ONLY_SINGLE_CAMERA_X_DEFAULT_VALUE = false
+        const val USE_ONLY_SINGLE_CAMERA_X_DEFAULT_VALUE = true
 
         const val NUMBER_OF_CACHE_PICTURES = "number_of_cache_pictures"
         const val NUMBER_OF_CACHE_PICTURES_DEFAULT_VALUE = "500"
@@ -77,7 +77,7 @@ interface IPreferencePropertyAccessor
 
         // --- CAMERA 2  PREFERENCES
         const val PREFERENCE_CAMERA_METHOD_2 = "camera_method2"
-        const val PREFERENCE_CAMERA_METHOD_2_DEFAULT_VALUE = "camerax"
+        const val PREFERENCE_CAMERA_METHOD_2_DEFAULT_VALUE = "NONE"
         const val PREFERENCE_CAMERA_SEQUENCE_2 = "camera_sequence2"
         const val PREFERENCE_CAMERA_SEQUENCE_2_DEFAULT_VALUE = "0"
         const val PREFERENCE_CAMERA_OPTION1_2 = "camera_option12"
@@ -93,7 +93,7 @@ interface IPreferencePropertyAccessor
 
         // --- CAMERA 3  PREFERENCES
         const val PREFERENCE_CAMERA_METHOD_3 = "camera_method3"
-        const val PREFERENCE_CAMERA_METHOD_3_DEFAULT_VALUE = "camerax"
+        const val PREFERENCE_CAMERA_METHOD_3_DEFAULT_VALUE = "NONE"
         const val PREFERENCE_CAMERA_SEQUENCE_3 = "camera_sequence3"
         const val PREFERENCE_CAMERA_SEQUENCE_3_DEFAULT_VALUE = "0"
         const val PREFERENCE_CAMERA_OPTION1_3 = "camera_option13"
@@ -109,7 +109,7 @@ interface IPreferencePropertyAccessor
 
         // --- CAMERA 4  PREFERENCES
         const val PREFERENCE_CAMERA_METHOD_4 = "camera_method4"
-        const val PREFERENCE_CAMERA_METHOD_4_DEFAULT_VALUE = "camerax"
+        const val PREFERENCE_CAMERA_METHOD_4_DEFAULT_VALUE = "NONE"
         const val PREFERENCE_CAMERA_SEQUENCE_4 = "camera_sequence4"
         const val PREFERENCE_CAMERA_SEQUENCE_4_DEFAULT_VALUE = "0"
         const val PREFERENCE_CAMERA_OPTION1_4 = "camera_option14"

@@ -86,6 +86,7 @@
         <SwitchPreferenceCompat
             android:key="only_one_camera_x"
             app:isPreferenceVisible="true"
+            android:defaultValue="true"
             android:summary="@string/pref_summary_only_one_camera_x"
             android:title="@string/pref_only_one_camera_x"/>
     </PreferenceCategory>
@@ -154,7 +155,7 @@
             android:entryValues="@array/connection_method_value"
             android:key="camera_method2"
             android:title="@string/pref_connection_method2"
-            android:defaultValue="camerax"
+            android:defaultValue="NONE"
             />
 
         <DropDownPreference
@@ -210,7 +211,7 @@
             android:entryValues="@array/connection_method_value"
             android:key="camera_method3"
             android:title="@string/pref_connection_method3"
-            android:defaultValue="camerax"
+            android:defaultValue="NONE"
             />
 
         <DropDownPreference
@@ -267,7 +268,7 @@
             android:entryValues="@array/connection_method_value"
             android:key="camera_method4"
             android:title="@string/pref_connection_method4"
-            android:defaultValue="camerax"
+            android:defaultValue="NONE"
             />
 
         <DropDownPreference
