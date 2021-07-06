@@ -18,14 +18,15 @@ import jp.osdn.gokigen.gokigenassets.liveview.ILiveView
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveViewRefresher
 import jp.osdn.gokigen.gokigenassets.liveview.focusframe.IAutoFocusFrameDisplay
 import jp.osdn.gokigen.gokigenassets.liveview.image.CameraLiveViewListenerImpl
+import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 
 
-class ExamplePictureControl(private val context: AppCompatActivity, private val vibrator : IVibrator, private val preference: ICameraPreferenceProvider) : IDisplayInjector, ILiveViewController, ICameraControl, View.OnClickListener, View.OnLongClickListener, ICaptureModeReceiver, ICameraShutter, IKeyDown
+class ExamplePictureControl(private val context: AppCompatActivity, private val vibrator : IVibrator, informationNotify: IInformationReceiver, private val preference: ICameraPreferenceProvider) : IDisplayInjector, ILiveViewController, ICameraControl, View.OnClickListener, View.OnLongClickListener, ICaptureModeReceiver, ICameraShutter, IKeyDown
 {
-    private val liveViewListener = CameraLiveViewListenerImpl(context, isDisableCache = true)
+    private val liveViewListener = CameraLiveViewListenerImpl(context, informationNotify, isDisableCache = true)
     private lateinit var refresher : ILiveViewRefresher
 
     private var startForResult : ActivityResultLauncher<Intent> = context.registerForActivityResult(StartActivityForResult()) { result : ActivityResult ->

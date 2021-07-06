@@ -15,17 +15,19 @@ import jp.osdn.gokigen.gokigenassets.liveview.ILiveViewRefresher
 import jp.osdn.gokigen.gokigenassets.liveview.bitmapconvert.IPreviewImageConverter
 import jp.osdn.gokigen.gokigenassets.liveview.bitmapconvert.ImageConvertFactory
 import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
+import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import java.io.ByteArrayOutputStream
 import java.util.*
 
 
 data class MyImageByteArray(val imageData : ByteArray, val rotationDegrees: Int)
 
-class CameraLiveViewListenerImpl(private val context: Context, private val isDisableCache : Boolean = false) : IImageDataReceiver, IImageProvider, ImageAnalysis.Analyzer
+class CameraLiveViewListenerImpl(private val context: Context,  private val informationReceiver: IInformationReceiver, private val isDisableCache : Boolean = false) : IImageDataReceiver, IImageProvider, ImageAnalysis.Analyzer
 {
     private var cachePics = ArrayList<MyImageByteArray>()
     private var isImageReceived = false
     private var maxCachePics : Int = 0
+    private var cacheIsFull = false
     private var bitmapConverter : IPreviewImageConverter = ImageConvertFactory().getImageConverter(0)
     private val refresher = ArrayList<ILiveViewRefresher>()
 
@@ -44,6 +46,7 @@ class CameraLiveViewListenerImpl(private val context: Context, private val isDis
         this.refresher.add(refresher)
         setupLiveviewCache()
     }
+
 
     override fun onUpdateLiveView(data: ByteArray, metadata: Map<String, Any>?)
     {
@@ -286,6 +289,15 @@ class CameraLiveViewListenerImpl(private val context: Context, private val isDis
             if ((maxCachePics > 0)&&(cachePics.size != maxCachePics))
             {
                 Log.v(TAG, " -=-=- image cache : ${cachePics.size} / $maxCachePics")
+                informationReceiver.updateMessage("cache:${cachePics.size}/$maxCachePics")
+            }
+            else
+            {
+                if (!cacheIsFull)
+                {
+                    informationReceiver.updateMessage("")
+                    cacheIsFull = true
+                }
             }
         }
         catch (e : Exception)
@@ -357,6 +369,7 @@ class CameraLiveViewListenerImpl(private val context: Context, private val isDis
         }
 
         cachePics.clear()
+        cacheIsFull = false
         val nofCachePics = preference.getString(ID_PREFERENCE_NUMBER_OF_CACHE_PICTURES, ID_PREFERENCE_NUMBER_OF_CACHE_PICTURES_DEFAULT_VALUE)
         maxCachePics = try {
             nofCachePics.toInt()

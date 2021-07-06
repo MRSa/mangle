@@ -206,22 +206,22 @@ class CameraProvider(private val activity: AppCompatActivity, private val inform
 
     private fun prepareThetaCameraControl(cameraPreference : ICameraPreferenceProvider) : ICameraControl
     {
-        return (ThetaCameraControl(activity, vibrator, cameraPreference, statusReceiver))
+        return (ThetaCameraControl(activity, vibrator, informationNotify, cameraPreference, statusReceiver))
     }
 
     private fun preparePentaxCameraControl(cameraPreference : ICameraPreferenceProvider) : ICameraControl
     {
-        return (RicohPentaxCameraControl(activity, vibrator, cameraPreference, statusReceiver))
+        return (RicohPentaxCameraControl(activity, vibrator, informationNotify, cameraPreference, statusReceiver))
     }
 
     private fun preparePanasonicCameraControl(cameraPreference : ICameraPreferenceProvider) : ICameraControl
     {
-        return (PanasonicCameraControl(activity, vibrator, cameraPreference, statusReceiver))
+        return (PanasonicCameraControl(activity, vibrator, informationNotify, cameraPreference, statusReceiver))
     }
 
     private fun prepareExamplePictureControl(cameraPreference : ICameraPreferenceProvider) : ICameraControl
     {
-        return (ExamplePictureControl(activity, vibrator, cameraPreference))
+        return (ExamplePictureControl(activity, vibrator, informationNotify, cameraPreference))
     }
 
     private fun prepareCameraXControl(cameraPreference : ICameraPreferenceProvider): ICameraControl
@@ -234,17 +234,17 @@ class CameraProvider(private val activity: AppCompatActivity, private val inform
                 {
                     if (!::cameraXControl1.isInitialized)
                     {
-                        cameraXControl1 = CameraControl(activity, cameraPreference, vibrator)
+                        cameraXControl1 = CameraControl(activity, cameraPreference, vibrator, informationNotify)
                         return (cameraXControl1)
                     }
                     if (!::cameraXControl2.isInitialized)
                     {
-                        cameraXControl2 = CameraControl(activity, cameraPreference, vibrator)
+                        cameraXControl2 = CameraControl(activity, cameraPreference, vibrator, informationNotify)
                         return (cameraXControl2)
                     }
                     if (!::cameraXControl3.isInitialized)
                     {
-                        cameraXControl3 = CameraControl(activity, cameraPreference, vibrator)
+                        cameraXControl3 = CameraControl(activity, cameraPreference, vibrator, informationNotify)
                         return (cameraXControl3)
                     }
                 }
@@ -255,7 +255,7 @@ class CameraProvider(private val activity: AppCompatActivity, private val inform
             }
             return (cameraXControl0)
         }
-        cameraXControl0 = CameraControl(activity, cameraPreference, vibrator)
+        cameraXControl0 = CameraControl(activity, cameraPreference, vibrator, informationNotify)
         cameraXisCreated = true
         return (cameraXControl0)
     }

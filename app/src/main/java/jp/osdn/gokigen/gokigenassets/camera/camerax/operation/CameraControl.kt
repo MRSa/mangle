@@ -22,11 +22,12 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraControl
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.IDisplayInjector
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.IFocusingControl
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.IKeyDown
+import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class CameraControl(private val activity : AppCompatActivity, private val preference: ICameraPreferenceProvider, private val vibrator : IVibrator) : ICameraControl
+class CameraControl(private val activity : AppCompatActivity, private val preference: ICameraPreferenceProvider, private val vibrator : IVibrator, private val informationReceiver : IInformationReceiver) : ICameraControl
 {
     private lateinit var cameraExecutor: ExecutorService
     private lateinit var liveViewListener : CameraLiveViewListenerImpl
@@ -44,7 +45,7 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
     override fun initialize()
     {
         Log.v(TAG, " initialize()")
-        liveViewListener = CameraLiveViewListenerImpl(activity)
+        liveViewListener = CameraLiveViewListenerImpl(activity, informationReceiver)
         cameraExecutor = Executors.newSingleThreadExecutor()
         storeImage = StoreImage(activity, liveViewListener)
         fileControl = FileControl(activity, storeImage, vibrator)

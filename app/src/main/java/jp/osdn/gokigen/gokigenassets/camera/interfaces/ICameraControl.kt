@@ -3,6 +3,7 @@ package jp.osdn.gokigen.gokigenassets.camera.interfaces
 import android.view.View
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveView
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveViewRefresher
+import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 
 interface ICameraControl
 {
