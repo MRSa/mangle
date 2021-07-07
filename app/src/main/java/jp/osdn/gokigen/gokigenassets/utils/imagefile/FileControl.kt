@@ -19,7 +19,6 @@ import jp.osdn.gokigen.gokigenassets.liveview.storeimage.IStoreImage
 import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 
-
 class FileControl(private val context: FragmentActivity, private val storeImage : IStoreImage, private val vibrator : IVibrator) : View.OnClickListener, View.OnLongClickListener, IKeyDown
 {
     private val storeLocal = ImageStoreLocal(context)
@@ -135,13 +134,13 @@ class FileControl(private val context: FragmentActivity, private val storeImage 
         return (false)
     }
 
-    companion object
-    {
-        private val TAG = FileControl::class.java.simpleName
-    }
-
     override fun onLongClick(v: View?): Boolean
     {
         return (false)
+    }
+
+    companion object
+    {
+        private val TAG = FileControl::class.java.simpleName
     }
 }
