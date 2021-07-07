@@ -114,10 +114,10 @@ class CameraXCameraControl : IFocusingControl, IDisplayInjector
             val thread = Thread {
                 try
                 {
+                    //val autoFocusPoint = SurfaceOrientedMeteringPointFactory(1.0f, 1.0f).createPoint(point.x, point.y)
                     val autoFocusPoint =
-                        SurfaceOrientedMeteringPointFactory(1.0f, 1.0f).createPoint(point.x, point.y)
-                    val action =
-                        FocusMeteringAction.Builder(autoFocusPoint, FocusMeteringAction.FLAG_AF)
+                        SurfaceOrientedMeteringPointFactory(1.0f, 1.0f).createPoint(point.y, point.x)
+                    val action = FocusMeteringAction.Builder(autoFocusPoint, FocusMeteringAction.FLAG_AF)
                         //FocusMeteringAction.Builder(autoFocusPoint)
                             //    .addPoint(autoFocusPoint, FocusMeteringAction.FLAG_AE)
                             .apply { disableAutoCancel() }.build()
@@ -144,12 +144,13 @@ class CameraXCameraControl : IFocusingControl, IDisplayInjector
 
     private fun getPreFocusFrameRect(point: PointF): RectF
     {
-        val imageWidth: Float = frameDisplay.getContentSizeWidth()
-        val imageHeight: Float = frameDisplay.getContentSizeHeight()
+        //val imageWidth: Float = frameDisplay.getContentSizeWidth()
+        //val imageHeight: Float = frameDisplay.getContentSizeHeight()
 
         // Display a provisional focus frame at the touched point.
         val focusWidth = 0.075f // 0.075 is rough estimate.
-        var focusHeight = 0.075f
+        val focusHeight = 0.075f
+/*
         focusHeight *= if (imageWidth > imageHeight)
         {
             imageWidth / imageHeight
@@ -158,6 +159,7 @@ class CameraXCameraControl : IFocusingControl, IDisplayInjector
         {
             imageHeight / imageWidth
         }
+*/
         return RectF(point.x - focusWidth / 2.0f, point.y - focusHeight / 2.0f, point.x + focusWidth / 2.0f, point.y + focusHeight / 2.0f)
     }
 
