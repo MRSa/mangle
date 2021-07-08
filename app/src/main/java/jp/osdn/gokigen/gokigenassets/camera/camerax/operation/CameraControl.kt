@@ -36,6 +36,7 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
     private lateinit var cameraXCamera : Camera
     private var cameraIsStarted = false
     private val cameraXCameraControl = CameraXCameraControl()
+    private val clickKeyDownListeners = mutableMapOf<Int, CameraClickKeyDownListener>()
 
     override fun getConnectionMethod(): String
     {
@@ -48,6 +49,7 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
         liveViewListener = CameraLiveViewListenerImpl(activity, informationReceiver)
         cameraExecutor = Executors.newSingleThreadExecutor()
         storeImage = StoreImage(activity, liveViewListener)
+        clickKeyDownListeners.clear()
         fileControl = FileControl(activity, storeImage, vibrator)
     }
 
@@ -237,41 +239,17 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
 
     override fun captureButtonReceiver(id : Int) : View.OnClickListener
     {
-        try
-        {
-            fileControl.setId(id)
-        }
-        catch (e : Exception)
-        {
-            e.printStackTrace()
-        }
-        return (fileControl)
+        return (getClickKeyDownListener(id))
     }
 
     override fun onLongClickReceiver(id: Int): View.OnLongClickListener
     {
-        try
-        {
-            fileControl.setId(id)
-        }
-        catch (e : Exception)
-        {
-            e.printStackTrace()
-        }
-        return (fileControl)
+        return (getClickKeyDownListener(id))
     }
 
     override fun keyDownReceiver(id: Int): IKeyDown
     {
-        try
-        {
-            fileControl.setId(id)
-        }
-        catch (e : Exception)
-        {
-            e.printStackTrace()
-        }
-        return (fileControl)
+        return (getClickKeyDownListener(id))
     }
 
     override fun getFocusingControl(id: Int): IFocusingControl
@@ -282,6 +260,26 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
     override fun getDisplayInjector(): IDisplayInjector
     {
         return (cameraXCameraControl)
+    }
+
+    private fun getClickKeyDownListener(id : Int) : CameraClickKeyDownListener
+    {
+        try
+        {
+            val listener = clickKeyDownListeners[id]
+            if (listener != null)
+            {
+                // すでに登録されていた場合は、応答する
+                return (listener)
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+        val listener = CameraClickKeyDownListener(id, fileControl)
+        clickKeyDownListeners.put(id, listener)
+        return (listener)
     }
 
     companion object

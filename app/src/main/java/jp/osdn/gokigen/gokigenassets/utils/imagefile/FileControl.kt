@@ -2,29 +2,23 @@ package jp.osdn.gokigen.gokigenassets.utils.imagefile
 
 import android.os.Build
 import android.util.Log
-import android.view.KeyEvent
-import android.view.View
 import androidx.camera.core.ImageCapture
 import androidx.fragment.app.FragmentActivity
-import jp.osdn.gokigen.gokigenassets.camera.interfaces.IKeyDown
-import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_BUTTON_SHUTTER
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW_DEFAULT_VALUE
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE_DEFAULT_VALUE
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_SAVE_LOCAL_LOCATION
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_SAVE_LOCAL_LOCATION_DEFAULT_VALUE
-import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREVIEW_VIEW_BUTTON_SHUTTER
 import jp.osdn.gokigen.gokigenassets.liveview.storeimage.IStoreImage
 import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 
-class FileControl(private val context: FragmentActivity, private val storeImage : IStoreImage, private val vibrator : IVibrator) : View.OnClickListener, View.OnLongClickListener, IKeyDown
+class FileControl(private val context: FragmentActivity, private val storeImage : IStoreImage, private val vibrator : IVibrator)
 {
     private val storeLocal = ImageStoreLocal(context)
     private val storeExternal = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) { ImageStoreExternal(context) } else { ImageStoreExternalLegacy(context) }
     private var imageCapture: ImageCapture? = null
-    private var cameraId : Int = 0
 
     fun prepare() : ImageCapture?
     {
@@ -44,12 +38,7 @@ class FileControl(private val context: FragmentActivity, private val storeImage 
 
     }
 
-    fun setId(id : Int)
-    {
-        cameraId = id
-    }
-
-    private fun takePhoto()
+    fun takePhoto(cameraId : Int)
     {
         Log.v(TAG, " takePhoto()")
         try
@@ -104,39 +93,6 @@ class FileControl(private val context: FragmentActivity, private val storeImage 
         {
             e.printStackTrace()
         }
-    }
-
-    override fun onClick(v: View?)
-    {
-        Log.v(TAG, " onClick : $v?.id ")
-        when (v?.id)
-        {
-            ID_PREVIEW_VIEW_BUTTON_SHUTTER -> takePhoto()
-            ID_BUTTON_SHUTTER -> takePhoto()
-            else -> Log.v(TAG, " Unknown ID : " + v?.id)
-        }
-    }
-
-    override fun handleKeyDown(keyCode: Int, event: KeyEvent): Boolean
-    {
-        try
-        {
-            if (event.action == KeyEvent.ACTION_DOWN && (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_CAMERA))
-            {
-                takePhoto()
-                return (true)
-            }
-        }
-        catch (e : Exception)
-        {
-            e.printStackTrace()
-        }
-        return (false)
-    }
-
-    override fun onLongClick(v: View?): Boolean
-    {
-        return (false)
     }
 
     companion object

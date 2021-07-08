@@ -23,13 +23,13 @@ import java.util.*
 class StoreImage(private val context: FragmentActivity, private val imageProvider: IImageProvider, private val dumpLog : Boolean = false) : IStoreImage
 {
 
-    override fun doStore(id : Int, isEquirectangular : Boolean,  target: Bitmap?)
+    override fun doStore(id : Int, isEquirectangular : Boolean, position : Float, target: Bitmap?)
     {
         try
         {
             // 保存処理(プログレスダイアログ（「保存中...」）を表示
 
-            val bitmapToStore = target ?: imageProvider.getImage()
+            val bitmapToStore = target ?: imageProvider.getImage(position)
             val isLocalLocation  = PreferenceAccessWrapper(context).getBoolean(ID_PREFERENCE_SAVE_LOCAL_LOCATION, ID_PREFERENCE_SAVE_LOCAL_LOCATION_DEFAULT_VALUE)
             if (isLocalLocation)
             {
