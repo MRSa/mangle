@@ -45,6 +45,10 @@ import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.P
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CONNECTION_METHOD
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_SAVE_LOCAL_LOCATION
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_SAVE_LOCAL_LOCATION_DEFAULT_VALUE
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.SHOW_GRID
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.SHOW_GRID_DEFAULT_VALUE
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.SHOW_GRID_STATUS
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.SHOW_GRID_STATUS_DEFAULT_VALUE
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.USE_GR2_SPECIAL_COMMAND
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.USE_SELF_TIMER
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.USE_SELF_TIMER_DEFAULT_VALUE
@@ -140,6 +144,11 @@ interface IApplicationConstantConvert
         const val ID_PREFERENCE_ARRAY_CAMERA_SEQUENCE = R.array.connection_sequence
         const val ID_PREFERENCE_ARRAY_CAMERA_METHOD_VALUE = R.array.connection_method_value
         const val ID_PREFERENCE_ARRAY_CAMERA_SEQUENCE_VALUE = R.array.connection_sequence_value
+
+        const val ID_PREFERENCE_SHOW_GRID = SHOW_GRID
+        const val ID_PREFERENCE_SHOW_GRID_DEFAULT_VALUE = SHOW_GRID_DEFAULT_VALUE
+        const val ID_PREFERENCE_ARRAY_SHOW_GRID = R.array.array_show_grid
+        const val ID_PREFERENCE_ARRAY_SHOW_GRID_VALUE = R.array.array_show_grid_value
 
         const val ID_PREFERENCE_CAMERA_METHOD_1 = PREFERENCE_CAMERA_METHOD_1
         const val ID_PREFERENCE_CAMERA_SEQUENCE_1 = PREFERENCE_CAMERA_SEQUENCE_1

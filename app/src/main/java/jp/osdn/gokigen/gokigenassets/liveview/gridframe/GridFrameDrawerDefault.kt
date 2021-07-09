@@ -7,10 +7,10 @@ import android.graphics.RectF
 
 class GridFrameDrawerDefault : IGridFrameDrawer
 {
-    override fun drawFramingGrid(canvas: Canvas, rect: RectF)
+    override fun drawFramingGrid(canvas: Canvas, rect: RectF, color : Int)
     {
         val paint = Paint()
-        paint.color = Color.argb(130, 235, 235, 235)
+        paint.color = color
         paint.strokeWidth = 1.0f
         paint.style = Paint.Style.STROKE
         paint.isAntiAlias = true

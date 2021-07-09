@@ -10,6 +10,7 @@ import android.view.*
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.SeekBar
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraControl
@@ -22,6 +23,8 @@ import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Compa
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_CACHE_LIVE_VIEW_PICTURES
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_SELF_TIMER_SECONDS
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_SELF_TIMER_SECONDS_DEFAULT_VALUE
+import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_SHOW_GRID
+import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_SHOW_GRID_DEFAULT_VALUE
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_AREA_0
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_AREA_1
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_AREA_2
@@ -98,6 +101,16 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
         }
         try
         {
+            var isGrid = "0"
+            if (::wrapper.isInitialized)
+            {
+                isGrid = wrapper.getString(ID_PREFERENCE_SHOW_GRID, ID_PREFERENCE_SHOW_GRID_DEFAULT_VALUE)
+            }
+            val showGrid = when (isGrid) {
+                "0" -> false
+                else -> true
+            }
+
             Log.v(TAG, "updateCameraLayout()")
             if (::cameraControl0.isInitialized)
             {
@@ -116,6 +129,10 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
                     {
                         imageCache0.visibility = View.VISIBLE
                         imageCache0.setOnSeekBarChangeListener(imageView0)
+                    }
+                    if (showGrid)
+                    {
+                        imageView0.showGridFrame(showGrid)
                     }
                     area0.visibility = View.VISIBLE
                 }
@@ -143,6 +160,10 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
                         imageCache1.visibility = View.VISIBLE
                         imageCache1.setOnSeekBarChangeListener(imageView1)
                     }
+                    if (showGrid)
+                    {
+                        imageView1.showGridFrame(showGrid)
+                    }
                     area1.visibility = View.VISIBLE
                 }
                 else
@@ -169,6 +190,10 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
                         imageCache2.visibility = View.VISIBLE
                         imageCache2.setOnSeekBarChangeListener(imageView2)
                     }
+                    if (showGrid)
+                    {
+                        imageView2.showGridFrame(showGrid)
+                    }
                     area2.visibility = View.VISIBLE
                 }
                 else
@@ -194,6 +219,10 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
                     {
                         imageCache3.visibility = View.VISIBLE
                         imageCache3.setOnSeekBarChangeListener(imageView3)
+                    }
+                    if (showGrid)
+                    {
+                        imageView3.showGridFrame(showGrid)
                     }
                     area3.visibility = View.VISIBLE
                 }
@@ -266,9 +295,49 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
                 e.printStackTrace()
                 0
             }
+            updateShowGridFrame(wrapper.getString(ID_PREFERENCE_SHOW_GRID, ID_PREFERENCE_SHOW_GRID_DEFAULT_VALUE))
         }
         Log.v(TAG, " onResume() : orientation ${getRotation()}, Self Timer: $selfTimerCount sec.")
     }
+
+    private fun updateShowGridFrame(isGrid : String)
+    {
+        try
+        {
+            val showGrid = when (isGrid) {
+                "0" -> false
+                else -> true
+            }
+            val imageView0 = liveviewView.findViewById<LiveImageView>(ID_VIEW_FINDER_0)
+            if (imageView0.isVisible)
+            {
+                imageView0.showGridFrame(showGrid)
+            }
+
+            val imageView1 = liveviewView.findViewById<LiveImageView>(ID_VIEW_FINDER_1)
+            if (imageView1.isVisible)
+            {
+                imageView1.showGridFrame(showGrid)
+            }
+
+            val imageView2 = liveviewView.findViewById<LiveImageView>(ID_VIEW_FINDER_2)
+            if (imageView2.isVisible)
+            {
+                imageView2.showGridFrame(showGrid)
+            }
+
+            val imageView3 = liveviewView.findViewById<LiveImageView>(ID_VIEW_FINDER_3)
+            if (imageView3.isVisible)
+            {
+                imageView3.showGridFrame(showGrid)
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
 
     override fun onPause()
     {

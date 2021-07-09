@@ -71,6 +71,9 @@
     <string name="pref_connection_sequence3">CONNECTION SEQUENCE</string>
     <string name="pref_connection_sequence4">CONNECTION SEQUENCE</string>
 
+    <string name="pref_show_grid">Show Grid</string>
+    <string name="pref_summary_show_grid"> </string>
+
     <string name="pref_camera_option11">OPTION1</string>
     <string name="pref_summary_camera_option11"> </string>
     <string name="pref_camera_option21">OPTION2</string>

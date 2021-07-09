@@ -38,6 +38,7 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
     private var sliderPosition : Float = 0.0f
     private var imageRotationDegrees : Int = 0
     private var showGrid : Boolean = false
+    private var gridColor : Int = Color.argb(130, 235, 235, 235)
     private var showingFocusFrame = false
     private val imageScaleType: ImageView.ScaleType = ImageView.ScaleType.FIT_CENTER
     private lateinit var imageBitmap: Bitmap
@@ -119,16 +120,17 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
         val imageRectF = drawImage(canvas)
         if (showGrid)
         {
-            gridFrameDrawer.drawFramingGrid(canvas, imageRectF)
+            gridFrameDrawer.drawFramingGrid(canvas, imageRectF, gridColor)
         }
         this.drawFocusFrame(canvas,imageRectF.width(), imageRectF.height())
         informationDrawer.drawInformationMessages(canvas, imageRectF)
         informationDrawer.drawLevelGauge(canvas, imageRotationDegrees)
     }
 
-    override fun showGridFrame(isShowGrid: Boolean)
+    override fun showGridFrame(isShowGrid: Boolean, color : Int)
     {
         this.showGrid = isShowGrid
+        gridColor = color
         refreshCanvas()
     }
 

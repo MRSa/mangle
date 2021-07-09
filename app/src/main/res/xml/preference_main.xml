@@ -55,6 +55,14 @@
             app:isPreferenceVisible="true"
             />
 
+        <DropDownPreference
+            android:entries="@array/array_show_grid"
+            android:entryValues="@array/array_show_grid_value"
+            android:defaultValue="OFF"
+            android:key="show_grid_frame"
+            android:title="@string/pref_show_grid"
+            android:summary="@string/pref_summary_show_grid"/>
+
         <SwitchPreferenceCompat
             android:key="capture_both_camera_and_live_view"
             android:title="@string/pref_capture_both_camera_and_live_view"

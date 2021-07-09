@@ -9,6 +9,8 @@ import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Compa
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_ARRAY_CAMERA_METHOD_VALUE
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_ARRAY_CAMERA_SEQUENCE
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_ARRAY_CAMERA_SEQUENCE_VALUE
+import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_ARRAY_SHOW_GRID
+import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_ARRAY_SHOW_GRID_VALUE
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_CAMERA_METHOD_1
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_CAMERA_METHOD_2
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_CAMERA_METHOD_3
@@ -44,6 +46,7 @@ import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Compa
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_SELF_TIMER_ARRAY
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_SELF_TIMER_ARRAY_VALUE
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_SELF_TIMER_SECONDS
+import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_SHOW_GRID
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_CAMERAX
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_EXAMPLE
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_NONE
@@ -85,6 +88,8 @@ class MainPreferenceFragment : PreferenceFragmentCompat(), IPreferenceViewUpdate
         prepareClickListener(ID_PREFERENCE_LABEL_SELECT_CAMERA_CONNECTION_METHOD)
 
         setMethodSummary(ID_PREFERENCE_SELF_TIMER_SECONDS, ID_PREFERENCE_SELF_TIMER_ARRAY, ID_PREFERENCE_SELF_TIMER_ARRAY_VALUE)
+
+        setMethodSummary(ID_PREFERENCE_SHOW_GRID, ID_PREFERENCE_ARRAY_SHOW_GRID, ID_PREFERENCE_ARRAY_SHOW_GRID_VALUE)
 
         setMethodSummary(ID_PREFERENCE_CAMERA_METHOD_1, ID_PREFERENCE_ARRAY_CAMERA_METHOD, ID_PREFERENCE_ARRAY_CAMERA_METHOD_VALUE)
         setMethodSummary(ID_PREFERENCE_CAMERA_METHOD_2, ID_PREFERENCE_ARRAY_CAMERA_METHOD, ID_PREFERENCE_ARRAY_CAMERA_METHOD_VALUE)

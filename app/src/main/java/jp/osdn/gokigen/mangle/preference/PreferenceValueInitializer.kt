@@ -111,6 +111,13 @@ class PreferenceValueInitializer() : IPreferenceValueInitializer
                     IPreferencePropertyAccessor.USE_SELF_TIMER_DEFAULT_VALUE
                 )
             }
+            if (!items.containsKey(IPreferencePropertyAccessor.SHOW_GRID))
+            {
+                editor.putString(
+                    IPreferencePropertyAccessor.SHOW_GRID,
+                    IPreferencePropertyAccessor.SHOW_GRID_DEFAULT_VALUE
+                )
+            }
             if (!items.containsKey(IPreferencePropertyAccessor.EXTERNAL_STORAGE_LOCATION))
             {
                 editor.putString(IPreferencePropertyAccessor.EXTERNAL_STORAGE_LOCATION, IPreferencePropertyAccessor.EXTERNAL_STORAGE_LOCATION_DEFAULT_VALUE)

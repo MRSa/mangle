@@ -34,7 +34,6 @@ interface IPreferencePropertyAccessor
         const val USE_SELF_TIMER = "self_timer_count"
         const val USE_SELF_TIMER_DEFAULT_VALUE = "0"
 
-
         // --- SCREEN TRANSACTION LABEL ---
         const val LABEL_EXIT_APPLICATION = "exit_application"
         const val LABEL_WIFI_SETTINGS = "wifi_settings"
@@ -42,9 +41,15 @@ interface IPreferencePropertyAccessor
         const val LABEL_PRIVACY_POLICY = "privacy_policy"
         const val LABEL_DEBUG_INFO = "debug_info"
 
-        // --- HIDDEN
+        // --- GRID FRAME
+        const val SHOW_GRID = "show_grid_frame"
+        const val SHOW_GRID_DEFAULT_VALUE = "0"
+
+        // --- GRID FRAME (DUMMY)
         const val SHOW_GRID_STATUS = "show_grid"
         const val SHOW_GRID_STATUS_DEFAULT_VALUE = false
+
+        // --- HIDDEN
         const val EXTERNAL_STORAGE_LOCATION = "external_storage_location"
         const val EXTERNAL_STORAGE_LOCATION_DEFAULT_VALUE = ""
 
