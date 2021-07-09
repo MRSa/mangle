@@ -22,6 +22,7 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraControl
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.IDisplayInjector
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.IFocusingControl
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.IKeyDown
+import jp.osdn.gokigen.gokigenassets.liveview.ICachePositionProvider
 import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import java.util.concurrent.ExecutorService
@@ -37,6 +38,7 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
     private var cameraIsStarted = false
     private val cameraXCameraControl = CameraXCameraControl()
     private val clickKeyDownListeners = mutableMapOf<Int, CameraClickKeyDownListener>()
+    private val cachePositionProviders = mutableMapOf<Int, ICachePositionProvider>()
 
     override fun getConnectionMethod(): String
     {
@@ -68,10 +70,11 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
         return (true)
     }
 
-    override fun setRefresher(refresher: ILiveViewRefresher, imageView : ILiveView)
+    override fun setRefresher(id: Int, refresher: ILiveViewRefresher, imageView : ILiveView, cachePosition : ICachePositionProvider)
     {
         liveViewListener.setRefresher(refresher)
         imageView.setImageProvider(liveViewListener)
+        cachePositionProviders[id] = cachePosition
     }
 
     override fun startCamera(isPreviewView : Boolean, cameraSequence : Int)
@@ -277,8 +280,8 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
         {
             e.printStackTrace()
         }
-        val listener = CameraClickKeyDownListener(id, fileControl)
-        clickKeyDownListeners.put(id, listener)
+        val listener = CameraClickKeyDownListener(id, fileControl, cachePositionProviders[id])
+        clickKeyDownListeners[id] = listener
         return (listener)
     }
 

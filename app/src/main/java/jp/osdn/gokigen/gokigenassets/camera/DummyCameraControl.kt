@@ -7,6 +7,7 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraControl
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.IDisplayInjector
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.IFocusingControl
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.IKeyDown
+import jp.osdn.gokigen.gokigenassets.liveview.ICachePositionProvider
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveView
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveViewRefresher
 
@@ -19,7 +20,7 @@ class DummyCameraControl() : ICameraControl, View.OnClickListener, View.OnLongCl
     override fun finishCamera() { }
     override fun changeCaptureMode(mode: String) { }
     override fun needRotateImage(): Boolean { return (false) }
-    override fun setRefresher(refresher: ILiveViewRefresher, imageView: ILiveView) { }
+    override fun setRefresher(id : Int, refresher: ILiveViewRefresher, imageView: ILiveView, cachePosition : ICachePositionProvider) { }
     override fun captureButtonReceiver(id: Int): View.OnClickListener { return (this) }
     override fun onLongClickReceiver(id: Int): View.OnLongClickListener { return (this) }
     override fun keyDownReceiver(id: Int): IKeyDown { return (this) }

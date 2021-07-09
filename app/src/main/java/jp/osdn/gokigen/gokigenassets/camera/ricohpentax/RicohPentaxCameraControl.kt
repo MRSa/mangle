@@ -17,6 +17,7 @@ import jp.osdn.gokigen.gokigenassets.camera.ricohpentax.status.RicohGr2StatusChe
 import jp.osdn.gokigen.gokigenassets.camera.ricohpentax.wrapper.RicohGr2RunMode
 import jp.osdn.gokigen.gokigenassets.camera.ricohpentax.wrapper.playback.RicohGr2PlaybackControl
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert
+import jp.osdn.gokigen.gokigenassets.liveview.ICachePositionProvider
 import jp.osdn.gokigen.gokigenassets.liveview.IIndicatorControl
 import jp.osdn.gokigen.gokigenassets.liveview.focusframe.IAutoFocusFrameDisplay
 import jp.osdn.gokigen.gokigenassets.liveview.image.CameraLiveViewListenerImpl
@@ -48,6 +49,7 @@ class RicohPentaxCameraControl(private val context: AppCompatActivity, private v
     private var useCameraScreen = false
     private var isStatusWatch = false
     private val storeImage = StoreImage(context, liveViewListener)
+    private lateinit var cachePositionProvider : ICachePositionProvider
     private var cameraPositionId = 0
 
     private val zoomControl = RicohGr2CameraZoomLensControl()
@@ -148,12 +150,13 @@ class RicohPentaxCameraControl(private val context: AppCompatActivity, private v
         }
     }
 
-    override fun setRefresher(refresher: ILiveViewRefresher, imageView: ILiveView)
+    override fun setRefresher(id : Int, refresher: ILiveViewRefresher, imageView: ILiveView, cachePosition : ICachePositionProvider)
     {
         try
         {
             liveViewListener.setRefresher(refresher)
             imageView.setImageProvider(liveViewListener)
+            cachePositionProvider = cachePosition
         }
         catch (e : Exception)
         {
@@ -266,7 +269,7 @@ class RicohPentaxCameraControl(private val context: AppCompatActivity, private v
             if ((captureBothCamera)&&(liveViewListener.isImageReceived()))
             {
                 // ライブビュー画像を保管する場合...
-                val thread = Thread { storeImage.doStore(cameraPositionId, false) }
+                val thread = Thread { storeImage.doStore(cameraPositionId, false, cachePositionProvider.getCachePosition()) }
                 try
                 {
                     thread.start()

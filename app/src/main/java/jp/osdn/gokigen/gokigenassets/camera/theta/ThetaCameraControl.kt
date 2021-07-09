@@ -19,6 +19,7 @@ import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Compa
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW_DEFAULT_VALUE
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE_DEFAULT_VALUE
+import jp.osdn.gokigen.gokigenassets.liveview.ICachePositionProvider
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveView
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveViewRefresher
 import jp.osdn.gokigen.gokigenassets.liveview.image.CameraLiveViewListenerImpl
@@ -41,6 +42,7 @@ class ThetaCameraControl(private val context: AppCompatActivity, private val vib
     private var isStatusWatch = false
     private var isMovieRecording = false
     private val storeImage = StoreImage(context, liveViewListener)
+    private lateinit var cachePositionProvider : ICachePositionProvider
     private var cameraPositionId = 0
 
     fun setIndicator(indicator : IMessageDrawer)
@@ -151,12 +153,13 @@ class ThetaCameraControl(private val context: AppCompatActivity, private val vib
         }
     }
 
-    override fun setRefresher(refresher: ILiveViewRefresher, imageView: ILiveView)
+    override fun setRefresher(id : Int, refresher: ILiveViewRefresher, imageView: ILiveView, cachePosition : ICachePositionProvider)
     {
         try
         {
             liveViewListener.setRefresher(refresher)
             imageView.setImageProvider(liveViewListener)
+            cachePositionProvider = cachePosition
         }
         catch (e : Exception)
         {
@@ -242,7 +245,7 @@ class ThetaCameraControl(private val context: AppCompatActivity, private val vib
             if ((captureBothCamera)&&(liveViewListener.isImageReceived()))
             {
                 // ライブビュー画像を保管する場合...
-                val thread = Thread { storeImage.doStore(cameraPositionId, true) }
+                val thread = Thread { storeImage.doStore(cameraPositionId, true, cachePositionProvider.getCachePosition()) }
                 try
                 {
                     thread.start()

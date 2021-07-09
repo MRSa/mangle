@@ -1,6 +1,7 @@
 package jp.osdn.gokigen.gokigenassets.camera.interfaces
 
 import android.view.View
+import jp.osdn.gokigen.gokigenassets.liveview.ICachePositionProvider
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveView
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveViewRefresher
 import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
@@ -17,7 +18,7 @@ interface ICameraControl
     fun changeCaptureMode(mode : String)
     fun needRotateImage() : Boolean
 
-    fun setRefresher(refresher : ILiveViewRefresher, imageView : ILiveView)
+    fun setRefresher(id : Int, refresher : ILiveViewRefresher, imageView : ILiveView, cachePosition : ICachePositionProvider)
     fun captureButtonReceiver(id : Int = 0) : View.OnClickListener
     fun onLongClickReceiver(id : Int = 0) : View.OnLongClickListener
     fun keyDownReceiver(id : Int = 0) : IKeyDown

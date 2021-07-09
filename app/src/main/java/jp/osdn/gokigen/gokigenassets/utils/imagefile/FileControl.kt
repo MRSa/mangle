@@ -38,7 +38,7 @@ class FileControl(private val context: FragmentActivity, private val storeImage 
 
     }
 
-    fun takePhoto(cameraId : Int)
+    fun takePhoto(cameraId : Int, position : Float = 0.0f)
     {
         Log.v(TAG, " takePhoto()")
         try
@@ -52,7 +52,7 @@ class FileControl(private val context: FragmentActivity, private val storeImage 
             if (captureBothCamera)
             {
                 // ライブビュー画像を保管する場合...
-                val thread = Thread { storeImage.doStore(cameraId, false) }
+                val thread = Thread { storeImage.doStore(cameraId, false, position) }
                 try
                 {
                     thread.start()

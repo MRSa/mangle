@@ -28,7 +28,7 @@ import jp.osdn.gokigen.gokigenassets.liveview.message.InformationDrawer
 import java.util.*
 import kotlin.math.min
 
-class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSeekBarChangeListener, IFocusingModeNotify, IFocusFrameDrawer, IAutoFocusFrameDisplay
+class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSeekBarChangeListener, IFocusingModeNotify, IFocusFrameDrawer, IAutoFocusFrameDisplay, ICachePositionProvider
 {
     companion object
     {
@@ -247,6 +247,12 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
                 ((centerY - halfWidth) + dstWidth)
             )
         })
+    }
+
+    override fun getCachePosition(): Float
+    {
+        //Log.v(TAG, " ----- sliderPosition : $sliderPosition")
+        return (sliderPosition)
     }
 
     override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean)
@@ -561,4 +567,5 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
         }
         return PointF(imagePointX, imagePointY)
     }
+
 }

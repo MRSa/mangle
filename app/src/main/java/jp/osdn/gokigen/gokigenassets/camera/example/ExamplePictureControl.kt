@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import jp.osdn.gokigen.gokigenassets.camera.ICameraPreferenceProvider
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.*
 import jp.osdn.gokigen.gokigenassets.camera.theta.status.ICaptureModeReceiver
+import jp.osdn.gokigen.gokigenassets.liveview.ICachePositionProvider
 import jp.osdn.gokigen.gokigenassets.liveview.IIndicatorControl
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveView
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveViewRefresher
@@ -20,7 +21,6 @@ import jp.osdn.gokigen.gokigenassets.liveview.focusframe.IAutoFocusFrameDisplay
 import jp.osdn.gokigen.gokigenassets.liveview.image.CameraLiveViewListenerImpl
 import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
-import java.io.ByteArrayOutputStream
 import java.io.InputStream
 
 
@@ -82,7 +82,7 @@ class ExamplePictureControl(private val context: AppCompatActivity, private val 
     override fun doShutterOff() { }
     override fun handleKeyDown(keyCode: Int, event: KeyEvent): Boolean { return (false) }
 
-    override fun setRefresher(refresher: ILiveViewRefresher, imageView: ILiveView)
+    override fun setRefresher(id: Int, refresher: ILiveViewRefresher, imageView: ILiveView, cachePosition : ICachePositionProvider)
     {
         try
         {

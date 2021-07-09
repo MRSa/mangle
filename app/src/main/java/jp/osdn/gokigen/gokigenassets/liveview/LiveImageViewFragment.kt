@@ -108,7 +108,7 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
                 val imageView0 = liveviewView.findViewById<LiveImageView>(ID_VIEW_FINDER_0)
                 if (isCameraControl0)
                 {
-                    cameraControl0.setRefresher(imageView0, imageView0)
+                    cameraControl0.setRefresher(0, imageView0, imageView0, imageView0)
                     imageView0.injectDisplay(cameraControl0)
                     imageView0.setOnLongClickListener(this)
                     imageView0.setOnTouchListener(LiveViewOnTouchListener(cameraControl0, 0))
@@ -134,7 +134,7 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
                 val imageView1 = liveviewView.findViewById<LiveImageView>(ID_VIEW_FINDER_1)
                 if (isCameraControl1)
                 {
-                    cameraControl1.setRefresher(imageView1, imageView1)
+                    cameraControl1.setRefresher(1, imageView1, imageView1, imageView1)
                     imageView1.injectDisplay(cameraControl1)
                     imageView1.setOnLongClickListener(this)
                     imageView1.setOnTouchListener(LiveViewOnTouchListener(cameraControl1, 1))
@@ -160,7 +160,7 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
                 val imageView2 = liveviewView.findViewById<LiveImageView>(ID_VIEW_FINDER_2)
                 if (isCameraControl2)
                 {
-                    cameraControl2.setRefresher(imageView2, imageView2)
+                    cameraControl2.setRefresher(2, imageView2, imageView2, imageView2)
                     imageView2.injectDisplay(cameraControl2)
                     imageView2.setOnLongClickListener(this)
                     imageView2.setOnTouchListener(LiveViewOnTouchListener(cameraControl2, 2))
@@ -186,7 +186,7 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
                 val imageView3 = liveviewView.findViewById<LiveImageView>(ID_VIEW_FINDER_3)
                 if (isCameraControl3)
                 {
-                    cameraControl3.setRefresher(imageView3, imageView3)
+                    cameraControl3.setRefresher(3, imageView3, imageView3, imageView3)
                     imageView3.injectDisplay(cameraControl3)
                     imageView3.setOnLongClickListener(this)
                     imageView3.setOnTouchListener(LiveViewOnTouchListener(cameraControl3, 3))
