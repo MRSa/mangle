@@ -9,8 +9,8 @@ android {
         applicationId "jp.osdn.gokigen.mangle"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 1000001
-        versionName "1.0.1"
+        versionCode 1000002
+        versionName "1.0.2"
         //testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
