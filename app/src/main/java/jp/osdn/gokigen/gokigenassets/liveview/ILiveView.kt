@@ -6,6 +6,7 @@ import jp.osdn.gokigen.gokigenassets.liveview.message.IMessageDrawer
 interface ILiveView
 {
     fun setImageProvider(provider : IImageProvider)
+    fun setAnotherDrawer(drawer : IAnotherDrawer?)
     fun updateImageRotation(degrees : Int)
     fun getMessageDrawer() : IMessageDrawer
     fun invalidate()

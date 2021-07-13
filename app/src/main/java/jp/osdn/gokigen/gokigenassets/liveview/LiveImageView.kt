@@ -50,6 +50,7 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
     private var focusFrameRect: RectF? = null
     private var focusFrameHideTimer: Timer? = null
     private var isRotationImage = false
+    private var anotherDrawer : IAnotherDrawer? = null
 
     constructor(context: Context) : super(context)
     {
@@ -101,6 +102,12 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
         this.imageProvider = provider
     }
 
+    override fun setAnotherDrawer(drawer: IAnotherDrawer?)
+    {
+        Log.v(TAG, " setAnotherDrawer() ")
+        this.anotherDrawer = drawer
+    }
+
     override fun updateImageRotation(degrees: Int)
     {
         this.imageRotationDegrees = degrees
@@ -110,11 +117,23 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
     override fun onDraw(canvas: Canvas?)
     {
         super.onDraw(canvas)
-        if ((canvas == null)||(!(::imageProvider.isInitialized)))
+        if (canvas == null)
         {
             Log.v(TAG, " ===== onDraw : canvas is not ready. ==== ")
             return
         }
+        if (anotherDrawer != null)
+        {
+            // 別の描画ロジックを使う場合...
+            anotherDrawer?.onDraw(canvas)
+            return
+        }
+        if (!(::imageProvider.isInitialized))
+        {
+            Log.v(TAG, " ===== image provider is not ready. ==== ")
+            return
+        }
+
         //Log.v(TAG, " ----- onDraw() ----- ")
         canvas.drawARGB(255, 0, 0, 0)
         val imageRectF = drawImage(canvas)

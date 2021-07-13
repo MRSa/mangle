@@ -25,4 +25,5 @@ interface ICameraControl
 
     fun getFocusingControl(id : Int = 0) : IFocusingControl?
     fun getDisplayInjector() : IDisplayInjector?
+    fun getAnotherTouchListener(id : Int = 0) : View.OnTouchListener? = null
 }

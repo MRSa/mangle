@@ -16,6 +16,7 @@
 
     <string-array name="connection_method">
         <item>未使用</item>
+        <item>操作パネル</item>
         <item>作例表示</item>
         <item>内蔵カメラ</item>
         <item>Ricoh GR / PENTAX</item>
@@ -34,6 +35,7 @@
 
     <string-array name="connection_method_value">
         <item>NONE</item>
+        <item>CONSOLE</item>
         <item>EXAMPLE</item>
         <item>camerax</item>
         <item>RICOH</item>

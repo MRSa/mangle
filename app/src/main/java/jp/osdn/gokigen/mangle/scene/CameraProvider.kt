@@ -6,12 +6,14 @@ import jp.osdn.gokigen.gokigenassets.camera.CameraPreferenceKeySet
 import jp.osdn.gokigen.gokigenassets.camera.DummyCameraControl
 import jp.osdn.gokigen.gokigenassets.camera.ICameraPreferenceProvider
 import jp.osdn.gokigen.gokigenassets.camera.camerax.operation.CameraControl
+import jp.osdn.gokigen.gokigenassets.camera.console.ConsolePanelControl
 import jp.osdn.gokigen.gokigenassets.camera.example.ExamplePictureControl
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.*
 import jp.osdn.gokigen.gokigenassets.camera.panasonic.wrapper.PanasonicCameraControl
 import jp.osdn.gokigen.gokigenassets.camera.ricohpentax.RicohPentaxCameraControl
 import jp.osdn.gokigen.gokigenassets.camera.theta.ThetaCameraControl
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_CAMERAX
+import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_CONSOLE
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_EXAMPLE
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_NONE
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_PANASONIC
@@ -104,6 +106,7 @@ class CameraProvider(private val activity: AppCompatActivity, private val inform
             }
             return (when (cameraPreference.getCameraMethod()) {
                 PREFERENCE_CAMERA_METHOD_NONE -> DummyCameraControl()
+                PREFERENCE_CAMERA_METHOD_CONSOLE -> prepareConsolePanelControl(cameraPreference)
                 PREFERENCE_CAMERA_METHOD_EXAMPLE -> prepareExamplePictureControl(cameraPreference)
                 PREFERENCE_CAMERA_METHOD_CAMERAX -> prepareCameraXControl(cameraPreference)
                 PREFERENCE_CAMERA_METHOD_THETA -> prepareThetaCameraControl(cameraPreference)
@@ -217,6 +220,11 @@ class CameraProvider(private val activity: AppCompatActivity, private val inform
     private fun preparePanasonicCameraControl(cameraPreference : ICameraPreferenceProvider) : ICameraControl
     {
         return (PanasonicCameraControl(activity, vibrator, informationNotify, cameraPreference, statusReceiver))
+    }
+
+    private fun prepareConsolePanelControl(cameraPreference : ICameraPreferenceProvider) : ICameraControl
+    {
+        return (ConsolePanelControl(activity, vibrator, informationNotify, cameraPreference))
     }
 
     private fun prepareExamplePictureControl(cameraPreference : ICameraPreferenceProvider) : ICameraControl
