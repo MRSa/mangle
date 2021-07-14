@@ -37,7 +37,7 @@ class PanasonicCameraControl(private val context: AppCompatActivity, private val
 
     private lateinit var cachePositionProvider : ICachePositionProvider
     private lateinit var panasonicCamera: IPanasonicCamera
-    private var statusChecker: CameraEventObserver? = null
+    private lateinit var statusChecker: CameraEventObserver
     private var liveViewControl: PanasonicLiveViewControl? = null
     private var focusControl: PanasonicCameraFocusControl? = null
     private var captureControl: PanasonicCameraCaptureControl? = null
@@ -58,7 +58,7 @@ class PanasonicCameraControl(private val context: AppCompatActivity, private val
             Log.v(TAG, " prepare : " + panasonicCamera.getFriendlyName() + " " + panasonicCamera.getModelName())
             try
             {
-                if (statusChecker == null)
+                if (!::statusChecker.isInitialized)
                 {
                     statusChecker = CameraEventObserver(context, panasonicCamera, cardSlotSelector)
                 }
@@ -111,13 +111,13 @@ class PanasonicCameraControl(private val context: AppCompatActivity, private val
     {
         try
         {
-            if (statusChecker != null)
+            if (::statusChecker.isInitialized)
             {
                 if (listener != null)
                 {
-                    statusChecker?.setEventListener(listener)
+                    statusChecker.setEventListener(listener)
                 }
-                statusChecker?.startStatusWatch(null, null)
+                statusChecker.startStatusWatch(null, null)
             }
         }
         catch (e: Exception)
@@ -206,7 +206,10 @@ class PanasonicCameraControl(private val context: AppCompatActivity, private val
         {
             if (isStatusWatch)
             {
-                statusChecker?.stopStatusWatch()
+                if (::statusChecker.isInitialized)
+                {
+                    statusChecker.stopStatusWatch()
+                }
                 isStatusWatch = false
             }
             cameraConnection.disconnect(false)
@@ -285,8 +288,11 @@ class PanasonicCameraControl(private val context: AppCompatActivity, private val
         {
             if (!isStatusWatch)
             {
-                statusChecker?.startStatusWatch(null, null)
-                isStatusWatch = true
+                if (::statusChecker.isInitialized)
+                {
+                    statusChecker.startStatusWatch(null, null)
+                    isStatusWatch = true
+                }
             }
             liveViewControl?.startLiveView()
         }
@@ -304,8 +310,11 @@ class PanasonicCameraControl(private val context: AppCompatActivity, private val
             liveViewControl?.stopLiveView()
             if (isStatusWatch)
             {
-                statusChecker?.stopStatusWatch()
-                isStatusWatch = false
+                if (::statusChecker.isInitialized)
+                {
+                    statusChecker.stopStatusWatch()
+                    isStatusWatch = false
+                }
             }
         }
         catch (e : Exception)
@@ -407,5 +416,11 @@ class PanasonicCameraControl(private val context: AppCompatActivity, private val
     override fun onLongClick(v: View?): Boolean
     {
         return (false)
+    }
+
+    override fun setNeighborCameraControl(camera0: ICameraControl?, camera1: ICameraControl?, camera2: ICameraControl?, camera3: ICameraControl?) { }
+    override fun getCameraStatus(): ICameraStatus
+    {
+        return (statusChecker)
     }
 }

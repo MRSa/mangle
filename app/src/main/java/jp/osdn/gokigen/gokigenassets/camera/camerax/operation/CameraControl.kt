@@ -12,16 +12,13 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import jp.osdn.gokigen.gokigenassets.camera.ICameraPreferenceProvider
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.*
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_CAMERA_X_PREVIEW_LAYOUT
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveView
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveViewRefresher
 import jp.osdn.gokigen.gokigenassets.liveview.image.CameraLiveViewListenerImpl
 import jp.osdn.gokigen.gokigenassets.liveview.storeimage.StoreImage
 import jp.osdn.gokigen.gokigenassets.utils.imagefile.FileControl
-import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraControl
-import jp.osdn.gokigen.gokigenassets.camera.interfaces.IDisplayInjector
-import jp.osdn.gokigen.gokigenassets.camera.interfaces.IFocusingControl
-import jp.osdn.gokigen.gokigenassets.camera.interfaces.IKeyDown
 import jp.osdn.gokigen.gokigenassets.liveview.ICachePositionProvider
 import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
@@ -37,6 +34,7 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
     private lateinit var cameraXCamera : Camera
     private var cameraIsStarted = false
     private val cameraXCameraControl = CameraXCameraControl()
+    private val cameraXCameraStatusHolder = CameraXCameraStatusHolder()
     private val clickKeyDownListeners = mutableMapOf<Int, CameraClickKeyDownListener>()
     private val cachePositionProviders = mutableMapOf<Int, ICachePositionProvider>()
 
@@ -284,6 +282,8 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
         clickKeyDownListeners[id] = listener
         return (listener)
     }
+    override fun setNeighborCameraControl(camera0: ICameraControl?, camera1: ICameraControl?, camera2: ICameraControl?, camera3: ICameraControl?) { }
+    override fun getCameraStatus(): ICameraStatus { return (cameraXCameraStatusHolder) }
 
     companion object
     {

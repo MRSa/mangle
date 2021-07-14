@@ -2,16 +2,12 @@ package jp.osdn.gokigen.gokigenassets.camera
 
 import android.view.KeyEvent
 import android.view.View
-import androidx.camera.core.CameraSelector
-import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraControl
-import jp.osdn.gokigen.gokigenassets.camera.interfaces.IDisplayInjector
-import jp.osdn.gokigen.gokigenassets.camera.interfaces.IFocusingControl
-import jp.osdn.gokigen.gokigenassets.camera.interfaces.IKeyDown
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.*
 import jp.osdn.gokigen.gokigenassets.liveview.ICachePositionProvider
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveView
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveViewRefresher
 
-class DummyCameraControl() : ICameraControl, View.OnClickListener, View.OnLongClickListener, IKeyDown
+class DummyCameraControl() : ICameraControl, View.OnClickListener, View.OnLongClickListener, IKeyDown, ICameraStatus
 {
     override fun getConnectionMethod(): String { return ("NONE") }
     override fun initialize() { }
@@ -26,7 +22,13 @@ class DummyCameraControl() : ICameraControl, View.OnClickListener, View.OnLongCl
     override fun keyDownReceiver(id: Int): IKeyDown { return (this) }
     override fun getFocusingControl(id: Int): IFocusingControl? { return (null) }
     override fun getDisplayInjector(): IDisplayInjector? { return (null) }
+    override fun setNeighborCameraControl(camera0: ICameraControl?, camera1: ICameraControl?, camera2: ICameraControl?, camera3: ICameraControl?) { }
+    override fun getCameraStatus(): ICameraStatus { return (this) }
+
     override fun onClick(v: View?) { }
     override fun handleKeyDown(keyCode: Int, event: KeyEvent): Boolean { return (false) }
     override fun onLongClick(v: View?): Boolean { return (false) }
+    override fun getStatusList(key: String): List<String?> { return (ArrayList<String>()) }
+    override fun getStatus(key: String): String { return ("") }
+    override fun setStatus(key: String, value: String) { }
 }

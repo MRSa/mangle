@@ -24,7 +24,7 @@ import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import java.io.InputStream
 
 
-class ExamplePictureControl(private val context: AppCompatActivity, private val vibrator : IVibrator, informationNotify: IInformationReceiver, private val preference: ICameraPreferenceProvider) : IDisplayInjector, ILiveViewController, ICameraControl, View.OnClickListener, View.OnLongClickListener, ICaptureModeReceiver, ICameraShutter, IKeyDown
+class ExamplePictureControl(private val context: AppCompatActivity, private val vibrator : IVibrator, informationNotify: IInformationReceiver, private val preference: ICameraPreferenceProvider) : IDisplayInjector, ILiveViewController, ICameraControl, View.OnClickListener, View.OnLongClickListener, ICaptureModeReceiver, ICameraShutter, IKeyDown, ICameraStatus
 {
     private val liveViewListener = CameraLiveViewListenerImpl(context, informationNotify, isDisableCache = true)
     private lateinit var refresher : ILiveViewRefresher
@@ -81,6 +81,11 @@ class ExamplePictureControl(private val context: AppCompatActivity, private val 
     override fun doShutter() { }
     override fun doShutterOff() { }
     override fun handleKeyDown(keyCode: Int, event: KeyEvent): Boolean { return (false) }
+    override fun setNeighborCameraControl(camera0: ICameraControl?, camera1: ICameraControl?, camera2: ICameraControl?, camera3: ICameraControl?) { }
+    override fun getCameraStatus(): ICameraStatus { return (this) }
+    override fun getStatusList(key: String): List<String?> { return (ArrayList<String>()) }
+    override fun getStatus(key: String): String { return ("") }
+    override fun setStatus(key: String, value: String) { }
 
     override fun setRefresher(id: Int, refresher: ILiveViewRefresher, imageView: ILiveView, cachePosition : ICachePositionProvider)
     {
@@ -128,7 +133,7 @@ class ExamplePictureControl(private val context: AppCompatActivity, private val 
                 {
                     if (isStoreUri)
                     {
-                        preference.getUpdator()?.setCameraOption1(uri.toString())
+                        preference.getUpdater()?.setCameraOption1(uri.toString())
                         vibrator.vibrate(IVibrator.VibratePattern.SIMPLE_LONG)
                     }
                     liveViewListener.onUpdateLiveView(fis.readBytes(), null)

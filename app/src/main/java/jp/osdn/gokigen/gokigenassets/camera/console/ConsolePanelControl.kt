@@ -19,10 +19,14 @@ import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 
 class ConsolePanelControl (private val context: AppCompatActivity, private val vibrator : IVibrator, informationNotify: IInformationReceiver, private val preference: ICameraPreferenceProvider) : IDisplayInjector,
-    ILiveViewController, ICameraControl, View.OnClickListener, View.OnLongClickListener,
-    ICaptureModeReceiver, ICameraShutter, IKeyDown, IAnotherDrawer, View.OnTouchListener
+    ILiveViewController, ICameraControl, View.OnClickListener, View.OnLongClickListener, ICaptureModeReceiver, ICameraShutter, IKeyDown, IAnotherDrawer, View.OnTouchListener, ICameraStatus
 {
     private lateinit var refresher: ILiveViewRefresher
+
+    private var camera0: ICameraControl? = null
+    private var camera1: ICameraControl? = null
+    private var camera2: ICameraControl? = null
+    private var camera3: ICameraControl? = null
 
     companion object
     {
@@ -46,12 +50,22 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
     override fun doShutter() { }
     override fun doShutterOff() { }
     override fun getAnotherTouchListener(id : Int) : View.OnTouchListener { return (this) }
+    override fun setNeighborCameraControl(camera0: ICameraControl?, camera1: ICameraControl?, camera2: ICameraControl?, camera3: ICameraControl?)
+    {
+        this.camera0 = camera0
+        this.camera1 = camera1
+        this.camera2 = camera2
+        this.camera3 = camera3
+    }
+
+    override fun getCameraStatus(): ICameraStatus {
+        TODO("Not yet implemented")
+    }
 
     override fun injectDisplay(frameDisplayer: IAutoFocusFrameDisplay, indicator: IIndicatorControl, focusingModeNotify: IFocusingModeNotify)
     {
 
     }
-
 
     override fun initialize()
     {
@@ -64,7 +78,6 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
             e.printStackTrace()
         }
     }
-
 
     override fun setRefresher(id: Int, refresher: ILiveViewRefresher, imageView: ILiveView, cachePosition: ICachePositionProvider)
     {
@@ -168,7 +181,7 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
         paint.style = Paint.Style.STROKE
         paint.isAntiAlias = true
         val width = canvas.width / 3.0f
-        val height = canvas.height / 3.0f
+        val height = canvas.height / 4.0f
         val rect = RectF(0.0f, 0.0f, canvas.width.toFloat(), canvas.height.toFloat())
 
         canvas.drawLine(rect.left + width, rect.top, rect.left + width, rect.bottom, paint)
@@ -177,5 +190,9 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
         canvas.drawLine(rect.left, rect.top + 2.0f * height, rect.right, rect.top + 2.0f * height, paint)
         canvas.drawRect(rect, paint)
     }
+
+    override fun getStatusList(key: String): List<String?> { return (ArrayList<String>()) }
+    override fun getStatus(key: String): String { return ("") }
+    override fun setStatus(key: String, value: String) { }
 
 }

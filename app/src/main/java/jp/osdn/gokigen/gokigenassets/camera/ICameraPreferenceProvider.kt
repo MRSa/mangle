@@ -2,6 +2,7 @@ package jp.osdn.gokigen.gokigenassets.camera
 
 interface ICameraPreferenceProvider
 {
+    fun getId() : Int
     fun getCameraMethod() : String
     fun getConnectionSequence() : String
 
@@ -11,5 +12,5 @@ interface ICameraPreferenceProvider
     fun getCameraOption4() : String
     fun getCameraOption5() : String
 
-    fun getUpdator() : ICameraPreferenceUpdater?
+    fun getUpdater() : ICameraPreferenceUpdater?
 }

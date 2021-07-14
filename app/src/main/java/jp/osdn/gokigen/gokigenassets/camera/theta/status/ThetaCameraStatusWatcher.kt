@@ -2,13 +2,14 @@ package jp.osdn.gokigen.gokigenassets.camera.theta.status
 
 import android.graphics.Color
 import android.util.Log
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusUpdateNotify
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusWatcher
 import jp.osdn.gokigen.gokigenassets.liveview.message.IMessageDrawer
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
 import org.json.JSONObject
 
-class ThetaCameraStatusWatcher(private val sessionIdProvider: IThetaSessionIdProvider, private val captureModeReceiver : ICaptureModeReceiver, private val executeUrl : String = "http://192.168.1.1") : ICameraStatusWatcher, IThetaStatusHolder
+class ThetaCameraStatusWatcher(private val sessionIdProvider: IThetaSessionIdProvider, private val captureModeReceiver : ICaptureModeReceiver, private val executeUrl : String = "http://192.168.1.1") : ICameraStatusWatcher, IThetaStatusHolder, ICameraStatus
 {
     private val httpClient = SimpleHttpClient()
     private var whileFetching = false
@@ -464,4 +465,18 @@ class ThetaCameraStatusWatcher(private val sessionIdProvider: IThetaSessionIdPro
         updateMessage()
     }
 
+    override fun getStatusList(key: String): List<String?>
+    {
+        return (ArrayList<String>())
+    }
+
+    override fun getStatus(key: String): String
+    {
+        return ("")
+    }
+
+    override fun setStatus(key: String, value: String)
+    {
+
+    }
 }

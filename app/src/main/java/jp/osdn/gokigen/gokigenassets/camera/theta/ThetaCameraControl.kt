@@ -346,4 +346,10 @@ class ThetaCameraControl(private val context: AppCompatActivity, private val vib
         return (false)
     }
 
+    override fun setNeighborCameraControl(camera0: ICameraControl?, camera1: ICameraControl?, camera2: ICameraControl?, camera3: ICameraControl?) { }
+
+    override fun getCameraStatus(): ICameraStatus
+    {
+        return (statusWatcher)
+    }
 }
