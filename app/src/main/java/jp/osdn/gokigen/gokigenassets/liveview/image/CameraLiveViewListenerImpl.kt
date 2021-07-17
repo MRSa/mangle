@@ -48,11 +48,11 @@ class CameraLiveViewListenerImpl(private val context: Context,  private val info
     }
 
 
-    override fun onUpdateLiveView(data: ByteArray, metadata: Map<String, Any>?)
+    override fun onUpdateLiveView(data: ByteArray, metadata: Map<String, Any>?, degrees : Int)
     {
         try
         {
-            insertCache(data, 0)
+            insertCache(data, degrees)
             isImageReceived = true
             refresh()
         }

@@ -10,6 +10,8 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.appcompat.app.AppCompatActivity
+import androidx.exifinterface.media.ExifInterface
+import androidx.exifinterface.media.ExifInterface.*
 import jp.osdn.gokigen.gokigenassets.camera.ICameraPreferenceProvider
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.*
 import jp.osdn.gokigen.gokigenassets.camera.theta.status.ICaptureModeReceiver
@@ -126,6 +128,21 @@ class ExamplePictureControl(private val context: AppCompatActivity, private val 
     {
         Log.v(TAG, " applyPictureFile(URI: $uri , storeUri: $isStoreUri)")
         val thread = Thread {
+            var degrees = 0
+            try
+            {
+                val fis2 : InputStream? = context.contentResolver.openInputStream(uri)
+                if (fis2 != null)
+                {
+                    degrees = ExifInterface(fis2).rotationDegrees
+                    fis2.close()
+                }
+            }
+            catch (t : Throwable)
+            {
+                t.printStackTrace()
+            }
+            Log.v(TAG, "  --- rotation $degrees deg. ---")
             try
             {
                 val fis: InputStream? = context.contentResolver.openInputStream(uri)
@@ -136,7 +153,7 @@ class ExamplePictureControl(private val context: AppCompatActivity, private val 
                         preference.getUpdater()?.setCameraOption1(uri.toString())
                         vibrator.vibrate(IVibrator.VibratePattern.SIMPLE_LONG)
                     }
-                    liveViewListener.onUpdateLiveView(fis.readBytes(), null)
+                    liveViewListener.onUpdateLiveView(fis.readBytes(), null, degrees)
                     if (::refresher.isInitialized)
                     {
                         refresher.refresh()
