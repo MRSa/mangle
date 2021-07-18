@@ -40,7 +40,7 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
 
     override fun getConnectionMethod(): String
     {
-        return ("CAMERA_X")
+        return ("camerax")
     }
 
     override fun initialize()
