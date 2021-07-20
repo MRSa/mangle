@@ -10,11 +10,11 @@ import jp.osdn.gokigen.gokigenassets.camera.panasonic.ICameraChangeListener
 import jp.osdn.gokigen.gokigenassets.camera.panasonic.IPanasonicCamera
 import jp.osdn.gokigen.gokigenassets.liveview.message.IMessageDrawer
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
-import java.util.ArrayList
 
-class CameraEventObserver(context: Context, private val remote: IPanasonicCamera, cardSlotSelector: ICardSlotSelector) : ICameraStatusWatcher, ICameraStatus
+class CameraEventObserver(context: Context, private val remote: IPanasonicCamera, cardSlotSelector: ICardSlotSelector, private val sleepMs : Long = 500) : ICameraStatusWatcher
 {
     private val statusHolder = CameraStatusHolder(context, remote, cardSlotSelector)
+    private val statusConvert = CameraStatusConvert(statusHolder)
     private var isEventMonitoring = false
     private var isActive = false
 
@@ -45,7 +45,6 @@ class CameraEventObserver(context: Context, private val remote: IPanasonicCamera
         }
     }
 
-
     private fun start(): Boolean
     {
         if (!isActive)
@@ -74,12 +73,17 @@ class CameraEventObserver(context: Context, private val remote: IPanasonicCamera
                                     TIMEOUT_MS
                                 )
                             )
-                        } catch (e: Exception) {
+                        }
+                        catch (e: Exception)
+                        {
                             e.printStackTrace()
                         }
-                        try {
-                            sleep(1000)
-                        } catch (e: Exception) {
+                        try
+                        {
+                            sleep(sleepMs)
+                        }
+                        catch (e: Exception)
+                        {
                             e.printStackTrace()
                         }
                     }
@@ -117,53 +121,14 @@ class CameraEventObserver(context: Context, private val remote: IPanasonicCamera
         }
     }
 
-    private fun getCameraStatusHolder(): ICameraStatusHolder
+    fun getCameraStatusConvert(): ICameraStatus
     {
-        return statusHolder
+        return (statusConvert)
     }
 
     private fun activate()
     {
         isActive = true
-    }
-
-    override fun getStatusList(key: String): List<String>
-    {
-        try
-        {
-            val listKey = key + "List"
-            return statusHolder.getAvailableItemList(listKey)
-        }
-        catch (e: Exception)
-        {
-            e.printStackTrace()
-        }
-        return ArrayList()
-    }
-
-    override fun getStatus(key: String): String
-    {
-        try
-        {
-            return statusHolder.getItemStatus(key)
-        }
-        catch (e: Exception)
-        {
-            e.printStackTrace()
-        }
-        return ""
-    }
-
-    override fun setStatus(key: String, value: String)
-    {
-        try
-        {
-            Log.v(TAG, " setStatus(key:$key, value:$value)")
-        }
-        catch (e : Exception)
-        {
-            e.printStackTrace()
-        }
     }
 
     companion object

@@ -472,11 +472,100 @@ class ThetaCameraStatusWatcher(private val sessionIdProvider: IThetaSessionIdPro
 
     override fun getStatus(key: String): String
     {
-        return ("")
+        return (when (key) {
+            ICameraStatus.TAKE_MODE -> getTakeMode()
+            ICameraStatus.SHUTTER_SPEED -> getShutterSpeed()
+            ICameraStatus.APERTURE -> getAperture()
+            ICameraStatus.EXPREV -> getExpRev()
+            ICameraStatus.CAPTURE_MODE -> getCaptureModeString()
+            ICameraStatus.ISO_SENSITIVITY -> getIsoSensitivity()
+            ICameraStatus.WHITE_BALANCE -> getWhiteBalance()
+            ICameraStatus.AE -> getMeteringMode()
+            ICameraStatus.EFFECT -> getPictureEffect()
+            ICameraStatus.BATTERY -> getRemainBattery()
+            else -> ""
+        })
     }
 
     override fun setStatus(key: String, value: String)
     {
 
+    }
+
+    private fun getTakeMode() : String
+    {
+        return (
+        when (currentExposureProgram) {
+            "1" -> "Manual"
+            "2" -> "Normal"
+            "3" -> "Aperture"
+            "4" -> "Shutter"
+            "9" -> "ISO"
+            else -> ""
+        })
+    }
+
+    private fun getShutterSpeed() : String
+    {
+        return (if (currentShutterSpeed == 0.0) { "" } else { convertShutterSpeedString(currentShutterSpeed) })
+    }
+
+    private fun getAperture() : String
+    {
+        if ((currentExposureProgram == "1")||(currentExposureProgram == "3"))
+        {
+            return (if (currentAperture == 0.0) { "F:auto" }  else { "F$currentAperture" })
+        }
+        return ("F$currentAperture")
+    }
+
+    private fun getExpRev() : String
+    {
+        return (if (currentExposureCompensation == 0.0) { "" } else { String.format("%1.1f", currentExposureCompensation) })
+    }
+
+    private fun getCaptureModeString() : String
+    {
+        return (currentCaptureMode)
+    }
+
+    private fun getIsoSensitivity() : String
+    {
+        return (if (currentIsoSensitivity == 0) { "ISO:auto" } else { "ISO:$currentIsoSensitivity" })
+    }
+
+    private fun getWhiteBalance() : String
+    {
+        return (currentWhiteBalance)
+    }
+
+    private fun getMeteringMode() : String
+    {
+        return ("")
+    }
+
+    private fun getPictureEffect() : String
+    {
+        return (when (currentFilter) {
+            "off" -> ""
+            else -> currentFilter
+        })
+    }
+
+    private fun getRemainBattery() : String
+    {
+        try
+        {
+            if (currentBatteryLevel >= 0.0f)
+            {
+                val percentage = kotlin.math.ceil(currentBatteryLevel * 100.0).toInt()
+                return ("Batt. : $percentage%")
+            }
+        }
+        catch (ee: java.lang.Exception)
+        {
+            ee.printStackTrace()
+        }
+        return ("Batt. : ???%")
     }
 }

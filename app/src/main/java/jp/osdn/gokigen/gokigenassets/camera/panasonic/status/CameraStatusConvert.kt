@@ -1,15 +1,37 @@
-package jp.osdn.gokigen.gokigenassets.camera.camerax.operation
+package jp.osdn.gokigen.gokigenassets.camera.panasonic.status
 
+import android.util.Log
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus
+import java.util.ArrayList
 
-class CameraXCameraStatusHolder : ICameraStatus
+class CameraStatusConvert(private val statusHolder: CameraStatusHolder) : ICameraStatus
 {
-    override fun getStatusList(key: String): List<String?>
-    {
-        return (ArrayList<String>())
-    }
-    override fun setStatus(key: String, value: String) { }
 
+    override fun getStatusList(key: String): List<String>
+    {
+        try
+        {
+            val listKey = key + "List"
+            return statusHolder.getAvailableItemList(listKey)
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+        return ArrayList()
+    }
+
+    override fun setStatus(key: String, value: String)
+    {
+        try
+        {
+            Log.v(TAG, " setStatus(key:$key, value:$value)")
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+    }
     override fun getStatus(key: String): String
     {
         return (when (key) {
@@ -23,10 +45,9 @@ class CameraXCameraStatusHolder : ICameraStatus
             ICameraStatus.AE -> getMeteringMode()
             ICameraStatus.EFFECT -> getPictureEffect()
             ICameraStatus.BATTERY -> getRemainBattery()
-          else -> ""
+            else -> ""
         })
     }
-
 
     private fun getTakeMode() : String
     {
@@ -76,6 +97,11 @@ class CameraXCameraStatusHolder : ICameraStatus
     private fun getRemainBattery() : String
     {
         return ("")
+    }
+
+    companion object
+    {
+        private val TAG = CameraStatusConvert::class.java.simpleName
     }
 
 }

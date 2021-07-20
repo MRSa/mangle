@@ -1,6 +1,7 @@
 package jp.osdn.gokigen.gokigenassets.camera.ricohpentax.status
 
 import android.util.Log
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusUpdateNotify
 import org.json.JSONObject
 import java.util.*
@@ -44,36 +45,144 @@ class RicohGr2StatusHolder(private val notifier: ICameraStatusUpdateNotify?)
         return itemList
     }
 
-    fun getItemStatus(key: String): String {
-        try {
-            return latestResultObject!!.getString(key)
-        } catch (e: Exception) {
+    fun getItemStatus(key: String): String
+    {
+        try
+        {
+            val statusValue = when (key) {
+                ICameraStatus.TAKE_MODE -> getTakeMode()
+                ICameraStatus.SHUTTER_SPEED -> getShutterSpeed()
+                ICameraStatus.APERTURE -> getAperture()
+                ICameraStatus.EXPREV -> getExpRev()
+                ICameraStatus.CAPTURE_MODE -> getCaptureMode()
+                ICameraStatus.ISO_SENSITIVITY -> getIsoSensitivity()
+                ICameraStatus.WHITE_BALANCE -> getWhiteBalance()
+                ICameraStatus.AE -> getMeteringMode()
+                ICameraStatus.EFFECT -> getPictureEffect()
+                ICameraStatus.BATTERY -> getRemainBattery()
+                else -> ""
+            }
+            return (statusValue)
+        }
+        catch (e: Exception)
+        {
             e.printStackTrace()
         }
-        return ""
+        return ("")
     }
 
-    private fun getStatusString(obj: JSONObject?, name: String): String {
-        try {
+    private fun getTakeMode() : String
+    {
+        return (latestResultObject!!.getString("exposureMode"))
+    }
+
+
+    private fun getShutterSpeed() : String
+    {
+        try
+        {
+            val value = latestResultObject!!.getString("tv")
+            return (value.replace(".", "/"))
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+        return ("")
+    }
+
+    private fun getAperture() : String
+    {
+        val value =  latestResultObject!!.getString("av")
+        return ("F$value")
+    }
+
+    private fun getExpRev() : String
+    {
+        try
+        {
+            val value = latestResultObject!!.getString("xv")
+            if (value.toFloat() != 0.0f)
+            {
+                return (value)
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+        return ("")
+    }
+
+    private fun getCaptureMode() : String
+    {
+        return ("")
+    }
+
+    private fun getIsoSensitivity() : String
+    {
+        return ("")
+    }
+
+    private fun getWhiteBalance() : String
+    {
+        val value = latestResultObject!!.getString("WBMode")
+        return ("WB:$value")
+    }
+
+    private fun getMeteringMode() : String
+    {
+        return (latestResultObject!!.getString("meteringMode"))
+    }
+
+    private fun getPictureEffect() : String
+    {
+        return ("")
+    }
+
+    private fun getRemainBattery() : String
+    {
+        try
+        {
+            val remain = latestResultObject!!.getString("battery").toInt()
+            return ("Batt.:$remain%")
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+        return ("")
+    }
+
+    private fun getStatusString(obj: JSONObject?, name: String): String
+    {
+        try
+        {
             if (obj == null)
             {
                 return ""
             }
             return obj.getString(name)
-        } catch (e: Exception) {
+        }
+        catch (e: Exception)
+        {
             //e.printStackTrace();
         }
         return ""
     }
 
-    private fun getBooleanStatus(obj: JSONObject?, name: String): Boolean {
-        try {
+    private fun getBooleanStatus(obj: JSONObject?, name: String): Boolean
+    {
+        try
+        {
             if (obj == null)
             {
                 return false
             }
             return obj.getBoolean(name)
-        } catch (e: Exception) {
+        }
+        catch (e: Exception)
+        {
             //e.printStackTrace();
         }
         return false
@@ -83,8 +192,10 @@ class RicohGr2StatusHolder(private val notifier: ICameraStatusUpdateNotify?)
      *
      *
      */
-    fun updateStatus(replyString: String?) {
-        if (replyString == null || replyString.length < 1) {
+    fun updateStatus(replyString: String?)
+    {
+        if (replyString == null || replyString.isEmpty())
+        {
             Log.v(TAG, "httpGet() reply is null. ")
             return
         }
@@ -100,8 +211,10 @@ class RicohGr2StatusHolder(private val notifier: ICameraStatusUpdateNotify?)
             val battery = getStatusString(latestResultObject, "battery")
             val focus = getBooleanStatus(latestResultObject, "focused")
             val focusLock = getBooleanStatus(latestResultObject, "focusLocked")
-            if (result.contains("OK")) {
-                if (avStatus != av) {
+            if (result.contains("OK"))
+            {
+                if (avStatus != av)
+                {
                     avStatus = av
                     notifier?.updatedAperture(avStatus)
                 }

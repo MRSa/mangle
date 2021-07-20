@@ -12,6 +12,16 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import jp.osdn.gokigen.gokigenassets.camera.ICameraPreferenceProvider
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.*
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.AE
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.APERTURE
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.BATTERY
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.CAPTURE_MODE
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.EFFECT
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.EXPREV
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.ISO_SENSITIVITY
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.SHUTTER_SPEED
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.TAKE_MODE
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.WHITE_BALANCE
 import jp.osdn.gokigen.gokigenassets.camera.theta.status.ICaptureModeReceiver
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_CAMERAX
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_PANASONIC
@@ -29,6 +39,7 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
 
     private var currentCameraControlId : Int = -1
     private var currentCameraControl : ICameraControl? = null
+    private var currentCameraStatus : ICameraStatus? = null
     private var camera0: ICameraControl? = null
     private var camera1: ICameraControl? = null
     private var camera2: ICameraControl? = null
@@ -38,7 +49,7 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
     {
         private val TAG = ConsolePanelControl::class.java.simpleName
         private const val MAX_CONTROL_CAMERAS = 4
-        private const val MARGIN = 6.0f
+        private const val MARGIN = 10.0f
     }
 
     override fun getConnectionMethod(): String { return ("CONSOLE") }
@@ -203,12 +214,211 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
             Log.v(TAG, " onDraw")
             canvas.drawARGB(255, 0, 0, 0)
 
+
             //
             drawControlPanelNumber(canvas)
 
+            if (currentCameraStatus != null)
+            {
+                drawProgramMode(canvas)
+                drawShutterSpeed(canvas)
+                drawAperture(canvas)
+                drawExpRev(canvas)
+
+                drawCaptureMode(canvas)
+                drawIsoSensitivity(canvas)
+                drawWhiteBalance(canvas)
+                drawMeteringMode(canvas)
+
+                drawPictureEffect(canvas)
+
+
+                drawBatteryLevel(canvas)
+            }
 
             drawFramingGrid(canvas, Color.GREEN)
 
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    private fun drawProgramMode(canvas: Canvas)
+    {
+        try
+        {
+            //  area : 0,0
+            val width = canvas.width / 3.0f
+            val height = canvas.height / 9.0f
+            val rect = RectF(width * 0.0f, height * 0.0f, width * 1.0f,height * 2.0f)
+            if (currentCameraStatus != null)
+            {
+                val msg = currentCameraStatus?.getStatus(TAKE_MODE)
+                drawString(canvas, rect, msg, Color.WHITE)
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    private fun drawShutterSpeed(canvas: Canvas)
+    {
+        try
+        {
+            //  area : 1,0
+            val width = canvas.width / 3.0f
+            val height = canvas.height / 9.0f
+            val rect = RectF(width * 1.0f, height * 0.0f, width * 2.0f,height * 2.0f)
+            if (currentCameraStatus != null)
+            {
+                val msg = currentCameraStatus?.getStatus(SHUTTER_SPEED)
+                drawString(canvas, rect, msg, Color.WHITE)
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    private fun drawAperture(canvas: Canvas)
+    {
+        try
+        {
+            //  area : 2,0
+            val width = canvas.width / 3.0f
+            val height = canvas.height / 9.0f
+            val rect = RectF(width * 2.0f, height * 0.0f, width * 3.0f,height * 2.0f)
+            if (currentCameraStatus != null)
+            {
+                val msg = currentCameraStatus?.getStatus(APERTURE)
+                drawString(canvas, rect, msg, Color.WHITE)
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    private fun drawIsoSensitivity(canvas: Canvas)
+    {
+        try
+        {
+            //  area : 0,1
+            val width = canvas.width / 3.0f
+            val height = canvas.height / 9.0f
+            val rect = RectF(width * 0.0f, height * 2.0f, width * 1.0f,height * 4.0f)
+            if (currentCameraStatus != null)
+            {
+                val msg = currentCameraStatus?.getStatus(ISO_SENSITIVITY)
+                drawString(canvas, rect, msg, Color.WHITE)
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    private fun drawExpRev(canvas: Canvas)
+    {
+        try
+        {
+            //  area : 1,1
+            val width = canvas.width / 3.0f
+            val height = canvas.height / 9.0f
+            val rect = RectF(width * 1.0f, height * 2.0f, width * 2.0f,height * 4.0f)
+            if (currentCameraStatus != null)
+            {
+                val msg = currentCameraStatus?.getStatus(EXPREV)
+                drawString(canvas, rect, msg, Color.WHITE)
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    private fun drawMeteringMode(canvas: Canvas)
+    {
+        try
+        {
+            //  area : 2,1
+            val width = canvas.width / 3.0f
+            val height = canvas.height / 9.0f
+            val rect = RectF(width * 2.0f, height * 2.0f, width * 3.0f,height * 4.0f)
+            if (currentCameraStatus != null)
+            {
+                val msg = currentCameraStatus?.getStatus(AE)
+                drawString(canvas, rect, msg, Color.WHITE)
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    private fun drawWhiteBalance(canvas: Canvas)
+    {
+        try
+        {
+            //  area : 0,2
+            val width = canvas.width / 3.0f
+            val height = canvas.height / 9.0f
+            val rect = RectF(width * 0.0f, height * 4.0f, width * 1.0f,height * 6.0f)
+            if (currentCameraStatus != null)
+            {
+                val msg = currentCameraStatus?.getStatus(WHITE_BALANCE)
+                drawString(canvas, rect, msg, Color.WHITE)
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+
+    private fun drawPictureEffect(canvas: Canvas)
+    {
+        try
+        {
+            //  area : 1,2
+            val width = canvas.width / 3.0f
+            val height = canvas.height / 9.0f
+            val rect = RectF(width * 1.0f, height * 4.0f, width * 2.0f,height * 6.0f)
+            if (currentCameraStatus != null)
+            {
+                val msg = currentCameraStatus?.getStatus(EFFECT)
+                drawString(canvas, rect, msg, Color.WHITE)
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    private fun drawCaptureMode(canvas: Canvas)
+    {
+        try
+        {
+            //  area : 2,2
+            val width = canvas.width / 3.0f
+            val height = canvas.height / 9.0f
+            val rect = RectF(width * 2.0f, height * 4.0f, width * 3.0f,height * 6.0f)
+            if (currentCameraStatus != null)
+            {
+                val msg = currentCameraStatus?.getStatus(CAPTURE_MODE)
+                drawString(canvas, rect, msg, Color.WHITE)
+            }
         }
         catch (e : Exception)
         {
@@ -220,20 +430,40 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
     {
         try
         {
-            val width = canvas.width / 4.0f
+            //  area : bottom-left
+            val width = canvas.width / 3.0f
             val height = canvas.height / 9.0f
-            val rect = RectF(width * 3, height * 8.0f, canvas.width.toFloat(), canvas.height.toFloat())
+            val rect = RectF(width * 0.0f, height * 8.0f, width * 1.0f,height * 9.0f)
 
             val msg = "$currentCameraControlId : ${currentCameraControl?.getConnectionMethod()}"
-
             drawString(canvas, rect, msg, Color.WHITE)
-
         }
         catch (e : Exception)
         {
             e.printStackTrace()
         }
     }
+
+    private fun drawBatteryLevel(canvas: Canvas)
+    {
+        try
+        {
+            //  area : bottom-right
+            val width = canvas.width / 3.0f
+            val height = canvas.height / 9.0f
+            val rect = RectF(width * 2.0f, height * 8.0f, canvas.width.toFloat(), canvas.height.toFloat())
+            if (currentCameraStatus != null)
+            {
+                val msg = currentCameraStatus?.getStatus(BATTERY)
+                drawString(canvas, rect, msg, Color.WHITE)
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
 
     private fun isAvailableCameraControl(id : Int) : Boolean
     {
@@ -276,6 +506,14 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
             3 -> camera3
             else -> null
         }
+        if (currentCameraControl != null)
+        {
+            currentCameraStatus = currentCameraControl?.getCameraStatus()
+        }
+        else
+        {
+            currentCameraStatus = null
+        }
     }
 
     private fun drawFramingGrid(canvas: Canvas, color : Int)
@@ -292,10 +530,10 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
     }
 
     /**
-     * resion内に文字を表示する
+     *   枠内に文字を（大きさを決めて）表示する
      *
      */
-    fun drawString(canvas: Canvas, region: RectF, target: String?, color: Int)
+    private fun drawString(canvas: Canvas, region: RectF, target: String?, color: Int)
     {
         if ((target == null)||(target.isEmpty()))
         {

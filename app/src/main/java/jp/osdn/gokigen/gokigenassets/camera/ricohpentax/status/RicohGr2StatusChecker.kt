@@ -74,18 +74,24 @@ class RicohGr2StatusChecker
             whileFetching = true
             val thread = Thread {
                 Log.d(TAG, "Start status watch.")
-                while (whileFetching) {
-                    try {
+                while (whileFetching)
+                {
+                    try
+                    {
                         statusHolder!!.updateStatus(httpClient.httpGet(watchUrl, timeoutMs))
                         Thread.sleep(sleepMs.toLong())
-                    } catch (e: Exception) {
+                    }
+                    catch (e: Exception)
+                    {
                         e.printStackTrace()
                     }
                 }
                 Log.v(TAG, "STATUS WATCH STOPPED.")
             }
             thread.start()
-        } catch (e: Exception) {
+        }
+        catch (e: Exception)
+        {
             e.printStackTrace()
         }
     }
@@ -103,12 +109,14 @@ class RicohGr2StatusChecker
         return ArrayList()
     }
 
-    override fun getStatus(key: String): String {
-        try {
-            return if (statusHolder == null) {
-                ""
-            } else statusHolder!!.getItemStatus(key)
-        } catch (e: Exception) {
+    override fun getStatus(key: String): String
+    {
+        try
+        {
+            return if (statusHolder == null) { "" } else { statusHolder!!.getItemStatus(key) }
+        }
+        catch (e: Exception)
+        {
             e.printStackTrace()
         }
         return ""
