@@ -8,8 +8,11 @@ import android.graphics.RectF
 import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
+import android.view.ScaleGestureDetector
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GestureDetectorCompat
+import androidx.core.view.ScaleGestureDetectorCompat
 import jp.osdn.gokigen.gokigenassets.camera.ICameraPreferenceProvider
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.*
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.AE
@@ -32,9 +35,13 @@ import jp.osdn.gokigen.gokigenassets.liveview.focusframe.IAutoFocusFrameDisplay
 import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 
-class ConsolePanelControl (private val context: AppCompatActivity, private val vibrator : IVibrator, informationNotify: IInformationReceiver, private val preference: ICameraPreferenceProvider) : IDisplayInjector,
-    ILiveViewController, ICameraControl, View.OnClickListener, View.OnLongClickListener, ICaptureModeReceiver, ICameraShutter, IKeyDown, IAnotherDrawer, View.OnTouchListener, ICameraStatus
+class ConsolePanelControl (context: AppCompatActivity, private val vibrator : IVibrator, informationNotify: IInformationReceiver, private val preference: ICameraPreferenceProvider) : IDisplayInjector,
+    ILiveViewController, ICameraControl, View.OnClickListener, View.OnLongClickListener, ICaptureModeReceiver, ICameraShutter, IKeyDown, IAnotherDrawer, View.OnTouchListener, ICameraStatus, IDetectPositionReceiver
 {
+    private val gestureListener = ConsolePanelGestureListener(this)
+    private val gestureDetector = GestureDetectorCompat(context, gestureListener)
+    private val scaleGestureDetector = ScaleGestureDetector(context, gestureListener)
+
     private lateinit var refresher: ILiveViewRefresher
 
     private var isRefreshLoop = false
@@ -44,6 +51,10 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
     private var camera1: ICameraControl? = null
     private var camera2: ICameraControl? = null
     private var camera3: ICameraControl? = null
+    private var canvasWidth : Float = 0.0f
+    private var canvasHeight : Float = 0.0f
+    private var touchedX : Float = -1.0f
+    private var touchedY : Float = -1.0f
 
     companion object
     {
@@ -51,7 +62,17 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
         private const val MAX_CONTROL_CAMERAS = 4
         private const val MARGIN = 10.0f
         private const val sleepMs = 1000L
+        private const val NOF_AREA_HORIZONTAL = 3.0f
+        private const val NOF_AREA_VERTICAL = 9.0f
+        private const val RADIUS = 5.0f
+        private const val showTouchedPosition = false
 
+    }
+
+    init
+    {
+        ScaleGestureDetectorCompat.setQuickScaleEnabled(scaleGestureDetector, true)
+        gestureDetector.setIsLongpressEnabled(true)
     }
 
     override fun getConnectionMethod(): String { return ("CONSOLE") }
@@ -89,14 +110,21 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
 
     override fun injectDisplay(frameDisplayer: IAutoFocusFrameDisplay, indicator: IIndicatorControl, focusingModeNotify: IFocusingModeNotify)
     {
+        try
+        {
 
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
     }
 
     override fun initialize()
     {
         try
         {
-            //startConsoleRefresh()
+
         }
         catch (e : Exception)
         {
@@ -117,7 +145,6 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
             e.printStackTrace()
         }
     }
-
 
     override fun onClick(v: View?)
     {
@@ -162,14 +189,13 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
     {
         try
         {
-            decideCameraControl()
-            vibrator.vibrate(IVibrator.VibratePattern.SIMPLE_LONG)
+
         }
         catch (e : Exception)
         {
             e.printStackTrace()
         }
-        return (true)
+        return (false)
     }
 
     override fun handleKeyDown(keyCode: Int, event: KeyEvent): Boolean
@@ -188,21 +214,47 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouch(v: View?, event: MotionEvent?): Boolean
     {
-        Log.v(TAG, " onTouch")
+        //Log.v(TAG, " onTouch")
         try
         {
+            var ret = false
+            if (event != null)
+            {
+                if (event.pointerCount == 1)
+                {
+                    ret = gestureDetector.onTouchEvent(event)
+                }
+                else
+                {
+                    ret = scaleGestureDetector.onTouchEvent(event)
+                }
+            }
+
             // 表示を更新する
             if (::refresher.isInitialized)
             {
                 refresher.refresh()
             }
-
+            return (ret)
         }
         catch (e : Exception)
         {
             e.printStackTrace()
         }
         return (false)
+    }
+
+    private fun changeControlPanel()
+    {
+        try
+        {
+            decideCameraControl()
+            vibrator.vibrate(IVibrator.VibratePattern.SIMPLE_LONG)
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
     }
 
     override fun onDraw(canvas: Canvas?)
@@ -214,10 +266,14 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
 
         try
         {
-            Log.v(TAG, " onDraw")
+            //Log.v(TAG, " onDraw")
             canvas.drawARGB(255, 0, 0, 0)
 
-            //
+            // エリアの大きさを設定
+            canvasWidth = canvas.width  / NOF_AREA_HORIZONTAL
+            canvasHeight = canvas.height  / NOF_AREA_VERTICAL
+
+            //　
             drawControlPanelNumber(canvas)
 
             val currentCameraStatus = currentCameraControl?.getCameraStatus()
@@ -238,6 +294,11 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
                 drawBatteryLevel(canvas, currentCameraStatus)
             }
             drawFramingGrid(canvas)
+
+            if (showTouchedPosition)
+            {
+                drawTouchedPosition(canvas)
+            }
         }
         catch (e : Exception)
         {
@@ -250,9 +311,7 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
         try
         {
             //  area : 0,0
-            val width = canvas.width / 3.0f
-            val height = canvas.height / 9.0f
-            val rect = RectF(width * 0.0f, height * 0.0f, width * 1.0f,height * 2.0f)
+            val rect = RectF(canvasWidth * 0.0f, canvasHeight * 0.0f, canvasWidth * 1.0f,canvasHeight * 2.0f)
             val msg = currentCameraStatus.getStatus(TAKE_MODE)
             val color = currentCameraStatus.getStatusColor(TAKE_MODE)
             drawString(canvas, rect, msg, color)
@@ -268,9 +327,7 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
         try
         {
             //  area : 1,0
-            val width = canvas.width / 3.0f
-            val height = canvas.height / 9.0f
-            val rect = RectF(width * 1.0f, height * 0.0f, width * 2.0f,height * 2.0f)
+            val rect = RectF(canvasWidth * 1.0f, canvasHeight * 0.0f, canvasWidth * 2.0f,canvasHeight * 2.0f)
             val msg = currentCameraStatus.getStatus(SHUTTER_SPEED)
             val color = currentCameraStatus.getStatusColor(SHUTTER_SPEED)
             drawString(canvas, rect, msg, color)
@@ -286,9 +343,7 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
         try
         {
             //  area : 2,0
-            val width = canvas.width / 3.0f
-            val height = canvas.height / 9.0f
-            val rect = RectF(width * 2.0f, height * 0.0f, width * 3.0f,height * 2.0f)
+            val rect = RectF(canvasWidth * 2.0f, canvasHeight * 0.0f, canvasWidth * 3.0f,canvasHeight * 2.0f)
             val msg = currentCameraStatus.getStatus(APERTURE)
             val color = currentCameraStatus.getStatusColor(APERTURE)
             drawString(canvas, rect, msg, color)
@@ -304,9 +359,7 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
         try
         {
             //  area : 0,1
-            val width = canvas.width / 3.0f
-            val height = canvas.height / 9.0f
-            val rect = RectF(width * 0.0f, height * 2.0f, width * 1.0f,height * 4.0f)
+            val rect = RectF(canvasWidth * 0.0f, canvasHeight * 2.0f, canvasWidth * 1.0f,canvasHeight * 4.0f)
             val msg = currentCameraStatus.getStatus(ISO_SENSITIVITY)
             val color = currentCameraStatus.getStatusColor(ISO_SENSITIVITY)
             drawString(canvas, rect, msg, color)
@@ -322,9 +375,7 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
         try
         {
             //  area : 1,1
-            val width = canvas.width / 3.0f
-            val height = canvas.height / 9.0f
-            val rect = RectF(width * 1.0f, height * 2.0f, width * 2.0f,height * 4.0f)
+            val rect = RectF(canvasWidth * 1.0f, canvasHeight * 2.0f, canvasWidth * 2.0f,canvasHeight * 4.0f)
             val msg = currentCameraStatus.getStatus(EXPREV)
             val color = currentCameraStatus.getStatusColor(EXPREV)
             drawString(canvas, rect, msg, color)
@@ -340,9 +391,7 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
         try
         {
             //  area : 2,1
-            val width = canvas.width / 3.0f
-            val height = canvas.height / 9.0f
-            val rect = RectF(width * 2.0f, height * 2.0f, width * 3.0f,height * 4.0f)
+            val rect = RectF(canvasWidth * 2.0f, canvasHeight * 2.0f, canvasWidth * 3.0f,canvasHeight * 4.0f)
             val msg = currentCameraStatus.getStatus(AE)
             val color = currentCameraStatus.getStatusColor(AE)
             drawString(canvas, rect, msg, color)
@@ -358,9 +407,7 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
         try
         {
             //  area : 0,2
-            val width = canvas.width / 3.0f
-            val height = canvas.height / 9.0f
-            val rect = RectF(width * 0.0f, height * 4.0f, width * 1.0f,height * 6.0f)
+            val rect = RectF(canvasWidth * 0.0f, canvasHeight * 4.0f, canvasWidth * 1.0f,canvasHeight * 6.0f)
             val msg = currentCameraStatus.getStatus(WHITE_BALANCE)
             val color = currentCameraStatus.getStatusColor(WHITE_BALANCE)
             drawString(canvas, rect, msg, color)
@@ -377,9 +424,7 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
         try
         {
             //  area : 1,2
-            val width = canvas.width / 3.0f
-            val height = canvas.height / 9.0f
-            val rect = RectF(width * 1.0f, height * 4.0f, width * 2.0f,height * 6.0f)
+            val rect = RectF(canvasWidth * 1.0f, canvasHeight * 4.0f, canvasWidth * 2.0f,canvasHeight * 6.0f)
             val msg = currentCameraStatus.getStatus(EFFECT)
             val color = currentCameraStatus.getStatusColor(EFFECT)
             drawString(canvas, rect, msg, color)
@@ -395,9 +440,7 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
         try
         {
             //  area : 2,2
-            val width = canvas.width / 3.0f
-            val height = canvas.height / 9.0f
-            val rect = RectF(width * 2.0f, height * 4.0f, width * 3.0f,height * 6.0f)
+            val rect = RectF(canvasWidth * 2.0f, canvasHeight * 4.0f, canvasWidth * 3.0f,canvasHeight * 6.0f)
             val msg = currentCameraStatus.getStatus(CAPTURE_MODE)
             val color = currentCameraStatus.getStatusColor(CAPTURE_MODE)
             drawString(canvas, rect, msg, color)
@@ -413,9 +456,7 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
         try
         {
             //  area : bottom-left
-            val width = canvas.width / 3.0f
-            val height = canvas.height / 9.0f
-            val rect = RectF(width * 0.0f, height * 8.0f, width * 1.0f,height * 9.0f)
+            val rect = RectF(canvasWidth * 0.0f, canvasHeight * 8.0f, canvasWidth * 1.0f,canvasHeight * 9.0f)
 
             val msg = "$currentCameraControlId : ${currentCameraControl?.getConnectionMethod()}"
             drawString(canvas, rect, msg, Color.WHITE)
@@ -431,9 +472,7 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
         try
         {
             //  area : bottom-right
-            val width = canvas.width / 3.0f
-            val height = canvas.height / 9.0f
-            val rect = RectF(width * 2.0f, height * 8.0f, canvas.width.toFloat(), canvas.height.toFloat())
+            val rect = RectF(canvasWidth * 2.0f, canvasHeight * 8.0f, canvas.width.toFloat(), canvas.height.toFloat())
             val msg = currentCameraStatus.getStatus(BATTERY)
             val color = currentCameraStatus.getStatusColor(BATTERY)
             drawString(canvas, rect, msg, color)
@@ -443,7 +482,6 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
             e.printStackTrace()
         }
     }
-
 
     private fun isAvailableCameraControl(id : Int) : Boolean
     {
@@ -499,6 +537,20 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
         paint.isAntiAlias = true
         val rect = RectF(0.0f, 0.0f, canvas.width.toFloat(), canvas.height.toFloat())
         canvas.drawRect(rect, paint)
+    }
+
+    private fun drawTouchedPosition(canvas: Canvas, color : Int = Color.DKGRAY)
+    {
+        if ((touchedX >= 0.0f)&&(touchedY >= 0.0f))
+        {
+            val paint = Paint()
+            canvas.width
+            paint.color = color
+            paint.strokeWidth = 3.0f
+            paint.style = Paint.Style.STROKE
+            paint.isAntiAlias = true
+            canvas.drawCircle(touchedX, touchedY, RADIUS, paint)
+        }
     }
 
     /**
@@ -569,5 +621,24 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
     override fun getStatus(key: String): String { return ("") }
     override fun getStatusColor(key: String): Int { return (Color.WHITE) }
     override fun setStatus(key: String, value: String) { }
+
+    // IDetectPositionReceiver
+    override fun onLongPress(positionX: Float, positionY: Float)
+    {
+        touchedX = positionX
+        touchedY = positionY
+
+        val widthPosition = (touchedX / canvasWidth).toInt()
+        val heightPosition = (touchedY / canvasHeight).toInt()
+
+        Log.v(TAG, "   ----- POSITION : $widthPosition, $heightPosition")
+
+        //  長押しした場所に合わせて処理を切り替える
+        if ((widthPosition == 0)&&(heightPosition == 8))
+        {
+            // 制御パネルを切り替える
+            changeControlPanel()
+        }
+    }
 
 }
