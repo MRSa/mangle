@@ -269,14 +269,17 @@ class CameraStatusConvert(private val statusHolder: CameraStatusHolder) : ICamer
             {
                 val value = (eventData?.get(index) ?: 0).toInt()
                 val value2 = (eventData?.get(index + 1) ?: 0).toInt()
-                val value3 = value * 10 + if (value2 > 0) { 3 } else if (value2 == 0) { 0 } else { 6 }
+                val value3 = value * 10 + if (value2 > 0) { 3 } else if (value2 == 0) { 0 } else if (value2 < -100) { 5 }  else { 6 }
+
+                //return (getApertureAlternate(value, value2))
                 aperture = when (value3) {
                     0 -> "F0.9"
                     3 -> "F1.0"
                     6 -> "F1.1"
                     10 -> "F1.2"
                     13 -> "F1.4"
-                    16 -> "F1.7"
+                    15 -> "F1.7"
+                    16 -> "F1.8"
                     20 -> "F2.0"
                     23 -> "F2.2"
                     26 -> "F2.5"

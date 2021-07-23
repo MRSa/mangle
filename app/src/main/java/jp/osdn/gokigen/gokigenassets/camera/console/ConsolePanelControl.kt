@@ -237,7 +237,7 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
 
                 drawBatteryLevel(canvas, currentCameraStatus)
             }
-            drawFramingGrid(canvas, Color.GREEN)
+            drawFramingGrid(canvas)
         }
         catch (e : Exception)
         {
@@ -488,7 +488,7 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
         }
     }
 
-    private fun drawFramingGrid(canvas: Canvas, color : Int)
+    private fun drawFramingGrid(canvas: Canvas, color : Int = Color.BLACK)
     {
 
         val paint = Paint()
