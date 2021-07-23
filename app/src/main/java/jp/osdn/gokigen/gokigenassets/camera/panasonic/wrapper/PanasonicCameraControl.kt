@@ -4,6 +4,7 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.datastore.preferences.core.stringPreferencesKey
 import jp.osdn.gokigen.gokigenassets.camera.ICameraPreferenceProvider
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.*
 import jp.osdn.gokigen.gokigenassets.camera.panasonic.ICameraChangeListener
@@ -64,7 +65,7 @@ class PanasonicCameraControl(private val context: AppCompatActivity, private val
                 }
                 if (liveViewControl == null)
                 {
-                    liveViewControl = PanasonicLiveViewControl(liveViewListener, panasonicCamera)
+                    liveViewControl = PanasonicLiveViewControl(liveViewListener, panasonicCamera, statusChecker.getCameraStatusEventObserver())
                 }
                 focusControl?.setCamera(panasonicCamera)
                 captureControl?.setCamera(panasonicCamera)
@@ -419,8 +420,12 @@ class PanasonicCameraControl(private val context: AppCompatActivity, private val
     }
 
     override fun setNeighborCameraControl(camera0: ICameraControl?, camera1: ICameraControl?, camera2: ICameraControl?, camera3: ICameraControl?) { }
-    override fun getCameraStatus(): ICameraStatus
+    override fun getCameraStatus(): ICameraStatus?
     {
+        if (!::statusChecker.isInitialized)
+        {
+            return (null)
+        }
         return (statusChecker.getCameraStatusConvert())
     }
 }

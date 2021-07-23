@@ -487,6 +487,14 @@ class ThetaCameraStatusWatcher(private val sessionIdProvider: IThetaSessionIdPro
         })
     }
 
+    override fun getStatusColor(key: String): Int
+    {
+        return (when (key) {
+            ICameraStatus.BATTERY -> getRemainBatteryColor()
+            else -> Color.WHITE
+        })
+    }
+
     override fun setStatus(key: String, value: String)
     {
 
@@ -568,4 +576,32 @@ class ThetaCameraStatusWatcher(private val sessionIdProvider: IThetaSessionIdPro
         }
         return ("Batt. : ???%")
     }
+
+    private fun getRemainBatteryColor() : Int
+    {
+        var color = Color.WHITE
+        try
+        {
+            if (currentBatteryLevel >= 0.0f)
+            {
+                val percentage = kotlin.math.ceil(currentBatteryLevel * 100.0).toInt()
+                if (percentage < 50)
+                {
+                    color = Color.YELLOW
+                }
+                else if (percentage < 30)
+                {
+                    color = Color.RED
+                }
+            }
+        }
+        catch (ee: java.lang.Exception)
+        {
+            ee.printStackTrace()
+        }
+        return (color)
+    }
+
+
+
 }

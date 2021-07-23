@@ -1,5 +1,6 @@
 package jp.osdn.gokigen.gokigenassets.camera
 
+import android.graphics.Color
 import android.view.KeyEvent
 import android.view.View
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.*
@@ -30,5 +31,6 @@ class DummyCameraControl() : ICameraControl, View.OnClickListener, View.OnLongCl
     override fun onLongClick(v: View?): Boolean { return (false) }
     override fun getStatusList(key: String): List<String?> { return (ArrayList<String>()) }
     override fun getStatus(key: String): String { return ("") }
+    override fun getStatusColor(key: String): Int { return (Color.WHITE) }
     override fun setStatus(key: String, value: String) { }
 }

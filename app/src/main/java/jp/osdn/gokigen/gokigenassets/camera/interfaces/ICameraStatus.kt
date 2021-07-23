@@ -8,6 +8,7 @@ interface ICameraStatus
 {
     fun getStatusList(key: String): List<String?>
     fun getStatus(key: String): String
+    fun getStatusColor(key: String): Int
     fun setStatus(key: String, value: String)
 
     companion object
@@ -21,7 +22,7 @@ interface ICameraStatus
         var WHITE_BALANCE = "WBMode"       // ホワイトバランス
         var AE = "meteringMode"            // 測光モード
 
-        var EFFECT = "effect"              // ピクチャーエフェクトモード
+        var EFFECT = "effect"              // ピクチャーエフェクトモード (フォトスタイルモード)
         var BATTERY = "battery"            // バッテリ残量
 
 

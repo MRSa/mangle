@@ -2,6 +2,7 @@ package jp.osdn.gokigen.gokigenassets.camera.panasonic.status
 
 import android.content.Context
 import android.util.Log
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICardSlotSelectionReceiver
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICardSlotSelector
 import jp.osdn.gokigen.gokigenassets.camera.panasonic.ICameraChangeListener
@@ -9,30 +10,34 @@ import jp.osdn.gokigen.gokigenassets.camera.panasonic.IPanasonicCamera
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
 import java.util.ArrayList
 
-
 class CameraStatusHolder(private val context: Context, private val remote: IPanasonicCamera, private val cardSlotSelector: ICardSlotSelector) : ICardSlotSelectionReceiver, ICameraStatusHolder
 {
     private var listener: ICameraChangeListener? = null
-    private var current_sd = "sd1"
+    private var currentSd = "sd1"
     private var isInitialized = false
     private var isDualSlot = false
+    private var remainBattery : Int = 0
 
     fun parse(reply: String)
     {
         try
         {
-            // Log.v(TAG, " getState : " + reply);
+            parseReceivedStatus(reply)
             var isEnableDualSlot = false
             if (reply.contains("<sd_memory>set</sd_memory>") && reply.contains("<sd2_memory>set</sd2_memory>")) {
                 // カードが2枚刺さっている場合...
                 isEnableDualSlot = true
             }
-            if (!isInitialized || isDualSlot != isEnableDualSlot) {
+            if (!isInitialized || isDualSlot != isEnableDualSlot)
+            {
                 // 初回だけの実行...
-                if (isEnableDualSlot) {
+                if (isEnableDualSlot)
+                {
                     // カードが2枚刺さっている場合...
                     cardSlotSelector.setupSlotSelector(true, this)
-                } else {
+                }
+                else
+                {
                     // カードが１つしか刺さっていない場合...
                     cardSlotSelector.setupSlotSelector(false, null)
                 }
@@ -57,10 +62,10 @@ class CameraStatusHolder(private val context: Context, private val remote: IPana
             if (indexStart > 0 && indexEnd > 0 && indexStart < indexEnd)
             {
                 val currentSlot = reply.substring(indexStart + header.length, indexEnd)
-                if (current_sd != currentSlot)
+                if (currentSd != currentSlot)
                 {
-                    current_sd = currentSlot
-                    cardSlotSelector.changedCardSlot(current_sd)
+                    currentSd = currentSlot
+                    cardSlotSelector.changedCardSlot(currentSd)
                 }
             }
         }
@@ -102,13 +107,13 @@ class CameraStatusHolder(private val context: Context, private val remote: IPana
     }
 
     override fun getStorageId(): String {
-        return current_sd
+        return currentSd
     }
 
     override fun slotSelected(slotId: String)
     {
         Log.v(TAG, " slotSelected : $slotId")
-        if (current_sd != slotId)
+        if (currentSd != slotId)
         {
             // スロットを変更したい！
             requestToChangeSlot(slotId)
@@ -191,6 +196,50 @@ class CameraStatusHolder(private val context: Context, private val remote: IPana
         {
             e.printStackTrace()
         }
+    }
+
+    private fun parseReceivedStatus(eventData : String)
+    {
+        try
+        {
+            //Log.v(TAG, " parseReceivedStatus : $eventData")
+            parseBatteryInfo(eventData)
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    private fun parseBatteryInfo(eventData : String)
+    {
+        try
+        {
+            val header = "<batt>"
+            val indexStart = eventData.indexOf(header)
+            val indexEnd = eventData.indexOf("</batt>")
+            if (indexStart > 0 && indexEnd > 0 && indexStart < indexEnd)
+            {
+                val batteryInfo = eventData.substring(indexStart + header.length, indexEnd)
+                val indexMiddle = batteryInfo.indexOf("/")
+                val numerator  = batteryInfo.substring(0, indexMiddle).toFloat()
+                val denominator = batteryInfo.substring(indexMiddle + 1, batteryInfo.length).toFloat()
+                remainBattery = ((numerator/denominator) * 100.0f).toInt()
+                // Log.v(TAG, "  ======  BATTERY INFORMATION :  $numerator / $denominator  ($remainBattery%)  ====== ")
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    fun getCurrentStatus(key: String) : String
+    {
+        return (when (key) {
+            ICameraStatus.BATTERY -> "$remainBattery"
+            else -> ""
+        })
     }
 
     companion object

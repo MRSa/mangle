@@ -2,6 +2,7 @@ package jp.osdn.gokigen.gokigenassets.camera.example
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import android.util.Log
 import android.view.KeyEvent
@@ -11,7 +12,6 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.appcompat.app.AppCompatActivity
 import androidx.exifinterface.media.ExifInterface
-import androidx.exifinterface.media.ExifInterface.*
 import jp.osdn.gokigen.gokigenassets.camera.ICameraPreferenceProvider
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.*
 import jp.osdn.gokigen.gokigenassets.camera.theta.status.ICaptureModeReceiver
@@ -24,7 +24,6 @@ import jp.osdn.gokigen.gokigenassets.liveview.image.CameraLiveViewListenerImpl
 import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import java.io.InputStream
-
 
 class ExamplePictureControl(private val context: AppCompatActivity, private val vibrator : IVibrator, informationNotify: IInformationReceiver, private val preference: ICameraPreferenceProvider) : IDisplayInjector, ILiveViewController, ICameraControl, View.OnClickListener, View.OnLongClickListener, ICaptureModeReceiver, ICameraShutter, IKeyDown, ICameraStatus
 {
@@ -87,6 +86,7 @@ class ExamplePictureControl(private val context: AppCompatActivity, private val 
     override fun getCameraStatus(): ICameraStatus { return (this) }
     override fun getStatusList(key: String): List<String?> { return (ArrayList<String>()) }
     override fun getStatus(key: String): String { return ("") }
+    override fun getStatusColor(key: String): Int { return (Color.WHITE) }
     override fun setStatus(key: String, value: String) { }
 
     override fun setRefresher(id: Int, refresher: ILiveViewRefresher, imageView: ILiveView, cachePosition : ICachePositionProvider)

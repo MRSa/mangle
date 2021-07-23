@@ -27,5 +27,5 @@ interface ICameraControl
     fun getDisplayInjector() : IDisplayInjector?
     fun getAnotherTouchListener(id : Int = 0) : View.OnTouchListener? = null
     fun setNeighborCameraControl(camera0: ICameraControl?, camera1: ICameraControl?, camera2: ICameraControl?, camera3: ICameraControl?)
-    fun getCameraStatus() : ICameraStatus
+    fun getCameraStatus() : ICameraStatus?
 }

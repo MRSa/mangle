@@ -1,12 +1,15 @@
 package jp.osdn.gokigen.gokigenassets.camera.ricohpentax.status
 
+import android.graphics.Color
 import android.util.Log
+import jp.osdn.gokigen.gokigenassets.camera.example.ExamplePictureControl
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusUpdateNotify
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusWatcher
 import jp.osdn.gokigen.gokigenassets.liveview.message.IMessageDrawer
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 /**
@@ -19,7 +22,6 @@ class RicohGr2StatusChecker
  *
  */ internal constructor(private val sleepMs: Int, executeUrl : String = "http://192.168.0.1") : ICameraStatusWatcher, ICameraStatus
 {
-    private val TAG = toString()
     private val statusCheckUrl = "$executeUrl/v1/props"
     private val statusSetUrl = "$executeUrl/v1/params/camera"
     private val grCommandUrl = "$executeUrl/_gr"
@@ -28,6 +30,11 @@ class RicohGr2StatusChecker
     private var statusHolder: RicohGr2StatusHolder? = null
     private var useGR2command = false
     private val httpClient = SimpleHttpClient()
+
+    companion object
+    {
+        private val TAG = RicohGr2StatusChecker::class.java.simpleName
+    }
 
     fun setUseGR2Command(useGR2command: Boolean)
     {
@@ -78,7 +85,7 @@ class RicohGr2StatusChecker
                 {
                     try
                     {
-                        statusHolder!!.updateStatus(httpClient.httpGet(watchUrl, timeoutMs))
+                        statusHolder?.updateStatus(httpClient.httpGet(watchUrl, timeoutMs))
                         Thread.sleep(sleepMs.toLong())
                     }
                     catch (e: Exception)
@@ -102,7 +109,7 @@ class RicohGr2StatusChecker
                 return ArrayList()
             }
             val listKey = key + "List"
-            return statusHolder!!.getAvailableItemList(listKey)
+            return statusHolder?.getAvailableItemList(listKey) ?: ArrayList()
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -121,6 +128,20 @@ class RicohGr2StatusChecker
         }
         return ""
     }
+
+    override fun getStatusColor(key: String): Int
+    {
+        try
+        {
+            return (statusHolder?.getItemStatusColor(key) ?: Color.WHITE)
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+        return (Color.WHITE)
+    }
+
 
     override fun setStatus(key: String, value: String) {
         val thread = Thread {

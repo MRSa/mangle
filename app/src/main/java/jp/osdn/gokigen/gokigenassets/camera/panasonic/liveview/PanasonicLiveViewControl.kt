@@ -2,14 +2,16 @@ package jp.osdn.gokigen.gokigenassets.camera.panasonic.liveview
 
 import android.util.Log
 import jp.osdn.gokigen.gokigenassets.camera.panasonic.IPanasonicCamera
+import jp.osdn.gokigen.gokigenassets.camera.panasonic.status.ICameraEventObserver
 import jp.osdn.gokigen.gokigenassets.liveview.image.CameraLiveViewListenerImpl
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
+import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleLogDumper
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.util.*
 
 
-class PanasonicLiveViewControl(private val liveViewListener : CameraLiveViewListenerImpl, private val camera: IPanasonicCamera)
+class PanasonicLiveViewControl(private val liveViewListener : CameraLiveViewListenerImpl, private val camera: IPanasonicCamera, private val eventObserver: ICameraEventObserver)
 {
     private var receiverSocket: DatagramSocket? = null
     private var whileStreamReceive = false
@@ -196,6 +198,10 @@ class PanasonicLiveViewControl(private val liveViewListener : CameraLiveViewList
             }
         }
         val offset = startPosition - startmarker.size
+        if (offset > 0)
+        {
+            eventObserver.receivedEvent(receivedData.copyOfRange(0, offset))
+        }
         liveViewListener.onUpdateLiveView(receivedData.copyOfRange(offset, dataLength), null)
     }
 
@@ -210,7 +216,7 @@ class PanasonicLiveViewControl(private val liveViewListener : CameraLiveViewList
                 val receive_packet = DatagramPacket(buffer, buffer.size)
                 if (receiverSocket != null)
                 {
-                    receiverSocket?.setSoTimeout(TIMEOUT_MS)
+                    receiverSocket?.soTimeout = TIMEOUT_MS
                     receiverSocket?.receive(receive_packet)
                     checkReceiveImage(receive_packet)
                     exceptionCount = 0

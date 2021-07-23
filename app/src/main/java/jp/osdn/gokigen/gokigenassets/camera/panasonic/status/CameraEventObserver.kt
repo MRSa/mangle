@@ -64,15 +64,12 @@ class CameraEventObserver(context: Context, private val remote: IPanasonicCamera
             val thread: Thread = object : Thread() {
                 override fun run() {
                     Log.d(TAG, "start() exec.")
-                    while (isEventMonitoring) {
-                        try {
+                    while (isEventMonitoring)
+                    {
+                        try
+                        {
                             // parse reply message
-                            statusHolder.parse(
-                                http.httpGet(
-                                    remote.getCmdUrl() + "cam.cgi?mode=getstate",
-                                    TIMEOUT_MS
-                                )
-                            )
+                            statusHolder.parse(http.httpGet(remote.getCmdUrl() + "cam.cgi?mode=getstate", TIMEOUT_MS))
                         }
                         catch (e: Exception)
                         {
@@ -109,6 +106,7 @@ class CameraEventObserver(context: Context, private val remote: IPanasonicCamera
         }
     }
 
+/*
     private fun clearEventListener()
     {
         try
@@ -120,8 +118,14 @@ class CameraEventObserver(context: Context, private val remote: IPanasonicCamera
             e.printStackTrace()
         }
     }
+*/
 
     fun getCameraStatusConvert(): ICameraStatus
+    {
+        return (statusConvert)
+    }
+
+    fun getCameraStatusEventObserver(): ICameraEventObserver
     {
         return (statusConvert)
     }

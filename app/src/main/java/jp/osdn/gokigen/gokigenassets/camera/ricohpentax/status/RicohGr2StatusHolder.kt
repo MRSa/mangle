@@ -1,5 +1,6 @@
 package jp.osdn.gokigen.gokigenassets.camera.ricohpentax.status
 
+import android.graphics.Color
 import android.util.Log
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusUpdateNotify
@@ -30,7 +31,7 @@ class RicohGr2StatusHolder(private val notifier: ICameraStatusUpdateNotify?)
     fun getAvailableItemList(key: String): List<String> {
         val itemList: MutableList<String> = ArrayList()
         try {
-            val array = latestResultObject!!.getJSONArray(key) ?: return itemList
+            val array = latestResultObject?.getJSONArray(key) ?: return itemList
             val nofItems = array.length()
             for (index in 0 until nofItems) {
                 try {
@@ -71,9 +72,27 @@ class RicohGr2StatusHolder(private val notifier: ICameraStatusUpdateNotify?)
         return ("")
     }
 
+    fun getItemStatusColor(key: String): Int
+    {
+        var color : Int = Color.WHITE
+        try
+        {
+            color = when (key) {
+                ICameraStatus.BATTERY -> getRemainBatteryColor()
+                else -> Color.WHITE
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+        return (color)
+    }
+
+
     private fun getTakeMode() : String
     {
-        return (latestResultObject!!.getString("exposureMode"))
+        return (latestResultObject?.getString("exposureMode") ?: "")
     }
 
 
@@ -81,7 +100,7 @@ class RicohGr2StatusHolder(private val notifier: ICameraStatusUpdateNotify?)
     {
         try
         {
-            val value = latestResultObject!!.getString("tv")
+            val value = latestResultObject?.getString("tv") ?: ""
             return (value.replace(".", "/"))
         }
         catch (e: Exception)
@@ -93,7 +112,7 @@ class RicohGr2StatusHolder(private val notifier: ICameraStatusUpdateNotify?)
 
     private fun getAperture() : String
     {
-        val value =  latestResultObject!!.getString("av")
+        val value =  latestResultObject?.getString("av") ?: ""
         return ("F$value")
     }
 
@@ -101,7 +120,7 @@ class RicohGr2StatusHolder(private val notifier: ICameraStatusUpdateNotify?)
     {
         try
         {
-            val value = latestResultObject!!.getString("xv")
+            val value = latestResultObject?.getString("xv") ?: "0"
             if (value.toFloat() != 0.0f)
             {
                 return (value)
@@ -126,13 +145,13 @@ class RicohGr2StatusHolder(private val notifier: ICameraStatusUpdateNotify?)
 
     private fun getWhiteBalance() : String
     {
-        val value = latestResultObject!!.getString("WBMode")
+        val value = latestResultObject?.getString("WBMode")
         return ("WB:$value")
     }
 
     private fun getMeteringMode() : String
     {
-        return (latestResultObject!!.getString("meteringMode"))
+        return (latestResultObject?.getString("meteringMode") ?: "")
     }
 
     private fun getPictureEffect() : String
@@ -144,7 +163,7 @@ class RicohGr2StatusHolder(private val notifier: ICameraStatusUpdateNotify?)
     {
         try
         {
-            val remain = latestResultObject!!.getString("battery").toInt()
+            val remain = latestResultObject?.getString("battery")?.toInt()
             return ("Batt.:$remain%")
         }
         catch (e : Exception)
@@ -152,6 +171,28 @@ class RicohGr2StatusHolder(private val notifier: ICameraStatusUpdateNotify?)
             e.printStackTrace()
         }
         return ("")
+    }
+
+    private fun getRemainBatteryColor() : Int
+    {
+        var color = Color.WHITE
+        try
+        {
+            val percentage = latestResultObject?.getString("battery")?.toInt() ?: 100
+           if (percentage < 50)
+           {
+               color = Color.YELLOW
+           }
+           else if (percentage < 30)
+           {
+               color = Color.RED
+           }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+        return (color)
     }
 
     private fun getStatusString(obj: JSONObject?, name: String): String

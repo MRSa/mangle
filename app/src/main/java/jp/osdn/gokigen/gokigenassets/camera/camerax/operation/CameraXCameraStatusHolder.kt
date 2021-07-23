@@ -1,5 +1,6 @@
 package jp.osdn.gokigen.gokigenassets.camera.camerax.operation
 
+import android.graphics.Color
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus
 
 class CameraXCameraStatusHolder : ICameraStatus
@@ -27,6 +28,10 @@ class CameraXCameraStatusHolder : ICameraStatus
         })
     }
 
+    override fun getStatusColor(key: String): Int
+    {
+        return (Color.WHITE)
+    }
 
     private fun getTakeMode() : String
     {

@@ -1,11 +1,16 @@
 package jp.osdn.gokigen.gokigenassets.camera.panasonic.status
 
+import android.graphics.Color
 import android.util.Log
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus
+import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleLogDumper
 import java.util.ArrayList
 
-class CameraStatusConvert(private val statusHolder: CameraStatusHolder) : ICameraStatus
+class CameraStatusConvert(private val statusHolder: CameraStatusHolder) : ICameraStatus, ICameraEventObserver
 {
+    //  現物合わせのクラス...
+    private var eventData: ByteArray? = null
+    private var currentBattery : Int = 0
 
     override fun getStatusList(key: String): List<String>
     {
@@ -46,6 +51,14 @@ class CameraStatusConvert(private val statusHolder: CameraStatusHolder) : ICamer
             ICameraStatus.EFFECT -> getPictureEffect()
             ICameraStatus.BATTERY -> getRemainBattery()
             else -> ""
+        })
+    }
+
+    override fun getStatusColor(key: String): Int
+    {
+        return (when (key) {
+            ICameraStatus.BATTERY -> getRemainBatteryColor()
+            else -> Color.WHITE
         })
     }
 
@@ -96,12 +109,56 @@ class CameraStatusConvert(private val statusHolder: CameraStatusHolder) : ICamer
 
     private fun getRemainBattery() : String
     {
+        try
+        {
+            currentBattery = statusHolder.getCurrentStatus(ICameraStatus.BATTERY).toInt()
+            return ("Batt.:$currentBattery%")
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
         return ("")
+    }
+
+    private fun getRemainBatteryColor() : Int
+    {
+        var color = Color.WHITE
+        try
+        {
+            if (currentBattery < 50)
+            {
+                color = Color.YELLOW
+            }
+            else if (currentBattery < 30)
+            {
+                color = Color.RED
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+        return (color)
+    }
+
+    override fun receivedEvent(eventData: ByteArray?)
+    {
+        try
+        {
+            this.eventData = eventData
+            val size = this.eventData?.size ?: 0
+            Log.v(TAG, "  ----- RECEIVED STATUS $size bytes. ----- ")
+            SimpleLogDumper.dumpBytes("LV DATA [$size]", this.eventData?.copyOfRange(0, size))
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
     }
 
     companion object
     {
         private val TAG = CameraStatusConvert::class.java.simpleName
     }
-
 }
