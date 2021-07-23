@@ -37,6 +37,7 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
 {
     private lateinit var refresher: ILiveViewRefresher
 
+    private var isRefreshLoop = false
     private var currentCameraControlId : Int = -1
     private var currentCameraControl : ICameraControl? = null
     private var camera0: ICameraControl? = null
@@ -95,7 +96,7 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
     {
         try
         {
-            startConsoleRefresh()
+            //startConsoleRefresh()
         }
         catch (e : Exception)
         {
@@ -109,6 +110,7 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
         {
             this.refresher = refresher
             imageView.setAnotherDrawer(this)
+            startConsoleRefresh()
         }
         catch (e : Exception)
         {
@@ -540,17 +542,21 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
             val thread = Thread {
                 try
                 {
-                    if (::refresher.isInitialized)
+                    while (isRefreshLoop)
                     {
-                        refresher.refresh()
+                        if (::refresher.isInitialized)
+                        {
+                            refresher.refresh()
+                        }
+                        Thread.sleep(sleepMs)
                     }
-                    Thread.sleep(sleepMs)
                 }
                 catch (e: Exception)
                 {
                     e.printStackTrace()
                 }
             }
+            isRefreshLoop = true
             thread.start()
         }
         catch (e: Exception)
