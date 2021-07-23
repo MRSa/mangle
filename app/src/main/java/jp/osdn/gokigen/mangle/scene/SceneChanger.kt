@@ -154,7 +154,31 @@ class SceneChanger(private val activity: AppCompatActivity, private val informat
     {
         try
         {
+            cameraControl1.connectToCamera()
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+        try
+        {
             cameraControl2.connectToCamera()
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+        try
+        {
+            cameraControl3.connectToCamera()
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+        try
+        {
+            cameraControl4.connectToCamera()
         }
         catch (e : Exception)
         {
