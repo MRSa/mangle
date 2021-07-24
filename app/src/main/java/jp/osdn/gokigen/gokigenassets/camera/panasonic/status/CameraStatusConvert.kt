@@ -491,13 +491,13 @@ class CameraStatusConvert(private val statusHolder: CameraStatusHolder) : ICamer
         var color = Color.WHITE
         try
         {
-            if (currentBattery < 50)
-            {
-                color = Color.YELLOW
-            }
-            else if (currentBattery < 30)
+            if (currentBattery < 30)
             {
                 color = Color.RED
+            }
+            else if (currentBattery < 50)
+            {
+                color = Color.YELLOW
             }
         }
         catch (e : Exception)

@@ -179,13 +179,13 @@ class RicohGr2StatusHolder(private val notifier: ICameraStatusUpdateNotify?)
         try
         {
             val percentage = latestResultObject?.getString("battery")?.toInt() ?: 100
-           if (percentage < 50)
-           {
-               color = Color.YELLOW
-           }
-           else if (percentage < 30)
+           if (percentage < 30)
            {
                color = Color.RED
+           }
+           else if (percentage < 50)
+           {
+               color = Color.YELLOW
            }
         }
         catch (e : Exception)

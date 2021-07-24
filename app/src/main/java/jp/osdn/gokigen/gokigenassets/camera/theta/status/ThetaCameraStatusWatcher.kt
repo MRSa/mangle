@@ -585,13 +585,13 @@ class ThetaCameraStatusWatcher(private val sessionIdProvider: IThetaSessionIdPro
             if (currentBatteryLevel >= 0.0f)
             {
                 val percentage = kotlin.math.ceil(currentBatteryLevel * 100.0).toInt()
-                if (percentage < 50)
-                {
-                    color = Color.YELLOW
-                }
-                else if (percentage < 30)
+                if (percentage < 30)
                 {
                     color = Color.RED
+                }
+                else if (percentage < 50)
+                {
+                    color = Color.YELLOW
                 }
             }
         }
@@ -601,7 +601,4 @@ class ThetaCameraStatusWatcher(private val sessionIdProvider: IThetaSessionIdPro
         }
         return (color)
     }
-
-
-
 }

@@ -47,8 +47,6 @@ import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.P
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_SAVE_LOCAL_LOCATION_DEFAULT_VALUE
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.SHOW_GRID
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.SHOW_GRID_DEFAULT_VALUE
-import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.SHOW_GRID_STATUS
-import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.SHOW_GRID_STATUS_DEFAULT_VALUE
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.USE_GR2_SPECIAL_COMMAND
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.USE_SELF_TIMER
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.USE_SELF_TIMER_DEFAULT_VALUE

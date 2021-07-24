@@ -26,6 +26,8 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.S
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.TAKE_MODE
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.WHITE_BALANCE
 import jp.osdn.gokigen.gokigenassets.camera.theta.status.ICaptureModeReceiver
+import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_ARRAY_CAMERA_METHOD
+import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_ARRAY_CAMERA_METHOD_VALUE
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_CAMERAX
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_PANASONIC
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_PENTAX
@@ -35,7 +37,7 @@ import jp.osdn.gokigen.gokigenassets.liveview.focusframe.IAutoFocusFrameDisplay
 import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 
-class ConsolePanelControl (context: AppCompatActivity, private val vibrator : IVibrator, informationNotify: IInformationReceiver, private val preference: ICameraPreferenceProvider) : IDisplayInjector,
+class ConsolePanelControl (private val context: AppCompatActivity, private val vibrator : IVibrator, informationNotify: IInformationReceiver, private val preference: ICameraPreferenceProvider) : IDisplayInjector,
     ILiveViewController, ICameraControl, View.OnClickListener, View.OnLongClickListener, ICaptureModeReceiver, ICameraShutter, IKeyDown, IAnotherDrawer, View.OnTouchListener, ICameraStatus, IDetectPositionReceiver
 {
     private val gestureListener = ConsolePanelGestureListener(this)
@@ -283,12 +285,10 @@ class ConsolePanelControl (context: AppCompatActivity, private val vibrator : IV
                 drawShutterSpeed(canvas, currentCameraStatus)
                 drawAperture(canvas, currentCameraStatus)
                 drawExpRev(canvas, currentCameraStatus)
-
                 drawCaptureMode(canvas, currentCameraStatus)
                 drawIsoSensitivity(canvas, currentCameraStatus)
                 drawWhiteBalance(canvas, currentCameraStatus)
                 drawMeteringMode(canvas, currentCameraStatus)
-
                 drawPictureEffect(canvas, currentCameraStatus)
 
                 drawBatteryLevel(canvas, currentCameraStatus)
@@ -456,15 +456,36 @@ class ConsolePanelControl (context: AppCompatActivity, private val vibrator : IV
         try
         {
             //  area : bottom-left
+            var methodName = ""
             val rect = RectF(canvasWidth * 0.0f, canvasHeight * 8.0f, canvasWidth * 1.0f,canvasHeight * 9.0f)
-
-            val msg = "$currentCameraControlId : ${currentCameraControl?.getConnectionMethod()}"
-            drawString(canvas, rect, msg, Color.WHITE)
+            val method = currentCameraControl?.getConnectionMethod()
+            if (method != null)
+            {
+                methodName = getConnectionMethodName(method)
+            }
+            drawString(canvas, rect, "$currentCameraControlId : $methodName", Color.WHITE)
         }
         catch (e : Exception)
         {
             e.printStackTrace()
         }
+    }
+
+    private fun getConnectionMethodName(method : String) : String
+    {
+        try
+        {
+            val index = context.resources.getStringArray(ID_PREFERENCE_ARRAY_CAMERA_METHOD_VALUE).indexOf(method)
+            if (index >= 0)
+            {
+                return (context.resources.getStringArray(ID_PREFERENCE_ARRAY_CAMERA_METHOD)[index])
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+        return (method)
     }
 
     private fun drawBatteryLevel(canvas: Canvas, currentCameraStatus : ICameraStatus)
