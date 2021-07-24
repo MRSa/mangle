@@ -1,9 +1,13 @@
 package jp.osdn.gokigen.gokigenassets.camera.camerax.operation
 
+import android.annotation.SuppressLint
 import android.graphics.PointF
 import android.graphics.RectF
 import android.util.Log
 import android.view.MotionEvent
+import androidx.camera.camera2.interop.Camera2CameraControl
+import androidx.camera.camera2.interop.Camera2CameraInfo
+import androidx.camera.core.ExposureState
 import androidx.camera.core.FocusMeteringAction
 import androidx.camera.core.SurfaceOrientedMeteringPointFactory
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.IDisplayInjector
@@ -17,6 +21,7 @@ class CameraXCameraControl : IFocusingControl, IDisplayInjector
     private var isCameraControlPrepared: Boolean = false
     private var isFrameDisplayPrepared: Boolean = false
     private lateinit var cameraXCameraControl: androidx.camera.core.CameraControl
+    private lateinit var cameraXCameraInfo: androidx.camera.core.CameraInfo
     private lateinit var frameDisplay: IAutoFocusFrameDisplay
     private lateinit var indicatorControl: IIndicatorControl
     private lateinit var focusModeNotify: IFocusingModeNotify
@@ -26,9 +31,10 @@ class CameraXCameraControl : IFocusingControl, IDisplayInjector
         private val TAG = CameraXCameraControl::class.java.simpleName
     }
 
-    fun setCameraControl(cameraControl: androidx.camera.core.CameraControl)
+    fun setCameraControl(camera:  androidx.camera.core.Camera)
     {
-        cameraXCameraControl = cameraControl
+        cameraXCameraControl = camera.cameraControl
+        cameraXCameraInfo = camera.cameraInfo
         isCameraControlPrepared = true
     }
 
@@ -153,4 +159,58 @@ class CameraXCameraControl : IFocusingControl, IDisplayInjector
         frameDisplay.showFocusFrame(rect, status, duration)
         indicatorControl.onAfLockUpdate(IAutoFocusFrameDisplay.FocusFrameStatus.Focused === status)
     }
+
+    fun getExposureState() : ExposureState?
+    {
+        try
+        {
+            if (::cameraXCameraInfo.isInitialized)
+            {
+                return (cameraXCameraInfo.exposureState)
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+        return (null)
+    }
+
+    @SuppressLint("UnsafeOptInUsageError")
+    fun getCamera2CameraInfo() : Camera2CameraInfo?
+    {
+        try
+        {
+            if (::cameraXCameraInfo.isInitialized)
+            {
+                return (Camera2CameraInfo.from(cameraXCameraInfo))
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+        return (null)
+    }
+
+
+    @SuppressLint("UnsafeOptInUsageError")
+    fun getCamera2CameraControl() : Camera2CameraControl?
+    {
+        try
+        {
+            if (::cameraXCameraControl.isInitialized)
+            {
+                return (Camera2CameraControl.from(cameraXCameraControl))
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+        return (null)
+    }
+
+
+
 }

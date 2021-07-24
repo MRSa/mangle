@@ -34,7 +34,7 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
     private lateinit var cameraXCamera : Camera
     private var cameraIsStarted = false
     private val cameraXCameraControl = CameraXCameraControl()
-    private val cameraXCameraStatusHolder = CameraXCameraStatusHolder()
+    private val cameraXCameraStatusHolder = CameraXCameraStatusHolder(cameraXCameraControl)
     private val clickKeyDownListeners = mutableMapOf<Int, CameraClickKeyDownListener>()
     private val cachePositionProviders = mutableMapOf<Int, ICachePositionProvider>()
 
@@ -128,7 +128,7 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
             {
                 cameraProvider.unbindAll()
                 cameraXCamera = cameraProvider.bindToLifecycle(activity, cameraSelector, preview, imageCapture)
-                cameraXCameraControl.setCameraControl(cameraXCamera.cameraControl)
+                cameraXCameraControl.setCameraControl(cameraXCamera)
             }
             catch(e : Exception)
             {
@@ -203,7 +203,7 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
                 }
                 cameraProvider.unbindAll()
                 cameraXCamera = cameraProvider.bindToLifecycle(activity, cameraSelector, imageCapture, imageAnalyzer)
-                cameraXCameraControl.setCameraControl(cameraXCamera.cameraControl)
+                cameraXCameraControl.setCameraControl(cameraXCamera)
             }
             catch(e : Exception)
             {

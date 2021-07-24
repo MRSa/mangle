@@ -463,7 +463,7 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
             {
                 methodName = getConnectionMethodName(method)
             }
-            drawString(canvas, rect, "$currentCameraControlId : $methodName", Color.WHITE)
+            drawString(canvas, rect, "${currentCameraControlId + 1}: $methodName", Color.WHITE)
         }
         catch (e : Exception)
         {
@@ -652,7 +652,7 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
         val widthPosition = (touchedX / canvasWidth).toInt()
         val heightPosition = (touchedY / canvasHeight).toInt()
 
-        Log.v(TAG, "   ----- POSITION : $widthPosition, $heightPosition")
+        // Log.v(TAG, "   ----- POSITION : $widthPosition, $heightPosition")
 
         //  長押しした場所に合わせて処理を切り替える
         if ((widthPosition == 0)&&(heightPosition == 8))
