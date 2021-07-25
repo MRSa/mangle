@@ -230,11 +230,11 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
         {
             val requestOptionsBuilder = CaptureRequestOptions.Builder()
             requestOptionsBuilder.setCaptureRequestOption(CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO)   // CONTROL_MODE_USE_SCENE_MODE
-            requestOptionsBuilder.setCaptureRequestOption(CONTROL_SCENE_MODE, CameraMetadata.CONTROL_SCENE_MODE_DISABLED)
-            requestOptionsBuilder.setCaptureRequestOption(CONTROL_AE_MODE, CameraMetadata.CONTROL_AE_MODE_ON)  // CONTROL_AE_MODE_ON
             requestOptionsBuilder.setCaptureRequestOption(CONTROL_AWB_MODE, CameraMetadata.CONTROL_AWB_MODE_AUTO)
-            requestOptionsBuilder.setCaptureRequestOption(CONTROL_EFFECT_MODE, CameraMetadata.CONTROL_EFFECT_MODE_OFF)
-            requestOptionsBuilder.setCaptureRequestOption(LENS_OPTICAL_STABILIZATION_MODE, CameraMetadata.LENS_OPTICAL_STABILIZATION_MODE_ON)
+            //requestOptionsBuilder.setCaptureRequestOption(CONTROL_SCENE_MODE, CameraMetadata.CONTROL_SCENE_MODE_DISABLED)
+            //requestOptionsBuilder.setCaptureRequestOption(CONTROL_AE_MODE, CameraMetadata.CONTROL_AE_MODE_ON)  // CONTROL_AE_MODE_ON
+            //requestOptionsBuilder.setCaptureRequestOption(CONTROL_EFFECT_MODE, CameraMetadata.CONTROL_EFFECT_MODE_OFF)
+            //requestOptionsBuilder.setCaptureRequestOption(LENS_OPTICAL_STABILIZATION_MODE, CameraMetadata.LENS_OPTICAL_STABILIZATION_MODE_ON)
             //requestOptionsBuilder.setCaptureRequestOption(FLASH_MODE, CameraMetadata.FLASH_MODE_OFF)  // CameraMetadata.FLASH_MODE_TORCH
             //requestOptionsBuilder.setCaptureRequestOption(EDGE_MODE, CameraMetadata.EDGE_MODE_HIGH_QUALITY)  // CameraMetadata.EDGE_MODE_OFF
             //requestOptionsBuilder.setCaptureRequestOption(COLOR_CORRECTION_MODE, CameraMetadata.COLOR_CORRECTION_MODE_HIGH_QUALITY)
