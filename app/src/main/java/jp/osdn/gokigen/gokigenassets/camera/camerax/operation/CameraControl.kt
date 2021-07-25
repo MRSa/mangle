@@ -1,10 +1,15 @@
 package jp.osdn.gokigen.gokigenassets.camera.camerax.operation
 
+import android.annotation.SuppressLint
+import android.hardware.camera2.CameraMetadata
+import android.hardware.camera2.CaptureRequest.*
 import android.util.Log
 import android.util.Size
 import android.view.Surface
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.camera.camera2.interop.Camera2CameraControl
+import androidx.camera.camera2.interop.CaptureRequestOptions
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
@@ -129,6 +134,8 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
                 cameraProvider.unbindAll()
                 cameraXCamera = cameraProvider.bindToLifecycle(activity, cameraSelector, preview, imageCapture)
                 cameraXCameraControl.setCameraControl(cameraXCamera)
+
+                setCaptureRequestOptions(cameraXCamera.cameraControl)
             }
             catch(e : Exception)
             {
@@ -204,6 +211,8 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
                 cameraProvider.unbindAll()
                 cameraXCamera = cameraProvider.bindToLifecycle(activity, cameraSelector, imageCapture, imageAnalyzer)
                 cameraXCameraControl.setCameraControl(cameraXCamera)
+
+                setCaptureRequestOptions(cameraXCamera.cameraControl)
             }
             catch(e : Exception)
             {
@@ -212,6 +221,32 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
             }
 
         }, ContextCompat.getMainExecutor(activity))
+    }
+
+    @SuppressLint("UnsafeOptInUsageError")
+    private fun setCaptureRequestOptions(cameraControl : androidx.camera.core.CameraControl)
+    {
+        try
+        {
+            val requestOptionsBuilder = CaptureRequestOptions.Builder()
+            requestOptionsBuilder.setCaptureRequestOption(CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO)   // CONTROL_MODE_USE_SCENE_MODE
+            requestOptionsBuilder.setCaptureRequestOption(CONTROL_SCENE_MODE, CameraMetadata.CONTROL_SCENE_MODE_DISABLED)
+            requestOptionsBuilder.setCaptureRequestOption(CONTROL_AE_MODE, CameraMetadata.CONTROL_AE_MODE_ON)  // CONTROL_AE_MODE_ON
+            requestOptionsBuilder.setCaptureRequestOption(CONTROL_AWB_MODE, CameraMetadata.CONTROL_AWB_MODE_AUTO)
+            requestOptionsBuilder.setCaptureRequestOption(CONTROL_EFFECT_MODE, CameraMetadata.CONTROL_EFFECT_MODE_OFF)
+            requestOptionsBuilder.setCaptureRequestOption(LENS_OPTICAL_STABILIZATION_MODE, CameraMetadata.LENS_OPTICAL_STABILIZATION_MODE_ON)
+            //requestOptionsBuilder.setCaptureRequestOption(FLASH_MODE, CameraMetadata.FLASH_MODE_OFF)  // CameraMetadata.FLASH_MODE_TORCH
+            //requestOptionsBuilder.setCaptureRequestOption(EDGE_MODE, CameraMetadata.EDGE_MODE_HIGH_QUALITY)  // CameraMetadata.EDGE_MODE_OFF
+            //requestOptionsBuilder.setCaptureRequestOption(COLOR_CORRECTION_MODE, CameraMetadata.COLOR_CORRECTION_MODE_HIGH_QUALITY)
+            //requestOptionsBuilder.setCaptureRequestOption(CONTROL_AE_ANTIBANDING_MODE, CameraMetadata.CONTROL_AE_ANTIBANDING_MODE_AUTO)
+            //requestOptionsBuilder.setCaptureRequestOption(HOT_PIXEL_MODE, CameraMetadata.HOT_PIXEL_MODE_OFF)
+            //requestOptionsBuilder.setCaptureRequestOption(NOISE_REDUCTION_MODE, CameraMetadata.NOISE_REDUCTION_MODE_HIGH_QUALITY)
+            Camera2CameraControl.from(cameraControl).captureRequestOptions = requestOptionsBuilder.build()
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
     }
 
     override fun finishCamera()
