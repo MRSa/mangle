@@ -42,6 +42,24 @@ class ConsolePanelGestureListener(private val positionArea : IDetectPositionRece
         }
     }
 
+    override fun onSingleTapUp(e: MotionEvent?): Boolean
+    {
+        var ret = false
+        super.onSingleTapUp(e)
+        try
+        {
+            if (e != null)
+            {
+                ret = positionArea.onSingleTapUp(e.x, e.y)
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+        return (ret)
+    }
+
 /*
     private fun onUp(event: MotionEvent) : Boolean
     {

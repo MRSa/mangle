@@ -662,4 +662,72 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
         }
     }
 
+    override fun onSingleTapUp(positionX: Float, positionY: Float): Boolean
+    {
+        touchedX = positionX
+        touchedY = positionY
+
+        val widthPosition = (touchedX / canvasWidth).toInt()
+        val heightPosition = (touchedY / canvasHeight).toInt()
+
+        // Log.v(TAG, "   ----- POSITION : $widthPosition, $heightPosition")
+
+        //  タップした場所に合わせて処理を切り替える
+        var ret = false
+        if (widthPosition == 0)
+        {
+            if (heightPosition < 2)
+            {
+                Log.v(TAG, " Tapped MODE")
+            }
+            else if (heightPosition < 4)
+            {
+                Log.v(TAG, " Tapped ISO Sensitivity")
+            }
+            else if (heightPosition < 6)
+            {
+                Log.v(TAG, " Tapped White Balance")
+            }
+            else if (heightPosition == 8)
+            {
+                Log.v(TAG, " Tapped Camera ID")
+            }
+        }
+        else if (widthPosition == 1)
+        {
+            if (heightPosition < 2)
+            {
+                Log.v(TAG, " Tapped Shutter Speed")
+            }
+            else if (heightPosition < 4)
+            {
+                Log.v(TAG, " Tapped Exposure Compensation")
+            }
+            else if (heightPosition < 6)
+            {
+                Log.v(TAG, " Tapped Picture Effect")
+            }
+        }
+        else if (widthPosition == 2)
+        {
+            if (heightPosition < 2)
+            {
+                Log.v(TAG, " Tapped Aperture")
+            }
+            else if (heightPosition < 4)
+            {
+                Log.v(TAG, " Tapped Auto Exposure")
+            }
+            else if (heightPosition < 6)
+            {
+                Log.v(TAG, " Tapped Capture Mode")
+            }
+            else if (heightPosition == 8)
+            {
+                Log.v(TAG, " Tapped Remain Battery")
+            }
+        }
+        return (ret)
+    }
+
 }
