@@ -61,6 +61,7 @@ class RicohGr2StatusHolder(private val notifier: ICameraStatusUpdateNotify?)
                 ICameraStatus.AE -> getMeteringMode()
                 ICameraStatus.EFFECT -> getPictureEffect()
                 ICameraStatus.BATTERY -> getRemainBattery()
+                ICameraStatus.TORCH_MODE -> getTorchMode()
                 else -> ""
             }
             return (statusValue)
@@ -155,6 +156,11 @@ class RicohGr2StatusHolder(private val notifier: ICameraStatusUpdateNotify?)
     }
 
     private fun getPictureEffect() : String
+    {
+        return ("")
+    }
+
+    private fun getTorchMode() : String
     {
         return ("")
     }

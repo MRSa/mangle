@@ -6,10 +6,12 @@ import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CaptureRequest
 import android.util.Log
 import android.util.Range
+import androidx.camera.camera2.interop.CaptureRequestOptions
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus
 
 class CameraXCameraStatusHolder(private val cameraXCameraControl: CameraXCameraControl) : ICameraStatus
 {
+    private val statusListHolder = CameraXCameraStatusListHolder()
     companion object
     {
         private val TAG = CameraXCameraStatusHolder::class.java.simpleName
@@ -18,9 +20,35 @@ class CameraXCameraStatusHolder(private val cameraXCameraControl: CameraXCameraC
 
     override fun getStatusList(key: String): List<String?>
     {
-        return (ArrayList<String>())
+        return (statusListHolder.getStatusList(key))
     }
-    override fun setStatus(key: String, value: String) { }
+
+    override fun setStatus(key: String, value: String)
+    {
+        try
+        {
+            Log.v(TAG, "  ----- setStatus($key, $value)")
+            when (key)
+            {
+                // ICameraStatus.TAKE_MODE -> setTakeMode(value)
+                // ICameraStatus.SHUTTER_SPEED -> setShutterSpeed(value)
+                // ICameraStatus.APERTURE -> setAperture(value)
+                // ICameraStatus.EXPREV -> setExpRev(value)
+                // ICameraStatus.CAPTURE_MODE -> setCaptureMode(value)
+                // ICameraStatus.ISO_SENSITIVITY -> setIsoSensitivity(value)
+                // ICameraStatus.WHITE_BALANCE -> setWhiteBalance(value)
+                // ICameraStatus.AE -> setMeteringMode(value)
+                // ICameraStatus.EFFECT -> setPictureEffect(value)
+                // ICameraStatus.BATTERY -> setRemainBattery(value)
+                ICameraStatus.TORCH_MODE -> setTorchMode(value)
+                else -> return
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
 
     override fun getStatus(key: String): String
     {
@@ -35,6 +63,7 @@ class CameraXCameraStatusHolder(private val cameraXCameraControl: CameraXCameraC
             ICameraStatus.AE -> getMeteringMode()
             ICameraStatus.EFFECT -> getPictureEffect()
             ICameraStatus.BATTERY -> getRemainBattery()
+            ICameraStatus.TORCH_MODE -> getTorchMode()
           else -> ""
         })
     }
@@ -364,6 +393,61 @@ class CameraXCameraStatusHolder(private val cameraXCameraControl: CameraXCameraC
         }
         return ("")
     }
+
+    @SuppressLint("UnsafeOptInUsageError")
+    private fun getTorchMode() : String
+    {
+        var flash = ""
+        try
+        {
+            val cameraControl = cameraXCameraControl.getCamera2CameraControl()
+            if (cameraControl != null)
+            {
+                val captureOptions = cameraControl.captureRequestOptions
+                val flashState = captureOptions.getCaptureRequestOption(CaptureRequest.FLASH_MODE) ?: -1
+                flash = when (flashState)
+                {
+                    CaptureRequest.FLASH_MODE_OFF -> "FLASH: OFF"
+                    CaptureRequest.FLASH_MODE_SINGLE -> "FLASH: SINGLE"
+                    CaptureRequest.FLASH_MODE_TORCH -> "FLASH: TORCH"
+                    else -> ""
+                }
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+        return (flash)
+    }
+
+    @SuppressLint("UnsafeOptInUsageError")
+    private fun setTorchMode(value : String)
+    {
+        try
+        {
+            val setValue = when (value)
+            {
+                "OFF" -> CaptureRequest.FLASH_MODE_OFF
+                "SINGLE" -> CaptureRequest.FLASH_MODE_SINGLE
+                "TORCH" -> CaptureRequest.FLASH_MODE_TORCH
+                else -> return
+            }
+            val cameraControl = cameraXCameraControl.getCamera2CameraControl()
+            if (cameraControl != null)
+            {
+                // cameraControl.setCaptureRequestOptions()
+                val builder = CaptureRequestOptions.Builder()
+                builder.setCaptureRequestOption(CaptureRequest.FLASH_MODE,setValue)
+                cameraControl.captureRequestOptions = builder.build()
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
 
     @SuppressLint("UnsafeOptInUsageError")
     private fun dumpAvailableValuesIntArray(name : String, id: CameraCharacteristics.Key<IntArray>)

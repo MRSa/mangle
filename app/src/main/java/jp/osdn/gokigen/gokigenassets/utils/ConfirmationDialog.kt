@@ -32,12 +32,11 @@ class ConfirmationDialog : DialogFragment()
         alertDialog.setIcon(android.R.drawable.ic_dialog_alert)
         alertDialog.setMessage(message)
         alertDialog.setCancelable(true)
-        alertDialog.setPositiveButton(myContext.getString(ID_DIALOG_BUTTON_LABEL_POSITIVE)
-        ) { dialog, which ->
+        alertDialog.setPositiveButton(myContext.getString(ID_DIALOG_BUTTON_LABEL_POSITIVE)) { dialog, _ ->
             callback.confirm()
             dialog.dismiss() }
 
-        alertDialog.setNegativeButton(myContext.getString(ID_DIALOG_BUTTON_LABEL_NEGATIVE)) { dialog, which -> dialog.cancel() }
+        alertDialog.setNegativeButton(myContext.getString(ID_DIALOG_BUTTON_LABEL_NEGATIVE)) { dialog, _ -> dialog.cancel() }
         alertDialog.show()
     }
 
@@ -51,8 +50,7 @@ class ConfirmationDialog : DialogFragment()
         alertDialog.setCancelable(true)
 
         // ボタンを設定する（実行ボタン）
-        alertDialog.setPositiveButton(myContext.getString(ID_DIALOG_BUTTON_LABEL_POSITIVE)
-        ) { dialog, which -> dialog.dismiss() }
+        alertDialog.setPositiveButton(myContext.getString(ID_DIALOG_BUTTON_LABEL_POSITIVE)) { dialog, _ -> dialog.dismiss() }
 
         // 確認ダイアログを表示する
         alertDialog.show()

@@ -21,31 +21,30 @@ interface ICameraStatus
         var ISO_SENSITIVITY = "sv"         // ISO感度
         var WHITE_BALANCE = "WBMode"       // ホワイトバランス
         var AE = "meteringMode"            // 測光モード
-
         var EFFECT = "effect"              // ピクチャーエフェクトモード (フォトスタイルモード)
         var BATTERY = "battery"            // バッテリ残量
+        var TORCH_MODE = "torch"           // 明かり（トーチ）の設定
 
+        //var STATE = "state"
+        //var FOCUS_MODE = "focusMode"
+        //var AF_MODE = "AFMode"
 
-        var STATE = "state"
-        var FOCUS_MODE = "focusMode"
-        var AF_MODE = "AFMode"
+        //var RESOLUTION = "reso"
+        //var DRIVE_MODE = "shootMode"
 
-        var RESOLUTION = "reso"
-        var DRIVE_MODE = "shootMode"
+        //var AE_STATUS_MULTI = "multi"
+        //var AE_STATUS_ESP = "ESP"
+        //var AE_STATUS_SPOT = "spot"
+        //var AE_STATUS_PINPOINT = "Spot"
+        //var AE_STATUS_CENTER = "center"
+        //var AE_STATUS_CENTER2 = "Ctr-Weighted"
 
-        var AE_STATUS_MULTI = "multi"
-        var AE_STATUS_ESP = "ESP"
-        var AE_STATUS_SPOT = "spot"
-        var AE_STATUS_PINPOINT = "Spot"
-        var AE_STATUS_CENTER = "center"
-        var AE_STATUS_CENTER2 = "Ctr-Weighted"
+        //var IMAGESIZE = "stillSize"
+        //var MOVIESIZE = "movieSize"
 
-        var IMAGESIZE = "stillSize"
-        var MOVIESIZE = "movieSize"
+        //var FLASH_XV = "flashxv"
+        //var SELF_TIMER = "selftimer"
 
-        var FLASH_XV = "flashxv"
-        var SELF_TIMER = "selftimer"
-
-        var TAKE_MODE_MOVIE = "movie"
+        //var TAKE_MODE_MOVIE = "movie"
     }
 }

@@ -24,6 +24,7 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.E
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.ISO_SENSITIVITY
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.SHUTTER_SPEED
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.TAKE_MODE
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.TORCH_MODE
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.WHITE_BALANCE
 import jp.osdn.gokigen.gokigenassets.camera.theta.status.ICaptureModeReceiver
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_ARRAY_CAMERA_METHOD
@@ -43,6 +44,7 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
     private val gestureListener = ConsolePanelGestureListener(this)
     private val gestureDetector = GestureDetectorCompat(context, gestureListener)
     private val scaleGestureDetector = ScaleGestureDetector(context, gestureListener)
+    private val statusItemSelector = StatusItemSelector(context, vibrator)
 
     private lateinit var refresher: ILiveViewRefresher
 
@@ -291,6 +293,7 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
                 drawMeteringMode(canvas, currentCameraStatus)
                 drawPictureEffect(canvas, currentCameraStatus)
 
+                drawTorchMode(canvas, currentCameraStatus)
                 drawBatteryLevel(canvas, currentCameraStatus)
             }
             drawFramingGrid(canvas)
@@ -488,11 +491,27 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
         return (method)
     }
 
+    private fun drawTorchMode(canvas: Canvas, currentCameraStatus : ICameraStatus)
+    {
+        try
+        {
+            //  area : bottom-right UP
+            val rect = RectF(canvasWidth * 2.0f, canvasHeight * 6.0f, canvas.width.toFloat(), canvasHeight * 7.0f)
+            val msg = currentCameraStatus.getStatus(TORCH_MODE)
+            drawString(canvas, rect, msg, Color.WHITE)
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+
     private fun drawBatteryLevel(canvas: Canvas, currentCameraStatus : ICameraStatus)
     {
         try
         {
-            //  area : bottom-right
+            //  area : bottom-right DOWN
             val rect = RectF(canvasWidth * 2.0f, canvasHeight * 8.0f, canvas.width.toFloat(), canvas.height.toFloat())
             val msg = currentCameraStatus.getStatus(BATTERY)
             val color = currentCameraStatus.getStatusColor(BATTERY)
@@ -664,6 +683,7 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
 
     override fun onSingleTapUp(positionX: Float, positionY: Float): Boolean
     {
+        // 画面をタップしたとき、、設定値の変更を行う
         touchedX = positionX
         touchedY = positionY
 
@@ -671,63 +691,10 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
         val heightPosition = (touchedY / canvasHeight).toInt()
 
         // Log.v(TAG, "   ----- POSITION : $widthPosition, $heightPosition")
-
-        //  タップした場所に合わせて処理を切り替える
-        var ret = false
-        if (widthPosition == 0)
+        if (currentCameraControl == null)
         {
-            if (heightPosition < 2)
-            {
-                Log.v(TAG, " Tapped MODE")
-            }
-            else if (heightPosition < 4)
-            {
-                Log.v(TAG, " Tapped ISO Sensitivity")
-            }
-            else if (heightPosition < 6)
-            {
-                Log.v(TAG, " Tapped White Balance")
-            }
-            else if (heightPosition == 8)
-            {
-                Log.v(TAG, " Tapped Camera ID")
-            }
+            return (false)
         }
-        else if (widthPosition == 1)
-        {
-            if (heightPosition < 2)
-            {
-                Log.v(TAG, " Tapped Shutter Speed")
-            }
-            else if (heightPosition < 4)
-            {
-                Log.v(TAG, " Tapped Exposure Compensation")
-            }
-            else if (heightPosition < 6)
-            {
-                Log.v(TAG, " Tapped Picture Effect")
-            }
-        }
-        else if (widthPosition == 2)
-        {
-            if (heightPosition < 2)
-            {
-                Log.v(TAG, " Tapped Aperture")
-            }
-            else if (heightPosition < 4)
-            {
-                Log.v(TAG, " Tapped Auto Exposure")
-            }
-            else if (heightPosition < 6)
-            {
-                Log.v(TAG, " Tapped Capture Mode")
-            }
-            else if (heightPosition == 8)
-            {
-                Log.v(TAG, " Tapped Remain Battery")
-            }
-        }
-        return (ret)
+        return (statusItemSelector.itemSelected(currentCameraControl, widthPosition, heightPosition))
     }
-
 }

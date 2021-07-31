@@ -235,7 +235,7 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
             //requestOptionsBuilder.setCaptureRequestOption(CONTROL_AE_MODE, CameraMetadata.CONTROL_AE_MODE_ON)  // CONTROL_AE_MODE_ON
             //requestOptionsBuilder.setCaptureRequestOption(CONTROL_EFFECT_MODE, CameraMetadata.CONTROL_EFFECT_MODE_OFF)
             //requestOptionsBuilder.setCaptureRequestOption(LENS_OPTICAL_STABILIZATION_MODE, CameraMetadata.LENS_OPTICAL_STABILIZATION_MODE_ON)
-            //requestOptionsBuilder.setCaptureRequestOption(FLASH_MODE, CameraMetadata.FLASH_MODE_OFF)  // CameraMetadata.FLASH_MODE_TORCH
+            requestOptionsBuilder.setCaptureRequestOption(FLASH_MODE, FLASH_MODE_OFF)  // CameraMetadata.FLASH_MODE_TORCH or FLASH_MODE_OFF
             //requestOptionsBuilder.setCaptureRequestOption(EDGE_MODE, CameraMetadata.EDGE_MODE_HIGH_QUALITY)  // CameraMetadata.EDGE_MODE_OFF
             //requestOptionsBuilder.setCaptureRequestOption(COLOR_CORRECTION_MODE, CameraMetadata.COLOR_CORRECTION_MODE_HIGH_QUALITY)
             //requestOptionsBuilder.setCaptureRequestOption(CONTROL_AE_ANTIBANDING_MODE, CameraMetadata.CONTROL_AE_ANTIBANDING_MODE_AUTO)

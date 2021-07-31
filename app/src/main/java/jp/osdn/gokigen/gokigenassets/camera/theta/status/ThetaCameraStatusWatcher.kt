@@ -483,6 +483,7 @@ class ThetaCameraStatusWatcher(private val sessionIdProvider: IThetaSessionIdPro
             ICameraStatus.AE -> getMeteringMode()
             ICameraStatus.EFFECT -> getPictureEffect()
             ICameraStatus.BATTERY -> getRemainBattery()
+            ICameraStatus.TORCH_MODE -> getTorchMode()
             else -> ""
         })
     }
@@ -558,6 +559,11 @@ class ThetaCameraStatusWatcher(private val sessionIdProvider: IThetaSessionIdPro
             "off" -> ""
             else -> currentFilter
         })
+    }
+
+    private fun getTorchMode() : String
+    {
+        return ("")
     }
 
     private fun getRemainBattery() : String

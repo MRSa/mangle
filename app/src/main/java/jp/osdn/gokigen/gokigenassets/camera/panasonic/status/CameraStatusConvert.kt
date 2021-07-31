@@ -50,6 +50,7 @@ class CameraStatusConvert(private val statusHolder: CameraStatusHolder) : ICamer
             ICameraStatus.AE -> getMeteringMode()
             ICameraStatus.EFFECT -> getPictureEffect()
             ICameraStatus.BATTERY -> getRemainBattery()
+            ICameraStatus.TORCH_MODE -> getTorchMode()
             else -> ""
         })
     }
@@ -468,6 +469,11 @@ class CameraStatusConvert(private val statusHolder: CameraStatusHolder) : ICamer
     }
 
     private fun getPictureEffect() : String
+    {
+        return ("")
+    }
+
+    private fun getTorchMode() : String
     {
         return ("")
     }
