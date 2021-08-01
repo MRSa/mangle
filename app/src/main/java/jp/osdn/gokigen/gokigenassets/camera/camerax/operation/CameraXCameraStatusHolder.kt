@@ -211,10 +211,7 @@ class CameraXCameraStatusHolder(private val cameraXCameraControl: CameraXCameraC
                 val index = exposureState.exposureCompensationIndex
                 val step = exposureState.exposureCompensationStep
                 val value = index.toDouble() * step.toDouble()
-                if (value != 0.0)
-                {
-                    return (String.format("%+1.1f", value))
-                }
+                return (String.format("%+1.1f", value))
             }
         }
         catch (e : Exception)
@@ -287,7 +284,7 @@ class CameraXCameraStatusHolder(private val cameraXCameraControl: CameraXCameraC
                 val awbMode = captureOptions.getCaptureRequestOption(CaptureRequest.CONTROL_AWB_MODE) ?: 0
                 val colorCorrection = captureOptions.getCaptureRequestOption(CaptureRequest.COLOR_CORRECTION_MODE) ?: 0
                 wb = when (awbMode) {
-                    CameraCharacteristics.CONTROL_AWB_MODE_OFF -> ""
+                    CameraCharacteristics.CONTROL_AWB_MODE_OFF -> "WB:OFF"
                     CameraCharacteristics.CONTROL_AWB_MODE_AUTO -> "WB:AUTO"
                     CameraCharacteristics.CONTROL_AWB_MODE_INCANDESCENT -> "WB:INCANDESCENT"
                     CameraCharacteristics.CONTROL_AWB_MODE_FLUORESCENT -> "WB:FLUORESCENT"
@@ -410,7 +407,8 @@ class CameraXCameraStatusHolder(private val cameraXCameraControl: CameraXCameraC
                     CaptureRequest.FLASH_MODE_OFF -> "FLASH: OFF"
                     CaptureRequest.FLASH_MODE_SINGLE -> "FLASH: SINGLE"
                     CaptureRequest.FLASH_MODE_TORCH -> "FLASH: TORCH"
-                    else -> ""
+                    -1 -> ""
+                    else -> "FLASH: $flashState"
                 }
             }
         }

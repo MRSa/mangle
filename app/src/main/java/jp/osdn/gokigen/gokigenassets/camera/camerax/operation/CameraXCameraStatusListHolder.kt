@@ -83,7 +83,7 @@ class CameraXCameraStatusListHolder(private val cameraXCameraControl: CameraXCam
                 val range = exposureState.exposureCompensationRange
                 for (count in range.lower .. range.upper)
                 {
-                    valueList.add(String.format("%+1.1f", (count.toDouble() * step.toDouble())))
+                    valueList.add(String.format("%+1.2f", (count.toDouble() * step.toDouble())))
                 }
                 return (valueList)
             }
@@ -103,6 +103,8 @@ class CameraXCameraStatusListHolder(private val cameraXCameraControl: CameraXCam
     @SuppressLint("UnsafeOptInUsageError")
     private fun getAvailableIsoSensitivity() : List<String>
     {
+        return (ArrayList()) // ISO 設定は有効にならない様子なので設定できないようにする
+/*
         try
         {
             val sensitivityList = ArrayList<String>()
@@ -135,6 +137,7 @@ class CameraXCameraStatusListHolder(private val cameraXCameraControl: CameraXCam
         }
         //return (ArrayList())
         return (listOf("100", "200", "400", "800"))
+*/
     }
 
     private fun getAvailableWhiteBalance() : List<String>
@@ -167,7 +170,7 @@ class CameraXCameraStatusListHolder(private val cameraXCameraControl: CameraXCam
 
     private fun getAvailablePictureEffect() : List<String>
     {
-        return (listOf("OFF", "AE-L/AWB-L", "AE-L", "AWB-L"))
+        return (listOf("OFF", "AE-L and AWB-L", "AE-L", "AWB-L"))
     }
 
     private fun getAvailableTorchMode() : List<String>
@@ -294,7 +297,7 @@ class CameraXCameraStatusListHolder(private val cameraXCameraControl: CameraXCam
     {
         return (when (value)
         {
-            "AE-L/AWB-L" -> true
+            "AE-L and AWB-L" -> true
             "AE-L" -> true
             else -> false
         })
@@ -304,7 +307,7 @@ class CameraXCameraStatusListHolder(private val cameraXCameraControl: CameraXCam
     {
         return (when (value)
         {
-            "AE-L/AWB-L" -> true
+            "AE-L and AWB-L" -> true
             "AWB-L" -> true
             else -> false
         })
