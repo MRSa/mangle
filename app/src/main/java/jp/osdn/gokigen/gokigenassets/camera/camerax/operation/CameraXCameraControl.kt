@@ -15,6 +15,7 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.IFocusingControl
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.IFocusingModeNotify
 import jp.osdn.gokigen.gokigenassets.liveview.IIndicatorControl
 import jp.osdn.gokigen.gokigenassets.liveview.focusframe.IAutoFocusFrameDisplay
+import kotlin.math.exp
 
 class CameraXCameraControl : IFocusingControl, IDisplayInjector
 {
@@ -175,6 +176,23 @@ class CameraXCameraControl : IFocusingControl, IDisplayInjector
         }
         return (null)
     }
+
+    fun setExposureCompensation(indexValue : Int)
+    {
+        try
+        {
+            if (::cameraXCameraControl.isInitialized)
+            {
+                cameraXCameraControl.setExposureCompensationIndex(indexValue)
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+
 
     @SuppressLint("UnsafeOptInUsageError")
     fun getCamera2CameraInfo() : Camera2CameraInfo?

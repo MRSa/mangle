@@ -32,12 +32,12 @@ class CameraXCameraStatusHolder(private val cameraXCameraControl: CameraXCameraC
             {
                 ICameraStatus.TAKE_MODE -> setTakeMode(value)
                 // ICameraStatus.SHUTTER_SPEED -> setShutterSpeed(value)
-                // ICameraStatus.APERTURE -> setAperture(value)
-                // ICameraStatus.EXPREV -> setExpRev(value)
+                //ICameraStatus.APERTURE -> setAperture(value)
+                ICameraStatus.EXPREV -> setExpRev(value)
                 // ICameraStatus.CAPTURE_MODE -> setCaptureMode(value)
                 ICameraStatus.ISO_SENSITIVITY -> setIsoSensitivity(value)
                 ICameraStatus.WHITE_BALANCE -> setWhiteBalance(value)
-                // ICameraStatus.AE -> setMeteringMode(value)
+                ICameraStatus.AE -> setMeteringMode(value)
                 ICameraStatus.EFFECT -> setPictureEffect(value)
                 // ICameraStatus.BATTERY -> setRemainBattery(value)
                 ICameraStatus.TORCH_MODE -> setTorchMode(value)
@@ -213,7 +213,7 @@ class CameraXCameraStatusHolder(private val cameraXCameraControl: CameraXCameraC
                 val value = index.toDouble() * step.toDouble()
                 if (value != 0.0)
                 {
-                    return (String.format("2.1f", value))
+                    return (String.format("%+1.1f", value))
                 }
             }
         }
@@ -238,7 +238,7 @@ class CameraXCameraStatusHolder(private val cameraXCameraControl: CameraXCameraC
                 val focal = captureOptions.getCaptureRequestOption(CaptureRequest.LENS_FOCAL_LENGTH) ?: 0.0f
                 if (focal != 0.0f)
                 {
-                    focalLength = String.format("F%2.1fmm", focal)
+                    focalLength = String.format("%2.1fmm", focal)
                 }
                 // Log.v(TAG, " Focal Length : $focalLength")
             }
@@ -329,9 +329,9 @@ class CameraXCameraStatusHolder(private val cameraXCameraControl: CameraXCameraC
                 val autoExposure = captureOptions.getCaptureRequestOption(CaptureRequest.CONTROL_AE_MODE) ?: 0
                 aeMode = when (autoExposure) {
                     CameraCharacteristics.CONTROL_AE_MODE_OFF -> "AE:OFF"
-                    CameraCharacteristics.CONTROL_AE_MODE_ON -> ""
+                    CameraCharacteristics.CONTROL_AE_MODE_ON -> "AE:ON"
                     CameraCharacteristics.CONTROL_AE_MODE_ON_AUTO_FLASH -> "Flash"
-                    CameraCharacteristics.CONTROL_AE_MODE_ON_ALWAYS_FLASH -> "FLASH ON"
+                    CameraCharacteristics.CONTROL_AE_MODE_ON_ALWAYS_FLASH -> "Always FLASH"
                     CameraCharacteristics.CONTROL_AE_MODE_ON_AUTO_FLASH_REDEYE -> "Flash(RedEye)"
                     CameraCharacteristics.CONTROL_AE_MODE_ON_EXTERNAL_FLASH -> "FLASH:EXTERNAL"
                     else -> "FLASH:[$autoExposure]"
@@ -421,6 +421,30 @@ class CameraXCameraStatusHolder(private val cameraXCameraControl: CameraXCameraC
         return (flash)
     }
 
+    @SuppressLint("UnsafeOptInUsageError")
+    private fun setMeteringMode(value : String)
+    {
+        try
+        {
+            val setValue = statusListHolder.decideMeteringMode(value)
+            if (setValue == -1)
+            {
+                return
+            }
+            val cameraControl = cameraXCameraControl.getCamera2CameraControl()
+            if (cameraControl != null)
+            {
+                // cameraControl.setCaptureRequestOptions()
+                val builder = CaptureRequestOptions.Builder()
+                builder.setCaptureRequestOption(CaptureRequest.CONTROL_AE_MODE,setValue)
+                cameraControl.captureRequestOptions = builder.build()
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
 
     @SuppressLint("UnsafeOptInUsageError")
     private fun setIsoSensitivity(value : String)
@@ -440,6 +464,19 @@ class CameraXCameraStatusHolder(private val cameraXCameraControl: CameraXCameraC
                 builder.setCaptureRequestOption(CaptureRequest.SENSOR_SENSITIVITY,setValue)
                 cameraControl.captureRequestOptions = builder.build()
             }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    @SuppressLint("UnsafeOptInUsageError")
+    private fun setExpRev(value : String)
+    {
+        try
+        {
+            cameraXCameraControl.setExposureCompensation(statusListHolder.decideExpRevIndex(value))
         }
         catch (e: Exception)
         {

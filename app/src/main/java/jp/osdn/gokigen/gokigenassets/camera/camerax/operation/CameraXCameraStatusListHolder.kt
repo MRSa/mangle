@@ -3,10 +3,16 @@ package jp.osdn.gokigen.gokigenassets.camera.camerax.operation
 import android.annotation.SuppressLint
 import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CaptureRequest
+import android.util.Log
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus
+import kotlin.math.abs
 
 class CameraXCameraStatusListHolder(private val cameraXCameraControl: CameraXCameraControl)
 {
+    companion object
+    {
+        private val TAG = CameraXCameraStatusListHolder::class.java.simpleName
+    }
 
     fun getStatusList(key: String): List<String>
     {
@@ -67,6 +73,25 @@ class CameraXCameraStatusListHolder(private val cameraXCameraControl: CameraXCam
 
     private fun getAvailableExpRev() : List<String>
     {
+        try
+        {
+            val valueList = ArrayList<String>()
+            val exposureState = cameraXCameraControl.getExposureState()
+            if ((exposureState != null)&&(exposureState.isExposureCompensationSupported))
+            {
+                val step = exposureState.exposureCompensationStep
+                val range = exposureState.exposureCompensationRange
+                for (count in range.lower .. range.upper)
+                {
+                    valueList.add(String.format("%+1.1f", (count.toDouble() * step.toDouble())))
+                }
+                return (valueList)
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
         return (ArrayList())
     }
 
@@ -131,7 +156,13 @@ class CameraXCameraStatusListHolder(private val cameraXCameraControl: CameraXCam
 
     private fun getAvailableMeteringMode() : List<String>
     {
-        return (ArrayList())
+        return (listOf("OFF",
+            "ON",
+            "FLASH",
+            "ALWAYS FLASH",
+            "FLASH REDEYE",
+            "EXTERNAL FLASH",
+        ))
     }
 
     private fun getAvailablePictureEffect() : List<String>
@@ -142,6 +173,20 @@ class CameraXCameraStatusListHolder(private val cameraXCameraControl: CameraXCam
     private fun getAvailableTorchMode() : List<String>
     {
         return (listOf("OFF", "SINGLE", "TORCH"))
+    }
+
+    fun decideMeteringMode(value : String) : Int
+    {
+        return (when (value)
+        {
+            "OFF" -> CameraCharacteristics.CONTROL_AE_MODE_OFF
+            "ON" -> CameraCharacteristics.CONTROL_AE_MODE_ON
+            "FLASH" -> CameraCharacteristics.CONTROL_AE_MODE_ON_AUTO_FLASH
+            "ALWAYS FLASH" -> CameraCharacteristics.CONTROL_AE_MODE_ON_ALWAYS_FLASH
+            "FLASH REDEYE" -> CameraCharacteristics.CONTROL_AE_MODE_ON_AUTO_FLASH_REDEYE
+            "EXTERNAL FLASH" -> CameraCharacteristics.CONTROL_AE_MODE_ON_EXTERNAL_FLASH
+            else -> -1
+        })
     }
 
     fun decideTorchMode(value : String) : Int
@@ -277,4 +322,34 @@ class CameraXCameraStatusListHolder(private val cameraXCameraControl: CameraXCam
         }
         return (-1)
     }
+
+    fun decideExpRevIndex(value: String) : Int
+    {
+        try
+        {
+            val targetValue = value.toDouble()
+            Log.v(TAG, " ---------- ExpRev : $targetValue")
+            val exposureState = cameraXCameraControl.getExposureState()
+            if ((exposureState != null)&&(exposureState.isExposureCompensationSupported))
+            {
+                val step = exposureState.exposureCompensationStep
+                val range = exposureState.exposureCompensationRange
+                for (count in range.lower .. range.upper)
+                {
+                    val checkValue = count.toDouble() * step.toDouble()
+                    if (abs(checkValue - targetValue) < step.toDouble())
+                    {
+                        Log.v(TAG, " ============ ExpRev : $targetValue ($checkValue) -> $count [step:$step]")
+                        return (count)
+                    }
+                }
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+        return (0)
+    }
+
 }
