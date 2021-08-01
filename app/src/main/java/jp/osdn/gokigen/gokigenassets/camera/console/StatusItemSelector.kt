@@ -31,17 +31,17 @@ class StatusItemSelector(val activity : AppCompatActivity, private val vibrator 
             {
                 if (heightPosition < 2)
                 {
-                    Log.v(TAG, " Tapped MODE")
+                    //Log.v(TAG, " Tapped MODE")
                     key = ICameraStatus.TAKE_MODE
                 }
                 else if (heightPosition < 4)
                 {
-                    Log.v(TAG, " Tapped ISO Sensitivity")
+                    //Log.v(TAG, " Tapped ISO Sensitivity")
                     key = ICameraStatus.ISO_SENSITIVITY
                 }
                 else if (heightPosition < 6)
                 {
-                    Log.v(TAG, " Tapped White Balance")
+                    //Log.v(TAG, " Tapped White Balance")
                     key = ICameraStatus.WHITE_BALANCE
                 }
             }
@@ -49,17 +49,17 @@ class StatusItemSelector(val activity : AppCompatActivity, private val vibrator 
             {
                 if (heightPosition < 2)
                 {
-                    Log.v(TAG, " Tapped Shutter Speed")
+                    //Log.v(TAG, " Tapped Shutter Speed")
                     key = ICameraStatus.SHUTTER_SPEED
                 }
                 else if (heightPosition < 4)
                 {
-                    Log.v(TAG, " Tapped Exposure Compensation")
+                    //Log.v(TAG, " Tapped Exposure Compensation")
                     key = ICameraStatus.EXPREV
                 }
                 else if (heightPosition < 6)
                 {
-                    Log.v(TAG, " Tapped Picture Effect")
+                    //Log.v(TAG, " Tapped Picture Effect")
                     key = ICameraStatus.EFFECT
                 }
             }
@@ -67,22 +67,22 @@ class StatusItemSelector(val activity : AppCompatActivity, private val vibrator 
             {
                 if (heightPosition < 2)
                 {
-                    Log.v(TAG, " Tapped Aperture")
+                    //Log.v(TAG, " Tapped Aperture")
                     key = ICameraStatus.APERTURE
                 }
                 else if (heightPosition < 4)
                 {
-                    Log.v(TAG, " Tapped Auto Exposure")
+                    //Log.v(TAG, " Tapped Auto Exposure")
                     key = ICameraStatus.AE
                 }
                 else if (heightPosition < 6)
                 {
-                    Log.v(TAG, " Tapped Capture Mode")
+                    //Log.v(TAG, " Tapped Capture Mode")
                     key = ICameraStatus.CAPTURE_MODE
                 }
                 else if (heightPosition < 7)
                 {
-                    Log.v(TAG, " Tapped Torch Mode")
+                    //Log.v(TAG, " Tapped Torch Mode")
                     key = ICameraStatus.TORCH_MODE
                 }
             }
@@ -95,7 +95,7 @@ class StatusItemSelector(val activity : AppCompatActivity, private val vibrator 
                     {
                         try
                         {
-                            vibrator.vibrate(IVibrator.VibratePattern.SIMPLE_MIDDLE)
+                            vibrator.vibrate(IVibrator.VibratePattern.SIMPLE_SHORT)
                         }
                         catch (e: Exception)
                         {
@@ -132,7 +132,7 @@ class StatusItemSelector(val activity : AppCompatActivity, private val vibrator 
             // アイテム選択ダイアログを表示する
             // Log.v(TAG, " showItemSelectionDialog($key)")
             val selectionDialog = ItemSelectionDialog.newInstance(activity)
-            selectionDialog.show(currentStatus, key, selectionItems, this)
+            selectionDialog.show(0, currentStatus, key, selectionItems, this)
             return (false)
         }
         catch (e: Exception)

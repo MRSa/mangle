@@ -13,14 +13,20 @@ class ItemSelectionDialog: DialogFragment()
         this.myContext = context
     }
 
-    fun show(title: String?, key: String, itemArray: List<String?>, callback: ItemSelectedCallback)
+    fun show(iconId: Int, title: String?, key: String, itemArray: List<String?>, callback: ItemSelectedCallback)
     {
         // コンテナ積み替え...
         val itemList = itemArray.toList()
         val items: Array<CharSequence?> = Array(itemList.size) { i -> itemList[i] }
 
         // 表示イアログの生成
+        //val alertDialog = AlertDialog.Builder(myContext, android.R.style.Theme_Material_Dialog)
+        //val alertDialog = AlertDialog.Builder(myContext, android.R.style.Theme_Material_Light_Dialog_Alert)
         val alertDialog = AlertDialog.Builder(myContext)
+        if (iconId != 0)
+        {
+            alertDialog.setIcon(iconId)
+        }
         alertDialog.setTitle(title)
         alertDialog.setCancelable(true)
         alertDialog.setItems(items) { dialog, which ->
