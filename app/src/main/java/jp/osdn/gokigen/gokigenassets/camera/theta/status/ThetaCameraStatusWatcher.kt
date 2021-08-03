@@ -12,6 +12,7 @@ import org.json.JSONObject
 class ThetaCameraStatusWatcher(private val sessionIdProvider: IThetaSessionIdProvider, private val captureModeReceiver : ICaptureModeReceiver, private val executeUrl : String = "http://192.168.1.1") : ICameraStatusWatcher, IThetaStatusHolder, ICameraStatus
 {
     private val httpClient = SimpleHttpClient()
+    private val statusListHolder = ThetaCameraStatusListHolder(sessionIdProvider, executeUrl)
     private var whileFetching = false
     private var currentIsoSensitivity : Int = 0
     private var currentBatteryLevel : Double = 0.0
@@ -467,6 +468,27 @@ class ThetaCameraStatusWatcher(private val sessionIdProvider: IThetaSessionIdPro
 
     override fun getStatusList(key: String): List<String?>
     {
+        try
+        {
+            return (when (key) {
+                ICameraStatus.TAKE_MODE -> statusListHolder.getAvailableTakeModeList()
+                ICameraStatus.SHUTTER_SPEED -> statusListHolder.getAvailableShutterSpeedList()
+                ICameraStatus.APERTURE -> statusListHolder.getAvailableApertureList()
+                ICameraStatus.EXPREV -> statusListHolder.getAvailableExpRevList()
+                ICameraStatus.CAPTURE_MODE -> statusListHolder.getAvailableCaptureModeStringList()
+                ICameraStatus.ISO_SENSITIVITY -> statusListHolder.getAvailableIsoSensitivityList()
+                ICameraStatus.WHITE_BALANCE -> statusListHolder.getAvailableWhiteBalanceList()
+                ICameraStatus.AE -> statusListHolder.getAvailableMeteringModeList()
+                ICameraStatus.EFFECT -> statusListHolder.getAvailablePictureEffectList()
+                //ICameraStatus.BATTERY -> // 設定不可
+                //ICameraStatus.TORCH_MODE -> // 設定不可
+                else -> ArrayList<String>()
+            })
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
         return (ArrayList<String>())
     }
 
@@ -498,7 +520,27 @@ class ThetaCameraStatusWatcher(private val sessionIdProvider: IThetaSessionIdPro
 
     override fun setStatus(key: String, value: String)
     {
-
+        try
+        {
+            when (key) {
+                ICameraStatus.TAKE_MODE -> statusListHolder.setTakeMode(value)
+                ICameraStatus.SHUTTER_SPEED -> statusListHolder.setShutterSpeed(value)
+                ICameraStatus.APERTURE -> statusListHolder.setAperture(value)
+                ICameraStatus.EXPREV -> statusListHolder.setExpRev(value)
+                ICameraStatus.CAPTURE_MODE -> statusListHolder.setCaptureMode(value)
+                ICameraStatus.ISO_SENSITIVITY -> statusListHolder.setIsoSensitivity(value)
+                ICameraStatus.WHITE_BALANCE -> statusListHolder.setWhiteBalance(value)
+                ICameraStatus.AE -> statusListHolder.setMeteringMode(value)
+                ICameraStatus.EFFECT -> statusListHolder.setPictureEffect(value)
+                //ICameraStatus.BATTERY -> // 設定不可
+                //ICameraStatus.TORCH_MODE -> // 設定不可
+                else -> Log.v(TAG, "  ----- setStatus($key, $value) : Unknown -----")
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
     }
 
     private fun getTakeMode() : String
