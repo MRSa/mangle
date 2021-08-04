@@ -434,24 +434,6 @@ class ThetaCameraStatusWatcher(private val sessionIdProvider: IThetaSessionIdPro
         whileFetching = false
     }
 
-    companion object
-    {
-        private val TAG = ThetaCameraStatusWatcher::class.java.simpleName
-        private const val timeoutMs = 3300
-        private const val loopWaitMs : Long = 400
-
-        private const val THETA_BATTERY_LEVEL = "batteryLevel"
-        private const val THETA_CAPTURE_STATUS = "_captureStatus"
-
-        private const val THETA_APERTURE = "aperture"
-        private const val THETA_CAPTURE_MODE = "captureMode"
-        private const val THETA_EXPOSURE_COMPENSATION = "exposureCompensation"
-        private const val THETA_EXPOSURE_PROGRAM = "exposureProgram"
-        private const val THETA_ISO_SENSITIVITY = "iso"
-        private const val THETA_SHUTTER_SPEED = "shutterSpeed"
-        private const val THETA_WHITE_BALANCE = "whiteBalance"
-        private const val THETA_FILTER = "_filter"
-    }
 
     override var captureMode: String
         get() = currentCaptureMode
@@ -648,5 +630,24 @@ class ThetaCameraStatusWatcher(private val sessionIdProvider: IThetaSessionIdPro
             ee.printStackTrace()
         }
         return (color)
+    }
+
+    companion object
+    {
+        private val TAG = ThetaCameraStatusWatcher::class.java.simpleName
+        private const val timeoutMs = 3300
+        private const val loopWaitMs : Long = 400
+
+        private const val THETA_BATTERY_LEVEL = "batteryLevel"
+        private const val THETA_CAPTURE_STATUS = "_captureStatus"
+
+        private const val THETA_APERTURE = "aperture"
+        private const val THETA_CAPTURE_MODE = "captureMode"
+        private const val THETA_EXPOSURE_COMPENSATION = "exposureCompensation"
+        private const val THETA_EXPOSURE_PROGRAM = "exposureProgram"
+        private const val THETA_ISO_SENSITIVITY = "iso"
+        private const val THETA_SHUTTER_SPEED = "shutterSpeed"
+        private const val THETA_WHITE_BALANCE = "whiteBalance"
+        private const val THETA_FILTER = "_filter"
     }
 }

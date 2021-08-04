@@ -1,12 +1,17 @@
 package jp.osdn.gokigen.gokigenassets.camera.theta.status
 
-import jp.osdn.gokigen.gokigenassets.camera.theta.operation.ThetaOptionGetControl
+import android.util.Log
 import jp.osdn.gokigen.gokigenassets.camera.theta.operation.ThetaOptionSetControl
 
 class ThetaCameraStatusListHolder(private val sessionIdProvider: IThetaSessionIdProvider, executeUrl : String = "http://192.168.1.1")
 {
-    private val optionGet = ThetaOptionGetControl(sessionIdProvider, executeUrl)
+    //private val optionGet = ThetaOptionGetControl(sessionIdProvider, executeUrl)
     private val optionSet = ThetaOptionSetControl(sessionIdProvider, executeUrl)
+
+    companion object
+    {
+        private val TAG = ThetaCameraStatusListHolder::class.java.simpleName
+    }
 
     fun getAvailableTakeModeList(): List<String?>
     {
@@ -80,12 +85,12 @@ class ThetaCameraStatusListHolder(private val sessionIdProvider: IThetaSessionId
 
     fun getAvailableApertureList(): List<String?>
     {
-        return (ArrayList())
+        return (listOf("2.0", "0", "2.1", "3.5", "5.6"))
     }
 
     fun getAvailableExpRevList(): List<String?>
     {
-        return (ArrayList())
+        return (listOf("-2.0", "-1.7", "-1.3", "-1.0", "-0.7", "-0.3", "0.0", "0.3", "0.7", "1.0", "1.3", "1.7", "2.0"))
     }
 
     fun getAvailableCaptureModeStringList(): List<String?>
@@ -110,7 +115,7 @@ class ThetaCameraStatusListHolder(private val sessionIdProvider: IThetaSessionId
 
     fun getAvailablePictureEffectList(): List<String?>
     {
-        return (ArrayList())
+        return (listOf("off", "DR Comp", "Noise Reduction", "hdr", "Hh hdr"))
     }
 
     fun setTakeMode(value: String)
@@ -212,33 +217,31 @@ class ThetaCameraStatusListHolder(private val sessionIdProvider: IThetaSessionId
         }
     }
 
-
     fun setAperture(value: String)
     {
         try
         {
-
+            val useOSCv2 = sessionIdProvider.sessionId.isEmpty()
+            optionSet.setOptions(" \"aperture\": $value", useOSCv2)
         }
         catch (e: Exception)
         {
             e.printStackTrace()
         }
     }
-
-
 
     fun setExpRev(value: String)
     {
         try
         {
-
+            val useOSCv2 = sessionIdProvider.sessionId.isEmpty()
+            optionSet.setOptions(" \"exposureCompensation\": $value", useOSCv2)
         }
         catch (e: Exception)
         {
             e.printStackTrace()
         }
     }
-
 
     fun setCaptureMode(value: String)
     {
@@ -285,7 +288,7 @@ class ThetaCameraStatusListHolder(private val sessionIdProvider: IThetaSessionId
     {
         try
         {
-
+            Log.v(TAG, " setMeteringMode($value)")
         }
         catch (e: Exception)
         {
@@ -297,12 +300,12 @@ class ThetaCameraStatusListHolder(private val sessionIdProvider: IThetaSessionId
     {
         try
         {
-
+            val useOSCv2 = sessionIdProvider.sessionId.isEmpty()
+            optionSet.setOptions(" \"_filter\": \"$value\"", useOSCv2)
         }
         catch (e: Exception)
         {
             e.printStackTrace()
         }
     }
-
 }
