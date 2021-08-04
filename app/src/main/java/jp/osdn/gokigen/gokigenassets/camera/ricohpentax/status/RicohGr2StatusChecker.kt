@@ -2,13 +2,11 @@ package jp.osdn.gokigen.gokigenassets.camera.ricohpentax.status
 
 import android.graphics.Color
 import android.util.Log
-import jp.osdn.gokigen.gokigenassets.camera.example.ExamplePictureControl
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusUpdateNotify
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusWatcher
 import jp.osdn.gokigen.gokigenassets.liveview.message.IMessageDrawer
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
-import java.util.*
 import kotlin.collections.ArrayList
 
 
