@@ -121,11 +121,8 @@ class RicohGr2StatusHolder(private val notifier: ICameraStatusUpdateNotify?)
     {
         try
         {
-            val value = latestResultObject?.getString("xv") ?: "0"
-            if (value.toFloat() != 0.0f)
-            {
-                return (value)
-            }
+            val value = latestResultObject?.getString("xv") ?: ""
+            return (value)
         }
         catch (e: Exception)
         {
@@ -136,12 +133,13 @@ class RicohGr2StatusHolder(private val notifier: ICameraStatusUpdateNotify?)
 
     private fun getCaptureMode() : String
     {
-        return ("")
+        return (latestResultObject?.getString("captureMode") ?: "")
     }
 
     private fun getIsoSensitivity() : String
     {
-        return ("")
+        val value = latestResultObject?.getString("sv")
+        return ("ISO:$value")
     }
 
     private fun getWhiteBalance() : String
@@ -157,7 +155,7 @@ class RicohGr2StatusHolder(private val notifier: ICameraStatusUpdateNotify?)
 
     private fun getPictureEffect() : String
     {
-        return ("")
+        return (latestResultObject?.getString("effect") ?: "")
     }
 
     private fun getTorchMode() : String
