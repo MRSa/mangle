@@ -14,7 +14,7 @@ import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
 class CameraEventObserver(context: Context, private val remote: IPanasonicCamera, cardSlotSelector: ICardSlotSelector, private val sleepMs : Long = 500) : ICameraStatusWatcher
 {
     private val statusHolder = CameraStatusHolder(context, remote, cardSlotSelector)
-    private val statusConvert = CameraStatusConvert(statusHolder)
+    private val statusConvert = CameraStatusConvert(statusHolder, remote)
     private var isEventMonitoring = false
     private var isActive = false
 

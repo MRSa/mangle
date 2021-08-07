@@ -8,7 +8,6 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICardSlotSelector
 import jp.osdn.gokigen.gokigenassets.camera.panasonic.ICameraChangeListener
 import jp.osdn.gokigen.gokigenassets.camera.panasonic.IPanasonicCamera
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
-import java.util.ArrayList
 
 class CameraStatusHolder(private val context: Context, private val remote: IPanasonicCamera, private val cardSlotSelector: ICardSlotSelector) : ICardSlotSelectionReceiver, ICameraStatusHolder
 {
@@ -85,11 +84,13 @@ class CameraStatusHolder(private val context: Context, private val remote: IPana
         listener = null
     }
 
-    override fun getCameraStatus(): String? {
+    override fun getCameraStatus(): String?
+    {
         return null
     }
 
-    override fun getLiveviewStatus(): Boolean {
+    override fun getLiveviewStatus(): Boolean
+    {
         return false
     }
 
@@ -98,15 +99,18 @@ class CameraStatusHolder(private val context: Context, private val remote: IPana
         return null
     }
 
-    override fun getAvailableShootModes(): List<String?>? {
+    override fun getAvailableShootModes(): List<String?>?
+    {
         return null
     }
 
-    override fun getZoomPosition(): Int {
+    override fun getZoomPosition(): Int
+    {
         return 0
     }
 
-    override fun getStorageId(): String {
+    override fun getStorageId(): String
+    {
         return currentSd
     }
 
@@ -118,48 +122,6 @@ class CameraStatusHolder(private val context: Context, private val remote: IPana
             // スロットを変更したい！
             requestToChangeSlot(slotId)
         }
-    }
-    /**
-     *
-     *
-     */
-    fun getAvailableItemList(key: String): List<String>
-    {
-        val itemList: MutableList<String> = ArrayList()
-        try
-        {
-/*
-            val array = latestResultObject!!.getJSONArray(key) ?: return itemList
-            val nofItems = array.length()
-            for (index in 0 until nofItems) {
-                try {
-                    itemList.add(array.getString(index))
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
-*/
-        }
-        catch (e: Exception)
-        {
-            e.printStackTrace()
-        }
-        return itemList
-    }
-
-    fun getItemStatus(key: String): String
-    {
-/*
-        try
-        {
-            return latestResultObject!!.getString(key)
-        }
-        catch (e: Exception)
-        {
-            e.printStackTrace()
-        }
-*/
-        return ""
     }
 
     private fun requestToChangeSlot(slotId: String)
@@ -236,7 +198,8 @@ class CameraStatusHolder(private val context: Context, private val remote: IPana
 
     fun getCurrentStatus(key: String) : String
     {
-        return (when (key) {
+        return (when (key)
+        {
             ICameraStatus.BATTERY -> "$remainBattery"
             else -> ""
         })

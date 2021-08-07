@@ -3,12 +3,15 @@ package jp.osdn.gokigen.gokigenassets.camera.panasonic.status
 import android.graphics.Color
 import android.util.Log
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus
+import jp.osdn.gokigen.gokigenassets.camera.panasonic.IPanasonicCamera
+import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleLogDumper
 import java.util.ArrayList
 import kotlin.math.pow
 
-class CameraStatusConvert(private val statusHolder: CameraStatusHolder) : ICameraStatus, ICameraEventObserver
+class CameraStatusConvert(private val statusHolder: CameraStatusHolder, remote: IPanasonicCamera) : ICameraStatus, ICameraEventObserver
 {
     //  現物合わせのクラス...
+    private val statusListHolder = CameraStatusListHolder(remote)
     private var eventData: ByteArray? = null
     private var currentBattery : Int = 0
 
@@ -16,8 +19,7 @@ class CameraStatusConvert(private val statusHolder: CameraStatusHolder) : ICamer
     {
         try
         {
-            val listKey = key + "List"
-            return statusHolder.getAvailableItemList(listKey)
+            return statusListHolder.getAvailableItemList(key)
         }
         catch (e: Exception)
         {
@@ -30,7 +32,7 @@ class CameraStatusConvert(private val statusHolder: CameraStatusHolder) : ICamer
     {
         try
         {
-            Log.v(TAG, " setStatus(key:$key, value:$value)")
+            statusListHolder.setStatus(key, value)
         }
         catch (e : Exception)
         {
@@ -330,8 +332,7 @@ class CameraStatusConvert(private val statusHolder: CameraStatusHolder) : ICamer
     {
         try
         {
-            val value3 = if (value2 < 0) { value2 * (-1) } else { value2 }
-
+            // val value3 = if (value2 < 0) { value2 * (-1) } else { value2 }
         }
         catch (e : Exception)
         {
@@ -371,7 +372,35 @@ class CameraStatusConvert(private val statusHolder: CameraStatusHolder) : ICamer
 
     private fun getCaptureMode() : String
     {
-        return ("")
+        // フォトスタイル設定
+        var photoStyle = ""
+        try
+        {
+            val index = 16 * 7 - 1
+            if ((eventData != null)&&((eventData?.size ?: 0) > (index)))
+            {
+                val value = (eventData?.get(index) ?: 0).toInt()
+                if (value != 0)
+                {
+                    photoStyle = when (value) {
+                        1 -> "STANDARD"
+                        2 -> "VIVID"
+                        3 -> "NATURAL"
+                        4 -> "MONO"
+                        5 -> "SCENERY"
+                        6 -> "PORTRAIT"
+                        7 -> "CUSTOM"
+                        12 -> "L.MONO"
+                        else -> "($value)"
+                    }
+                }
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+        return (photoStyle)
     }
 
     private fun getIsoSensitivity() : String
@@ -470,7 +499,49 @@ class CameraStatusConvert(private val statusHolder: CameraStatusHolder) : ICamer
 
     private fun getPictureEffect() : String
     {
-        return ("")
+        // フィルター設定
+        var pictureEffect = ""
+        try
+        {
+            val index = 16 * 10 + 10
+            if ((eventData != null)&&((eventData?.size ?: 0) > (index)))
+            {
+                val value = (eventData?.get(index) ?: 0).toInt()
+                if (value != 0)
+                {
+                    pictureEffect = when (value) {
+                        1 -> "POP"
+                        2 -> "RETR"
+                        15 -> "OLD"
+                        3 -> "HKEY"
+                        4 -> "LKEY"
+                        5 -> "SEPI"
+                        22 -> "MONO"
+                        10 -> "D.MONO"
+                        21 -> "R.MONO"
+                        20 -> "S.MONO"
+                        11 -> "IART"
+                        6 -> "HDYN"
+                        12 -> "XPRO"
+                        8 -> "TOY"
+                        18 -> "TOYP"
+                        17 -> "BLEA"
+                        7 -> "DIOR"
+                        9 -> "SOFT"
+                        19 -> "FAN"
+                        14 -> "STAR"
+                        13 -> "1CLR"
+                        16 -> "SUN"
+                        else -> "($value)"
+                    }
+                }
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+        return (pictureEffect)
     }
 
     private fun getTorchMode() : String
@@ -518,9 +589,12 @@ class CameraStatusConvert(private val statusHolder: CameraStatusHolder) : ICamer
         try
         {
             this.eventData = eventData
-            //val size = this.eventData?.size ?: 0
-            //Log.v(TAG, "  ----- RECEIVED STATUS $size bytes. ----- ")
-            //SimpleLogDumper.dumpBytes("LV DATA [$size]", this.eventData?.copyOfRange(0, size))
+            if (isDumpData)
+            {
+                val size = this.eventData?.size ?: 0
+                Log.v(TAG, "  ----- RECEIVED STATUS $size bytes. ----- ")
+                SimpleLogDumper.dumpBytes("LV DATA [$size]", this.eventData?.copyOfRange(0, size))
+            }
         }
         catch (e: Exception)
         {
@@ -531,5 +605,6 @@ class CameraStatusConvert(private val statusHolder: CameraStatusHolder) : ICamer
     companion object
     {
         private val TAG = CameraStatusConvert::class.java.simpleName
+        private const val isDumpData = false
     }
 }
