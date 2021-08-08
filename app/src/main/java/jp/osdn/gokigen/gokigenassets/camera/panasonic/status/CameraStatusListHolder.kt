@@ -55,7 +55,7 @@ class CameraStatusListHolder(private val remote: IPanasonicCamera)
 
     private fun getAvailableTorchMode() : List<String>
     {
-        return (ArrayList())
+        return (listOf("OFF", "EXPOSURE-BRACKET", "FOCAL-BRACKET", "WB-BRACKET", "FOCUS-BRACKET"))
     }
 
     private fun getAvailableShutterSpeed() : List<String>
@@ -70,7 +70,39 @@ class CameraStatusListHolder(private val remote: IPanasonicCamera)
 
     private fun getAvailableExpRev() : List<String>
     {
-        return (ArrayList())
+        return (listOf(
+            "-5.0",
+            "-4.7",
+            "-4.3",
+            "-4.0",
+            "-3.7",
+            "-3.3",
+            "-3.0",
+            "-2.7",
+            "-2.3",
+            "-2.0",
+            "-1.7",
+            "-1.3",
+            "-1.0",
+            "-0.7",
+            "-0.3",
+            "0.0",
+            "+0.3",
+            "+0.7",
+            "+1.0",
+            "+1.3",
+            "+1.7",
+            "+2.0",
+            "+2.3",
+            "+2.7",
+            "+3.0",
+            "+3.3",
+            "+3.7",
+            "+4.0",
+            "+4.3",
+            "+4.7",
+            "+5.0",
+            ))
     }
 
     private fun getAvailablePictureEffect() : List<String>
@@ -102,17 +134,62 @@ class CameraStatusListHolder(private val remote: IPanasonicCamera)
 
     private fun getAvailableIsoSensitivity() : List<String>
     {
-        return (ArrayList())
+        return (listOf("ISO-i",
+            "AUTO",
+            "100",
+            "125",
+            "160",
+            "200",
+            "250",
+            "320",
+            "400",
+            "500",
+            "640",
+            "800",
+            "1000",
+            "1250",
+            "1600",
+            "2000",
+            "2500",
+            "3200",
+            "4000",
+            "5000",
+            "6400",
+            "8000",
+            "10000",
+            "12800",
+            "16000",
+            "20000",
+            "25600",
+            "50000",
+        ))
     }
 
     private fun getAvailableWhiteBalance() : List<String>
     {
-        return (ArrayList())
+        return (listOf("AWB",
+        "Daylight",
+        "Cloudy",
+        "Shade",
+        "Incandescent",
+        "Flash",
+        "Custom1",
+        "Custom2",
+        "Custom3",
+        "Custom4",
+        "Color Temp.",
+        "K1",
+        "K2",
+        "K3",
+        "K4",
+        "AWBc",
+        "AWBw"))
     }
 
     private fun getAvailableMeteringMode() : List<String>
     {
         return (ArrayList())
+        //return (listOf("MULTI", "CENTER", "SPOT", "HIGHLIGHT"))  // SPOT測光に切り替えると、LVがうまく取れないので...
     }
 
     private fun getAvailableCaptureMode() : List<String>
@@ -153,7 +230,15 @@ class CameraStatusListHolder(private val remote: IPanasonicCamera)
 
     private fun setTorchMode(value: String)
     {
-
+        val setValue = when (value) {
+            "OFF" -> "off"
+            "EXPOSURE-BRACKET" -> "exposure"
+            "FOCAL-BRACKET" -> "focal"
+            "WB-BRACKET" -> "wb"
+            "FOCUS-BRACKET" -> "focus"
+            else -> "off"
+        }
+        sendCamSetSettingCmd("bracket", setValue, null)
     }
 
     private fun setShutterSpeed(value: String)
@@ -168,7 +253,41 @@ class CameraStatusListHolder(private val remote: IPanasonicCamera)
 
     private fun setExpRev(value: String)
     {
-
+        val setValue = when (value) {
+            "-5.0" -> "-5"
+            "-4.7" -> "-14/3"
+            "-4.3" -> "-13/3"
+            "-4.0" -> "-4"
+            "-3.7" -> "-11/3"
+            "-3.3" -> "-10/3"
+            "-3.0" -> "-3"
+            "-2.7" -> "-8/3"
+            "-2.3" -> "-7/3"
+            "-2.0" -> "-2"
+            "-1.7" -> "-5/3"
+            "-1.3" -> "-4/3"
+            "-1.0" -> "-1"
+            "-0.7" -> "-2/3"
+            "-0.3" -> "-1/3"
+            "0.0" -> "0"
+            "+0.3" -> "1/3"
+            "+0.7" -> "2/3"
+            "+1.0" -> "1"
+            "+1.3" -> "4/3"
+            "+1.7" -> "5/3"
+            "+2.0" -> "2"
+            "+2.3" -> "7/3"
+            "+2.7" -> "8/3"
+            "+3.0" -> "3"
+            "+3.3" -> "10/3"
+            "+3.7" -> "11/3"
+            "+4.0" -> "4"
+            "+4.3" -> "13/3"
+            "+4.7" -> "14/3"
+            "+5.0" -> "5"
+            else -> "0"
+        }
+        sendCamSetSettingCmd("exposure", setValue, null)
     }
 
     private fun setCaptureMode(value: String)
@@ -190,17 +309,49 @@ class CameraStatusListHolder(private val remote: IPanasonicCamera)
 
     private fun setIsoSensitivity(value: String)
     {
-
+        val setValue = when (value) {
+            "ISO-i" -> "i_auto"
+            "AUTO" -> "auto"
+            else -> value
+        }
+        sendCamSetSettingCmd("iso", setValue, null)
     }
 
     private fun setWhiteBalance(value: String)
     {
-
+        val setValue =  when (value) {
+            "AWB" -> "auto"
+            "Daylight" -> "daylight"
+            "Cloudy" -> "cloudy"
+            "Shade" -> "shade"
+            "Incandescent" -> "halogen"
+            "Flash" -> "flash"
+            "Custom1" -> "white_set1"
+            "Custom2" -> "white_set2"
+            "Custom3" -> "white_set3"
+            "Custom4" -> "white_set4"
+            "Color Temp." -> "color_temp"
+            "K1" -> "color_temp1"
+            "K2" -> "color_temp2"
+            "K3" -> "color_temp3"
+            "K4" -> "color_temp4"
+            "AWBc" -> "auto_cool"
+            "AWBw" -> "auto_warm"
+            else -> "auto"
+        }
+        sendCamSetSettingCmd("whitebalance", setValue, null)
     }
 
     private fun setMeteringMode(value: String)
     {
-
+        val setValue = when (value) {
+            "MULTI" -> "multi"
+            "CENTER" -> "center"
+            "SPOT" -> "spot"
+            "HIGHLIGHT" -> "highlight"
+            else -> "multi"
+        }
+        sendCamSetSettingCmd("lightmetering", setValue, null)
     }
 
     private fun setPictureEffect(value: String)

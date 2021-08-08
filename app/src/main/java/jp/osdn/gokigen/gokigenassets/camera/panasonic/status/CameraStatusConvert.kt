@@ -415,8 +415,8 @@ class CameraStatusConvert(private val statusHolder: CameraStatusHolder, remote: 
                 val value = (eventData?.get(index) ?: 0).toInt()
                 iso = when (value) {
                     0 -> "ISO:auto"
-                    1 -> "iso:100"
-                    35 -> "ISO:100"
+                    1 -> "ISO:100"
+                    35 -> "iso:100"
                     2 -> "ISO:125"
                     3 -> "ISO:160"
                     4 -> "ISO:200"
@@ -465,6 +465,7 @@ class CameraStatusConvert(private val statusHolder: CameraStatusHolder, remote: 
                 val value = (eventData?.get(index) ?: 0).toInt()
                 wb = when (value) {
                     0 -> "AWB"
+                    1 -> "Bracket"
                     2 -> "Daylight"
                     3 -> "Cloudy"
                     4 -> "Shade"
@@ -605,6 +606,6 @@ class CameraStatusConvert(private val statusHolder: CameraStatusHolder, remote: 
     companion object
     {
         private val TAG = CameraStatusConvert::class.java.simpleName
-        private const val isDumpData = false
+        private const val isDumpData = true
     }
 }

@@ -101,6 +101,14 @@ class PanasonicCameraControl(private val context: AppCompatActivity, private val
             {
                 Log.v(TAG, "CAMERA REPLIED ERROR : CHANGE AF MODE 1area.")
             }
+
+            //  測光モードに関しては、画面全体の測光に切り替える（仮）
+            reply = http.httpGet(panasonicCamera.getCmdUrl() + "cam.cgi?mode=setsetting&type=lightmetering&value=multi", TIMEOUT_MS)
+            if (!reply.contains("ok"))
+            {
+                Log.v(TAG, "CAMERA REPLIED ERROR : CHANGE AF MODE 1area.")
+            }
+
         }
         catch (e: Exception)
         {
