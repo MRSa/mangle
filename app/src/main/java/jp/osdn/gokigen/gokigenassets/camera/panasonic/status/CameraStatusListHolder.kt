@@ -342,6 +342,7 @@ class CameraStatusListHolder(private val remote: IPanasonicCamera)
 
     private fun setTakeMode(value: String)
     {
+        Log.v(TAG, " setTakeMode($value)")
 
     }
 

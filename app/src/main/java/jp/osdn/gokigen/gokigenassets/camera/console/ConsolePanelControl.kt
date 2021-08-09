@@ -261,6 +261,26 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
         }
     }
 
+/*
+    private fun drawPanelRect(canvas: Canvas)
+    {
+        try
+        {
+            val paint = Paint()
+            paint.color = Color.WHITE
+            paint.style = Paint.Style.STROKE
+            paint.isAntiAlias = true
+            paint.strokeWidth = 5.0f
+            val rect = RectF(0.0f, 0.0f, canvas.width.toFloat(), canvas.height.toFloat())
+            canvas.drawRect(rect, paint)
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+*/
+
     override fun onDraw(canvas: Canvas?)
     {
         if (canvas == null)
@@ -276,6 +296,9 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
             // エリアの大きさを設定
             canvasWidth = canvas.width  / NOF_AREA_HORIZONTAL
             canvasHeight = canvas.height  / NOF_AREA_VERTICAL
+
+            //
+            //drawPanelRect(canvas)
 
             //　
             drawControlPanelNumber(canvas)
