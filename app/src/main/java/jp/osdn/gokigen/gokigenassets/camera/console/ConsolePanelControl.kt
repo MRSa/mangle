@@ -70,11 +70,19 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
         private const val NOF_AREA_VERTICAL = 9.0f
         private const val RADIUS = 5.0f
         private const val showTouchedPosition = false
-
     }
 
     init
     {
+        try
+        {
+            currentCameraControlId = preference.getCameraOption1().toInt() - 1
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+            currentCameraControlId = -1
+        }
         ScaleGestureDetectorCompat.setQuickScaleEnabled(scaleGestureDetector, true)
         gestureDetector.setIsLongpressEnabled(true)
     }
@@ -181,8 +189,9 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
                 }
                 count++
             } while (count <= MAX_CONTROL_CAMERAS)
+            preference.getUpdater()?.setCameraOption1(currentCameraControlId.toString())
         }
-        catch (e : Exception)
+        catch (e: Exception)
         {
             e.printStackTrace()
         }

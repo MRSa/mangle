@@ -16,7 +16,7 @@
 
     <string-array name="connection_method">
         <item>None</item>
-        <item>Status Panel</item>
+        <item>Console Panel</item>
         <item>Show Example</item>
         <item>Internal Camera</item>
         <item>Ricoh GR / PENTAX</item>

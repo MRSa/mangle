@@ -16,7 +16,7 @@
 
     <string-array name="connection_method">
         <item>未使用</item>
-        <item>状態パネル</item>
+        <item>操作パネル</item>
         <item>作例表示</item>
         <item>内蔵カメラ</item>
         <item>Ricoh GR / PENTAX</item>
