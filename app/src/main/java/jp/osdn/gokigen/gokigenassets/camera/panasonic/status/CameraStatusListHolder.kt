@@ -55,17 +55,114 @@ class CameraStatusListHolder(private val remote: IPanasonicCamera)
 
     private fun getAvailableTorchMode() : List<String>
     {
-        return (listOf("OFF", "EXPOSURE-BRACKET", "FOCAL-BRACKET", "WB-BRACKET", "FOCUS-BRACKET"))
+        return (listOf("OFF", "EXP. BRACKET", "FOCAL BRACKET", "WB BRACKET", "FOCUS BRACKET"))
     }
 
     private fun getAvailableShutterSpeed() : List<String>
     {
-        return (ArrayList())
+        return (listOf(
+            "16000" ,
+            "13000" ,
+            "10000" ,
+            "8000" ,
+            "6400" ,
+            "5000" ,
+            "4000" ,
+            "3200" ,
+            "2500" ,
+            "2000" ,
+            "1600" ,
+            "1300" ,
+            "1000" ,
+            "800" ,
+            "640" ,
+            "500" ,
+            "400" ,
+            "320" ,
+            "250" ,
+            "200" ,
+            "160" ,
+            "125" ,
+            "100" ,
+            "80" ,
+            "60" ,
+            "50" ,
+            "40" ,
+            "30" ,
+            "25" ,
+            "20" ,
+            "15" ,
+            "13" ,
+            "10" ,
+            "8" ,
+            "6" ,
+            "5" ,
+            "4" ,
+            "3.2" ,
+            "2.5" ,
+            "2" ,
+            "1.6" ,
+            "1.3" ,
+            "1s" ,
+            "1.3s" ,
+            "1.6s" ,
+            "2s" ,
+            "2.5s" ,
+            "3.2s" ,
+            "4s" ,
+            "5s" ,
+            "6s" ,
+            "8s" ,
+            "10s" ,
+            "13s" ,
+            "15s" ,
+            "20s" ,
+            "25s" ,
+            "30s" ,
+            "40s" ,
+            "50s" ,
+            "60s" ,
+            "T" ,
+        ))
     }
 
     private fun getAvailableAperture() : List<String>
     {
-        return (ArrayList())
+        return (listOf(
+            "F1.0",
+            "F1.1",
+            "F1.2",
+            "F1.4",
+            "F1.6",
+            "F1.7",
+            "F1.8",
+            "F2.0",
+            "F2.2",
+            "F2.4",
+            "F2.5",
+            "F2.8",
+            "F3.2",
+            "F3.5",
+            "F4.0",
+            "F4.5",
+            "F5.0",
+            "F5.6",
+            "F6.3",
+            "F7.1",
+            "F8.0",
+            "F9.0",
+            "F10",
+            "F11",
+            "F13",
+            "F14",
+            "F16",
+            "F18",
+            "F20",
+            "F22",
+            "F25",
+            "F29",
+            "F32",
+        ))
     }
 
     private fun getAvailableExpRev() : List<String>
@@ -194,7 +291,27 @@ class CameraStatusListHolder(private val remote: IPanasonicCamera)
 
     private fun getAvailableCaptureMode() : List<String>
     {
-        return (listOf("STD", "VIVID", "NATURAL", "MONO", "L.MONO", "SCENERY", "PORTRAIT", "CUSTOM"))
+        return (listOf(
+            "STD",
+            "VIVID",
+            "NATURAL",
+            "MONO",
+            "L.MONO",
+            "L.MONO D",
+            "SCENERY",
+            "PORTRAIT",
+            "CUSTOM",
+            "CUSTOM1",
+            "CUSTOM2",
+            "CUSTOM3",
+            "CUSTOM4",
+            "CINELIKE_D",
+            "CINELIKE_V",
+            "Like709",
+            "VLOG-L",
+            "VLOG-G",
+            "VLOG-GAMMA",
+        ))
     }
 
     fun setStatus(key: String, value: String)
@@ -232,10 +349,10 @@ class CameraStatusListHolder(private val remote: IPanasonicCamera)
     {
         val setValue = when (value) {
             "OFF" -> "off"
-            "EXPOSURE-BRACKET" -> "exposure"
-            "FOCAL-BRACKET" -> "focal"
-            "WB-BRACKET" -> "wb"
-            "FOCUS-BRACKET" -> "focus"
+            "EXP. BRACKET" -> "exposure"
+            "FOCAL BRACKET" -> "focal"
+            "WB BRACKET" -> "wb"
+            "FOCUS BRACKET" -> "focus"
             else -> "off"
         }
         sendCamSetSettingCmd("bracket", setValue, null)
@@ -243,12 +360,113 @@ class CameraStatusListHolder(private val remote: IPanasonicCamera)
 
     private fun setShutterSpeed(value: String)
     {
-
+        val setValue = when (value) {
+            "16000" -> "3584/256"
+                "13000" -> "3499/256"
+                "10000" -> "3414/256"
+                "8000" -> "3328/256"
+                "6400" -> "3243/256"
+                "5000" -> "3158/256"
+                "4000" -> "3072/256"
+                "3200" -> "2987/256"
+                "2500" -> "2902/256"
+                "2000" -> "2816/256"
+                "1600" -> "2731/256"
+                "1300" -> "2646/256"
+                "1000" -> "2560/256"
+                "800" -> "2475/256"
+                "640" -> "2390/256"
+                "500" -> "2304/256"
+                "400" -> "2219/256"
+                "320" -> "2134/256"
+                "250" -> "2048/256"
+                "200" -> "1963/256"
+                "160" -> "1878/256"
+                "125" -> "1792/256"
+                "100" -> "1707/256"
+                "80" -> "1622/256"
+                "60" -> "1536/256"
+                "50" -> "1451/256"
+                "40" -> "1366/256"
+                "30" -> "1280/256"
+                "25" -> "1195/256"
+                "20" -> "1110/256"
+                "15" -> "1024/256"
+                "13" -> "939/256"
+                "10" -> "854/256"
+                "8" -> "768/256"
+                "6" -> "683/256"
+                "5" -> "598/256"
+                "4" -> "512/256"
+                "3.2" -> "427/256"
+                "2.5" -> "342/256"
+                "2" -> "256/256"
+                "1.6" -> "171/256"
+                "1.3" -> "86/256"
+                "1s" -> "0/256"
+                "1.3s" -> "-85/256"
+                "1.6s" -> "-170/256"
+                "2s" -> "-256/256"
+                "2.5s" -> "-341/256"
+                "3.2s" -> "-426/256"
+                "4s" -> "-512/256"
+                "5s" -> "-597/256"
+                "6s" -> "-682/256"
+                "8s" -> "-768/256"
+                "10s" -> "-853/256"
+                "13s" -> "-938/256"
+                "15s" -> "-1024/256"
+                "20s" -> "-1109/256"
+                "25s" -> "-1194/256"
+                "30s" -> "-1280/256"
+                "40s" -> "-1365/256"
+                "50s" -> "-1450/256"
+                "60s" -> "-1536/256"
+                "T" -> "256/256"
+                else -> "1792/256"
+        }
+        sendCamSetSettingCmd("shtrspeed", setValue, null)
     }
 
     private fun setAperture(value: String)
     {
-
+        val setValue = when (value) {
+            "F1.0" -> "0/256"
+            "F1.1" -> "85/256"
+            "F1.2" -> "171/256"
+            "F1.4" -> "256/256"
+            "F1.6" -> "341/256"
+            "F1.7" -> "392/256"
+            "F1.8" -> "427/256"
+            "F2.0" -> "512/256"
+            "F2.2" -> "598/256"
+            "F2.4" -> "640/256"
+            "F2.5" -> "683/256"
+            "F2.8" -> "768/256"
+            "F3.2" -> "854/256"
+            "F3.5" -> "938/256"
+            "F4.0" -> "1024/256"
+            "F4.5" -> "1110/256"
+            "F5.0" -> "1195/256"
+            "F5.6" -> "1280/256"
+            "F6.3" -> "1366/256"
+            "F7.1" -> "1451/256"
+            "F8.0" -> "1536/256"
+            "F9.0" -> "1622/256"
+            "F10" -> "1707/256"
+            "F11" -> "1792/256"
+            "F13" -> "1878/256"
+            "F14" -> "1963/256"
+            "F16" -> "2048/256"
+            "F18" -> "2133/256"
+            "F20" -> "2219/256"
+            "F22" -> "2304/256"
+            "F25" -> "2389/256"
+            "F29" -> "2474/256"
+            "F32" -> "2560/256"
+            else -> "1024/256"
+        }
+        sendCamSetSettingCmd("focal", setValue, null)
     }
 
     private fun setExpRev(value: String)
@@ -302,6 +520,17 @@ class CameraStatusListHolder(private val remote: IPanasonicCamera)
             "SCENERY" -> "scenery"
             "PORTRAIT" -> "portrait"
             "CUSTOM" -> "custom"
+            "CUSTOM1" -> "custom1"
+            "CUSTOM2" -> "custom2"
+            "CUSTOM3" -> "custom3"
+            "CUSTOM4" -> "custom4"
+            "CINELIKE_D" -> "cinelike_d"
+            "CINELIKE_V" -> "cinelike_v"
+            "L.MONO.D" -> "l_bw_d"
+            "Like709" -> "Like709"
+            "VLOG-L" -> "vlog-l"
+            "VLOG-G" -> "vlog-g"
+            "VLOG-GAMMA" -> "vlog-gamma"
             else -> return
         }
         sendCamSetSettingCmd("colormode", setValue, null)

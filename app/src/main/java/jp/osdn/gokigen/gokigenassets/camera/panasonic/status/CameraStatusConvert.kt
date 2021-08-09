@@ -285,6 +285,7 @@ class CameraStatusConvert(private val statusHolder: CameraStatusHolder, remote: 
                     16 -> "F1.8"
                     20 -> "F2.0"
                     23 -> "F2.2"
+                    25 -> "F2.4"
                     26 -> "F2.5"
                     30 -> "F2.8"
                     33 -> "F3.2"
@@ -390,7 +391,14 @@ class CameraStatusConvert(private val statusHolder: CameraStatusHolder, remote: 
                         5 -> "SCENERY"
                         6 -> "PORTRAIT"
                         7 -> "CUSTOM"
+                        9 -> "CINELIKE D"
+                        10 -> "CINELIKE V"
                         12 -> "L.MONO"
+                        14 -> "CUSTOM1"
+                        15 -> "CUSTOM2"
+                        16 -> "CUSTOM3"
+                        17 -> "CUSTOM4"
+                        19 -> "L.MONO D"
                         else -> "($value)"
                     }
                 }
@@ -547,7 +555,39 @@ class CameraStatusConvert(private val statusHolder: CameraStatusHolder, remote: 
 
     private fun getTorchMode() : String
     {
-        return ("")
+        // ブラケット状態を示す
+        var bracketStatus = ""
+        try
+        {
+            val wbBracketIndex = 16 * 9 +1
+            val focusBracketIndex = 16 * 11 + 3
+            val focalBracketIndex = 16 * 11 + 4
+            val exposureBracketIndex = 16 * 11 + 5
+            if ((eventData != null)&&((eventData?.size ?: 0) > (exposureBracketIndex)))
+            {
+                val wbBracketValue = (eventData?.get(wbBracketIndex) ?: 0).toInt()
+                val focusBracketValue = (eventData?.get(focusBracketIndex) ?: 0).toInt()
+                val focalBracketValue = (eventData?.get(focalBracketIndex) ?: 0).toInt()
+                val exposureBracketValue = (eventData?.get(exposureBracketIndex) ?: 0).toInt()
+                if (wbBracketValue != 0) {
+                    bracketStatus += "WB BKT "
+                }
+                if (focusBracketValue != 0) {
+                    bracketStatus += "FOCUS BKT "
+                }
+                if (focalBracketValue != 0) {
+                    bracketStatus += "FOCAL BKT "
+                }
+                if (exposureBracketValue != 0) {
+                    bracketStatus += "EXP BKT "
+                }
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+        return (bracketStatus)
     }
 
     private fun getRemainBattery() : String
