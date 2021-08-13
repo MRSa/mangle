@@ -4,10 +4,9 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.datastore.preferences.core.stringPreferencesKey
 import jp.osdn.gokigen.gokigenassets.camera.ICameraPreferenceProvider
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.*
-import jp.osdn.gokigen.gokigenassets.camera.panasonic.ICameraChangeListener
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraChangeListener
 import jp.osdn.gokigen.gokigenassets.camera.panasonic.IPanasonicCamera
 import jp.osdn.gokigen.gokigenassets.camera.panasonic.IPanasonicCameraHolder
 import jp.osdn.gokigen.gokigenassets.camera.panasonic.connection.PanasonicCameraConnection
@@ -290,9 +289,9 @@ class PanasonicCameraControl(private val context: AppCompatActivity, private val
         captureControl = PanasonicCameraCaptureControl(frameDisplayer, indicator)
     }
 
-    override fun startLiveView()
+    override fun startLiveView(isCameraScreen: Boolean)
     {
-        Log.v(TAG, " startLiveView() ")
+        Log.v(TAG, " startLiveView($isCameraScreen) ")
         try
         {
             if (!isStatusWatch)

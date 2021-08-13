@@ -54,9 +54,9 @@ class RicohPentaxCameraControl(private val context: AppCompatActivity, private v
 
     private val zoomControl = RicohGr2CameraZoomLensControl()
 
-    override fun startLiveView()
+    override fun startLiveView(isCameraScreen: Boolean)
     {
-        Log.v(TAG, " startLiveView() ")
+        Log.v(TAG, " startLiveView($isCameraScreen) ")
         try
         {
             if (!isStatusWatch)

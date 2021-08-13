@@ -88,7 +88,7 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
     }
 
     override fun getConnectionMethod(): String { return ("CONSOLE") }
-    override fun startLiveView() { }
+    override fun startLiveView(isCameraScreen : Boolean) { }
     override fun stopLiveView() { }
     override fun connectToCamera() { }
     override fun startCamera(isPreviewView: Boolean, cameraSequence: Int) { }

@@ -2,7 +2,7 @@ package jp.osdn.gokigen.gokigenassets.camera.panasonic.wrapper
 
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICardSlotSelectionReceiver
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICardSlotSelector
-import jp.osdn.gokigen.gokigenassets.camera.panasonic.ICameraChangeListener
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraChangeListener
 
 class PanasonicCardSlotSelector() : ICardSlotSelector, ICameraChangeListener
 {

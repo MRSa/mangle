@@ -64,7 +64,7 @@ class ExamplePictureControl(private val context: AppCompatActivity, private val 
 
     override fun injectDisplay(frameDisplayer: IAutoFocusFrameDisplay, indicator: IIndicatorControl, focusingModeNotify: IFocusingModeNotify) { }
     override fun initialize() {  }
-    override fun startLiveView() {  }
+    override fun startLiveView(isCameraScreen: Boolean) {  }
     override fun stopLiveView() { }
     override fun getConnectionMethod(): String { return ("EXAMPLE") }
     override fun connectToCamera() { }

@@ -33,16 +33,16 @@ class RicohGr2LiveViewControl(private val liveViewListener: CameraLiveViewListen
         this.useCameraScreen = useCameraScreen
     }
 
-    override fun startLiveView()
+    override fun startLiveView(isCameraScreen: Boolean)
     {
-        val isCameraScreen = useGR2command && useCameraScreen
-        Log.v(TAG, "startLiveView() : $isCameraScreen ($useGR2command)")
+        val isCameraScreen0 = useGR2command && useCameraScreen
+        Log.v(TAG, "startLiveView() : $isCameraScreen0 ($useGR2command) $isCameraScreen")
         try
         {
             val thread = Thread {
                 try
                 {
-                    if (isCameraScreen)
+                    if (isCameraScreen0)
                     {
                         start(cameraDisplayUrl)
                     }

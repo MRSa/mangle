@@ -269,9 +269,9 @@ class ThetaCameraControl(private val context: AppCompatActivity, private val vib
         private val TAG = ThetaCameraControl::class.java.simpleName
     }
 
-    override fun startLiveView()
+    override fun startLiveView(isCameraScreen: Boolean)
     {
-        Log.v(TAG, " startLiveView() ")
+        Log.v(TAG, " startLiveView($isCameraScreen) ")
         try
         {
             if (!isStatusWatch)

@@ -1,4 +1,4 @@
-package jp.osdn.gokigen.gokigenassets.camera.panasonic
+package jp.osdn.gokigen.gokigenassets.camera.interfaces
 
 interface ICameraChangeListener
 {

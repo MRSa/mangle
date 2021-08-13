@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnection
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnectionStatus
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
-import jp.osdn.gokigen.gokigenassets.camera.panasonic.ICameraChangeListener
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraChangeListener
 import jp.osdn.gokigen.gokigenassets.camera.panasonic.IPanasonicCamera
 import jp.osdn.gokigen.gokigenassets.camera.panasonic.IPanasonicCameraHolder
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConstantConvert

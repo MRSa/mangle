@@ -16,9 +16,9 @@ class ThetaLiveViewControl(private val liveViewListener: CameraLiveViewListenerI
         this.sessionIdProvider = sessionIdProvider
     }
 
-    override fun startLiveView()
+    override fun startLiveView(isCameraScreen: Boolean)
     {
-        Log.v(TAG, " startLiveView()")
+        Log.v(TAG, " startLiveView($isCameraScreen)")
         try
         {
             val thread = Thread {
