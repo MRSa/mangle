@@ -112,6 +112,7 @@ class SonyCameraControl(private val context: AppCompatActivity, private val vibr
     {
         try
         {
+            var retryCount = 2
             if (::eventObserver.isInitialized)
             {
                 eventObserver.setEventListener(sonyCameraStatus)
@@ -127,7 +128,13 @@ class SonyCameraControl(private val context: AppCompatActivity, private val vibr
                 }
                 try
                 {
+                    Log.v(TAG, " --- WAIT FOR LIVEVIEW ENABLE ---")
                     Thread.sleep(1500)
+                    retryCount--
+                    if (retryCount < 0)
+                    {
+                        break
+                    }
                 }
                 catch (e: Exception)
                 {
@@ -165,7 +172,7 @@ class SonyCameraControl(private val context: AppCompatActivity, private val vibr
 
     override fun connectToCamera()
     {
-        Log.v(TAG, " connectToCamera() : PANASONIC ")
+        Log.v(TAG, " connectToCamera() : SONY ")
         try
         {
             cameraConnection.connect()
@@ -422,6 +429,7 @@ class SonyCameraControl(private val context: AppCompatActivity, private val vibr
 
     private fun getApiCommands(): List<String>
     {
+        Log.v(TAG, " --- getApiCommands() ")
         try
         {
             var apiList = sonyCameraApi.getAvailableApiList()?.getString("result")
