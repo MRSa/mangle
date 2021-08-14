@@ -52,6 +52,7 @@ import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companio
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_NONE
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_PANASONIC
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_PENTAX
+import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_SONY
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_THETA
 
 class MainPreferenceFragment : PreferenceFragmentCompat(), IPreferenceViewUpdater
@@ -169,6 +170,7 @@ class MainPreferenceFragment : PreferenceFragmentCompat(), IPreferenceViewUpdate
                     PREFERENCE_CAMERA_METHOD_THETA -> updatePreferenceItemVisibility(true, sequenceKey, option1Key, option2Key, option3Key, option4Key, option5Key)
                     PREFERENCE_CAMERA_METHOD_PENTAX -> updatePreferenceItemVisibility(true, sequenceKey, option1Key, option2Key, option3Key, option4Key, option5Key)
                     PREFERENCE_CAMERA_METHOD_PANASONIC  -> updatePreferenceItemVisibility(true, sequenceKey, option1Key, option2Key, option3Key, option4Key, option5Key)
+                    PREFERENCE_CAMERA_METHOD_SONY  -> updatePreferenceItemVisibility(true, sequenceKey, option1Key, option2Key, option3Key, option4Key, option5Key)
                     else -> updatePreferenceItemVisibility(false, sequenceKey, option1Key, option2Key, option3Key, option4Key, option5Key)
                 }
             }

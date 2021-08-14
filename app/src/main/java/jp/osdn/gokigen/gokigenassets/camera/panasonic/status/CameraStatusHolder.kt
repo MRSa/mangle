@@ -2,14 +2,12 @@ package jp.osdn.gokigen.gokigenassets.camera.panasonic.status
 
 import android.content.Context
 import android.util.Log
-import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus
-import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICardSlotSelectionReceiver
-import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICardSlotSelector
-import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraChangeListener
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.*
 import jp.osdn.gokigen.gokigenassets.camera.panasonic.IPanasonicCamera
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
 
-class CameraStatusHolder(private val context: Context, private val remote: IPanasonicCamera, private val cardSlotSelector: ICardSlotSelector) : ICardSlotSelectionReceiver, ICameraStatusHolder
+class CameraStatusHolder(private val context: Context, private val remote: IPanasonicCamera, private val cardSlotSelector: ICardSlotSelector) : ICardSlotSelectionReceiver,
+    ICameraStatusHolder
 {
     private var listener: ICameraChangeListener? = null
     private var currentSd = "sd1"

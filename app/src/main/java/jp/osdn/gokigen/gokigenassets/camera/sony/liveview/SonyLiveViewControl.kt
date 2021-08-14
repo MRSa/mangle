@@ -6,15 +6,15 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ILiveViewController
 import org.json.JSONObject
 import jp.osdn.gokigen.gokigenassets.liveview.image.CameraLiveViewListenerImpl
 import jp.osdn.gokigen.gokigenassets.camera.sony.wrapper.ISonyCameraApi
+import jp.osdn.gokigen.gokigenassets.liveview.image.IImageDataReceiver
 import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleLiveViewSlicer
 import org.json.JSONArray
 import java.lang.Exception
 
 
-class SonyLiveViewControl(private val context: Context, private val informationReceiver: IInformationReceiver, private val cameraApi: ISonyCameraApi) : ILiveViewController
+class SonyLiveViewControl(context: Context, private val informationReceiver: IInformationReceiver, private val imageDataReceiver: IImageDataReceiver, private val cameraApi: ISonyCameraApi) : ILiveViewController
 {
-    private val liveViewListener = CameraLiveViewListenerImpl(context, informationReceiver)
     private var whileFetching = false
 
     override fun startLiveView(isCameraScreen: Boolean)
@@ -84,25 +84,22 @@ class SonyLiveViewControl(private val context: Context, private val informationR
         }
     }
 
-    fun changeLiveViewSize(size: String?) { }
-    fun updateDigitalZoom() {}
-    fun updateMagnifyingLiveViewScale(isChangeScale: Boolean) {}
-    fun getMagnifyingLiveViewScale(): Float { return (1.0f) }
-    fun getDigitalZoomScale(): Float { return (1.0f) }
-
     fun start(streamUrl: String?): Boolean
     {
-        if (streamUrl == null) {
+        if (streamUrl == null)
+        {
             Log.e(TAG, "start() streamUrl is null.")
             return false
         }
-        if (whileFetching) {
+        if (whileFetching)
+        {
             Log.v(TAG, "start() already starting.")
         }
         whileFetching = true
 
         // A thread for retrieving liveview data from server.
-        try {
+        try
+        {
             val thread = Thread {
                 Log.d(TAG, "Starting retrieving streaming data from server.")
                 var slicer: SimpleLiveViewSlicer? = null
@@ -129,7 +126,7 @@ class SonyLiveViewControl(private val context: Context, private val informationR
                         val jpegData = payload.getJpegData()
                         if (jpegData != null)
                         {
-                            liveViewListener.onUpdateLiveView(jpegData, null)
+                            imageDataReceiver.onUpdateLiveView(jpegData, null)
                         }
                         continuousNullDataReceived = 0
                     }
@@ -163,7 +160,7 @@ class SonyLiveViewControl(private val context: Context, private val informationR
         {
             e.printStackTrace()
         }
-        return true
+        return (true)
     }
 
     companion object

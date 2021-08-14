@@ -6,7 +6,6 @@ import jp.osdn.gokigen.gokigenassets.camera.sony.wrapper.ISonyCamera
 import jp.osdn.gokigen.gokigenassets.camera.sony.wrapper.ISonyCameraHolder
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnection
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
-import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraChangeListener
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConstantConvert.Companion.ID_STRING_CONNECT_CAMERA_FOUND
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConstantConvert.Companion.ID_STRING_CONNECT_CONNECTED
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConstantConvert.Companion.ID_STRING_CONNECT_START
@@ -15,20 +14,13 @@ import java.lang.Exception
 class SonyCameraConnectSequence(private val context: AppCompatActivity,
                                 private val cameraStatusReceiver: ICameraStatusReceiver,
                                 private val cameraConnection: ICameraConnection?,
-                                private val cameraHolder: ISonyCameraHolder,
-                                private val listener: ICameraChangeListener) : Runnable, SonySsdpClient.ISearchResultCallback
+                                private val cameraHolder: ISonyCameraHolder) : Runnable, SonySsdpClient.ISearchResultCallback
 {
+    private var client = SonySsdpClient(context, this, cameraStatusReceiver, 1)
+
     companion object
     {
         private val TAG = SonyCameraConnectSequence::class.java.simpleName
-    }
-
-    private var client: SonySsdpClient? = null
-
-    init
-    {
-        Log.v(TAG, "SonyCameraConnectSequence")
-        client = SonySsdpClient(context, this, cameraStatusReceiver, 1)
     }
 
     override fun run()
@@ -37,7 +29,7 @@ class SonyCameraConnectSequence(private val context: AppCompatActivity,
         try
         {
             cameraStatusReceiver.onStatusNotify(context.getString(ID_STRING_CONNECT_START))
-            client?.search()
+            client.search()
         }
         catch (e: Exception)
         {
@@ -67,9 +59,8 @@ class SonyCameraConnectSequence(private val context: AppCompatActivity,
                 try
                 {
                     cameraHolder.prepare()
-                    cameraHolder.startPlaybackMode()
-                    //cameraHolder.startRecMode();
-                    //cameraHolder.startEventWatch(listener);
+                    cameraHolder.startRecMode()
+                    cameraHolder.startEventWatch()
                 }
                 catch (e: Exception)
                 {
@@ -103,6 +94,7 @@ class SonyCameraConnectSequence(private val context: AppCompatActivity,
         }
     }
 
+/*
     private fun waitForAMoment(mills: Long)
     {
         if (mills > 0)
@@ -118,6 +110,7 @@ class SonyCameraConnectSequence(private val context: AppCompatActivity,
             }
         }
     }
+*/
 
     override fun onErrorFinished(reason: String?)
     {

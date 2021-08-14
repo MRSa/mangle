@@ -10,7 +10,6 @@ import jp.osdn.gokigen.gokigenassets.liveview.IIndicatorControl
 import jp.osdn.gokigen.gokigenassets.liveview.focusframe.IAutoFocusFrameDisplay.FocusFrameStatus
 import java.lang.Exception
 
-
 class AutoFocusControl(private val frameDisplayer: IAutoFocusFrameDisplay, private val indicator: IIndicatorControl)
 {
     private lateinit var cameraApi: ISonyCameraApi
@@ -38,21 +37,24 @@ class AutoFocusControl(private val frameDisplayer: IAutoFocusFrameDisplay, priva
                     val posY = point.y * 100.0
                     Log.v(TAG, "AF ($posX, $posY)")
                     val resultsObj = cameraApi.setTouchAFPosition(posX, posY)
-                    if (resultsObj == null)
+                    if (resultsObj != null)
                     {
-                        Log.v(TAG, "setTouchAFPosition() reply is null.")
-                    }
-                    if (findTouchAFPositionResult(resultsObj))
-                    {
-                        // AF FOCUSED
-                        Log.v(TAG, "lockAutoFocus() : FOCUSED")
-                        showFocusFrame(preFocusFrameRect, FocusFrameStatus.Focused, 0.0)
+                        if (findTouchAFPositionResult(resultsObj))
+                        {
+                            // AF FOCUSED
+                            Log.v(TAG, "lockAutoFocus() : FOCUSED")
+                            showFocusFrame(preFocusFrameRect, FocusFrameStatus.Focused, 0.0)
+                        }
+                        else
+                        {
+                            // AF ERROR
+                            Log.v(TAG, "lockAutoFocus() : ERROR")
+                            showFocusFrame(preFocusFrameRect, FocusFrameStatus.Failed, 1.0)
+                        }
                     }
                     else
                     {
-                        // AF ERROR
-                        Log.v(TAG, "lockAutoFocus() : ERROR")
-                        showFocusFrame(preFocusFrameRect, FocusFrameStatus.Failed, 1.0)
+                        Log.v(TAG, "setTouchAFPosition() reply is null.")
                     }
                 }
                 catch (e: Exception)
@@ -177,6 +179,31 @@ class AutoFocusControl(private val frameDisplayer: IAutoFocusFrameDisplay, priva
      *
      *
      */
+    private fun findTouchAFPositionResult(replyJson: JSONObject): Boolean
+    {
+        var afResult = false
+        try
+        {
+            val indexOfTouchAFPositionResult = 1
+            val resultsObj = replyJson.getJSONArray("result")
+            if (!resultsObj.isNull(indexOfTouchAFPositionResult))
+            {
+                val touchAFPositionResultObj = resultsObj.getJSONObject(indexOfTouchAFPositionResult)
+                afResult = touchAFPositionResultObj.getBoolean("AFResult")
+                Log.v(TAG, "AF Result : $afResult")
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+        return afResult
+    }
+
+    /**
+     *
+     *
+     */
     private fun getPreFocusFrameRect(point: PointF): RectF
     {
         val imageWidth = frameDisplayer.getContentSizeWidth()
@@ -199,25 +226,5 @@ class AutoFocusControl(private val frameDisplayer: IAutoFocusFrameDisplay, priva
     companion object
     {
         private val TAG = AutoFocusControl::class.java.simpleName
-        private fun findTouchAFPositionResult(replyJson: JSONObject?): Boolean
-        {
-            var afResult = false
-            try
-            {
-                val indexOfTouchAFPositionResult = 1
-                val resultsObj = replyJson!!.getJSONArray("result")
-                if (!resultsObj.isNull(indexOfTouchAFPositionResult))
-                {
-                    val touchAFPositionResultObj = resultsObj.getJSONObject(indexOfTouchAFPositionResult)
-                    afResult = touchAFPositionResultObj.getBoolean("AFResult")
-                    Log.v(TAG, "AF Result : $afResult")
-                }
-            }
-            catch (e: Exception)
-            {
-                e.printStackTrace()
-            }
-            return afResult
-        }
     }
 }

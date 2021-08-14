@@ -6,7 +6,7 @@ import org.json.JSONArray
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
 import java.lang.Exception
 
-private class SonyCameraApi(private val sonyCamera: ISonyCamera) : ISonyCameraApi
+class SonyCameraApi(private val sonyCamera: ISonyCamera) : ISonyCameraApi
 {
     private var requestId = 1
     private val httpClient = SimpleHttpClient()
@@ -518,16 +518,14 @@ private class SonyCameraApi(private val sonyCamera: ISonyCamera) : ISonyCameraAp
         return JSONObject()
     }
 
-    override fun isErrorReply(replyJson: JSONObject?): Boolean {
+    override fun isErrorReply(replyJson: JSONObject?): Boolean
+    {
         return replyJson != null && replyJson.has("error")
     }
 
-    companion object {
+    companion object
+    {
         private val TAG = SonyCameraApi::class.java.simpleName
         private const val FULL_LOG = true
-        fun newInstance(target: ISonyCamera): ISonyCameraApi
-        {
-            return SonyCameraApi(target)
-        }
     }
 }

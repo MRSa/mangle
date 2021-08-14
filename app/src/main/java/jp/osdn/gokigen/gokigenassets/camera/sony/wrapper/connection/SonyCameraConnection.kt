@@ -3,25 +3,20 @@ package jp.osdn.gokigen.gokigenassets.camera.sony.wrapper.connection
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnectionStatus.CameraConnectionStatus
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
-import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraChangeListener
 import jp.osdn.gokigen.gokigenassets.camera.sony.wrapper.ISonyCameraHolder
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
-
 import android.content.*
 import android.provider.Settings
 import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnection
-import jp.osdn.gokigen.gokigenassets.camera.interfaces.ILiveViewController
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConstantConvert
 import java.lang.Exception
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
-
-class SonyCameraConnection(private val context: AppCompatActivity, private val statusReceiver: ICameraStatusReceiver, private val liveViewControl: ILiveViewController, private val cameraHolder: ISonyCameraHolder, private val listener: ICameraChangeListener) : ICameraConnection
+class SonyCameraConnection(private val context: AppCompatActivity, private val statusReceiver: ICameraStatusReceiver, private val cameraHolder: ISonyCameraHolder) : ICameraConnection
 {
     companion object
     {
@@ -212,7 +207,7 @@ class SonyCameraConnection(private val context: AppCompatActivity, private val s
         connectionStatus = CameraConnectionStatus.CONNECTING
         try
         {
-            cameraExecutor.execute(SonyCameraConnectSequence(context, statusReceiver, this, cameraHolder, listener))
+            cameraExecutor.execute(SonyCameraConnectSequence(context, statusReceiver, this, cameraHolder))
         }
         catch (e: Exception)
         {

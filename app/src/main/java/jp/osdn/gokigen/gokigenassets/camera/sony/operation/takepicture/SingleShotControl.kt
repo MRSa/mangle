@@ -6,7 +6,6 @@ import jp.osdn.gokigen.gokigenassets.liveview.IIndicatorControl
 import jp.osdn.gokigen.gokigenassets.liveview.focusframe.IAutoFocusFrameDisplay
 import java.lang.Exception
 
-
 class SingleShotControl(private val frameDisplayer: IAutoFocusFrameDisplay, private val indicator: IIndicatorControl)
 {
     private lateinit var cameraApi: ISonyCameraApi

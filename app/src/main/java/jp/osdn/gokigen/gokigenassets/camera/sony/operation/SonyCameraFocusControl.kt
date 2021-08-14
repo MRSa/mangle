@@ -12,6 +12,7 @@ import java.lang.Exception
 class SonyCameraFocusControl(private val frameDisplay: IAutoFocusFrameDisplay, indicator: IIndicatorControl) : IFocusingControl
 {
     private val afControl = AutoFocusControl(frameDisplay, indicator)
+
     fun setCameraApi(sonyCameraApi: ISonyCameraApi)
     {
         afControl.setCameraApi(sonyCameraApi)

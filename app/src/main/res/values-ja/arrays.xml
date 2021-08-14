@@ -22,12 +22,12 @@
         <item>Ricoh GR / PENTAX</item>
         <item>Ricoh Theta(OSC)</item>
         <item>Panasonic (MFT)</item>
+        <item>Sony</item>
 <!--
         <item>OPC(Olympus Air)</item>
         <item>Olympus(OM-D/PEN)</item>
         <item>KODAK PIXPRO</item>
         <item>Fuji X Series</item>
-        <item>Sony</item>
         <item>Canon</item>
         <item>Nikon</item>
 -->
@@ -41,12 +41,12 @@
         <item>RICOH</item>
         <item>THETA</item>
         <item>PANASONIC</item>
+        <item>SONY</item>
 <!--
         <item>OPC</item>
         <item>OLYMPUS</item>
         <item>PIXPRO</item>
         <item>FUJI_X</item>
-        <item>SONY</item>
         <item>CANON</item>
         <item>NIKON</item>
 -->
