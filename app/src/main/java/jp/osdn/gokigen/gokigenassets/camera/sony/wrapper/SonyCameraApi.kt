@@ -479,14 +479,9 @@ class SonyCameraApi(private val sonyCamera: ISonyCamera) : ISonyCameraApi
         return null
     }
 
-    override fun callGenericSonyApiMethod(
-        service: String,
-        method: String,
-        params: JSONArray,
-        version: String
-    ): JSONObject
+    override fun callGenericSonyApiMethod(service: String, method: String, params: JSONArray, version: String, timeoutMs: Int): JSONObject
     {
-        return communicateJSON(service, method, params, version, -1)
+        return communicateJSON(service, method, params, version, timeoutMs)
     }
 
     override fun getDdUrl(): String
@@ -526,6 +521,6 @@ class SonyCameraApi(private val sonyCamera: ISonyCamera) : ISonyCameraApi
     companion object
     {
         private val TAG = SonyCameraApi::class.java.simpleName
-        private const val FULL_LOG = true
+        private const val FULL_LOG = false
     }
 }

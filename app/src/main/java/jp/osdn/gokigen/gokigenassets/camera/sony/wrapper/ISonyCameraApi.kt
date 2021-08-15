@@ -3,7 +3,6 @@ package jp.osdn.gokigen.gokigenassets.camera.sony.wrapper
 import org.json.JSONArray
 import org.json.JSONObject
 
-
 interface ISonyCameraApi
 {
     fun getAvailableApiList(): JSONObject?
@@ -52,7 +51,8 @@ interface ISonyCameraApi
         service: String,
         method: String,
         params: JSONArray,
-        version: String
+        version: String,
+        timeoutMs: Int = -1
     ): JSONObject?
 
     fun getDdUrl(): String?

@@ -43,7 +43,10 @@ class SonyCameraEventObserver(context: Context, private val remoteApi: ISonyCame
                     {
                         val replyJson = remoteApi.getEvent(eventVersion, longPolling) ?: JSONObject()
                         val errorCode = findErrorCode(replyJson)
-                        Log.d(TAG, "getEvent errorCode: $errorCode")
+                        if (errorCode != 0)
+                        {
+                            Log.d(TAG, "getEvent errorCode: $errorCode")
+                        }
                         when (errorCode)
                         {
                             0 -> { }

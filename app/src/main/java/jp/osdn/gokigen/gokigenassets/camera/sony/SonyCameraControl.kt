@@ -69,6 +69,7 @@ class SonyCameraControl(private val context: AppCompatActivity, private val vibr
                 eventObserver = SonyCameraEventObserver.newInstance(context, sonyCameraApi, sonyCameraStatus)
                 liveViewControl = SonyLiveViewControl(context, informationNotify, liveViewListener, sonyCameraApi)
                 zoomControl.setCameraApi(sonyCameraApi)
+                sonyCameraStatus.setCameraApi(sonyCameraApi)
                 if (::focusControl.isInitialized)
                 {
                     focusControl.setCameraApi(sonyCameraApi)

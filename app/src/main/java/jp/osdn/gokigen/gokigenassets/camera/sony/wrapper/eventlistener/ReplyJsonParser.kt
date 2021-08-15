@@ -9,7 +9,6 @@ import java.lang.Exception
 import java.util.*
 import kotlin.collections.ArrayList
 
-
 class ReplyJsonParser(private val uiHandler: Handler) : ICameraStatusHolder
 {
     private var cameraStatus = ""
