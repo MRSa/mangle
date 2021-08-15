@@ -16,7 +16,7 @@ class SonyCameraEventObserver(context: Context, private val remoteApi: ISonyCame
     private val replyParser = ReplyJsonParser(Handler(context.mainLooper))
     private var isEventMonitoring = false
     private var isActive = false
-    private var eventVersion = "1.1" // 初期値を "1.0" から "1.1" に更新
+    private var eventVersion = "1.3" // 初期値を "1.3" に更新
 
     override fun start(): Boolean
     {
@@ -50,13 +50,29 @@ class SonyCameraEventObserver(context: Context, private val remoteApi: ISonyCame
                         when (errorCode)
                         {
                             0 -> { }
-                            1, 12 -> {
-                                if (eventVersion == "1.1")
+                            1, 12, 14, 15 -> {
+                                if (eventVersion == "1.3")
+                                {
+                                    // "1.3" でエラーが発生した時には "1.2" にダウングレードして再実行
+                                    eventVersion = "1.2"
+                                    Log.v(TAG, " === NOT SUPPORT EVENT v1.3, TRY v1.2")
+                                    continue@MONITORLOOP
+                                }
+                                else if (eventVersion == "1.2")
+                                {
+                                    // "1.2" でエラーが発生した時には "1.1" にダウングレードして再実行
+                                    eventVersion = "1.1"
+                                    Log.v(TAG, " === NOT SUPPORT EVENT v1.2, TRY v1.1")
+                                    continue@MONITORLOOP
+                                }
+                                else if (eventVersion == "1.1")
                                 {
                                     // "1.1" でエラーが発生した時には "1.0" にダウングレードして再実行
                                     eventVersion = "1.0"
+                                    Log.v(TAG, " === NOT SUPPORT EVENT v1.1, TRY v1.0")
                                     continue@MONITORLOOP
                                 }
+                                Log.v(TAG, " === NOT SUPPORT EVENT v1.0... ABORTED.")
                                 replyParser.catchResponseError()
                                 break@MONITORLOOP  // "1.0" でもエラーが発生した場合は、モニタ終了
                             }

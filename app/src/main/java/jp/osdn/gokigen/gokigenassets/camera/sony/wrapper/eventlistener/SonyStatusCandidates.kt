@@ -1,5 +1,6 @@
 package jp.osdn.gokigen.gokigenassets.camera.sony.wrapper.eventlistener
 
+import android.util.Log
 import jp.osdn.gokigen.gokigenassets.camera.sony.wrapper.ISonyCameraApi
 import org.json.JSONArray
 
@@ -180,7 +181,6 @@ class SonyStatusCandidates()
     fun getAvailableWhiteBalance(): List<String?>
     {
         val whiteBalanceList : ArrayList<String> = ArrayList()
-/*
         try
         {
             if (::cameraApi.isInitialized)
@@ -192,7 +192,7 @@ class SonyStatusCandidates()
                     val availableItemArray = resultsObj.getJSONArray(1)
                     for (index in 0 until availableItemArray.length())
                     {
-                        val itemString = availableItemArray.getString(index)
+                        val itemString = availableItemArray.getJSONObject(index).getString("whiteBalanceMode")
                         whiteBalanceList.add(itemString)
                     }
                 }
@@ -202,7 +202,6 @@ class SonyStatusCandidates()
         {
             e.printStackTrace()
         }
-*/
         return (whiteBalanceList)
     }
 
@@ -226,17 +225,167 @@ class SonyStatusCandidates()
         return (ArrayList())
     }
 
-    fun setTakeMode(value: String) { }
-    fun setShutterSpeed(value: String) { }
-    fun setAperture(value: String) { }
-    fun setExpRev(value: String) { }
-    fun setCaptureMode(value: String) { }
-    fun setIsoSensitivity(value: String) { }
-    fun setWhiteBalance(value: String) { }
-    fun setMeteringMode(value: String) { }
-    fun setPictureEffect(value: String) { }
-    fun setRemainBattery(value: String) { }
-    fun setTorchMode(value: String) { }
+    fun setTakeMode(value: String)
+    {
+        try
+        {
+            val replyJson = cameraApi.callGenericSonyApiMethod("camera", "setExposureMode", JSONArray().put(value), "1.0")
+            if (cameraApi.isErrorReply(replyJson))
+            {
+                Log.v(TAG, " REPLY ERROR(exposureMode) : $replyJson")
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    fun setShutterSpeed(value: String)
+    {
+        try
+        {
+            val replyJson = cameraApi.callGenericSonyApiMethod("camera", "setShutterSpeed", JSONArray().put(value), "1.0")
+            if (cameraApi.isErrorReply(replyJson))
+            {
+                Log.v(TAG, " REPLY ERROR(shutterSpeed) : $replyJson")
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    fun setAperture(value: String)
+    {
+        try
+        {
+            val replyJson = cameraApi.callGenericSonyApiMethod("camera", "setFNumber", JSONArray().put(value), "1.0")
+            if (cameraApi.isErrorReply(replyJson))
+            {
+                Log.v(TAG, " REPLY ERROR(aperture) : $replyJson")
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    fun setExpRev(value: String)
+    {
+        try
+        {
+/*
+            val replyJson = cameraApi.callGenericSonyApiMethod("camera", "setxxx", JSONArray().put(value), "1.0")
+            if (cameraApi.isErrorReply(replyJson))
+            {
+                Log.v(TAG, " REPLY ERROR(aperture) : $replyJson")
+            }
+*/
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    fun setCaptureMode(value: String)
+    {
+        try
+        {
+            val replyJson = cameraApi.callGenericSonyApiMethod("camera", "setShootMode", JSONArray().put(value), "1.0")
+            if (cameraApi.isErrorReply(replyJson))
+            {
+                Log.v(TAG, " REPLY ERROR(shootMode) : $replyJson")
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    fun setIsoSensitivity(value: String)
+    {
+        try
+        {
+            val replyJson = cameraApi.callGenericSonyApiMethod("camera", "setIsoSpeedRate", JSONArray().put(value), "1.0")
+            if (cameraApi.isErrorReply(replyJson))
+            {
+                Log.v(TAG, " REPLY ERROR(ISO Sensitivity) : $replyJson")
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    fun setWhiteBalance(value: String)
+    {
+        try
+        {
+            val replyJson = cameraApi.callGenericSonyApiMethod("camera", "setWhiteBalance", JSONArray().put(value).put(false).put(2500), "1.0")
+            if (cameraApi.isErrorReply(replyJson))
+            {
+                Log.v(TAG, " REPLY ERROR(White Balance) : $replyJson")
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    fun setMeteringMode(value: String)
+    {
+        try
+        {
+            Log.v(TAG, "setMeteringMode($value)")
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    fun setPictureEffect(value: String)
+    {
+        try
+        {
+            Log.v(TAG, "setPictureEffect($value)")
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    fun setRemainBattery(value: String)
+    {
+        try
+        {
+            Log.v(TAG, "setTorchMode($value)")
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    fun setTorchMode(value: String)
+    {
+        try
+        {
+            Log.v(TAG, "setTorchMode($value)")
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
 
     companion object
     {

@@ -21,6 +21,10 @@ class SonyStatus(jsonObject : JSONObject) : ICameraStatus, ICameraChangeListener
     private var currentShutterSpeed = ""
     private var currentWhiteBalanceMode = ""
     private var currentCameraStatus = ""
+    private var currentPictureEffect = ""
+    private var currentMeteringMode = ""
+    private var currentRemainBattery = ""
+    private var currentRemainBatteryPercent = 0.0
 
     fun setCameraApi(sonyCameraApi: ISonyCameraApi)
     {
@@ -98,7 +102,23 @@ class SonyStatus(jsonObject : JSONObject) : ICameraStatus, ICameraChangeListener
 
     private fun getRemainBatteryColor() : Int
     {
-        return (Color.WHITE)
+        var color = Color.WHITE
+        try
+        {
+            if (currentRemainBatteryPercent < 30)
+            {
+                color = Color.RED
+            }
+            else if (currentRemainBatteryPercent < 50)
+            {
+                color = Color.YELLOW
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+        return (color)
     }
 
     private fun getTakeMode() : String
@@ -113,6 +133,10 @@ class SonyStatus(jsonObject : JSONObject) : ICameraStatus, ICameraChangeListener
 
     private fun getAperture() : String
     {
+        if (currentFNumber.length > 1)
+        {
+            return ("F$currentFNumber")
+        }
         return (currentFNumber)
     }
 
@@ -128,8 +152,13 @@ class SonyStatus(jsonObject : JSONObject) : ICameraStatus, ICameraChangeListener
 
     private fun getIsoSensitivity() : String
     {
+        if (currentIsoSpeedRate.length > 1)
+        {
+            return ("ISO:$currentIsoSpeedRate")
+        }
         return (currentIsoSpeedRate)
     }
+
     private fun getWhiteBalance() : String
     {
         return (currentWhiteBalanceMode)
@@ -137,17 +166,17 @@ class SonyStatus(jsonObject : JSONObject) : ICameraStatus, ICameraChangeListener
 
     private fun getMeteringMode() : String
     {
-        return ""
+        return (currentMeteringMode)
     }
 
     private fun getPictureEffect() : String
     {
-        return ""
+        return (currentPictureEffect)
     }
 
     private fun getRemainBattery() : String
     {
-        return ""
+        return (currentRemainBattery)
     }
 
     private fun getTorchMode() : String
@@ -155,35 +184,43 @@ class SonyStatus(jsonObject : JSONObject) : ICameraStatus, ICameraChangeListener
         return (currentCameraStatus)
     }
 
-    override fun onApiListModified(apis: List<String?>?) {
+    override fun onApiListModified(apis: List<String?>?)
+    {
         //TODO("Not yet implemented")
     }
 
-    override fun onCameraStatusChanged(status: String?) {
+    override fun onCameraStatusChanged(status: String?)
+    {
         //TODO("Not yet implemented")
     }
 
-    override fun onLiveviewStatusChanged(status: Boolean) {
+    override fun onLiveviewStatusChanged(status: Boolean)
+    {
         //TODO("Not yet implemented")
     }
 
-    override fun onShootModeChanged(shootMode: String?) {
+    override fun onShootModeChanged(shootMode: String?)
+    {
         //TODO("Not yet implemented")
     }
 
-    override fun onZoomPositionChanged(zoomPosition: Int) {
+    override fun onZoomPositionChanged(zoomPosition: Int)
+    {
         //TODO("Not yet implemented")
     }
 
-    override fun onStorageIdChanged(storageId: String?) {
+    override fun onStorageIdChanged(storageId: String?)
+    {
         //TODO("Not yet implemented")
     }
 
-    override fun onFocusStatusChanged(focusStatus: String?) {
+    override fun onFocusStatusChanged(focusStatus: String?)
+    {
         //TODO("Not yet implemented")
     }
 
-    override fun onResponseError() {
+    override fun onResponseError()
+    {
         //TODO("Not yet implemented")
     }
 
@@ -203,6 +240,50 @@ class SonyStatus(jsonObject : JSONObject) : ICameraStatus, ICameraChangeListener
         currentIsoSpeedRate = parseEventStatus(currentIsoSpeedRate, jsonObject, "isoSpeedRate", "currentIsoSpeedRate", 29)
         currentShutterSpeed = parseEventStatus(currentShutterSpeed, jsonObject, "shutterSpeed", "currentShutterSpeed", 32)
         currentWhiteBalanceMode = parseEventStatus(currentWhiteBalanceMode, jsonObject, "whiteBalance", "currentWhiteBalanceMode", 33)
+        currentRemainBattery = parseBatteryInfo(currentRemainBattery, jsonObject)
+    }
+
+    private fun parseBatteryInfo(currentStatus: String, replyJson: JSONObject) : String
+    {
+        val indexOfCameraStatus = 56
+        var eventStatus = currentStatus
+        try
+        {
+            val resultsObj = replyJson.getJSONArray("result")
+            if ((resultsObj.length() > indexOfCameraStatus)&&(!resultsObj.isNull(indexOfCameraStatus)))
+            {
+                val cameraStatusObj = resultsObj.getJSONObject(indexOfCameraStatus)
+                val batteryInfoObj = cameraStatusObj.getJSONArray("batteryInfo").getJSONObject(0)
+                val type = cameraStatusObj.getString("type")
+                if ("batteryInfo" == type)
+                {
+                    Log.v(TAG, "  =====> $batteryInfoObj")
+                    //eventStatus = cameraStatusObj.getString(key)
+
+                    val numerator = batteryInfoObj.getInt("levelNumer")
+                    val denominator =  batteryInfoObj.getInt("levelDenom")
+                    if ((numerator <= 0)||(denominator <= 0))
+                    {
+                        eventStatus = "Batt.: ???%"
+                        currentRemainBatteryPercent = 0.0
+                    }
+                    else
+                    {
+                        currentRemainBatteryPercent = denominator.toDouble() / numerator.toDouble()  * 100.0
+                        eventStatus = "Batt.: " + String.format("%2.0f", currentRemainBatteryPercent) + "%"
+                    }
+                }
+                else
+                {
+                    Log.w(TAG, "Event reply: Illegal Index ($indexOfCameraStatus:) $type : $cameraStatusObj")
+                }
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+        return (eventStatus)
     }
 
     private fun parseEventStatus(currentStatus: String, replyJson: JSONObject, item: String, key: String, indexOfCameraStatus: Int): String
@@ -211,7 +292,7 @@ class SonyStatus(jsonObject : JSONObject) : ICameraStatus, ICameraChangeListener
         try
         {
             val resultsObj = replyJson.getJSONArray("result")
-            if (!resultsObj.isNull(indexOfCameraStatus))
+            if ((resultsObj.length() > indexOfCameraStatus)&&(!resultsObj.isNull(indexOfCameraStatus)))
             {
                 val cameraStatusObj = resultsObj.getJSONObject(indexOfCameraStatus)
                 val type = cameraStatusObj.getString("type")
