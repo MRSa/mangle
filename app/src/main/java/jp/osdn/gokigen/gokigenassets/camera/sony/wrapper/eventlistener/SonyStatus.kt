@@ -105,11 +105,11 @@ class SonyStatus(jsonObject : JSONObject) : ICameraStatus, ICameraChangeListener
         var color = Color.WHITE
         try
         {
-            if (currentRemainBatteryPercent < 30)
+            if (currentRemainBatteryPercent <= 30.1)
             {
                 color = Color.RED
             }
-            else if (currentRemainBatteryPercent < 50)
+            else if (currentRemainBatteryPercent <= 50.1)
             {
                 color = Color.YELLOW
             }
@@ -231,7 +231,7 @@ class SonyStatus(jsonObject : JSONObject) : ICameraStatus, ICameraChangeListener
         currentCameraStatus = parseEventStatus(currentCameraStatus, jsonObject, "cameraStatus", "cameraStatus", 1)
         currentExposureMode = parseEventStatus(currentExposureMode, jsonObject, "exposureMode", "currentExposureMode", 18)
         currentShootMode = parseEventStatus(currentShootMode, jsonObject, "shootMode", "currentShootMode",21)
-        currentExposureCompensation = parseEventStatus(currentExposureCompensation, jsonObject, "exposureCompensation", "currentExposureCompensation",25)
+        currentExposureCompensation = parseExposureCompensation(currentExposureCompensation, jsonObject)
 
         currentFlashMode = parseEventStatus(currentFlashMode, jsonObject, "flashMode", "currentFlashMode",26)
         currentFNumber = parseEventStatus(currentFNumber, jsonObject, "fNumber", "currentFNumber",27)
@@ -241,6 +241,37 @@ class SonyStatus(jsonObject : JSONObject) : ICameraStatus, ICameraChangeListener
         currentShutterSpeed = parseEventStatus(currentShutterSpeed, jsonObject, "shutterSpeed", "currentShutterSpeed", 32)
         currentWhiteBalanceMode = parseEventStatus(currentWhiteBalanceMode, jsonObject, "whiteBalance", "currentWhiteBalanceMode", 33)
         currentRemainBattery = parseBatteryInfo(currentRemainBattery, jsonObject)
+    }
+
+    private fun parseExposureCompensation(currentStatus: String, replyJson: JSONObject) : String
+    {
+        val indexOfCameraStatus = 25
+        var eventStatus = currentStatus
+        try
+        {
+            val resultsObj = replyJson.getJSONArray("result")
+            if ((resultsObj.length() > indexOfCameraStatus)&&(!resultsObj.isNull(indexOfCameraStatus)))
+            {
+                val cameraStatusObj = resultsObj.getJSONObject(indexOfCameraStatus)
+                val type = cameraStatusObj.getString("type")
+                if ("exposureCompensation" == type)
+                {
+                    val currentIndex = cameraStatusObj.getInt("currentExposureCompensation")
+                    val currentStep = cameraStatusObj.getInt("stepIndexOfExposureCompensation")
+                    val showValue = currentIndex.toDouble() / if (currentStep == 2) { 2.0 } else { 3.0 }
+                    eventStatus = String.format("%+1.1f", showValue)
+                }
+                else
+                {
+                    Log.w(TAG, "Event reply: Illegal Index ($indexOfCameraStatus) $type : $cameraStatusObj")
+                }
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+        return (eventStatus)
     }
 
     private fun parseBatteryInfo(currentStatus: String, replyJson: JSONObject) : String
@@ -257,9 +288,8 @@ class SonyStatus(jsonObject : JSONObject) : ICameraStatus, ICameraChangeListener
                 val type = cameraStatusObj.getString("type")
                 if ("batteryInfo" == type)
                 {
-                    Log.v(TAG, "  =====> $batteryInfoObj")
+                    //Log.v(TAG, "  =====> $batteryInfoObj")
                     //eventStatus = cameraStatusObj.getString(key)
-
                     val numerator = batteryInfoObj.getInt("levelNumer")
                     val denominator =  batteryInfoObj.getInt("levelDenom")
                     if ((numerator <= 0)||(denominator <= 0))

@@ -7,6 +7,12 @@ import org.json.JSONArray
 class SonyStatusCandidates()
 {
     private lateinit var cameraApi: ISonyCameraApi
+
+    private var expRevCurrentIndex: Int = 0
+    private var expRevUpperIndex: Int = 0
+    private var expRevLowerIndex: Int = 0
+    private var expRevStepIndex: Int = 0
+
     fun setCameraApi(sonyCameraApi: ISonyCameraApi)
     {
         cameraApi = sonyCameraApi
@@ -97,8 +103,7 @@ class SonyStatusCandidates()
 
     fun getAvailableExpRev(): List<String?>
     {
-/*
-        val apertureList : ArrayList<String> = ArrayList()
+        val availableExpRevList : ArrayList<String> = ArrayList()
         try
         {
             if (::cameraApi.isInitialized)
@@ -107,11 +112,15 @@ class SonyStatusCandidates()
                 val resultsObj = replyJson?.getJSONArray("result")
                 if (resultsObj?.isNull(1) == false)
                 {
-                    val availableItemArray = resultsObj.getJSONArray(1)
-                    for (index in 0 until availableItemArray.length())
+                    Log.v(TAG, "  getAvailableExposureCompensation: $resultsObj")
+                    expRevCurrentIndex = resultsObj.getInt(0)
+                    expRevUpperIndex = resultsObj.getInt(1)
+                    expRevLowerIndex = resultsObj.getInt(2)
+                    expRevStepIndex = resultsObj.getInt(3)  // 1: 1/3EV, 2: 1/2EV
+                    for (index in expRevLowerIndex..expRevUpperIndex)
                     {
-                        val itemString = availableItemArray.getString(index)
-                        apertureList.add(itemString)
+                        val showValue = index.toDouble() / if (expRevStepIndex == 2) { 2.0 } else { 3.0 }
+                        availableExpRevList.add(String.format("%+1.1f", showValue))
                     }
                 }
             }
@@ -120,8 +129,7 @@ class SonyStatusCandidates()
         {
             e.printStackTrace()
         }
-*/
-        return (ArrayList())
+        return (availableExpRevList)
     }
 
     fun getAvailableCaptureMode(): List<String?>
@@ -277,13 +285,31 @@ class SonyStatusCandidates()
     {
         try
         {
-/*
-            val replyJson = cameraApi.callGenericSonyApiMethod("camera", "setxxx", JSONArray().put(value), "1.0")
-            if (cameraApi.isErrorReply(replyJson))
+            val doubleValue = value.toDoubleOrNull()
+            val step : Double = if (expRevStepIndex == 2) { 2.0 } else { 3.0 }
+            if (doubleValue == null)
             {
-                Log.v(TAG, " REPLY ERROR(aperture) : $replyJson")
+                Log.v(TAG," ----- setExposureCompensation : cannot convert to double : $value" )
+                return
             }
-*/
+
+            Log.v(TAG, " ----- setExpRev($value) : $doubleValue ($expRevLowerIndex..$expRevUpperIndex) step:$step")
+
+            for (index in expRevLowerIndex..expRevUpperIndex)
+            {
+                val checkValue = index.toDouble() / step
+                if ((doubleValue - checkValue) <= 0.0f)
+                {
+                    Log.v(TAG, " ----- SET exposureCompensation : $doubleValue (index:$index)")
+                    val replyJson = cameraApi.callGenericSonyApiMethod("camera", "setExposureCompensation", JSONArray().put(index), "1.0")
+                    if (cameraApi.isErrorReply(replyJson))
+                    {
+                        Log.v(TAG, " REPLY ERROR(exposureCompensation) : $replyJson")
+                    }
+                    return
+                }
+            }
+            Log.v(TAG, " --- exposureCompensation IS NOT UPDATED ---")
         }
         catch (e: Exception)
         {
@@ -367,7 +393,7 @@ class SonyStatusCandidates()
     {
         try
         {
-            Log.v(TAG, "setTorchMode($value)")
+            Log.v(TAG, "setRemainBattery($value)")
         }
         catch (e: Exception)
         {
