@@ -3,6 +3,7 @@ package jp.osdn.gokigen.gokigenassets.camera.sony.wrapper.eventlistener
 import android.util.Log
 import jp.osdn.gokigen.gokigenassets.camera.sony.wrapper.ISonyCameraApi
 import org.json.JSONArray
+import kotlin.math.abs
 
 class SonyStatusCandidates()
 {
@@ -298,7 +299,7 @@ class SonyStatusCandidates()
             for (index in expRevLowerIndex..expRevUpperIndex)
             {
                 val checkValue = index.toDouble() / step
-                if ((doubleValue - checkValue) <= 0.0f)
+                if (abs(doubleValue - checkValue) <= 0.1f)
                 {
                     Log.v(TAG, " ----- SET exposureCompensation : $doubleValue (index:$index)")
                     val replyJson = cameraApi.callGenericSonyApiMethod("camera", "setExposureCompensation", JSONArray().put(index), "1.0")
