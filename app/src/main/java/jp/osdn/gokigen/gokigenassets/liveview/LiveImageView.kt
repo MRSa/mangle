@@ -300,6 +300,11 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
 
     override fun drawFocusFrame(canvas: Canvas, imageWidth : Float, imageHeight : Float)
     {
+        if (!showingFocusFrame)
+        {
+            // フォーカスマークは表示しないので、描画しない
+            return
+        }
 
         val focusRectOnImage: RectF = convertRectOnViewfinderIntoLiveImage(focusFrameRect, imageWidth, imageHeight, imageRotationDegrees)
         val focusRectOnView: RectF = convertRectFromImageArea(focusRectOnImage)

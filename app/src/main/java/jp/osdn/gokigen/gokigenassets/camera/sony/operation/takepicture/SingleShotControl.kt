@@ -30,7 +30,16 @@ class SingleShotControl(private val frameDisplayer: IAutoFocusFrameDisplay, priv
                     val resultsObj = cameraApi.actTakePicture()
                     if (resultsObj == null)
                     {
-                        Log.v(TAG, "setTouchAFPosition() reply is null.")
+                        Log.v(TAG, "actTakePicture() reply is null.")
+                    }
+                    else
+                    {
+                        // 撮影後、タッチAFをキャンセルする
+                        val resultsObj2 = cameraApi.cancelTouchAFPosition()
+                        if (resultsObj2 == null)
+                        {
+                            Log.v(TAG, "cancelTouchAFPosition() reply is null.")
+                        }
                     }
                 }
                 catch (e: Exception)

@@ -299,7 +299,8 @@ class SonyStatus(jsonObject : JSONObject) : ICameraStatus, ICameraChangeListener
                     }
                     else
                     {
-                        currentRemainBatteryPercent = denominator.toDouble() / numerator.toDouble()  * 100.0
+                        //currentRemainBatteryPercent = denominator.toDouble() / numerator.toDouble()  * 100.0
+                        currentRemainBatteryPercent = numerator.toDouble() / denominator.toDouble()  * 100.0
                         eventStatus = "Batt.: " + String.format("%2.0f", currentRemainBatteryPercent) + "%"
                     }
                 }
