@@ -39,6 +39,7 @@ class AutoFocusControl(private val frameDisplayer: IAutoFocusFrameDisplay, priva
                     val resultsObj = cameraApi.setTouchAFPosition(posX, posY)
                     if (resultsObj != null)
                     {
+                        //Log.v(TAG, " lockAutoFocus() LEN:${resultsObj.length()}  $resultsObj")
                         if (findTouchAFPositionResult(resultsObj))
                         {
                             // AF FOCUSED
@@ -195,7 +196,11 @@ class AutoFocusControl(private val frameDisplayer: IAutoFocusFrameDisplay, priva
         }
         catch (e: Exception)
         {
-            e.printStackTrace()
+            //e.printStackTrace()
+
+            // resultがない... halfPressShutterで対応する
+            Log.v(TAG, " Touch-AF is fail. try halfPressShutter action.")
+            halfPressShutter(true)
         }
         return afResult
     }
