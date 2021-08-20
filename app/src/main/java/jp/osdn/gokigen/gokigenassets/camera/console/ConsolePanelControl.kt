@@ -21,6 +21,7 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.B
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.CAPTURE_MODE
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.EFFECT
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.EXPREV
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.FOCUS_STATUS
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.ISO_SENSITIVITY
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.SHUTTER_SPEED
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.TAKE_MODE
@@ -325,7 +326,7 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
                 drawWhiteBalance(canvas, currentCameraStatus)
                 drawMeteringMode(canvas, currentCameraStatus)
                 drawPictureEffect(canvas, currentCameraStatus)
-
+                drawFocusStatus(canvas, currentCameraStatus)
                 drawTorchMode(canvas, currentCameraStatus)
                 drawBatteryLevel(canvas, currentCameraStatus)
             }
@@ -522,6 +523,22 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
             e.printStackTrace()
         }
         return (method)
+    }
+
+    private fun drawFocusStatus(canvas: Canvas, currentCameraStatus : ICameraStatus)
+    {
+        try
+        {
+            //  area : bottom-left UP
+            val rect = RectF(canvasWidth * 0.0f, canvasHeight * 6.0f, canvasWidth * 1.0f, canvasHeight * 7.0f)
+            val msg = currentCameraStatus.getStatus(FOCUS_STATUS)
+            val color = currentCameraStatus.getStatusColor(FOCUS_STATUS)
+            drawString(canvas, rect, msg, color)
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
     }
 
     private fun drawTorchMode(canvas: Canvas, currentCameraStatus : ICameraStatus)

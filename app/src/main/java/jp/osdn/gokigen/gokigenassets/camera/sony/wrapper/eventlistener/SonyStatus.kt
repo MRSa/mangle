@@ -3,6 +3,7 @@ package jp.osdn.gokigen.gokigenassets.camera.sony.wrapper.eventlistener
 import android.graphics.Color
 import android.util.Log
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.*
+import jp.osdn.gokigen.gokigenassets.camera.sony.operation.SonyCameraFocusControl
 import jp.osdn.gokigen.gokigenassets.camera.sony.wrapper.ISonyCameraApi
 import org.json.JSONObject
 import java.lang.Exception
@@ -10,6 +11,8 @@ import java.lang.Exception
 class SonyStatus(jsonObject : JSONObject) : ICameraStatus, ICameraChangeListener, ISonyStatusReceiver
 {
     private val statusCandidates = SonyStatusCandidates()
+
+    private lateinit var focusControl: IFocusingControl
 
     private var currentExposureMode = ""
     private var currentShootMode = ""
@@ -25,10 +28,17 @@ class SonyStatus(jsonObject : JSONObject) : ICameraStatus, ICameraChangeListener
     private var currentMeteringMode = ""
     private var currentRemainBattery = ""
     private var currentRemainBatteryPercent = 0.0
+    private var currentFocusStatus = ""
+
 
     fun setCameraApi(sonyCameraApi: ISonyCameraApi)
     {
         statusCandidates.setCameraApi(sonyCameraApi)
+    }
+
+    fun setFocusControl(focusControl : IFocusingControl)
+    {
+        this.focusControl = focusControl
     }
 
     private var jsonObject : JSONObject
@@ -51,6 +61,7 @@ class SonyStatus(jsonObject : JSONObject) : ICameraStatus, ICameraChangeListener
             ICameraStatus.EFFECT -> statusCandidates.setPictureEffect(value)
             ICameraStatus.BATTERY -> statusCandidates.setRemainBattery(value)
             ICameraStatus.TORCH_MODE -> statusCandidates.setTorchMode(value)
+             ICameraStatus.FOCUS_STATUS -> setFocusStatus(value)
             else -> { return }
         }
     }
@@ -69,6 +80,7 @@ class SonyStatus(jsonObject : JSONObject) : ICameraStatus, ICameraChangeListener
             ICameraStatus.EFFECT -> statusCandidates.getAvailablePictureEffect()
             ICameraStatus.BATTERY -> statusCandidates.getAvailableRemainBattery()
             ICameraStatus.TORCH_MODE -> statusCandidates.getAvailableTorchMode()
+            ICameraStatus.FOCUS_STATUS -> setAvailableFocusStatus()
             else -> { ArrayList() }
         })
         return (statusList)
@@ -88,6 +100,7 @@ class SonyStatus(jsonObject : JSONObject) : ICameraStatus, ICameraChangeListener
             ICameraStatus.EFFECT -> getPictureEffect()
             ICameraStatus.BATTERY -> getRemainBattery()
             ICameraStatus.TORCH_MODE -> getTorchMode()
+            ICameraStatus.FOCUS_STATUS -> getFocusStatus()
             else -> ""
         })
     }
@@ -96,8 +109,45 @@ class SonyStatus(jsonObject : JSONObject) : ICameraStatus, ICameraChangeListener
     {
         return (when (key) {
             ICameraStatus.BATTERY -> getRemainBatteryColor()
+            ICameraStatus.FOCUS_STATUS -> getFocusStatusColor()
             else -> Color.WHITE
         })
+    }
+
+    private fun setAvailableFocusStatus() : List<String?>
+    {
+/*
+        if (currentFocusStatus == "Not Focusing")
+        {
+            return (listOf("Do Focus", "Cancel Focus"))
+        }
+        return (listOf("Cancel Focus"))
+*/
+        return (listOf("Do Focus", "Cancel Focus"))
+    }
+
+    private fun setFocusStatus(value: String)
+    {
+        try
+        {
+            if (!::focusControl.isInitialized)
+            {
+                Log.v(TAG, " FOCUS CONTROL IS NOT INITIALIZED.")
+                return
+            }
+            when (value)
+            {
+                "Do Focus" -> focusControl.halfPressShutter(true)
+                else -> {
+                    focusControl.unlockAutoFocus()
+                    focusControl.halfPressShutter(false)
+                }
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
     }
 
     private fun getRemainBatteryColor() : Int
@@ -115,6 +165,27 @@ class SonyStatus(jsonObject : JSONObject) : ICameraStatus, ICameraChangeListener
             }
         }
         catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+        return (color)
+    }
+
+    private fun getFocusStatusColor() : Int
+    {
+        var color = Color.WHITE
+        try
+        {
+            color = when (currentFocusStatus)
+            {
+                "Not Focusing" -> Color.WHITE
+                "Focusing" -> Color.LTGRAY
+                "Focused" -> Color.GREEN
+                "Failed" -> Color.RED
+                else -> Color.WHITE
+            }
+        }
+        catch (e: Exception)
         {
             e.printStackTrace()
         }
@@ -184,6 +255,28 @@ class SonyStatus(jsonObject : JSONObject) : ICameraStatus, ICameraChangeListener
         return (currentCameraStatus)
     }
 
+    private fun getFocusStatus() : String
+    {
+        var status = ""
+        try
+        {
+            status = when (currentFocusStatus)
+            {
+                "Not Focusing" -> ""
+                "Focusing" -> "Focusing"
+                "Focused" -> "Focused"
+                "Failed" -> "Failed"
+                else -> ""
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+        return (status)
+    }
+
+
     override fun onApiListModified(apis: List<String?>?)
     {
         //TODO("Not yet implemented")
@@ -241,6 +334,7 @@ class SonyStatus(jsonObject : JSONObject) : ICameraStatus, ICameraChangeListener
         currentShutterSpeed = parseEventStatus(currentShutterSpeed, jsonObject, "shutterSpeed", "currentShutterSpeed", 32)
         currentWhiteBalanceMode = parseEventStatus(currentWhiteBalanceMode, jsonObject, "whiteBalance", "currentWhiteBalanceMode", 33)
         currentRemainBattery = parseBatteryInfo(currentRemainBattery, jsonObject)
+        currentFocusStatus = parseEventStatus(currentFocusStatus, jsonObject, "focusStatus", "focusStatus", 35)
     }
 
     private fun parseExposureCompensation(currentStatus: String, replyJson: JSONObject) : String

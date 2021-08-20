@@ -24,6 +24,7 @@ interface ICameraStatus
         var EFFECT = "effect"              // ピクチャーエフェクトモード (フォトスタイルモード)
         var BATTERY = "battery"            // バッテリ残量
         var TORCH_MODE = "torch"           // 明かり（トーチ）の設定
+        var FOCUS_STATUS = "focusStatus"   // フォーカス状態（合焦かどうか）
 
         //var STATE = "state"
         //var FOCUS_MODE = "focusMode"

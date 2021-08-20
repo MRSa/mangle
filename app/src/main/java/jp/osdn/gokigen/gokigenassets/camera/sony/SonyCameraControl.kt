@@ -73,6 +73,7 @@ class SonyCameraControl(private val context: AppCompatActivity, private val vibr
                 if (::focusControl.isInitialized)
                 {
                     focusControl.setCameraApi(sonyCameraApi)
+                    sonyCameraStatus.setFocusControl(focusControl)
                 }
                 if (::captureControl.isInitialized)
                 {

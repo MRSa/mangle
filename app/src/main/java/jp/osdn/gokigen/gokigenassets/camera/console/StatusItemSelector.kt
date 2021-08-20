@@ -44,6 +44,11 @@ class StatusItemSelector(val activity : AppCompatActivity, private val vibrator 
                     //Log.v(TAG, " Tapped White Balance")
                     key = ICameraStatus.WHITE_BALANCE
                 }
+                else if (heightPosition < 7)
+                {
+                    //Log.v(TAG, " Tapped Focus Status")
+                    key = ICameraStatus.FOCUS_STATUS
+                }
             }
             else if (widthPosition == 1)
             {
