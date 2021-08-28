@@ -12,9 +12,9 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.appcompat.app.AppCompatActivity
 import androidx.exifinterface.media.ExifInterface
-import jp.osdn.gokigen.gokigenassets.camera.ICameraPreferenceProvider
+import jp.osdn.gokigen.gokigenassets.camera.preference.ICameraPreferenceProvider
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.*
-import jp.osdn.gokigen.gokigenassets.camera.theta.status.ICaptureModeReceiver
+import jp.osdn.gokigen.gokigenassets.camera.vendor.theta.status.ICaptureModeReceiver
 import jp.osdn.gokigen.gokigenassets.liveview.ICachePositionProvider
 import jp.osdn.gokigen.gokigenassets.liveview.IIndicatorControl
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveView

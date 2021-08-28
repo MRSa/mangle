@@ -10,7 +10,7 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
 import jp.osdn.gokigen.gokigenassets.liveview.LiveImageViewFragment
 import jp.osdn.gokigen.gokigenassets.preference.MainPreferenceFragment
 import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
-import jp.osdn.gokigen.gokigenassets.camera.camerax.preview.PreviewFragment
+import jp.osdn.gokigen.gokigenassets.camera.vendor.camerax.preview.PreviewFragment
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraControl
 import jp.osdn.gokigen.gokigenassets.scene.IChangeSceneBasic
 import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver

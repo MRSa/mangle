@@ -13,7 +13,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GestureDetectorCompat
 import androidx.core.view.ScaleGestureDetectorCompat
-import jp.osdn.gokigen.gokigenassets.camera.ICameraPreferenceProvider
+import jp.osdn.gokigen.gokigenassets.camera.preference.ICameraPreferenceProvider
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.*
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.AE
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.APERTURE
@@ -27,7 +27,7 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.S
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.TAKE_MODE
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.TORCH_MODE
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.WHITE_BALANCE
-import jp.osdn.gokigen.gokigenassets.camera.theta.status.ICaptureModeReceiver
+import jp.osdn.gokigen.gokigenassets.camera.vendor.theta.status.ICaptureModeReceiver
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_ARRAY_CAMERA_METHOD
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_ARRAY_CAMERA_METHOD_VALUE
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_CAMERAX

@@ -123,6 +123,7 @@
     <string name="connect_connect">接続</string>
     <string name="connect_connecting">接続中&#8230;</string>
     <string name="connect_connected">接続完了</string>
+    <string name="connect_connect_finished">接続完了.</string>
     <string name="connect_change_run_mode">モード変更</string>
     <string name="connect_restore_camera_settings">カメラ設定調整</string>
     <string name="connect_camera_detected">カメラ発見</string>
@@ -131,6 +132,7 @@
     <string name="connect_camera_wait_reply">カメラ応答待ち</string>
     <string name="connect_camera_received_reply">カメラ応答受信</string>
     <string name="connect_camera_rejected">カメラ接続拒否</string>
+    <string name="connect_receive_unknown_message">未定義メッセージを受信</string>
 
     <string name="camera_not_found">カメラが見つかりませんでした&#8230;</string>
     <string name="camera_connect_response_ng">カメラに接続できませんでした。</string>

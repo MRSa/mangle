@@ -123,6 +123,7 @@
     <string name="connect_connect">connecting</string>
     <string name="connect_connecting">connecting&#8230;</string>
     <string name="connect_connected">connected</string>
+    <string name="connect_connect_finished">connect finished.</string>
     <string name="connect_change_run_mode">changeRunMode</string>
     <string name="connect_restore_camera_settings">restoreCameraSettings</string>
     <string name="connect_camera_detected">Detected a camera</string>
@@ -130,6 +131,7 @@
     <string name="connect_camera_found">Found a camera</string>
     <string name="connect_camera_wait_reply">Wait reply from a camera</string>
     <string name="connect_camera_received_reply">Received reply from a camera</string>
+    <string name="connect_receive_unknown_message">Received a unknown message.</string>
 
     <string name="camera_not_found">Not Found&#8230;</string>
     <string name="camera_connect_response_ng">Camera replies NG.</string>

@@ -1,18 +1,18 @@
 package jp.osdn.gokigen.mangle.scene
 
 import androidx.appcompat.app.AppCompatActivity
-import jp.osdn.gokigen.gokigenassets.camera.CameraPreference
-import jp.osdn.gokigen.gokigenassets.camera.CameraPreferenceKeySet
+import jp.osdn.gokigen.gokigenassets.camera.preference.CameraPreference
+import jp.osdn.gokigen.gokigenassets.camera.preference.CameraPreferenceKeySet
 import jp.osdn.gokigen.gokigenassets.camera.DummyCameraControl
-import jp.osdn.gokigen.gokigenassets.camera.ICameraPreferenceProvider
-import jp.osdn.gokigen.gokigenassets.camera.camerax.operation.CameraControl
+import jp.osdn.gokigen.gokigenassets.camera.preference.ICameraPreferenceProvider
+import jp.osdn.gokigen.gokigenassets.camera.vendor.camerax.operation.CameraControl
 import jp.osdn.gokigen.gokigenassets.camera.console.ConsolePanelControl
 import jp.osdn.gokigen.gokigenassets.camera.example.ExamplePictureControl
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.*
-import jp.osdn.gokigen.gokigenassets.camera.panasonic.wrapper.PanasonicCameraControl
-import jp.osdn.gokigen.gokigenassets.camera.ricohpentax.RicohPentaxCameraControl
-import jp.osdn.gokigen.gokigenassets.camera.sony.SonyCameraControl
-import jp.osdn.gokigen.gokigenassets.camera.theta.ThetaCameraControl
+import jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.wrapper.PanasonicCameraControl
+import jp.osdn.gokigen.gokigenassets.camera.vendor.ricohpentax.RicohPentaxCameraControl
+import jp.osdn.gokigen.gokigenassets.camera.vendor.sony.SonyCameraControl
+import jp.osdn.gokigen.gokigenassets.camera.vendor.theta.ThetaCameraControl
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_CAMERAX
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_CONSOLE
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_EXAMPLE
