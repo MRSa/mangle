@@ -9,7 +9,6 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.Log
 import android.view.KeyEvent
-import android.view.Surface
 import android.view.WindowManager
 import android.widget.ImageButton
 import android.widget.Toast
@@ -24,7 +23,6 @@ import jp.osdn.gokigen.gokigenassets.utils.IScopedStorageAccessPermission
 import jp.osdn.gokigen.mangle.preference.PreferenceValueInitializer
 import jp.osdn.gokigen.mangle.scene.MainButtonHandler
 import jp.osdn.gokigen.mangle.scene.SceneChanger
-
 
 class MainActivity : AppCompatActivity(), IVibrator, ICameraStatusReceiver
 {
@@ -286,6 +284,7 @@ class MainActivity : AppCompatActivity(), IVibrator, ICameraStatusReceiver
             Manifest.permission.INTERNET,
             Manifest.permission.ACCESS_NETWORK_STATE,
             Manifest.permission.ACCESS_WIFI_STATE,
+            Manifest.permission.CHANGE_WIFI_MULTICAST_STATE,
         )
     }
 }

@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnection
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.IPixproInternalInterfaces
+import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.IPixproCamera
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.IPixproCommandPublisher
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.messages.IPixproCommandCallback
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.messages.base.IPixproMessages
@@ -30,9 +31,10 @@ import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.messag
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.status.PixproStatusChecker
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConstantConvert
 
-
-class PixproCameraConnectSequence(private val context: AppCompatActivity, private val cameraStatusReceiver: ICameraStatusReceiver, private val cameraConnection : ICameraConnection, private val interfaceProvider : IPixproInternalInterfaces, private val statusChecker: PixproStatusChecker) : Runnable, IPixproCommandCallback, IPixproMessages
+class PixproCameraConnectSequence(private val context: AppCompatActivity, private val cameraStatusReceiver: ICameraStatusReceiver, private val cameraConnection : ICameraConnection, private val interfaceProvider : IPixproInternalInterfaces, private val statusChecker: PixproStatusChecker) : Runnable, IPixproCommandCallback, IPixproMessages, PixproConnectionClient.ISearchResultCallback
 {
+    private var client = PixproConnectionClient(context, interfaceProvider, this, cameraStatusReceiver, 1)
+
     private val commandIssuer: IPixproCommandPublisher
     private var flashMode: String = "OFF"
 
@@ -50,6 +52,20 @@ class PixproCameraConnectSequence(private val context: AppCompatActivity, privat
 
     override fun run()
     {
+        Log.v(TAG, "search()")
+        try
+        {
+            cameraStatusReceiver.onStatusNotify(context.getString(ICameraConstantConvert.ID_STRING_CONNECT_START))
+            client.search()
+        }
+        catch (e: java.lang.Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    private fun startConnect()
+    {
         try
         {
             // カメラとTCP接続
@@ -61,9 +77,9 @@ class PixproCameraConnectSequence(private val context: AppCompatActivity, privat
                     // 接続失敗...
                     interfaceProvider.getInformationReceiver().updateMessage(
                         context.getString(ICameraConstantConvert.ID_STRING_DIALOG_TITLE_CONNECT_FAILED),
-                        false,
-                        true,
-                        Color.RED
+                        isBold = false,
+                        isColor = true,
+                        color = Color.RED
                     )
                     onConnectError(context.getString(ICameraConstantConvert.ID_STRING_DIALOG_TITLE_CONNECT_FAILED))
                     return
@@ -84,9 +100,9 @@ class PixproCameraConnectSequence(private val context: AppCompatActivity, privat
             e.printStackTrace()
             interfaceProvider.getInformationReceiver().updateMessage(
                 context.getString(ICameraConstantConvert.ID_STRING_DIALOG_TITLE_CONNECT_FAILED),
-                false,
-                true,
-                Color.RED
+                isBold = false,
+                isColor = true,
+                color = Color.RED
             )
             onConnectError(e.message?: "")
         }
@@ -97,41 +113,42 @@ class PixproCameraConnectSequence(private val context: AppCompatActivity, privat
         cameraConnection.alertConnectingFailed(reason)
     }
 
-    override fun receivedMessage(id: Int, rx_body: ByteArray?) {
+    override fun receivedMessage(id: Int, rx_body: ByteArray?)
+    {
         when (id) {
             SEQ_CONNECT_01 -> {
                 interfaceProvider.getInformationReceiver().updateMessage(
                     context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CONNECTING) + "1",
-                    false,
-                    false,
-                    0
+                    isBold = false,
+                    isColor = false,
+                    color = 0
                 )
                 commandIssuer.enqueueCommand(PixproConnectSequence02(this))
             }
             SEQ_CONNECT_02 -> {
                 interfaceProvider.getInformationReceiver().updateMessage(
                     context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CONNECTING) + "2",
-                    false,
-                    false,
-                    0
+                    isBold = false,
+                    isColor = false,
+                    color = 0
                 )
                 commandIssuer.enqueueCommand(PixproConnectSequence03(this))
             }
             SEQ_CONNECT_03 -> {
                 interfaceProvider.getInformationReceiver().updateMessage(
                     context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CONNECTING) + "3",
-                    false,
-                    false,
-                    0
+                    isBold = false,
+                    isColor = false,
+                    color = 0
                 )
                 commandIssuer.enqueueCommand(PixproConnectSequence04(this))
             }
             SEQ_CONNECT_04 -> {
                 interfaceProvider.getInformationReceiver().updateMessage(
                     context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CONNECTING) + "4",
-                    false,
-                    false,
-                    0
+                    isBold = false,
+                    isColor = false,
+                    color = 0
                 )
                 // ここで、パスワードの Base64情報を切り出す(FC 03 の応答、 0x0058 ～ 64バイトの文字列を切り出して、Base64エンコードする)
                 commandIssuer.enqueueCommand(PixproConnectSequence05(this))
@@ -139,9 +156,9 @@ class PixproCameraConnectSequence(private val context: AppCompatActivity, privat
             SEQ_CONNECT_05 -> {
                 interfaceProvider.getInformationReceiver().updateMessage(
                     context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CONNECTING) + "5",
-                    false,
-                    false,
-                    0
+                    isBold = false,
+                    isColor = false,
+                    color = 0
                 )
                 // ここで、パスワードの情報を切り出す (FE 03 の応答、 0x0078 ～ 文字列を切り出す。)
                 commandIssuer.enqueueCommand(PixproConnectSequence06(this))
@@ -149,69 +166,73 @@ class PixproCameraConnectSequence(private val context: AppCompatActivity, privat
             SEQ_CONNECT_06 -> {
                 interfaceProvider.getInformationReceiver().updateMessage(
                     context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CONNECTING) + "6",
-                    false,
-                    false,
-                    0
+                    isBold = false,
+                    isColor = false,
+                    color = 0
                 )
                 commandIssuer.enqueueCommand(PixproConnectSequence07(this))
             }
             SEQ_CONNECT_07 -> {
                 interfaceProvider.getInformationReceiver().updateMessage(
                     context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CONNECTING) + "7",
-                    false,
-                    false,
-                    0
+                    isBold = false,
+                    isColor = false,
+                    color = 0
                 )
                 commandIssuer.enqueueCommand(PixproConnectSequence08(this))
             }
             SEQ_CONNECT_08 -> {
                 interfaceProvider.getInformationReceiver().updateMessage(
                     context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CONNECTING) + "8",
-                    false,
-                    false,
-                    0
+                    isBold = false,
+                    isColor = false,
+                    color = 0
                 )
                 commandIssuer.enqueueCommand(PixproConnectSequence09(this))
             }
             SEQ_CONNECT_09 -> {
                 interfaceProvider.getInformationReceiver().updateMessage(
                     context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CONNECTING) + "9",
-                    false,
-                    false,
-                    0
+                    isBold = false,
+                    isColor = false,
+                    color = 0
                 )
                 commandIssuer.enqueueCommand(PixproConnectSequence10(this))
             }
             SEQ_CONNECT_10 -> {
                 interfaceProvider.getInformationReceiver().updateMessage(
                     context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CONNECTING) + "10",
-                    false,
-                    false,
-                    0
+                    isBold = false,
+                    isColor = false,
+                    color = 0
                 )
                 commandIssuer.enqueueCommand(PixproConnectSequence11(this))
             }
             SEQ_CONNECT_11 -> {
                 interfaceProvider.getInformationReceiver().updateMessage(
                     context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CONNECTING) + "11",
-                    false,
-                    false,
-                    0
+                    isBold = false,
+                    isColor = false,
+                    color = 0
                 )
-                if (flashMode.contains("AUTO")) {
-                    commandIssuer.enqueueCommand(PixproFlashAuto(this))
-                } else if (flashMode.contains("ON")) {
-                    commandIssuer.enqueueCommand(PixproFlashOn(this))
-                } else {
-                    commandIssuer.enqueueCommand(PixproFlashOff(this))
+                when {
+                    flashMode.contains("AUTO") -> {
+                        commandIssuer.enqueueCommand(PixproFlashAuto(this))
+                    }
+                    flashMode.contains("ON") -> {
+                        commandIssuer.enqueueCommand(PixproFlashOn(this))
+                    }
+                    else -> {
+                        commandIssuer.enqueueCommand(PixproFlashOff(this))
+                    }
                 }
             }
             SEQ_FLASH_AUTO, SEQ_FLASH_OFF, SEQ_FLASH_ON -> {
                 interfaceProvider.getInformationReceiver().updateMessage(
                     context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CONNECT_FINISHED),
-                    false,
-                    false,
-                    0
+                    isBold = false,
+                    isColor = false,
+                    color = 0
                 )
                 connectFinished()
                 Log.v(TAG, "  CONNECT TO CAMERA : DONE.")
@@ -225,8 +246,11 @@ class PixproCameraConnectSequence(private val context: AppCompatActivity, privat
 
     private fun startConnectSequence()
     {
-        interfaceProvider.getInformationReceiver()
-            .updateMessage(context.getString(ICameraConstantConvert.ID_STRING_CONNECT_START), false, false, 0)
+        interfaceProvider.getInformationReceiver().updateMessage(context.getString(ICameraConstantConvert.ID_STRING_CONNECT_START),
+            isBold = false,
+            isColor = false,
+            color = 0
+        )
         cameraStatusReceiver.onStatusNotify(context.getString(ICameraConstantConvert.ID_STRING_CONNECT_START))
         commandIssuer.enqueueCommand(PixproConnectSequence01(this))
     }
@@ -237,7 +261,11 @@ class PixproCameraConnectSequence(private val context: AppCompatActivity, privat
         {
             // 接続成功のメッセージを出す
             interfaceProvider.getInformationReceiver()
-                .updateMessage(context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CONNECTED), false, false, 0)
+                .updateMessage(context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CONNECTED),
+                    isBold = false,
+                    isColor = false,
+                    color = 0
+                )
 
             // ちょっと待つ
             Thread.sleep(1000)
@@ -247,7 +275,11 @@ class PixproCameraConnectSequence(private val context: AppCompatActivity, privat
 
             // 接続成功！のメッセージを出す
             interfaceProvider.getInformationReceiver()
-                .updateMessage(context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CONNECTED), false, false, 0)
+                .updateMessage(context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CONNECTED),
+                    isBold = false,
+                    isColor = false,
+                    color = 0
+                )
             onConnectNotify()
         }
         catch (e: Exception)
@@ -263,6 +295,7 @@ class PixproCameraConnectSequence(private val context: AppCompatActivity, privat
             val thread = Thread { // カメラとの接続確立を通知する
                 cameraStatusReceiver.onStatusNotify(context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CONNECTED))
                 cameraStatusReceiver.onCameraConnected()
+                interfaceProvider.getIPixproCommunicationNotify().readyToCommunicate()
                 Log.v(TAG, " onConnectNotify()")
             }
             thread.start()
@@ -273,4 +306,20 @@ class PixproCameraConnectSequence(private val context: AppCompatActivity, privat
         }
     }
 
+    override fun onDeviceFound(cameraDevice: IPixproCamera)
+    {
+        Log.v(TAG, " onDeviceFound()")
+        startConnect()
+    }
+
+    override fun onFinished()
+    {
+        Log.v(TAG, " ------ onFinished()")
+    }
+
+    override fun onErrorFinished(reason: String?)
+    {
+        Log.v(TAG, " onErrorFinished() : $reason")
+        cameraConnection.alertConnectingFailed(reason)
+    }
 }

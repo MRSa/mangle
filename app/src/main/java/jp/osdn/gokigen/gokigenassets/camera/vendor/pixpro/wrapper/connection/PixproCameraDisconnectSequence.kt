@@ -2,7 +2,6 @@ package jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.connection
 
 import androidx.appcompat.app.AppCompatActivity
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.IPixproInternalInterfaces
-import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.IPixproCommunication
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.status.PixproStatusChecker
 import java.lang.Exception
 

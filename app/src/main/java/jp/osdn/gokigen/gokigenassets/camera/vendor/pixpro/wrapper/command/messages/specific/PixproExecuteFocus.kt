@@ -18,7 +18,7 @@ class PixproExecuteFocus(private val callback: IPixproCommandCallback, posX: Int
 
     override fun getId() : Int
     {
-        return (IPixproMessages.SEQ_SHUTTER)
+        return (IPixproMessages.SEQ_FOCUS)
     }
 
     override fun commandBody(): ByteArray

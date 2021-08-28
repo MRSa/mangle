@@ -1,5 +1,6 @@
 package jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.status
 
+import android.graphics.Color
 import android.util.Log
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusUpdateNotify
 import androidx.collection.SparseArrayCompat
@@ -163,8 +164,13 @@ class PixproStatusHolder
         return selection
     }
 
-    fun getItemStatus(key: String): String {
-        var key = key
+    fun getItemStatusColor(key: String): Int
+    {
+        return (Color.WHITE)
+    }
+
+    fun getItemStatus(orgKey: String): String {
+        var key = orgKey
         try {
             val strIndex = key.indexOf("x")
             Log.v(TAG, "getItemStatus() : $key [$strIndex]")

@@ -17,11 +17,11 @@ import java.lang.Exception
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
-class PixproConnection(private val context: AppCompatActivity, private val statusReceiver: ICameraStatusReceiver, private val interfaceProvider : IPixproInternalInterfaces, private val statusChecker: PixproStatusChecker) : ICameraConnection
+class PixproCameraConnection(private val context: AppCompatActivity, private val statusReceiver: ICameraStatusReceiver, private val interfaceProvider : IPixproInternalInterfaces, private val statusChecker: PixproStatusChecker) : ICameraConnection
 {
     companion object
     {
-        private val TAG = PixproConnection::class.java.simpleName
+        private val TAG = PixproCameraConnection::class.java.simpleName
     }
     private val connectionReceiver: BroadcastReceiver
     private val cameraExecutor: Executor = Executors.newFixedThreadPool(1)
@@ -193,5 +193,6 @@ class PixproConnection(private val context: AppCompatActivity, private val statu
             e.printStackTrace()
         }
     }
+
 
 }

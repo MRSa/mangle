@@ -145,4 +145,5 @@
     <string name="dialog_message_power_off">カメラの電源を切り、アプリケーションを終了します。</string>
     <string name="dialog_message_exit">アプリケーションを終了します。</string>
 
+    <string name="command_line_disconnected">カメラ制御用の回線が切断されました。</string>
 </resources>

@@ -1,77 +1,298 @@
 package jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro
 
-import android.graphics.Color
+import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.*
 import jp.osdn.gokigen.gokigenassets.camera.preference.ICameraPreferenceProvider
+import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.operation.FocusControl
+import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.operation.SingleShotControl
+import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.IPixproCamera
+import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.IPixproCameraInitializer
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.PixproCamera
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.IPixproCommandPublisher
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.IPixproCommunication
+import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.IPixproCommunicationNotify
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.PixproCommandCommunicator
+import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.connection.PixproCameraConnection
+import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.liveview.PixproLiveViewControl
+import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.status.PixproStatusChecker
+import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert
+import jp.osdn.gokigen.gokigenassets.constants.ICameraConstantConvert.Companion.ID_STRING_COMMAND_LINE_DISCONNECTED
 import jp.osdn.gokigen.gokigenassets.liveview.ICachePositionProvider
+import jp.osdn.gokigen.gokigenassets.liveview.IIndicatorControl
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveView
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveViewRefresher
+import jp.osdn.gokigen.gokigenassets.liveview.focusframe.IAutoFocusFrameDisplay
+import jp.osdn.gokigen.gokigenassets.liveview.image.CameraLiveViewListenerImpl
+import jp.osdn.gokigen.gokigenassets.liveview.storeimage.StoreImage
+import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
 import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 
-
-class PixproCameraControl(private val context: AppCompatActivity, private val vibrator: IVibrator, private val informationNotify : IInformationReceiver, private val preference: ICameraPreferenceProvider, provider: ICameraStatusReceiver) : ICameraControl, View.OnClickListener, View.OnLongClickListener, IKeyDown, ICameraStatus, IPixproInternalInterfaces, PixproCommandCommunicator.ICommunicationNotify
+class PixproCameraControl(private val context: AppCompatActivity, private val vibrator: IVibrator, private val informationNotify : IInformationReceiver, private val preference: ICameraPreferenceProvider, provider: ICameraStatusReceiver) : ICameraControl, View.OnClickListener, View.OnLongClickListener, ICameraShutter, IKeyDown, IPixproInternalInterfaces, IPixproCommunicationNotify, IDisplayInjector
 {
+    private val statusChecker = PixproStatusChecker()
+    private val liveViewListener = CameraLiveViewListenerImpl(context, informationNotify)
+    private val cameraConnection = PixproCameraConnection(context, provider, this, statusChecker)
     private val pixproCameraParameter = PixproCamera()
     private val commandCommunicator = PixproCommandCommunicator(pixproCameraParameter, this)
+    private val storeImage = StoreImage(context, liveViewListener)
+
+    private lateinit var liveViewControl : PixproLiveViewControl
+    private lateinit var cachePositionProvider : ICachePositionProvider
+    private lateinit var focusControl: FocusControl
+    private lateinit var captureControl: SingleShotControl
+
+    private var cameraPositionId = 0
 
     companion object
     {
         private val TAG = PixproCameraControl::class.java.simpleName
     }
 
-    override fun getConnectionMethod(): String { return ("PIXPRO") }
-    override fun initialize() { }
-    override fun connectToCamera() { }
-    override fun startCamera(isPreviewView: Boolean, cameraSequence : Int) { }
-    override fun finishCamera() { }
+    override fun getConnectionMethod(): String
+    {
+        return ("PIXPRO")
+    }
+
+    override fun initialize()
+    {
+        Log.v(TAG, " --- initialize() : SEQ : ${preference.getConnectionSequence()}")
+    }
+
+    override fun connectToCamera()
+    {
+        Log.v(TAG, " connectToCamera() : PIXPRO ")
+        try
+        {
+            cameraConnection.connect()
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    override fun startCamera(isPreviewView: Boolean, cameraSequence : Int)
+    {
+        try
+        {
+            if (cameraConnection.getConnectionStatus() != ICameraConnectionStatus.CameraConnectionStatus.CONNECTED)
+            {
+                cameraConnection.startWatchWifiStatus(context)
+            }
+            else
+            {
+                cameraConnection.connect()
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    override fun finishCamera()
+    {
+        try
+        {
+            if (::liveViewControl.isInitialized)
+            {
+                liveViewControl.stopLiveView()
+            }
+            statusChecker.stopStatusWatch()
+            cameraConnection.disconnect(false)
+            cameraConnection.stopWatchWifiStatus(context)
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
     override fun changeCaptureMode(mode: String) { }
     override fun needRotateImage(): Boolean { return (false) }
-    override fun setRefresher(id : Int, refresher: ILiveViewRefresher, imageView: ILiveView, cachePosition : ICachePositionProvider) { }
-    override fun captureButtonReceiver(id: Int): View.OnClickListener { return (this) }
-    override fun onLongClickReceiver(id: Int): View.OnLongClickListener { return (this) }
-    override fun keyDownReceiver(id: Int): IKeyDown { return (this) }
-    override fun getFocusingControl(id: Int): IFocusingControl? { return (null) }
-    override fun getDisplayInjector(): IDisplayInjector? { return (null) }
+    override fun setRefresher(id : Int, refresher: ILiveViewRefresher, imageView: ILiveView, cachePosition : ICachePositionProvider)
+    {
+        try
+        {
+            liveViewListener.setRefresher(refresher)
+            imageView.setImageProvider(liveViewListener)
+            cachePositionProvider = cachePosition
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    override fun captureButtonReceiver(id: Int): View.OnClickListener
+    {
+        cameraPositionId = id
+        return (this)
+    }
+
+    override fun onLongClickReceiver(id: Int): View.OnLongClickListener
+    {
+        cameraPositionId = id
+        return (this)
+    }
+
+    override fun keyDownReceiver(id: Int): IKeyDown
+    {
+        cameraPositionId = id
+        return (this)
+    }
+
+    override fun getFocusingControl(id: Int): IFocusingControl
+    {
+        cameraPositionId = id
+        return (focusControl)
+    }
+
+    override fun getDisplayInjector(): IDisplayInjector
+    {
+        return (this)
+    }
+
+    override fun injectDisplay(frameDisplayer: IAutoFocusFrameDisplay, indicator: IIndicatorControl, focusingModeNotify: IFocusingModeNotify)
+    {
+        Log.v(TAG, "injectDisplay()")
+        focusControl = FocusControl(commandCommunicator, frameDisplayer)
+        captureControl = SingleShotControl(commandCommunicator, frameDisplayer)
+    }
+
     override fun setNeighborCameraControl(camera0: ICameraControl?, camera1: ICameraControl?, camera2: ICameraControl?, camera3: ICameraControl?) { }
-    override fun getCameraStatus(): ICameraStatus { return (this) }
+    override fun getCameraStatus(): ICameraStatus { return (statusChecker) }
 
-    override fun onClick(v: View?) { }
-    override fun handleKeyDown(keyCode: Int, event: KeyEvent): Boolean { return (false) }
-    override fun onLongClick(v: View?): Boolean { return (false) }
+    override fun onClick(v: View?)
+    {
+        if (v == null)
+        {
+            return
+        }
+        when (v.id)
+        {
+            IApplicationConstantConvert.ID_BUTTON_SHUTTER -> { doShutter() }
+            else -> { }
+        }
+    }
 
-    override fun getStatusList(key: String): List<String?> { return (ArrayList<String>()) }
-    override fun getStatus(key: String): String { return ("") }
-    override fun getStatusColor(key: String): Int { return (Color.WHITE) }
-    override fun setStatus(key: String, value: String) { }
+    override fun handleKeyDown(keyCode: Int, event: KeyEvent): Boolean
+    {
+        if ((event.action == KeyEvent.ACTION_DOWN)&&((keyCode == KeyEvent.KEYCODE_VOLUME_UP)||(keyCode == KeyEvent.KEYCODE_CAMERA)))
+        {
+            doShutter()
+            return (true)
+        }
+        return (false)
+    }
 
+    override fun onLongClick(v: View?): Boolean
+    {
+        return (false)
+    }
 
     override fun getIPixproCommunication(): IPixproCommunication { return (commandCommunicator) }
     override fun getIPixproCommandPublisher(): IPixproCommandPublisher { return (commandCommunicator) }
     override fun getInformationReceiver(): IInformationReceiver { return (informationNotify) }
+    override fun getIPixproCameraInitializer(): IPixproCameraInitializer { return (pixproCameraParameter) }
+    override fun getIPixproCamera(): IPixproCamera { return (pixproCameraParameter) }
+    override fun getIPixproCommunicationNotify(): IPixproCommunicationNotify { return (this) }
+
+    override fun readyToCommunicate()
+    {
+        Log.v(TAG, " ----- readyToCommunicate() ")
+        try
+        {
+            if (!::liveViewControl.isInitialized)
+            {
+                liveViewControl = PixproLiveViewControl(liveViewListener, pixproCameraParameter)
+            }
+            liveViewControl.startLiveView()
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
 
     override fun detectDisconnect()
     {
+        Log.v(TAG, " ----- detectDisconnect() ")
+        cameraConnection.forceUpdateConnectionStatus(ICameraConnectionStatus.CameraConnectionStatus.DISCONNECTED)
+        cameraConnection.alertConnectingFailed(context.getString(ID_STRING_COMMAND_LINE_DISCONNECTED))
+    }
 
-/*
-    private fun detectDisconnect()
+    override fun doShutter()
     {
-        val connection: ICameraConnection = interfaceProvider.getCameraConnection()
-        if (connection != null)
+        try
         {
-            // 回線状態を「切断」にしてダイアログを表示する
-            connection.forceUpdateConnectionStatus(ICameraConnection.CameraConnectionStatus.DISCONNECTED)
-            connection.alertConnectingFailed(interfaceProvider.getStringFromResource(R.string.kodak_command_line_disconnected))
+            Log.v(TAG, " doShutter()")
+            val isNotDriveShutter = captureImageLiveView()
+            if (isNotDriveShutter)
+            {
+                //  シャッターを駆動させない(けど、バイブレーションで通知する)
+                vibrator.vibrate(IVibrator.VibratePattern.SIMPLE_SHORT)
+                return
+            }
+            if (::captureControl.isInitialized)
+            {
+                captureControl.doCapture(0)
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
         }
     }
- */
-        //TODO("Not yet implemented")
+
+    override fun doShutterOff()
+    {
+        try
+        {
+            Log.v(TAG, " doShutterOff()")
+            if (::captureControl.isInitialized)
+            {
+                captureControl.doCapture(0)
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    private fun captureImageLiveView() : Boolean
+    {
+        try
+        {
+            //  preferenceから設定を取得する
+            val captureBothCamera = PreferenceAccessWrapper(context).getBoolean(
+                IApplicationConstantConvert.ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW, IApplicationConstantConvert.ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW_DEFAULT_VALUE)
+            val notUseShutter = PreferenceAccessWrapper(context).getBoolean(
+                IApplicationConstantConvert.ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE, IApplicationConstantConvert.ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE_DEFAULT_VALUE)
+            if ((captureBothCamera)&&(liveViewListener.isImageReceived()))
+            {
+                // ライブビュー画像を保管する場合...
+                val thread = Thread { storeImage.doStore(cameraPositionId, false, cachePositionProvider.getCachePosition()) }
+                try
+                {
+                    thread.start()
+                }
+                catch (e: Exception)
+                {
+                    e.printStackTrace()
+                }
+            }
+            return (notUseShutter)
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+        return (false)
     }
 }

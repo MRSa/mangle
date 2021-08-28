@@ -17,7 +17,7 @@ import java.net.Socket
 import java.net.SocketException
 import java.util.*
 
-class PixproCommandCommunicator(private val pixproCamera: IPixproCamera, private val notifier: ICommunicationNotify) : IPixproCommandPublisher, IPixproCommunication
+class PixproCommandCommunicator(private val pixproCamera: IPixproCamera, private val notifier: IPixproCommunicationNotify) : IPixproCommandPublisher, IPixproCommunication
 {
     private var isStart = false
     private var isConnected = false
@@ -55,11 +55,11 @@ class PixproCommandCommunicator(private val pixproCamera: IPixproCamera, private
             socket = Socket()
             if (pixproCamera.getTcpNoDelay())
             {
-                socket?.setKeepAlive(false)
+                socket?.keepAlive = false
                 socket?.setPerformancePreferences(0, 2, 0)
-                socket?.setOOBInline(true)
-                socket?.setReuseAddress(false)
-                socket?.setTrafficClass(0x80)
+                socket?.oobInline = true
+                socket?.reuseAddress = false
+                socket?.trafficClass = 0x80
             }
             socket?.tcpNoDelay = pixproCamera.getTcpNoDelay()
             socket?.connect(InetSocketAddress(pixproCamera.getIpAddress(), pixproCamera.getPortNumber()), 0)
@@ -368,7 +368,7 @@ class PixproCommandCommunicator(private val pixproCamera: IPixproCamera, private
         if (isDumpReceiveLog && body != null)
         {
             // ログに受信メッセージを出力する
-            SimpleLogDumper.dumpBytes("RECV[" + body.size + "] ", body)
+            SimpleLogDumper.dumpBytes("RX[" + body.size + "] ", body)
         }
         if (checkReceiveStatusMessage(body))
         {
@@ -758,10 +758,5 @@ class PixproCommandCommunicator(private val pixproCamera: IPixproCamera, private
             e.printStackTrace()
         }
         return (readBytes)
-    }
-
-    interface ICommunicationNotify
-    {
-        fun detectDisconnect()
     }
 }

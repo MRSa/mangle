@@ -3,11 +3,13 @@
     <words>
       <w>acclock</w>
       <w>batt</w>
+      <w>displayer</w>
       <w>equirectangular</w>
       <w>liveview</w>
       <w>mpget</w>
       <w>mpset</w>
       <w>pixpro</w>
+      <w>recmode</w>
       <w>ricoh</w>
     </words>
   </dictionary>

@@ -144,4 +144,6 @@
     <string name="dialog_title_confirmation">Confirmation</string>
     <string name="dialog_message_power_off">Power Off</string>
     <string name="dialog_message_exit">Exit Application</string>
+
+    <string name="command_line_disconnected">Camera control line is disconnected.</string>
 </resources>

@@ -21,12 +21,12 @@
         <item>内蔵カメラ</item>
         <item>Ricoh GR / PENTAX</item>
         <item>Ricoh Theta(OSC)</item>
-        <item>Panasonic (MFT)</item>
+        <item>Panasonic</item>
         <item>Sony</item>
+        <item>PIXPRO WPZ2</item>
 <!--
         <item>OPC(Olympus Air)</item>
         <item>Olympus(OM-D/PEN)</item>
-        <item>KODAK PIXPRO</item>
         <item>Fuji X Series</item>
         <item>Canon</item>
         <item>Nikon</item>
@@ -42,10 +42,10 @@
         <item>THETA</item>
         <item>PANASONIC</item>
         <item>SONY</item>
+        <item>PIXPRO</item>
 <!--
         <item>OPC</item>
         <item>OLYMPUS</item>
-        <item>PIXPRO</item>
         <item>FUJI_X</item>
         <item>CANON</item>
         <item>NIKON</item>

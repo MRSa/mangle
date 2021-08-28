@@ -1,37 +1,29 @@
 package jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.connection
 
 import android.content.Context
+import android.net.wifi.WifiManager
 import android.util.Log
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
-import jp.osdn.gokigen.gokigenassets.camera.vendor.sony.wrapper.ISonyCamera
-import jp.osdn.gokigen.gokigenassets.camera.vendor.sony.wrapper.SonyCameraDeviceProvider
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConstantConvert
-import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
-import jp.osdn.gokigen.gokigenassets.utils.communication.XmlElement
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetSocketAddress
-import java.nio.charset.Charset
-import android.net.DhcpInfo
-import androidx.core.content.ContextCompat.getSystemService
-import android.net.wifi.WifiManager
-import androidx.core.content.ContextCompat
-import jp.osdn.gokigen.gokigenassets.camera.vendor.sony.wrapper.connection.SonySsdpClient
+import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.IPixproInternalInterfaces
+import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.IPixproCamera
 import java.net.InetAddress
 
-
-class PixproConnectionClient(private val context: Context, private val callback: ISearchResultCallback, private val cameraStatusReceiver: ICameraStatusReceiver, private var sendRepeatCount: Int = 0)
+class PixproConnectionClient(private val context: Context, private val interfaceProvider: IPixproInternalInterfaces, private val callback: ISearchResultCallback, private val cameraStatusReceiver: ICameraStatusReceiver, private var sendRepeatCount: Int = 0)
 {
     companion object
     {
         private val TAG = PixproConnectionClient::class.java.simpleName
-        private const val SEND_TIMES_DEFAULT = 1
+        private const val SEND_TIMES_DEFAULT = 3
         private const val SEND_WAIT_DURATION_MS = 300
-        private const val SSDP_RECEIVE_TIMEOUT = 4 * 1000 // msec
+        private const val REPLY_RECEIVE_TIMEOUT = 4 * 1000 // msec
         private const val PACKET_BUFFER_SIZE = 4096
-
-        private const val QUERY_STRING = "AOFQUERY:GOKIGEN01Family,1"
+        private const val QUERY_STRING = "AOFQUERY:GOKIGEN a01Series,1"
         private const val TARGET_UDP_PORT = 5175
+        private const val RECEIVE_UDP_PORT = 5176
     }
 
     init
@@ -44,13 +36,17 @@ class PixproConnectionClient(private val context: Context, private val callback:
 /*
         try
         {
-            val wifi = context.getSystemService(Context.WIFI_SERVICE) as WifiManager?
-            val dhcp = wifi!!.dhcpInfo
-            // handle null somehow
-            val broadcast = dhcp.ipAddress and dhcp.netmask or dhcp.netmask.inv()
-            val quads = ByteArray(4)
-            for (k in 0..3) quads[k] = (broadcast shr k * 8).toByte()
-            return InetAddress.getByAddress(quads)
+            val wifi = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager?
+            val dhcp = wifi?.dhcpInfo
+            if (dhcp != null)
+            {
+                //val dhcpServer = dhcp.serverAddress
+                val broadcast = dhcp.ipAddress and dhcp.netmask or dhcp.netmask.inv()
+                val quads = ByteArray(4)
+                for (k in 0..3) quads[k] = (broadcast shr k * 8).toByte()
+                Log.v(TAG, " DHCP : $dhcp")
+                return (InetAddress.getByAddress(quads))
+            }
         }
         catch (e : Exception)
         {
@@ -62,251 +58,109 @@ class PixproConnectionClient(private val context: Context, private val callback:
 
     fun search()
     {
-        val sendData = QUERY_STRING.toByteArray()
-        val detailString = ""
-        var socket: DatagramSocket? = null
-        var receivePacket: DatagramPacket
-        val packet: DatagramPacket
-
-        //  要求の送信
+        val sendReceiveSocket = DatagramSocket(RECEIVE_UDP_PORT)
         try
         {
-            socket = DatagramSocket()
-            socket.reuseAddress = true
-            val iAddress = InetSocketAddress(getBroadcastAddress(), TARGET_UDP_PORT)
-            packet = DatagramPacket(sendData, sendData.size, iAddress)
+            //  要求の送信
+            sendReceiveSocket.reuseAddress = true
+            val broadcastAddress = getBroadcastAddress()
+            val iAddress = InetSocketAddress(broadcastAddress, TARGET_UDP_PORT)
+            val sendData = QUERY_STRING.toByteArray()
+            val packet = DatagramPacket(sendData, sendData.size, iAddress)
 
             // 要求を繰り返し送信する
             for (loop in 1..sendRepeatCount)
             {
                 cameraStatusReceiver.onStatusNotify(context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CAMERA_SEARCH_REQUEST) + " " + loop)
-                socket.send(packet)
+                sendReceiveSocket.send(packet)
                 Thread.sleep(SEND_WAIT_DURATION_MS.toLong())
             }
-            Log.v(TAG, " UDP QUERY : SEND $QUERY_STRING")
+            Log.v(TAG, " UDP QUERY : SEND $QUERY_STRING (${broadcastAddress.hostAddress})")
         }
         catch (e: Exception)
         {
-            if (socket != null && !socket.isClosed)
-            {
-                socket.close()
-            }
-            e.printStackTrace()
+            sendReceiveSocket.close()
 
             // エラー応答する
-            callback.onErrorFinished(detailString + " : " + e.localizedMessage)
+            callback.onErrorFinished(" : " + e.localizedMessage)
             return
         }
 
-        // 応答の受信
-        val startTime = System.currentTimeMillis()
-        var currentTime = System.currentTimeMillis()
-        val foundDevices: MutableList<String?> = ArrayList()
-        val array = ByteArray(PACKET_BUFFER_SIZE)
-
         try
         {
-            cameraStatusReceiver.onStatusNotify(context.getString(ICameraConstantConvert.ID_STRING_CONNECT_WAIT_REPLY_CAMERA))
-            while (currentTime - startTime < SSDP_RECEIVE_TIMEOUT)
-            {
-                receivePacket = DatagramPacket(array, array.size)
-                socket.soTimeout = SSDP_RECEIVE_TIMEOUT
-                socket.receive(receivePacket)
-                val ssdpReplyMessage = String(receivePacket.getData(), 0, receivePacket.length, Charset.forName("UTF-8"))
-                var ddUsn: String?
-                if (ssdpReplyMessage.contains("HTTP/1.1 200"))
-                {
-                    ddUsn = findParameterValue(ssdpReplyMessage, "USN")
-                    cameraStatusReceiver.onStatusNotify(context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CAMERA_RECEIVED_REPLY))
-                    if (!foundDevices.contains(ddUsn))
-                    {
-                        val ddLocation = findParameterValue(ssdpReplyMessage, "LOCATION")
-                        foundDevices.add(ddUsn)
+            val wifi = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager?
+            val mLock = wifi?.createMulticastLock("lock")
 
-                        //// Fetch Device Description XML and parse it.
-                        if (ddLocation != null)
-                        {
-                            cameraStatusReceiver.onStatusNotify("LOCATION : $ddLocation")
-                            val device: ISonyCamera? = searchSonyCameraDevice(ddLocation)
-                            if ((device != null)&&(device.hasApiService("camera")))
-                            {
-                                cameraStatusReceiver.onStatusNotify(context.getString(
-                                    ICameraConstantConvert.ID_STRING_CONNECT_CAMERA_FOUND) + " " + device.getFriendlyName())
-                                callback.onDeviceFound(device)
-                                // カメラが見つかった場合は breakする
-                                break
-                            }
-                            else
-                            {
-                                // カメラが見つからない...
-                                cameraStatusReceiver.onStatusNotify(context.getString(
-                                    ICameraConstantConvert.ID_STRING_CAMERA_NOT_FOUND))
-                            }
-                        }
-                    }
-                    else
-                    {
-                        Log.v(TAG, "Already received. : $ddUsn")
-                    }
+            val cameraInitializer = interfaceProvider.getIPixproCameraInitializer()
+            val pixproCamera = interfaceProvider.getIPixproCamera()
+
+            // 応答の受信
+            val startTime = System.currentTimeMillis()
+            var currentTime = System.currentTimeMillis()
+            val array = ByteArray(PACKET_BUFFER_SIZE)
+            cameraStatusReceiver.onStatusNotify(context.getString(ICameraConstantConvert.ID_STRING_CONNECT_WAIT_REPLY_CAMERA))
+            while (currentTime - startTime < REPLY_RECEIVE_TIMEOUT)
+            {
+                val receivePacket = DatagramPacket(array, array.size)
+                sendReceiveSocket.soTimeout = REPLY_RECEIVE_TIMEOUT
+
+                try
+                {
+                    mLock?.acquire()
+                    sendReceiveSocket.receive(receivePacket)
+                    mLock?.release()
+                }
+                catch (ee: java.net.SocketTimeoutException)
+                {
+                    sendReceiveSocket.close()
+
+                    // 受信タイムアウト:　エラー応答する
+                    callback.onErrorFinished(" : " + ee.localizedMessage)
+                    return
+                }
+                catch (e: Exception)
+                {
+                    // そうなじゃなければ例外出す
+                    e.printStackTrace()
+                }
+
+                cameraInitializer.parseCommunicationParameter(receivePacket.data)
+                if (pixproCamera.isAvailable())
+                {
+                    callback.onDeviceFound(pixproCamera)
+                    break
                 }
                 else
                 {
-                    Log.v(TAG, " SSDP REPLY MESSAGE (ignored) : $ssdpReplyMessage")
+                    // カメラが見つからない...
+                    cameraStatusReceiver.onStatusNotify(context.getString(ICameraConstantConvert.ID_STRING_CAMERA_NOT_FOUND))
                 }
                 currentTime = System.currentTimeMillis()
             }
         }
         catch (e: Exception)
         {
+            sendReceiveSocket.close()
             e.printStackTrace()
 
             // エラー応答する
-            callback.onErrorFinished(detailString + " : " + e.localizedMessage)
+            callback.onErrorFinished(" : " + e.localizedMessage)
             return
         }
-        finally
+        try
         {
-            try
-            {
-                if (!socket.isClosed())
-                {
-                    socket.close()
-                }
-            }
-            catch (ee: Exception)
-            {
-                ee.printStackTrace()
-            }
+            sendReceiveSocket.close()
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
         }
         callback.onFinished()
     }
 
-    private fun findParameterValue(ssdpMessage: String, paramName: String): String?
-    {
-        var name = paramName
-        if (!name.endsWith(":"))
-        {
-            name = "$name:"
-        }
-        var start = ssdpMessage.indexOf(name)
-        val end = ssdpMessage.indexOf("\r\n", start)
-        if (start != -1 && end != -1)
-        {
-            start += name.length
-            try
-            {
-                return ssdpMessage.substring(start, end).trim { it <= ' ' }
-            }
-            catch (e: Exception)
-            {
-                e.printStackTrace()
-            }
-        }
-        return null
-    }
-
-    private fun searchSonyCameraDevice(ddUrl: String): ISonyCamera?
-    {
-        val httpClient = SimpleHttpClient()
-        var device: SonyCameraDeviceProvider? = null
-        val ddXml: String
-        try
-        {
-            ddXml = httpClient.httpGet(ddUrl, -1)
-            Log.d(TAG, "fetch () httpGet done. : " + ddXml.length)
-            if (ddXml.length < 2)
-            {
-                // 内容がないときは...終了する
-                Log.v(TAG, "NO BODY")
-                return (null)
-            }
-        }
-        catch (e: java.lang.Exception)
-        {
-            e.printStackTrace()
-            return (null)
-        }
-        try
-        {
-            //Log.v(TAG, "ddXml : " + ddXml);
-            val rootElement = XmlElement.parse(ddXml)
-
-            // "root"
-            if ("root" == rootElement.tagName)
-            {
-                // "device"
-                val deviceElement = rootElement.findChild("device")
-                val friendlyName = deviceElement.findChild("friendlyName").value
-                val modelName = deviceElement.findChild("modelName").value
-                val udn = deviceElement.findChild("UDN").value
-
-                // "iconList"
-                var iconUrl = ""
-                val iconListElement = deviceElement.findChild("iconList")
-                val iconElements = iconListElement.findChildren("icon")
-                for (iconElement in iconElements) {
-                    // Choose png icon to show Android UI.
-                    if ("image/png" == iconElement.findChild("mimetype").value) {
-                        val uri = iconElement.findChild("url").value
-                        val hostUrl = toSchemeAndHost(ddUrl)
-                        iconUrl = hostUrl + uri
-                    }
-                }
-                device = SonyCameraDeviceProvider(ddUrl, friendlyName, modelName, udn, iconUrl)
-
-                // "av:X_ScalarWebAPI_DeviceInfo"
-                val wApiElement = deviceElement.findChild("X_ScalarWebAPI_DeviceInfo")
-                val wApiServiceListElement = wApiElement.findChild("X_ScalarWebAPI_ServiceList")
-                val wApiServiceElements =
-                    wApiServiceListElement.findChildren("X_ScalarWebAPI_Service")
-                for (wApiServiceElement in wApiServiceElements) {
-                    val serviceName =
-                        wApiServiceElement.findChild("X_ScalarWebAPI_ServiceType").value
-                    val actionUrl =
-                        wApiServiceElement.findChild("X_ScalarWebAPI_ActionList_URL").value
-                    device.addApiService(serviceName, actionUrl)
-                }
-            }
-        } catch (e: java.lang.Exception) {
-            e.printStackTrace()
-        }
-        Log.d(TAG, "fetch () parsing XML done.")
-        if (device == null) {
-            Log.v(TAG, "device is null.")
-        }
-        return device
-    }
-
-    private fun toSchemeAndHost(url: String): String {
-        val i = url.indexOf("://") // http:// or https://
-        if (i == -1) {
-            return ""
-        }
-        val j = url.indexOf("/", i + 3)
-        return if (j == -1) {
-            ""
-        } else url.substring(0, j)
-    }
-
-    private fun toHost(url: String): String
-    {
-        val i = url.indexOf("://") // http:// or https://
-        if (i == -1) {
-            return ""
-        }
-        val j = url.indexOf(":", i + 3)
-        return if (j == -1) {
-            ""
-        } else url.substring(i + 3, j)
-    }
-
-    /**
-     * 検索結果のコールバック
-     *
-     */
     interface ISearchResultCallback
     {
-        fun onDeviceFound(cameraDevice: ISonyCamera) // デバイスが見つかった！
+        fun onDeviceFound(cameraDevice: IPixproCamera) // デバイスが見つかった！
         fun onFinished() // 通常の終了をしたとき
         fun onErrorFinished(reason: String?) // エラーが発生して応答したとき
     }

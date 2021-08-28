@@ -9,6 +9,7 @@ import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.IPixpr
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.messages.IPixproCommandCallback
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.messages.specific.PixproExecuteFocus
 import java.lang.Exception
+import kotlin.math.roundToInt
 
 class FocusControl(private val commandPublisher: IPixproCommandPublisher, private val frameDisplayer: IAutoFocusFrameDisplay?) : IFocusingControl, IPixproCommandCallback
 {
@@ -78,8 +79,8 @@ class FocusControl(private val commandPublisher: IPixproCommandPublisher, privat
         val maxPointLimitWidth = 1000000.0f
         val maxPointLimitHeight = 1000000.0f
         try {
-            val x = 0x00ffffff and Math.round(point.x * maxPointLimitWidth) + 1
-            val y = 0x00ffffff and Math.round(point.y * maxPointLimitHeight) + 1
+            val x = 0x00ffffff and (point.x * maxPointLimitWidth).roundToInt() + 1
+            val y = 0x00ffffff and (point.y * maxPointLimitHeight).roundToInt() + 1
             Log.v(TAG, "Lock AF: [$x,$y]")
             commandPublisher.enqueueCommand(PixproExecuteFocus(this, x, y))
         } catch (e: Exception) {

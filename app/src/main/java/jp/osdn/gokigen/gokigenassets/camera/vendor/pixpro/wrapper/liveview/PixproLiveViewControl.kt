@@ -1,18 +1,15 @@
 package jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.liveview
 
-import android.content.Context
 import android.util.Log
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ILiveViewController
+import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.IPixproCamera
 import java.lang.Exception
-import jp.osdn.gokigen.gokigenassets.liveview.image.CameraLiveViewListenerImpl
-import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
+import jp.osdn.gokigen.gokigenassets.liveview.image.IImageDataReceiver
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleLiveViewSlicer
 
-
-class PixproLiveViewControl(context: Context, private val informationReceiver: IInformationReceiver, camera_ip : String, liveview_port : Int) : ILiveViewController
+class PixproLiveViewControl(private val imageDataReceiver: IImageDataReceiver, pixproCamera: IPixproCamera) : ILiveViewController
 {
-    private val liveViewListener = CameraLiveViewListenerImpl(context, informationReceiver)
-    private val liveViewUrl: String = "http://$camera_ip:$liveview_port/"; // "http://172.16.0.254:9176";
+    private val liveViewUrl: String = "http://${pixproCamera.getIpAddress()}:${pixproCamera.getLiveViewPortNumber()}/" // "http://172.16.0.254:9176";
     private var whileFetching = false
 
     companion object
@@ -48,7 +45,6 @@ class PixproLiveViewControl(context: Context, private val informationReceiver: I
     {
         Log.v(TAG, " stopLiveView()")
     }
-
 
     private fun start(streamUrl: String)
     {
@@ -90,7 +86,7 @@ class PixproLiveViewControl(context: Context, private val informationReceiver: I
                         //    mJpegQueue.remove();
                         //}
                         //mJpegQueue.add(payload.getJpegData());
-                        liveViewListener.onUpdateLiveView(payload.getJpegData() ?: ByteArray(0), null)
+                        imageDataReceiver.onUpdateLiveView(payload.getJpegData() ?: ByteArray(0), null)
                         continuousNullDataReceived = 0
                     }
                 }

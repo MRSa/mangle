@@ -1,8 +1,9 @@
 package jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper
 
 import android.util.Log
+import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleLogDumper
 
-class PixproCamera : IPixproCamera
+class PixproCamera : IPixproCamera, IPixproCameraInitializer
 {
     private lateinit var ipAddress: String
     private var portNumber = -1
@@ -15,7 +16,7 @@ class PixproCamera : IPixproCamera
         private val TAG = PixproCamera::class.java.simpleName
     }
 
-    fun setCommunicationParameter(ip: String, port: Int, lvPort: Int, tcpDelay: Boolean)
+    override fun setCommunicationParameter(ip: String, port: Int, lvPort: Int, tcpDelay: Boolean)
     {
         Log.v(TAG, "setCommunicationParameter($ip, $port, $lvPort, $tcpDelay)")
         this.ipAddress = ip
@@ -25,11 +26,13 @@ class PixproCamera : IPixproCamera
         isAvailable = true
     }
 
-    fun parseCommunicationParameter(data: ByteArray)
+    override fun parseCommunicationParameter(data: ByteArray)
     {
         //  AOFREPLY:DC163,1,PIXPRO WPZ2,172.16.0.254,255.255.255.0,(mac address),9176,9175,0,(WIFI SSID),0
         try
         {
+            val dumpSize = if (data.size > 127 ) { 127 } else { data.size }
+            SimpleLogDumper.dumpBytes("[QUERY:${data.size}]", data.copyOfRange(0, dumpSize))
             isAvailable = true
         }
         catch (e: Exception)

@@ -30,6 +30,7 @@ interface ICameraConstantConvert
         const val ID_STRING_CONNECT_CAMERA_REJECTED = R.string.connect_camera_rejected
         const val ID_STRING_CONNECT_UNKNOWN_MESSAGE = R.string.connect_receive_unknown_message
 
+        const val ID_STRING_COMMAND_LINE_DISCONNECTED = R.string.command_line_disconnected
 
         const val ID_PREFERENCE_THETA_LIVEVIEW_RESOLUTION = IPreferencePropertyAccessor.THETA_LIVEVIEW_RESOLUTION
         const val ID_PREFERENCE_THETA_LIVEVIEW_RESOLUTION_DEFAULT_VALUE = IPreferencePropertyAccessor.THETA_LIVEVIEW_RESOLUTION_DEFAULT_VALUE

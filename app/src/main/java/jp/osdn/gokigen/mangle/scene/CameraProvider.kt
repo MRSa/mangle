@@ -10,6 +10,7 @@ import jp.osdn.gokigen.gokigenassets.camera.console.ConsolePanelControl
 import jp.osdn.gokigen.gokigenassets.camera.example.ExamplePictureControl
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.*
 import jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.wrapper.PanasonicCameraControl
+import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.PixproCameraControl
 import jp.osdn.gokigen.gokigenassets.camera.vendor.ricohpentax.RicohPentaxCameraControl
 import jp.osdn.gokigen.gokigenassets.camera.vendor.sony.SonyCameraControl
 import jp.osdn.gokigen.gokigenassets.camera.vendor.theta.ThetaCameraControl
@@ -19,6 +20,7 @@ import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companio
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_NONE
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_PANASONIC
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_PENTAX
+import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_PIXPRO
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_SONY
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_THETA
 import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
@@ -115,6 +117,7 @@ class CameraProvider(private val activity: AppCompatActivity, private val inform
                 PREFERENCE_CAMERA_METHOD_PENTAX -> preparePentaxCameraControl(cameraPreference)
                 PREFERENCE_CAMERA_METHOD_PANASONIC -> preparePanasonicCameraControl(cameraPreference)
                 PREFERENCE_CAMERA_METHOD_SONY -> prepareSonyCameraControl(cameraPreference)
+                PREFERENCE_CAMERA_METHOD_PIXPRO -> preparePixproCameraControl(cameraPreference)
                 else -> DummyCameraControl()
             })
         }
@@ -228,6 +231,11 @@ class CameraProvider(private val activity: AppCompatActivity, private val inform
     private fun prepareSonyCameraControl(cameraPreference : ICameraPreferenceProvider) : ICameraControl
     {
         return (SonyCameraControl(activity, vibrator, informationNotify, cameraPreference, statusReceiver))
+    }
+
+    private fun preparePixproCameraControl(cameraPreference : ICameraPreferenceProvider) : ICameraControl
+    {
+        return (PixproCameraControl(activity, vibrator, informationNotify, cameraPreference, statusReceiver))
     }
 
     private fun prepareConsolePanelControl(cameraPreference : ICameraPreferenceProvider) : ICameraControl
