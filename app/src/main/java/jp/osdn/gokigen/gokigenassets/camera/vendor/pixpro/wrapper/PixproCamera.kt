@@ -1,11 +1,11 @@
 package jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper
 
 import android.util.Log
-import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleLogDumper
 
 class PixproCamera : IPixproCamera, IPixproCameraInitializer
 {
     private lateinit var ipAddress: String
+    private var cameraName = ""
     private var portNumber = -1
     private var liveViewPort = -1
     private var tcpNoDelay = false
@@ -28,11 +28,19 @@ class PixproCamera : IPixproCamera, IPixproCameraInitializer
 
     override fun parseCommunicationParameter(data: ByteArray)
     {
-        //  AOFREPLY:DC163,1,PIXPRO WPZ2,172.16.0.254,255.255.255.0,(mac address),9176,9175,0,(WIFI SSID),0
         try
         {
-            val dumpSize = if (data.size > 127 ) { 127 } else { data.size }
-            SimpleLogDumper.dumpBytes("[QUERY:${data.size}]", data.copyOfRange(0, dumpSize))
+            //  AOFREPLY:xxxxxx,1,PIXPRO WPZ2,172.16.0.254,255.255.255.0,(mac address),9176,9175,0,(WIFI SSID),0
+            val receiveStringArray = data.decodeToString().split(",")
+            cameraName = receiveStringArray[2]
+            ipAddress = receiveStringArray[3]
+            liveViewPort = receiveStringArray[6].toInt()
+            portNumber = receiveStringArray[7].toInt()
+
+            Log.v(TAG, " ===== DETECTED PIXPRO CAMERA:$cameraName  IP:$ipAddress  port:$portNumber (liveview:$liveViewPort)")
+
+            //val dumpSize = if (data.size > 127 ) { 127 } else { data.size }
+            //SimpleLogDumper.dumpBytes("[QUERY:${data.size}]", data.copyOfRange(0, dumpSize))
             isAvailable = true
         }
         catch (e: Exception)
