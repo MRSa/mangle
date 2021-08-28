@@ -33,6 +33,7 @@ import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Compa
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_CAMERAX
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_PANASONIC
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_PENTAX
+import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_PIXPRO
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_SONY
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_THETA
 import jp.osdn.gokigen.gokigenassets.liveview.*
@@ -595,6 +596,7 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
                 PREFERENCE_CAMERA_METHOD_THETA -> true
                 PREFERENCE_CAMERA_METHOD_PANASONIC -> true
                 PREFERENCE_CAMERA_METHOD_SONY -> true
+                PREFERENCE_CAMERA_METHOD_PIXPRO -> true
                 else -> false
             }
         }
