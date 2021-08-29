@@ -37,7 +37,7 @@ class PixproCameraControl(private val context: AppCompatActivity, private val vi
     private val liveViewListener = CameraLiveViewListenerImpl(context, informationNotify)
     private val cameraConnection = PixproCameraConnection(context, provider, this, statusChecker)
     private val pixproCameraParameter = PixproCamera()
-    private val commandCommunicator = PixproCommandCommunicator(pixproCameraParameter, this)
+    private val commandCommunicator = PixproCommandCommunicator(pixproCameraParameter, this, statusChecker)
     private val storeImage = StoreImage(context, liveViewListener)
 
     private lateinit var liveViewControl : PixproLiveViewControl
@@ -60,6 +60,7 @@ class PixproCameraControl(private val context: AppCompatActivity, private val vi
     override fun initialize()
     {
         Log.v(TAG, " --- initialize() : SEQ : ${preference.getConnectionSequence()}")
+        statusChecker.setCommandPublisher(commandCommunicator)
     }
 
     override fun connectToCamera()
@@ -212,6 +213,7 @@ class PixproCameraControl(private val context: AppCompatActivity, private val vi
                 liveViewControl = PixproLiveViewControl(liveViewListener, pixproCameraParameter)
             }
             liveViewControl.startLiveView()
+            statusChecker.startStatusWatch(null, null)
         }
         catch (e: Exception)
         {

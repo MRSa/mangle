@@ -17,7 +17,7 @@ import java.net.Socket
 import java.net.SocketException
 import java.util.*
 
-class PixproCommandCommunicator(private val pixproCamera: IPixproCamera, private val notifier: IPixproCommunicationNotify) : IPixproCommandPublisher, IPixproCommunication
+class PixproCommandCommunicator(private val pixproCamera: IPixproCamera, private val notifier: IPixproCommunicationNotify, private val statusChecker: IPixproCommandCallback) : IPixproCommandPublisher, IPixproCommunication
 {
     private var isStart = false
     private var isConnected = false
@@ -37,9 +37,9 @@ class PixproCommandCommunicator(private val pixproCamera: IPixproCamera, private
     {
         private val TAG = PixproCommandCommunicator::class.java.simpleName
         private const val BUFFER_SIZE = 1024 * 1024 + 16 // 受信バッファは 1MB
-        private const val COMMAND_SEND_RECEIVE_DURATION_MS = 5
+        private const val COMMAND_SEND_RECEIVE_DURATION_MS = 30
         private const val COMMAND_SEND_RECEIVE_DURATION_MAX = 3000
-        private const val COMMAND_POLL_QUEUE_MS = 5
+        private const val COMMAND_POLL_QUEUE_MS = 15
     }
 
     override fun connect(): Boolean
@@ -51,9 +51,13 @@ class PixproCommandCommunicator(private val pixproCamera: IPixproCamera, private
         }
         try
         {
-            Log.v(TAG, " connect()")
+            val tcpNoDelay = pixproCamera.getTcpNoDelay()
+            Log.v(TAG, " connect() $tcpNoDelay")
             socket = Socket()
-            if (pixproCamera.getTcpNoDelay())
+            socket?.reuseAddress = true
+            socket?.keepAlive = true
+            socket?.tcpNoDelay = tcpNoDelay
+            if (tcpNoDelay)
             {
                 socket?.keepAlive = false
                 socket?.setPerformancePreferences(0, 2, 0)
@@ -61,7 +65,6 @@ class PixproCommandCommunicator(private val pixproCamera: IPixproCamera, private
                 socket?.reuseAddress = false
                 socket?.trafficClass = 0x80
             }
-            socket?.tcpNoDelay = pixproCamera.getTcpNoDelay()
             socket?.connect(InetSocketAddress(pixproCamera.getIpAddress(), pixproCamera.getPortNumber()), 0)
             isConnected = true
             return (true)
@@ -154,11 +157,16 @@ class PixproCommandCommunicator(private val pixproCamera: IPixproCamera, private
                         if (command != null)
                         {
                             issueCommand(command)
+
+                            Thread.sleep(COMMAND_POLL_QUEUE_MS.toLong())
+                            Log.v(TAG, " --- RECEIVE FOR REPLY --- ")
+                            receiveFromCamera(command)
                         }
                         Thread.sleep(COMMAND_POLL_QUEUE_MS.toLong())
+
                         if (inputStream != null && inputStream.available() > 0)
                         {
-                            Log.v(TAG, " --- RECEIVE MSG --- ")
+                            Log.v(TAG, " --- RECEIVE FOR (PRIMARY) MSG --- ")
                             receiveFromCamera(PixproCommandReceiveOnly(SEQ_RECEIVE_ONLY, PixproCommandOnlyCallback()))
                         }
                     }
@@ -174,9 +182,12 @@ class PixproCommandCommunicator(private val pixproCamera: IPixproCamera, private
                 e.printStackTrace()
             }
         }
-        try {
+        try
+        {
             thread.start()
-        } catch (e: Exception) {
+        }
+        catch (e: Exception)
+        {
             e.printStackTrace()
         }
     }
@@ -210,9 +221,11 @@ class PixproCommandCommunicator(private val pixproCamera: IPixproCamera, private
     {
         try
         {
+/*
             var retryOver = true
             while (retryOver)
             {
+*/
                 //Log.v(TAG, "issueCommand : " + command.getId());
                 val commandBody: ByteArray = command.commandBody()
                 // コマンドボディが入っていた場合には、コマンド送信（入っていない場合は受信待ち）
@@ -224,12 +237,14 @@ class PixproCommandCommunicator(private val pixproCamera: IPixproCamera, private
                     // コマンドボディの２つめが入っていた場合には、コマンドを連続送信する
                     sendToCamera(command.dumpLog(), commandBody2)
                 }
+/*
                 retryOver = receiveFromCamera(command)
                 if (retryOver)
                 {
                     retryOver = command.sendRetry()
                 }
             }
+*/
         }
         catch (e: Exception)
         {
@@ -388,7 +403,7 @@ class PixproCommandCommunicator(private val pixproCamera: IPixproCamera, private
         try
         {
             var messageToSend: ByteArray? = null
-            if (received_body[8] == 0xd2.toByte() && received_body[9] == 0xd7.toByte())
+            if (received_body[8] == 0xd2.toByte() && received_body[9] == 0x07.toByte())
             {
                 messageToSend = byteArrayOf(
                     0x2e.toByte(),
@@ -401,6 +416,79 @@ class PixproCommandCommunicator(private val pixproCamera: IPixproCamera, private
                     0x00.toByte(),
                     0xd2.toByte(),
                     0x07.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x01.toByte(),
+                    0x10.toByte(),
+                    0x00.toByte(),
+                    0x80.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x01.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0xff.toByte(),
+                    0xff.toByte(),
+                    0xff.toByte(),
+                    0xff.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00.toByte()
+                )
+            }
+            if (received_body[8] == 0xd2.toByte() && received_body[9] == 0xd7.toByte())
+            {
+                messageToSend = byteArrayOf(
+                    0x2e.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0x00.toByte(),
+                    0xd2.toByte(),
+                    0xd7.toByte(),
                     0x00.toByte(),
                     0x00.toByte(),
                     0x01.toByte(),
@@ -710,13 +798,15 @@ class PixproCommandCommunicator(private val pixproCamera: IPixproCamera, private
                 return false
             }
             if (receive_body[8] == 0xd2.toByte() && receive_body[9] == 0x07.toByte() ||
+                receive_body[8] == 0xd2.toByte() && receive_body[9] == 0xd7.toByte() ||
                 receive_body[8] == 0xb9.toByte() && receive_body[9] == 0x0b.toByte() ||
                 receive_body[8] == 0xba.toByte() && receive_body[9] == 0x0b.toByte() ||
                 receive_body[8] == 0xbb.toByte() && receive_body[9] == 0x0b.toByte()
             )
             {
                 isReceivedStatusMessage = true
-                Log.v(TAG, "  >>> RECEIVED HOST PRIMARY MESSAGE. <<<")
+                Log.v(TAG, "  >>> RECEIVED HOST PRIMARY MESSAGE. (${receive_body.size} bytes.)<<<")
+                statusChecker.receivedMessage(0, receive_body)
             }
         }
         catch (e: Exception)

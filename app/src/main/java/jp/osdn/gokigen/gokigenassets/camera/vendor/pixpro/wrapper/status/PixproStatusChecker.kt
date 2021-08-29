@@ -5,6 +5,7 @@ import android.util.Log
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusUpdateNotify
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusWatcher
+import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.IPixproCommandPublisher
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.messages.IPixproCommandCallback
 import jp.osdn.gokigen.gokigenassets.liveview.message.IMessageDrawer
 import java.lang.Exception
@@ -14,10 +15,18 @@ class PixproStatusChecker : IPixproCommandCallback, ICameraStatusWatcher, ICamer
     private val statusHolder = PixproStatusHolder()
     private var whileFetching = false
     private var notifier: ICameraStatusUpdateNotify? = null
+    private lateinit var commandPublisher : IPixproCommandPublisher
 
     companion object
     {
         private val TAG = PixproStatusChecker::class.java.simpleName
+        private const val EVENT_POLL_QUEUE_MS = 1000
+    }
+
+    fun setCommandPublisher(commandPublisher : IPixproCommandPublisher)
+    {
+        this.commandPublisher = commandPublisher
+        statusHolder.setCommandPublisher(commandPublisher)
     }
 
     override fun getStatusList(key: String): List<String?>
@@ -30,7 +39,7 @@ class PixproStatusChecker : IPixproCommandCallback, ICameraStatusWatcher, ICamer
         {
             e.printStackTrace()
         }
-        return ArrayList()
+        return (ArrayList())
     }
 
     override fun getStatus(key: String): String
@@ -62,12 +71,17 @@ class PixproStatusChecker : IPixproCommandCallback, ICameraStatusWatcher, ICamer
     override fun setStatus(key: String, value: String)
     {
         Log.v(TAG, "setStatus($key, $value)")
+        try
+        {
+            return (statusHolder.setItemStatus(key, value))
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
     }
 
-    override fun startStatusWatch(
-        indicator: IMessageDrawer?,
-        notifier: ICameraStatusUpdateNotify?
-    )
+    override fun startStatusWatch(indicator: IMessageDrawer?, notifier: ICameraStatusUpdateNotify?)
     {
         if (whileFetching)
         {
@@ -78,6 +92,30 @@ class PixproStatusChecker : IPixproCommandCallback, ICameraStatusWatcher, ICamer
         {
             this.notifier = notifier
             whileFetching = true
+
+            val thread = Thread {
+                while (whileFetching)
+                {
+                    try
+                    {
+                        Thread.sleep(EVENT_POLL_QUEUE_MS.toLong())
+
+                        Log.v(TAG, "  ----- POLL EVENT -----  ")
+                    }
+                    catch (e: Exception)
+                    {
+                        e.printStackTrace()
+                    }
+                }
+            }
+            try
+            {
+                thread.start()
+            }
+            catch (e: Exception)
+            {
+                e.printStackTrace()
+            }
         }
         catch (e: Exception)
         {

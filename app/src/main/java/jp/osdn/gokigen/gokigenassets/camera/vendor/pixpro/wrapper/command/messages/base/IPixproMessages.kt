@@ -15,6 +15,8 @@ interface IPixproMessages
         const val  SEQ_FLASH_ON = 21
         const val  SEQ_FLASH_AUTO = 22
 
+        const val  SEQ_WHITE_BALANCE = 30
+
         const val  SEQ_CONNECT_01 = 101
         const val  SEQ_CONNECT_02 = 102
         const val  SEQ_CONNECT_03 = 103

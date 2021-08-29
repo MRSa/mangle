@@ -6,14 +6,18 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusUpdateNotify
 import androidx.collection.SparseArrayCompat
 
 import android.util.SparseIntArray
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus
+import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.IPixproCommandPublisher
+import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.messages.base.PixproCommandOnlyCallback
+import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.messages.specific.PixproFlashAuto
+import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.messages.specific.PixproFlashOff
+import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.messages.specific.PixproFlashOn
+import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.messages.specific.PixproWhiteBalance
 import java.lang.Exception
 import java.util.*
-import kotlin.collections.ArrayList
-
 
 class PixproStatusHolder
 {
-
     companion object
     {
         private val TAG = PixproStatusHolder::class.java.simpleName
@@ -21,39 +25,12 @@ class PixproStatusHolder
 
     private val statusHolder: SparseIntArray = SparseIntArray()
     private val statusNameArray: SparseArrayCompat<String>  = SparseArrayCompat()
-    private fun prepareStatusNameArray() {
-/*
-        statusNameArray.clear();
-        statusNameArray.append(BATTERY_LEVEL, BATTERY_LEVEL_STR);
-        statusNameArray.append(WHITE_BALANCE, WHITE_BALANCE_STR);
-        statusNameArray.append(APERTURE, APERTURE_STR);
-        statusNameArray.append(FOCUS_MODE, FOCUS_MODE_STR);
-        statusNameArray.append(SHOOTING_MODE, SHOOTING_MODE_STR);
-        statusNameArray.append(FLASH, FLASH_STR);
-        statusNameArray.append(EXPOSURE_COMPENSATION, EXPOSURE_COMPENSATION_STR);
-        statusNameArray.append(SELF_TIMER, SELF_TIMER_STR);
-        statusNameArray.append(FILM_SIMULATION, FILM_SIMULATION_STR);
-        statusNameArray.append(IMAGE_FORMAT, IMAGE_FORMAT_STR);
-        statusNameArray.append(RECMODE_ENABLE, RECMODE_ENABLE_STR);
-        statusNameArray.append(F_SS_CONTROL, F_SS_CONTROL_STR);
-        statusNameArray.append(ISO, ISO_STR);
-        statusNameArray.append(MOVIE_ISO, MOVIE_ISO_STR);
-        statusNameArray.append(FOCUS_POINT, FOCUS_POINT_STR);
-        statusNameArray.append(DEVICE_ERROR, DEVICE_ERROR_STR);
-        statusNameArray.append(IMAGE_FILE_COUNT, IMAGE_FILE_COUNT_STR);
-        statusNameArray.append(SDCARD_REMAIN_SIZE, SDCARD_REMAIN_SIZE_STR);
-        statusNameArray.append(FOCUS_LOCK, FOCUS_LOCK_STR);
-        statusNameArray.append(MOVIE_REMAINING_TIME, MOVIE_REMAINING_TIME_STR);
-        statusNameArray.append(SHUTTER_SPEED, SHUTTER_SPEED_STR);
-        statusNameArray.append(IMAGE_ASPECT,IMAGE_ASPECT_STR);
-        statusNameArray.append(BATTERY_LEVEL_2, BATTERY_LEVEL_2_STR);
+    private var statusConvert = PixproStatusConvert(this)
+    private lateinit var commandPublisher : IPixproCommandPublisher
 
-        statusNameArray.append(UNKNOWN_DF00, UNKNOWN_DF00_STR);
-        statusNameArray.append(PICTURE_JPEG_COUNT, PICTURE_JPEG_COUNT_STR);
-        statusNameArray.append(UNKNOWN_D400, UNKNOWN_D400_STR);
-        statusNameArray.append(UNKNOWN_D401, UNKNOWN_D401_STR);
-        statusNameArray.append(UNKNOWN_D52F, UNKNOWN_D52F_STR);
-*/
+    fun setCommandPublisher(commandPublisher : IPixproCommandPublisher)
+    {
+        this.commandPublisher = commandPublisher
     }
 
     fun updateValue(
@@ -121,86 +98,299 @@ class PixproStatusHolder
         }
     }
 
-    /**
-     * 認識したカメラのステータス名称のリストを応答する
-     *
-     */
-    private val availableStatusNameList: List<String?>
-        private get() {
-            val selection: ArrayList<String?> = ArrayList()
-            try {
-                for (index in 0 until statusHolder.size()) {
-                    val key = statusHolder.keyAt(index)
-                    selection.add(
-                        statusNameArray[key, java.lang.String.format(
-                            Locale.US,
-                            "0x%04x",
-                            key
-                        )]
-                    )
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-            return selection
+    fun getAvailableItemList(key: String?): List<String?>
+    {
+        try
+        {
+            return (when (key) {
+                ICameraStatus.TAKE_MODE -> statusConvert.getAvailableTakeMode()
+                ICameraStatus.SHUTTER_SPEED -> statusConvert.getAvailableShutterSpeed()
+                ICameraStatus.APERTURE -> statusConvert.getAvailableAperture()
+                ICameraStatus.EXPREV -> statusConvert.getAvailableExpRev()
+                ICameraStatus.CAPTURE_MODE -> statusConvert.getAvailableCaptureMode()
+                ICameraStatus.ISO_SENSITIVITY -> statusConvert.getAvailableIsoSensitivity()
+                ICameraStatus.WHITE_BALANCE -> statusConvert.getAvailableWhiteBalance()
+                ICameraStatus.AE -> statusConvert.getAvailableMeteringMode()
+                ICameraStatus.EFFECT -> statusConvert.getAvailablePictureEffect()
+                ICameraStatus.TORCH_MODE -> statusConvert.getAvailableTorchMode()
+                //ICameraStatus.BATTERY -> statusConvert.getAvailableRemainBattery()
+                //ICameraStatus.FOCUS_STATUS -> statusConvert.getAvailableFocusStatus()
+                else -> ArrayList()
+            })
+            //Log.v(TAG, " ----- getAvailableItemList($key) ")
+            //sendCamGetSettingCmd("colormode")
         }
-
-    fun getAvailableItemList(listKey: String?): List<String?> {
-        if (listKey == null) {
-            // アイテム名の一覧を応答する
-            return availableStatusNameList
-        }
-
-        /////  選択可能なステータスの一覧を取得する : でも以下はアイテム名の一覧... /////
-        val selection: ArrayList<String?> = ArrayList()
-        try {
-            for (index in 0 until statusHolder.size()) {
-                val key = statusHolder.keyAt(index)
-                selection.add(statusNameArray[key])
-            }
-        } catch (e: Exception) {
+        catch (e: Exception)
+        {
             e.printStackTrace()
         }
-        return selection
+        return (ArrayList())
     }
 
     fun getItemStatusColor(key: String): Int
     {
+        return (when (key) {
+            ICameraStatus.BATTERY -> getRemainBatteryColor()
+            else -> Color.WHITE
+        })
+    }
+
+    fun getItemStatus(orgKey: String): String
+    {
+        return (when (orgKey) {
+            ICameraStatus.TAKE_MODE -> getTakeMode()
+            ICameraStatus.SHUTTER_SPEED -> getShutterSpeed()
+            //ICameraStatus.APERTURE -> getAperture()
+            ICameraStatus.EXPREV -> getExpRev()
+            //ICameraStatus.CAPTURE_MODE -> getCaptureMode()
+            ICameraStatus.ISO_SENSITIVITY -> getIsoSensitivity()
+            ICameraStatus.WHITE_BALANCE -> getWhiteBalance()
+            //ICameraStatus.AE -> getMeteringMode()
+            //ICameraStatus.EFFECT -> getPictureEffect()
+            ICameraStatus.BATTERY -> getRemainBattery()
+            ICameraStatus.TORCH_MODE -> getTorchMode()
+            //ICameraStatus.FOCUS_STATUS -> getfocusStatus()
+            else -> ""
+        })
+    }
+
+    private fun getRemainBatteryColor() : Int
+    {
         return (Color.WHITE)
     }
 
-    fun getItemStatus(orgKey: String): String {
-        var key = orgKey
-        try {
-            val strIndex = key.indexOf("x")
-            Log.v(TAG, "getItemStatus() : $key [$strIndex]")
-            if (strIndex >= 1) {
-                key = key.substring(strIndex + 1)
-                try {
-                    val id = key.toInt(16)
-                    val value = statusHolder[id]
-                    Log.v(TAG, "getItemStatus() value : $value")
-                    return value.toString() + ""
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
-            for (index in 0 until statusNameArray.size()) {
-                val id = statusNameArray.keyAt(index)
-                val strKey = statusNameArray.valueAt(index)
-                if (key.contentEquals(strKey)) {
-                    val value = statusHolder[id]
-                    return value.toString() + ""
-                }
-            }
-        } catch (e: Exception) {
+    private fun getTakeMode() : String
+    {
+        var status = ""
+        try
+        {
+
+        }
+        catch (e: Exception)
+        {
             e.printStackTrace()
         }
-        return "? [$key]"
+        return (status)
     }
 
-    init {
+    private fun getShutterSpeed() : String
+    {
+        var status = ""
+        try
+        {
+
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+        return (status)
+    }
+
+    private fun getExpRev() : String
+    {
+        var status = ""
+        try
+        {
+
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+        return (status)
+    }
+
+    private fun getIsoSensitivity() : String
+    {
+        var status = ""
+        try
+        {
+
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+        return (status)
+    }
+
+    private fun getRemainBattery() : String
+    {
+        var status = ""
+        try
+        {
+
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+        return (status)
+    }
+
+    private fun getWhiteBalance() : String
+    {
+        var status = ""
+        try
+        {
+            status = "WB: "
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+        return (status)
+    }
+
+    private fun getTorchMode() : String
+    {
+        var status = ""
+        try
+        {
+            status = "Flash: "
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+        return (status)
+    }
+
+    fun setItemStatus(key: String, value: String)
+    {
+        Log.v(TAG, " setItemStatus(key:$key, value:$value)")
+        try
+        {
+            when (key) {
+                ICameraStatus.TAKE_MODE -> setTakeMode(value)
+                ICameraStatus.SHUTTER_SPEED -> setShutterSpeed(value)
+                //ICameraStatus.APERTURE -> setAperture(value)
+                ICameraStatus.EXPREV -> setExpRev(value)
+                //ICameraStatus.CAPTURE_MODE -> setCaptureMode(value)
+                ICameraStatus.ISO_SENSITIVITY -> setIsoSensitivity(value)
+                ICameraStatus.WHITE_BALANCE -> setWhiteBalance(value)
+                //ICameraStatus.AE -> setMeteringMode(value)
+                //ICameraStatus.EFFECT -> setPictureEffect(value)
+                ICameraStatus.TORCH_MODE -> setTorchMode(value)
+                //ICameraStatus.BATTERY -> setRemainBattery(value)
+                //ICameraStatus.FOCUS_STATUS -> setfocusStatus(value)
+                else -> return
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    private fun setTakeMode(value: String)
+    {
+        try
+        {
+            Log.v(TAG, " setTakeMode($value)")
+
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    private fun setShutterSpeed(value: String)
+    {
+        try
+        {
+            Log.v(TAG, " setShutterSpeed($value)")
+
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    private fun setExpRev(value: String)
+    {
+        try
+        {
+            Log.v(TAG, " setExpRev($value)")
+
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    private fun setIsoSensitivity(value: String)
+    {
+        try
+        {
+            Log.v(TAG, " setIsoSensitivity($value)")
+
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    private fun setWhiteBalance(value: String)
+    {
+        try
+        {
+            if (!::commandPublisher.isInitialized)
+            {
+                // 未初期化の場合はコマンドを送らない
+                return
+            }
+            Log.v(TAG, " setWhiteBalance($value)")
+            when (value)
+            {
+                "AUTO" -> commandPublisher.enqueueCommand(PixproWhiteBalance(PixproCommandOnlyCallback(), 0x04))
+                "Daylight" -> commandPublisher.enqueueCommand(PixproWhiteBalance(PixproCommandOnlyCallback(), 0x01))
+                "Cloudy" -> commandPublisher.enqueueCommand(PixproWhiteBalance(PixproCommandOnlyCallback(), 0x02))
+                "Fluorescent" -> commandPublisher.enqueueCommand(PixproWhiteBalance(PixproCommandOnlyCallback(), 0x10))
+                "Fluorescent CWF" -> commandPublisher.enqueueCommand(PixproWhiteBalance(PixproCommandOnlyCallback(), 0x20)) //
+                "Incandescent" -> commandPublisher.enqueueCommand(PixproWhiteBalance(PixproCommandOnlyCallback(), 0x40))  // 白熱灯
+                "Underwater" -> commandPublisher.enqueueCommand(PixproWhiteBalance(PixproCommandOnlyCallback(), 0x80))    // 不明...
+                "Other" -> commandPublisher.enqueueCommand(PixproWhiteBalance(PixproCommandOnlyCallback(), 0x08))         // 不明...
+                else -> { }
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    private fun setTorchMode(value: String)
+    {
+        try
+        {
+            if (!::commandPublisher.isInitialized)
+            {
+                // 未初期化の場合はコマンドを送らない
+                return
+            }
+            Log.v(TAG, " setTorchMode($value)")
+            when (value)
+            {
+                "OFF" -> commandPublisher.enqueueCommand(PixproFlashOff(PixproCommandOnlyCallback()))
+                "ON" -> commandPublisher.enqueueCommand(PixproFlashOn(PixproCommandOnlyCallback()))
+                "AUTO" -> commandPublisher.enqueueCommand(PixproFlashAuto(PixproCommandOnlyCallback()))
+                else -> { }
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    init
+    {
         statusHolder.clear()
-        prepareStatusNameArray()
     }
 }
