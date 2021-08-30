@@ -7,7 +7,9 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusWatcher
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.IPixproCommandPublisher
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.messages.IPixproCommandCallback
+import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.messages.specific.PixproStatusRequest
 import jp.osdn.gokigen.gokigenassets.liveview.message.IMessageDrawer
+import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleLogDumper
 import java.lang.Exception
 
 class PixproStatusChecker : IPixproCommandCallback, ICameraStatusWatcher, ICameraStatus
@@ -20,7 +22,7 @@ class PixproStatusChecker : IPixproCommandCallback, ICameraStatusWatcher, ICamer
     companion object
     {
         private val TAG = PixproStatusChecker::class.java.simpleName
-        private const val EVENT_POLL_QUEUE_MS = 1000
+        private const val EVENT_POLL_QUEUE_MS = 1500
     }
 
     fun setCommandPublisher(commandPublisher : IPixproCommandPublisher)
@@ -101,6 +103,10 @@ class PixproStatusChecker : IPixproCommandCallback, ICameraStatusWatcher, ICamer
                         Thread.sleep(EVENT_POLL_QUEUE_MS.toLong())
 
                         Log.v(TAG, "  ----- POLL EVENT -----  ")
+                        if (::commandPublisher.isInitialized)
+                        {
+                            commandPublisher.enqueueCommand(PixproStatusRequest(this))
+                        }
                     }
                     catch (e: Exception)
                     {
@@ -125,14 +131,14 @@ class PixproStatusChecker : IPixproCommandCallback, ICameraStatusWatcher, ICamer
 
     override fun stopStatusWatch()
     {
-        Log.v(TAG, "stoptStatusWatch()")
+        Log.v(TAG, "stopStatusWatch()")
         whileFetching = false
         notifier = null
     }
 
     override fun receivedMessage(id: Int, rx_body: ByteArray?)
     {
-        Log.v(TAG, " receivedMessage($id) : ${rx_body?.size} bytes.")
-
+        Log.v(TAG, " RECEIVED EVENT : ${rx_body?.size} bytes.")
+        SimpleLogDumper.dumpBytes("EVT[${rx_body?.size}]", rx_body)
     }
 }

@@ -7,6 +7,8 @@ interface IPixproMessages
         const val  SEQ_DUMMY = 0
         const val  SEQ_RECEIVE_ONLY = 1
 
+        const val  SEQ_EVENT_REQUEST = 5
+
         const val  SEQ_SHUTTER = 10
         const val  SEQ_FOCUS = 11
         const val  SEQ_ZOOM = 12
