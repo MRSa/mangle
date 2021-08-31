@@ -22,7 +22,7 @@ class PixproStatusChecker : IPixproCommandCallback, ICameraStatusWatcher, ICamer
     companion object
     {
         private val TAG = PixproStatusChecker::class.java.simpleName
-        private const val EVENT_POLL_QUEUE_MS = 1500
+        private const val EVENT_POLL_QUEUE_MS = 1000
     }
 
     fun setCommandPublisher(commandPublisher : IPixproCommandPublisher)
@@ -140,5 +140,30 @@ class PixproStatusChecker : IPixproCommandCallback, ICameraStatusWatcher, ICamer
     {
         Log.v(TAG, " RECEIVED EVENT : ${rx_body?.size} bytes.")
         SimpleLogDumper.dumpBytes("EVT[${rx_body?.size}]", rx_body)
+        try
+        {
+            val length = rx_body?.size ?: 0
+            if (length == 2744)
+            {
+                // FLASH Mode
+                val flashMode = when (rx_body?.get(16 * 127 + 8))
+                {
+                    0x01.toByte() -> "OFF"
+                    0x02.toByte() -> "AUTO"
+                    0x04.toByte() -> "ON"
+                    else -> ""
+                }
+                statusHolder.updateValue(ICameraStatus.TORCH_MODE, flashMode)
+
+            }
+
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+
+
+
     }
 }

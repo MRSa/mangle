@@ -28,6 +28,8 @@ class PixproStatusHolder
     private var statusConvert = PixproStatusConvert(this)
     private lateinit var commandPublisher : IPixproCommandPublisher
 
+    private var currentFlashMode = ""
+
     fun setCommandPublisher(commandPublisher : IPixproCommandPublisher)
     {
         this.commandPublisher = commandPublisher
@@ -97,6 +99,27 @@ class PixproStatusHolder
             e.printStackTrace()
         }
     }
+
+    fun updateValue(key: String, value: String)
+    {
+        when (key)
+        {
+            ICameraStatus.TAKE_MODE -> { }
+            ICameraStatus.SHUTTER_SPEED -> { }
+            //ICameraStatus.APERTURE -> { }
+            ICameraStatus.EXPREV -> { }
+            //ICameraStatus.CAPTURE_MODE -> { }
+            ICameraStatus.ISO_SENSITIVITY -> { }
+            ICameraStatus.WHITE_BALANCE -> { }
+            //ICameraStatus.AE -> { }
+            //ICameraStatus.EFFECT -> { }
+            ICameraStatus.BATTERY -> { }
+            ICameraStatus.TORCH_MODE -> { currentFlashMode = value }
+            //ICameraStatus.FOCUS_STATUS -> { }
+            else -> { }
+        }
+    }
+
 
     fun getAvailableItemList(key: String?): List<String?>
     {
@@ -248,7 +271,7 @@ class PixproStatusHolder
         var status = ""
         try
         {
-            status = "Flash: "
+            status = "Flash: $currentFlashMode"
         }
         catch (e: Exception)
         {
