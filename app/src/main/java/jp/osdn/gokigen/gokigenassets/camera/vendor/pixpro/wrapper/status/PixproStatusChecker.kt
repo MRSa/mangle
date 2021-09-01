@@ -146,15 +146,26 @@ class PixproStatusChecker : IPixproCommandCallback, ICameraStatusWatcher, ICamer
             if (length == 2744)
             {
                 // FLASH Mode
-                val flashMode = when (rx_body?.get(16 * 127 + 8))
+                val flashMode = when (val flash0 = rx_body?.get(16 * 127 + 8))
                 {
                     0x01.toByte() -> "OFF"
                     0x02.toByte() -> "AUTO"
                     0x04.toByte() -> "ON"
-                    else -> ""
+                    else -> "($flash0)"
                 }
                 statusHolder.updateValue(ICameraStatus.TORCH_MODE, flashMode)
 
+                val whiteBalance = when (val wb0 = rx_body?.get(16 * 125 + 8))
+                {
+                    0x01.toByte() -> "AUTO"
+                    0x02.toByte() -> "Daylight"
+                    0x04.toByte() -> "Cloudy"
+                    0x10.toByte() -> "Fluorescent"
+                    0x20.toByte() -> "Fluorescent CWF"
+                    0x80.toByte() -> "Incandescent"
+                    else -> "($wb0)"
+                }
+                statusHolder.updateValue(ICameraStatus.WHITE_BALANCE, whiteBalance)
             }
 
         }
@@ -162,8 +173,5 @@ class PixproStatusChecker : IPixproCommandCallback, ICameraStatusWatcher, ICamer
         {
             e.printStackTrace()
         }
-
-
-
     }
 }

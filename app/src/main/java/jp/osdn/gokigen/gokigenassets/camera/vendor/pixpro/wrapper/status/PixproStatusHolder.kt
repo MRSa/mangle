@@ -29,6 +29,8 @@ class PixproStatusHolder
     private lateinit var commandPublisher : IPixproCommandPublisher
 
     private var currentFlashMode = ""
+    private var currentWhiteBalance = ""
+
 
     fun setCommandPublisher(commandPublisher : IPixproCommandPublisher)
     {
@@ -106,15 +108,15 @@ class PixproStatusHolder
         {
             ICameraStatus.TAKE_MODE -> { }
             ICameraStatus.SHUTTER_SPEED -> { }
-            //ICameraStatus.APERTURE -> { }
             ICameraStatus.EXPREV -> { }
-            //ICameraStatus.CAPTURE_MODE -> { }
             ICameraStatus.ISO_SENSITIVITY -> { }
-            ICameraStatus.WHITE_BALANCE -> { }
+            ICameraStatus.WHITE_BALANCE -> { currentWhiteBalance = value }
+            ICameraStatus.TORCH_MODE -> { currentFlashMode = value }
+            ICameraStatus.BATTERY -> { }
+            //ICameraStatus.APERTURE -> { }
+            //ICameraStatus.CAPTURE_MODE -> { }
             //ICameraStatus.AE -> { }
             //ICameraStatus.EFFECT -> { }
-            ICameraStatus.BATTERY -> { }
-            ICameraStatus.TORCH_MODE -> { currentFlashMode = value }
             //ICameraStatus.FOCUS_STATUS -> { }
             else -> { }
         }
@@ -254,30 +256,12 @@ class PixproStatusHolder
 
     private fun getWhiteBalance() : String
     {
-        var status = ""
-        try
-        {
-            status = "WB: "
-        }
-        catch (e: Exception)
-        {
-            e.printStackTrace()
-        }
-        return (status)
+        return ("WB: $currentWhiteBalance")
     }
 
     private fun getTorchMode() : String
     {
-        var status = ""
-        try
-        {
-            status = "Flash: $currentFlashMode"
-        }
-        catch (e: Exception)
-        {
-            e.printStackTrace()
-        }
-        return (status)
+        return ("Flash: $currentFlashMode")
     }
 
     fun setItemStatus(key: String, value: String)
@@ -371,14 +355,14 @@ class PixproStatusHolder
             Log.v(TAG, " setWhiteBalance($value)")
             when (value)
             {
-                "AUTO" -> commandPublisher.enqueueCommand(PixproWhiteBalance(PixproCommandOnlyCallback(), 0x04))
-                "Daylight" -> commandPublisher.enqueueCommand(PixproWhiteBalance(PixproCommandOnlyCallback(), 0x01))
-                "Cloudy" -> commandPublisher.enqueueCommand(PixproWhiteBalance(PixproCommandOnlyCallback(), 0x02))
+                "AUTO" -> commandPublisher.enqueueCommand(PixproWhiteBalance(PixproCommandOnlyCallback(), 0x01))
+                "Daylight" -> commandPublisher.enqueueCommand(PixproWhiteBalance(PixproCommandOnlyCallback(), 0x02))
+                "Cloudy" -> commandPublisher.enqueueCommand(PixproWhiteBalance(PixproCommandOnlyCallback(), 0x04))
                 "Fluorescent" -> commandPublisher.enqueueCommand(PixproWhiteBalance(PixproCommandOnlyCallback(), 0x10))
                 "Fluorescent CWF" -> commandPublisher.enqueueCommand(PixproWhiteBalance(PixproCommandOnlyCallback(), 0x20)) //
-                "Incandescent" -> commandPublisher.enqueueCommand(PixproWhiteBalance(PixproCommandOnlyCallback(), 0x40))  // 白熱灯
-                "Underwater" -> commandPublisher.enqueueCommand(PixproWhiteBalance(PixproCommandOnlyCallback(), 0x80))    // 不明...
-                "Other" -> commandPublisher.enqueueCommand(PixproWhiteBalance(PixproCommandOnlyCallback(), 0x08))         // 不明...
+                "Incandescent" -> commandPublisher.enqueueCommand(PixproWhiteBalance(PixproCommandOnlyCallback(), 0x80))    //
+                "Unknown" -> commandPublisher.enqueueCommand(PixproWhiteBalance(PixproCommandOnlyCallback(), 0x40))         //
+                "Other" -> commandPublisher.enqueueCommand(PixproWhiteBalance(PixproCommandOnlyCallback(), 0x08))           // 不明...
                 else -> { }
             }
         }

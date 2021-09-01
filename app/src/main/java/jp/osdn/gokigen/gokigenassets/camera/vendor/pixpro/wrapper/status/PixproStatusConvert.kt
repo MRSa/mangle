@@ -48,7 +48,7 @@ class PixproStatusConvert(private val statusHolder: PixproStatusHolder)
 
     fun getAvailableWhiteBalance(): List<String?>
     {
-        return (listOf("AUTO", "Daylight", "Cloudy", "Fluorescent", "Fluorescent CWF", "Incandescent", "Underwater", "Other"))
+        return (listOf("AUTO", "Daylight", "Cloudy", "Fluorescent", "Fluorescent CWF", "Incandescent"))
     }
 
     fun getAvailableMeteringMode(): List<String?>
