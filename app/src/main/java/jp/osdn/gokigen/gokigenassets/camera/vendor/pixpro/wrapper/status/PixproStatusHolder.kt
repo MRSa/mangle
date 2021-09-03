@@ -9,10 +9,7 @@ import android.util.SparseIntArray
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.IPixproCommandPublisher
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.messages.base.PixproCommandOnlyCallback
-import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.messages.specific.PixproFlashAuto
-import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.messages.specific.PixproFlashOff
-import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.messages.specific.PixproFlashOn
-import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.messages.specific.PixproWhiteBalance
+import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.messages.specific.*
 import java.lang.Exception
 import java.util.*
 
@@ -171,7 +168,7 @@ class PixproStatusHolder
             ICameraStatus.ISO_SENSITIVITY -> getIsoSensitivity()
             ICameraStatus.WHITE_BALANCE -> getWhiteBalance()
             //ICameraStatus.AE -> getMeteringMode()
-            //ICameraStatus.EFFECT -> getPictureEffect()
+            ICameraStatus.EFFECT -> getPictureEffect()
             ICameraStatus.BATTERY -> getRemainBattery()
             ICameraStatus.TORCH_MODE -> getTorchMode()
             //ICameraStatus.FOCUS_STATUS -> getfocusStatus()
@@ -259,6 +256,11 @@ class PixproStatusHolder
         return ("WB: $currentWhiteBalance")
     }
 
+    private fun getPictureEffect() : String
+    {
+        return ("Zoom")
+    }
+
     private fun getTorchMode() : String
     {
         return ("Flash: $currentFlashMode")
@@ -278,7 +280,7 @@ class PixproStatusHolder
                 ICameraStatus.ISO_SENSITIVITY -> setIsoSensitivity(value)
                 ICameraStatus.WHITE_BALANCE -> setWhiteBalance(value)
                 //ICameraStatus.AE -> setMeteringMode(value)
-                //ICameraStatus.EFFECT -> setPictureEffect(value)
+                ICameraStatus.EFFECT -> setPictureEffect(value)
                 ICameraStatus.TORCH_MODE -> setTorchMode(value)
                 //ICameraStatus.BATTERY -> setRemainBattery(value)
                 //ICameraStatus.FOCUS_STATUS -> setfocusStatus(value)
@@ -295,8 +297,21 @@ class PixproStatusHolder
     {
         try
         {
+            if (!::commandPublisher.isInitialized)
+            {
+                // 未初期化の場合はコマンドを送らない
+                return
+            }
             Log.v(TAG, " setTakeMode($value)")
-
+            when (value)
+            {
+                "P" -> commandPublisher.enqueueCommand(PixproChangeMode(PixproCommandOnlyCallback(), 0x01))
+                "M" -> commandPublisher.enqueueCommand(PixproChangeMode(PixproCommandOnlyCallback(), 0x08))
+                "ASCN" -> commandPublisher.enqueueCommand(PixproChangeMode(PixproCommandOnlyCallback(), 0x20))
+                "Video" -> commandPublisher.enqueueCommand(PixproChangeVideoMode(PixproCommandOnlyCallback()))
+                "Cont. Shot" -> commandPublisher.enqueueCommand(PixproChangeMode(PixproCommandOnlyCallback(), 0x00, 0x08))
+                else -> { }
+            }
         }
         catch (e: Exception)
         {
@@ -371,6 +386,30 @@ class PixproStatusHolder
             e.printStackTrace()
         }
     }
+
+    private fun setPictureEffect(value: String)
+    {
+        try
+        {
+            if (!::commandPublisher.isInitialized)
+            {
+                // 未初期化の場合はコマンドを送らない
+                return
+            }
+            Log.v(TAG, " setPictureEffect($value)")
+            when (value)
+            {
+                "Zoom In" -> commandPublisher.enqueueCommand(PixproExecuteZoom(PixproCommandOnlyCallback(), 1))
+                "Zoom Out" -> commandPublisher.enqueueCommand(PixproExecuteZoom(PixproCommandOnlyCallback(), -1))
+                else -> { }
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
 
     private fun setTorchMode(value: String)
     {

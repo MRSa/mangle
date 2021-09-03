@@ -18,7 +18,8 @@ class PixproStatusConvert(private val statusHolder: PixproStatusHolder)
 
     fun getAvailableTakeMode(): List<String?>
     {
-        return (ArrayList())
+        return (listOf("P", "M", "ASCN"))
+        //return (listOf("P", "M", "ASCN", "Video", "Cont. Shot"))
     }
 
     fun getAvailableShutterSpeed(): List<String?>
@@ -58,7 +59,7 @@ class PixproStatusConvert(private val statusHolder: PixproStatusHolder)
 
     fun getAvailablePictureEffect(): List<String?>
     {
-        return (ArrayList())
+        return (listOf("Zoom In", "Zoom Out"))
     }
 
     fun getAvailableTorchMode(): List<String?>
