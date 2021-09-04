@@ -18,8 +18,8 @@ class PixproStatusConvert(private val statusHolder: PixproStatusHolder)
 
     fun getAvailableTakeMode(): List<String?>
     {
-        return (listOf("P", "M", "ASCN"))
-        //return (listOf("P", "M", "ASCN", "Video", "Cont. Shot"))
+        //return (listOf("P", "M", "ASCN"))
+        return (listOf("P", "M", "ASCN", "Video", "Cont. Shot"))
     }
 
     fun getAvailableShutterSpeed(): List<String?>

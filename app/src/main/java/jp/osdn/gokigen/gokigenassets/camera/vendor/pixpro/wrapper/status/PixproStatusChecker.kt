@@ -145,6 +145,18 @@ class PixproStatusChecker : IPixproCommandCallback, ICameraStatusWatcher, ICamer
             val length = rx_body?.size ?: 0
             if (length == 2744)
             {
+                // TAKE MODE
+                val takeMode = when (val take0 = rx_body?.get(16 * 136 + 8))
+                {
+                    0x01.toByte() -> "P"
+                    0x04.toByte() -> "M"
+                    0x06.toByte() -> "ASCN"
+                    0x07.toByte() -> "Video"
+                    0x0c.toByte() -> "Cont."
+                    else -> "($take0)"
+                }
+                statusHolder.updateValue(ICameraStatus.TAKE_MODE, takeMode)
+
                 // FLASH Mode
                 val flashMode = when (val flash0 = rx_body?.get(16 * 127 + 8))
                 {
@@ -155,6 +167,7 @@ class PixproStatusChecker : IPixproCommandCallback, ICameraStatusWatcher, ICamer
                 }
                 statusHolder.updateValue(ICameraStatus.TORCH_MODE, flashMode)
 
+                // WHITE BALANCE
                 val whiteBalance = when (val wb0 = rx_body?.get(16 * 125 + 8))
                 {
                     0x01.toByte() -> "AUTO"

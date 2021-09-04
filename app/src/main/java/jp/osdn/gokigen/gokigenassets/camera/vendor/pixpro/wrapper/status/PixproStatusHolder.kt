@@ -25,6 +25,7 @@ class PixproStatusHolder
     private var statusConvert = PixproStatusConvert(this)
     private lateinit var commandPublisher : IPixproCommandPublisher
 
+    private var currentTakeMode = ""
     private var currentFlashMode = ""
     private var currentWhiteBalance = ""
 
@@ -103,7 +104,7 @@ class PixproStatusHolder
     {
         when (key)
         {
-            ICameraStatus.TAKE_MODE -> { }
+            ICameraStatus.TAKE_MODE -> { currentTakeMode = value }
             ICameraStatus.SHUTTER_SPEED -> { }
             ICameraStatus.EXPREV -> { }
             ICameraStatus.ISO_SENSITIVITY -> { }
@@ -183,16 +184,7 @@ class PixproStatusHolder
 
     private fun getTakeMode() : String
     {
-        var status = ""
-        try
-        {
-
-        }
-        catch (e: Exception)
-        {
-            e.printStackTrace()
-        }
-        return (status)
+        return (currentTakeMode)
     }
 
     private fun getShutterSpeed() : String
