@@ -18,6 +18,8 @@ interface IPixproMessages
         const val  SEQ_FLASH_AUTO = 22
 
         const val  SEQ_WHITE_BALANCE = 30
+        const val  SEQ_EXP_REV = 31
+        const val  SEQ_ISO_SENSITIVITY =32
 
         const val  SEQ_CHANGE_MODE_VIDEO = 40
         const val  SEQ_CHANGE_MODE = 41

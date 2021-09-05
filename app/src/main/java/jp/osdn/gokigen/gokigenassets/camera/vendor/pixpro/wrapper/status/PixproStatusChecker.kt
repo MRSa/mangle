@@ -7,6 +7,8 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusWatcher
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.IPixproCommandPublisher
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.messages.IPixproCommandCallback
+import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.messages.base.PixproCommandOnlyCallback
+import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.messages.specific.PixproChangeExposureCompensation
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.messages.specific.PixproStatusRequest
 import jp.osdn.gokigen.gokigenassets.liveview.message.IMessageDrawer
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleLogDumper
@@ -179,8 +181,48 @@ class PixproStatusChecker : IPixproCommandCallback, ICameraStatusWatcher, ICamer
                     else -> "($wb0)"
                 }
                 statusHolder.updateValue(ICameraStatus.WHITE_BALANCE, whiteBalance)
-            }
 
+                // ISO SENSITIVITY
+                val isoSensitivity = when (val iso0 = rx_body?.get(16 * 70 + 0))
+                {
+                    0x00.toByte() -> "Auto"
+                    0x01.toByte() -> "100"
+                    0x02.toByte() -> "200"
+                    0x03.toByte() -> "400"
+                    0x04.toByte() -> "800"
+                    0x05.toByte() -> "1600"
+                    0x06.toByte() -> "3200"
+                    else -> "($iso0)"
+                }
+                statusHolder.updateValue(ICameraStatus.ISO_SENSITIVITY, isoSensitivity)
+
+                // EXPOSURE Compensation
+                val exposureCompensation = when (val exprev0 = rx_body?.get(16 * 61 + 0))
+                {
+                    0x00.toByte() -> "-3.0"
+                    0x01.toByte() -> "-2.7"
+                    0x02.toByte() -> "-2.3"
+                    0x03.toByte() -> "-2.0"
+                    0x04.toByte() -> "-1.7"
+                    0x05.toByte() -> "-1.3"
+                    0x06.toByte() -> "-1.0"
+                    0x07.toByte() -> "-0.7"
+                    0x08.toByte() -> "-0.3"
+                    0x09.toByte() -> "0.0"
+                    0x0a.toByte() -> "+0.3"
+                    0x0b.toByte() -> "+0.7"
+                    0x0c.toByte() -> "+1.0"
+                    0x0d.toByte() -> "+1.3"
+                    0x0e.toByte() -> "+1.7"
+                    0x0f.toByte() -> "+2.0"
+                    0x10.toByte() -> "+2.3"
+                    0x11.toByte() -> "+2.7"
+                    0x12.toByte() -> "+3.0"
+
+                    else -> "($exprev0)"
+                }
+                statusHolder.updateValue(ICameraStatus.EXPREV, exposureCompensation)
+            }
         }
         catch (e: Exception)
         {

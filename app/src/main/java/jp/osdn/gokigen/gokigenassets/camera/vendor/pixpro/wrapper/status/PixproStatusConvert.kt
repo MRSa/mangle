@@ -18,8 +18,8 @@ class PixproStatusConvert(private val statusHolder: PixproStatusHolder)
 
     fun getAvailableTakeMode(): List<String?>
     {
-        //return (listOf("P", "M", "ASCN"))
-        return (listOf("P", "M", "ASCN", "Video", "Cont. Shot"))
+        return (listOf("P", "M", "ASCN"))
+        //return (listOf("P", "M", "ASCN", "Video", "Cont. Shot"))
     }
 
     fun getAvailableShutterSpeed(): List<String?>
@@ -34,7 +34,27 @@ class PixproStatusConvert(private val statusHolder: PixproStatusHolder)
 
     fun getAvailableExpRev(): List<String?>
     {
-        return (ArrayList())
+        return (listOf(
+            "-3.0",
+            "-2.7",
+            "-2.3",
+            "-2.0",
+            "-1.7",
+            "-1.3",
+            "-1.0",
+            "-0.7",
+            "-0.3",
+            "0.0",
+            "+0.3",
+            "+0.7",
+            "+1.0",
+            "+1.3",
+            "+1.7",
+            "+2.0",
+            "+2.3",
+            "+2.7",
+            "+3.0"
+        ))
     }
 
     fun getAvailableCaptureMode(): List<String?>
@@ -44,7 +64,7 @@ class PixproStatusConvert(private val statusHolder: PixproStatusHolder)
 
     fun getAvailableIsoSensitivity(): List<String?>
     {
-        return (ArrayList())
+        return (listOf("AUTO", "100", "200", "400", "800",  "1600", "3200"))
     }
 
     fun getAvailableWhiteBalance(): List<String?>

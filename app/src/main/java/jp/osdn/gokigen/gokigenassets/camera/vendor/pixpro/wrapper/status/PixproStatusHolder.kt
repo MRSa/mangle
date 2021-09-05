@@ -2,10 +2,6 @@ package jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.status
 
 import android.graphics.Color
 import android.util.Log
-import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusUpdateNotify
-import androidx.collection.SparseArrayCompat
-
-import android.util.SparseIntArray
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.IPixproCommandPublisher
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.messages.base.PixproCommandOnlyCallback
@@ -20,84 +16,20 @@ class PixproStatusHolder
         private val TAG = PixproStatusHolder::class.java.simpleName
     }
 
-    private val statusHolder: SparseIntArray = SparseIntArray()
-    private val statusNameArray: SparseArrayCompat<String>  = SparseArrayCompat()
     private var statusConvert = PixproStatusConvert(this)
     private lateinit var commandPublisher : IPixproCommandPublisher
 
     private var currentTakeMode = ""
     private var currentFlashMode = ""
     private var currentWhiteBalance = ""
-
+    private var currentIsoSensitivity = ""
+    private var currentExposureCompensation = ""
+    private var currentShutterSpeed = ""
+    private var currentRemainBattery = ""
 
     fun setCommandPublisher(commandPublisher : IPixproCommandPublisher)
     {
         this.commandPublisher = commandPublisher
-    }
-
-    fun updateValue(
-        notifier: ICameraStatusUpdateNotify?,
-        id: Int,
-        data0: Byte,
-        data1: Byte,
-        data2: Byte,
-        data3: Byte
-    ) {
-        try {
-            val value =
-                (data3.toInt() and 0xff shl 24) + (data2.toInt() and 0xff shl 16) + (data1.toInt() and 0xff shl 8) + (data0.toInt() and 0xff)
-            val currentValue = statusHolder[id, -1]
-            Log.v(TAG, "STATUS  ID: $id  value : $value ($currentValue)")
-            statusHolder.put(id, value)
-            if (currentValue != value) {
-                //Log.v(TAG, "STATUS  ID: " + id + " value : " + currentValue + " -> " + value);
-                notifier?.let { updateDetected(it, id, currentValue, value) }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-    private fun updateDetected(
-        notifier: ICameraStatusUpdateNotify,
-        id: Int,
-        previous: Int,
-        current: Int
-    ) {
-        try {
-            val idName = statusNameArray[id, "Unknown"]
-            Log.v(
-                TAG,
-                java.lang.String.format(
-                    Locale.US,
-                    "<< UPDATE STATUS >> id: 0x%04x[%s] 0x%08x(%d) -> 0x%08x(%d)",
-                    id,
-                    idName,
-                    previous,
-                    previous,
-                    current,
-                    current
-                )
-            )
-            //Log.v(TAG, "updateDetected(ID: " + id + " [" + idName + "] " + previous + " -> " + current + " )");
-/*
-            if (id == FOCUS_LOCK)
-            {
-                if (current == 1)
-                {
-                    // focus Lock
-                    notifier.updateFocusedStatus(true, true);
-                }
-                else
-                {
-                    // focus unlock
-                    notifier.updateFocusedStatus(false, false);
-                }
-            }
-*/
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
     }
 
     fun updateValue(key: String, value: String)
@@ -105,12 +37,12 @@ class PixproStatusHolder
         when (key)
         {
             ICameraStatus.TAKE_MODE -> { currentTakeMode = value }
-            ICameraStatus.SHUTTER_SPEED -> { }
-            ICameraStatus.EXPREV -> { }
-            ICameraStatus.ISO_SENSITIVITY -> { }
+            ICameraStatus.SHUTTER_SPEED -> { currentShutterSpeed = value }
+            ICameraStatus.EXPREV -> { currentExposureCompensation = value }
+            ICameraStatus.ISO_SENSITIVITY -> { currentIsoSensitivity = value }
             ICameraStatus.WHITE_BALANCE -> { currentWhiteBalance = value }
             ICameraStatus.TORCH_MODE -> { currentFlashMode = value }
-            ICameraStatus.BATTERY -> { }
+            ICameraStatus.BATTERY -> { currentRemainBattery = value }
             //ICameraStatus.APERTURE -> { }
             //ICameraStatus.CAPTURE_MODE -> { }
             //ICameraStatus.AE -> { }
@@ -119,7 +51,6 @@ class PixproStatusHolder
             else -> { }
         }
     }
-
 
     fun getAvailableItemList(key: String?): List<String?>
     {
@@ -189,58 +120,22 @@ class PixproStatusHolder
 
     private fun getShutterSpeed() : String
     {
-        var status = ""
-        try
-        {
-
-        }
-        catch (e: Exception)
-        {
-            e.printStackTrace()
-        }
-        return (status)
+        return (currentShutterSpeed)
     }
 
     private fun getExpRev() : String
     {
-        var status = ""
-        try
-        {
-
-        }
-        catch (e: Exception)
-        {
-            e.printStackTrace()
-        }
-        return (status)
+        return (currentExposureCompensation)
     }
 
     private fun getIsoSensitivity() : String
     {
-        var status = ""
-        try
-        {
-
-        }
-        catch (e: Exception)
-        {
-            e.printStackTrace()
-        }
-        return (status)
+        return ("ISO:$currentIsoSensitivity")
     }
 
     private fun getRemainBattery() : String
     {
-        var status = ""
-        try
-        {
-
-        }
-        catch (e: Exception)
-        {
-            e.printStackTrace()
-        }
-        return (status)
+        return (currentRemainBattery)
     }
 
     private fun getWhiteBalance() : String
@@ -324,12 +219,27 @@ class PixproStatusHolder
         }
     }
 
-    private fun setExpRev(value: String)
+    private fun setIsoSensitivity(value: String)
     {
         try
         {
-            Log.v(TAG, " setExpRev($value)")
-
+            if (!::commandPublisher.isInitialized)
+            {
+                // 未初期化の場合はコマンドを送らない
+                return
+            }
+            Log.v(TAG, " setIsoSensitivity($value)")
+            when (value)
+            {
+                "AUTO" -> commandPublisher.enqueueCommand(PixproChangeIsoSensitivity(PixproCommandOnlyCallback(), 0x00))
+                "100" -> commandPublisher.enqueueCommand(PixproChangeIsoSensitivity(PixproCommandOnlyCallback(), 0x01))
+                "200" -> commandPublisher.enqueueCommand(PixproChangeIsoSensitivity(PixproCommandOnlyCallback(), 0x02))
+                "400" -> commandPublisher.enqueueCommand(PixproChangeIsoSensitivity(PixproCommandOnlyCallback(), 0x03))
+                "800" -> commandPublisher.enqueueCommand(PixproChangeIsoSensitivity(PixproCommandOnlyCallback(), 0x04))
+                "1600" -> commandPublisher.enqueueCommand(PixproChangeIsoSensitivity(PixproCommandOnlyCallback(), 0x05))
+                "3200" -> commandPublisher.enqueueCommand(PixproChangeIsoSensitivity(PixproCommandOnlyCallback(), 0x06))
+                else -> { }
+            }
         }
         catch (e: Exception)
         {
@@ -337,12 +247,39 @@ class PixproStatusHolder
         }
     }
 
-    private fun setIsoSensitivity(value: String)
+    private fun setExpRev(value: String)
     {
         try
         {
-            Log.v(TAG, " setIsoSensitivity($value)")
-
+            if (!::commandPublisher.isInitialized)
+            {
+                // 未初期化の場合はコマンドを送らない
+                return
+            }
+            Log.v(TAG, " setExpRev($value)")
+            when (value)
+            {
+                "-3.0" -> commandPublisher.enqueueCommand(PixproChangeExposureCompensation(PixproCommandOnlyCallback(), 0x00))
+                "-2.7" -> commandPublisher.enqueueCommand(PixproChangeExposureCompensation(PixproCommandOnlyCallback(), 0x01))
+                "-2.3" -> commandPublisher.enqueueCommand(PixproChangeExposureCompensation(PixproCommandOnlyCallback(), 0x02))
+                "-2.0" -> commandPublisher.enqueueCommand(PixproChangeExposureCompensation(PixproCommandOnlyCallback(), 0x03))
+                "-1.7" -> commandPublisher.enqueueCommand(PixproChangeExposureCompensation(PixproCommandOnlyCallback(), 0x04))
+                "-1.3" -> commandPublisher.enqueueCommand(PixproChangeExposureCompensation(PixproCommandOnlyCallback(), 0x05))
+                "-1.0" -> commandPublisher.enqueueCommand(PixproChangeExposureCompensation(PixproCommandOnlyCallback(), 0x06))
+                "-0.7" -> commandPublisher.enqueueCommand(PixproChangeExposureCompensation(PixproCommandOnlyCallback(), 0x07))
+                "-0.3" -> commandPublisher.enqueueCommand(PixproChangeExposureCompensation(PixproCommandOnlyCallback(), 0x08))
+                "0.0" -> commandPublisher.enqueueCommand(PixproChangeExposureCompensation(PixproCommandOnlyCallback(), 0x09))
+                "+0.3" -> commandPublisher.enqueueCommand(PixproChangeExposureCompensation(PixproCommandOnlyCallback(), 0x0a))
+                "+0.7" -> commandPublisher.enqueueCommand(PixproChangeExposureCompensation(PixproCommandOnlyCallback(), 0x0b))
+                "+1.0" -> commandPublisher.enqueueCommand(PixproChangeExposureCompensation(PixproCommandOnlyCallback(), 0x0c))
+                "+1.3" -> commandPublisher.enqueueCommand(PixproChangeExposureCompensation(PixproCommandOnlyCallback(), 0x0d))
+                "+1.7" -> commandPublisher.enqueueCommand(PixproChangeExposureCompensation(PixproCommandOnlyCallback(), 0x0e))
+                "+2.0" -> commandPublisher.enqueueCommand(PixproChangeExposureCompensation(PixproCommandOnlyCallback(), 0x0f))
+                "+2.3" -> commandPublisher.enqueueCommand(PixproChangeExposureCompensation(PixproCommandOnlyCallback(), 0x10))
+                "+2.7" -> commandPublisher.enqueueCommand(PixproChangeExposureCompensation(PixproCommandOnlyCallback(), 0x11))
+                "+3.0" -> commandPublisher.enqueueCommand(PixproChangeExposureCompensation(PixproCommandOnlyCallback(), 0x12))
+                else -> { }
+            }
         }
         catch (e: Exception)
         {
@@ -425,10 +362,5 @@ class PixproStatusHolder
         {
             e.printStackTrace()
         }
-    }
-
-    init
-    {
-        statusHolder.clear()
     }
 }
