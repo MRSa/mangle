@@ -210,8 +210,66 @@ class PixproStatusHolder
     {
         try
         {
-            Log.v(TAG, " setShutterSpeed($value)")
 
+            if (!::commandPublisher.isInitialized)
+            {
+                // 未初期化の場合はコマンドを送らない
+                return
+            }
+            Log.v(TAG, " setShutterSpeed($value)")
+            when (value)
+            {
+                "1/2000" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x01))
+                "1/1600" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x02))
+                "1/1200" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x03))
+                "1/1000" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x04))
+                "1/800" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x05))
+                "1/600" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x06))
+                "1/500" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x07))
+                "1/400" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x08))
+                "1/320" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x09))
+                "1/250" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x0a))
+                "1/200" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x0b))
+                "1/160" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x0c))
+                "1/125" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x0d))
+                "1/100" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x0e))
+                "1/80" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x0f))
+                "0x10" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x10))
+                "0x11" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x11))
+                "0x12" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x12))
+                "0x13" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x13))
+                "0x14" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x14))
+                "0x15" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x15))
+                "0x16" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x16))
+                "0x17" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x17))
+                "0x18" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x18))
+                "0x19" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x19))
+                "0x1a" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x1a))
+                "0x1b" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x1b))
+                "0x1c" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x1c))
+                "0x1d" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x1d))
+                "0x1e" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x1e))
+                "0x1f" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x1f))
+                "0x20" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x20))
+                "0x21" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x21))
+                "0x22" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x22))
+                "0x23" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x23))
+                "0x24" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x24))
+                "0x25" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x25))
+                "0x26" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x26))
+                "0x27" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x27))
+                "0x28" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x28))
+                "0x29" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x29))
+                "0x2a" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x2a))
+                "0x2b" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x2b))
+                "0x2c" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x2c))
+                "0x2d" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x2d))
+                "0x2e" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x2e))
+                "0x2f" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x2f))
+                "0x30" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x30))
+                "0x31" -> commandPublisher.enqueueCommand(PixproChangeShutterSpeed(PixproCommandOnlyCallback(), 0x31))
+                else -> { }
+            }
         }
         catch (e: Exception)
         {
