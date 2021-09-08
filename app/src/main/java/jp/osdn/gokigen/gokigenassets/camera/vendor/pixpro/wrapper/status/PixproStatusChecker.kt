@@ -7,8 +7,6 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusWatcher
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.IPixproCommandPublisher
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.messages.IPixproCommandCallback
-import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.messages.base.PixproCommandOnlyCallback
-import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.messages.specific.PixproChangeExposureCompensation
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.messages.specific.PixproStatusRequest
 import jp.osdn.gokigen.gokigenassets.liveview.message.IMessageDrawer
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleLogDumper
@@ -24,7 +22,8 @@ class PixproStatusChecker : IPixproCommandCallback, ICameraStatusWatcher, ICamer
     companion object
     {
         private val TAG = PixproStatusChecker::class.java.simpleName
-        private const val EVENT_POLL_QUEUE_MS = 1000
+        private const val EVENT_POLL_QUEUE_MS = 350
+        private const val isDumpLog = false
     }
 
     fun setCommandPublisher(commandPublisher : IPixproCommandPublisher)
@@ -104,7 +103,7 @@ class PixproStatusChecker : IPixproCommandCallback, ICameraStatusWatcher, ICamer
                     {
                         Thread.sleep(EVENT_POLL_QUEUE_MS.toLong())
 
-                        Log.v(TAG, "  ----- POLL EVENT -----  ")
+                        Log.v(TAG, " === POLL EVENT === ")
                         if (::commandPublisher.isInitialized)
                         {
                             commandPublisher.enqueueCommand(PixproStatusRequest(this))
@@ -140,8 +139,11 @@ class PixproStatusChecker : IPixproCommandCallback, ICameraStatusWatcher, ICamer
 
     override fun receivedMessage(id: Int, rx_body: ByteArray?)
     {
-        Log.v(TAG, " RECEIVED EVENT : ${rx_body?.size} bytes.")
-        SimpleLogDumper.dumpBytes("EVT[${rx_body?.size}]", rx_body)
+        if (isDumpLog)
+        {
+            Log.v(TAG, " RECEIVED EVENT : ${rx_body?.size} bytes.")
+            SimpleLogDumper.dumpBytes("EVT[${rx_body?.size}]", rx_body)
+        }
         try
         {
             val length = rx_body?.size ?: 0
@@ -222,6 +224,64 @@ class PixproStatusChecker : IPixproCommandCallback, ICameraStatusWatcher, ICamer
                     else -> "($exprev0)"
                 }
                 statusHolder.updateValue(ICameraStatus.EXPREV, exposureCompensation)
+
+
+                // Shutter Speed
+                val shutterSpeed = when (val sv = rx_body?.get(16 * 75 + 8))
+                {
+                    0x01.toByte() -> "1/2000"
+                    0x02.toByte() -> "1/1600"
+                    0x03.toByte() -> "1/1200"
+                    0x04.toByte() -> "1/1000"
+                    0x05.toByte() -> "1/800"
+                    0x06.toByte() -> "1/600"
+                    0x07.toByte() -> "1/500"
+                    0x08.toByte() -> "1/400"
+                    0x09.toByte() -> "1/320"
+                    0x0a.toByte() -> "1/250"
+                    0x0b.toByte() -> "1/200"
+                    0x0c.toByte() -> "1/160"
+                    0x0d.toByte() -> "1/125"
+                    0x0e.toByte() -> "1/100"
+                    0x0f.toByte() -> "1/80"
+                    0x10.toByte() -> "1/60"
+                    0x11.toByte() -> "1/50"
+                    0x12.toByte() -> "1/40"
+                    0x13.toByte() -> "1/30"
+                    0x14.toByte() -> "1/25"
+                    0x15.toByte() -> "1/20"
+                    0x16.toByte() -> "1/15"
+                    0x17.toByte() -> "1/13"
+                    0x18.toByte() -> "1/10"
+                    0x19.toByte() -> "1/8"
+                    0x1a.toByte() -> "1/6"
+                    0x1b.toByte() -> "1/5"
+                    0x1c.toByte() -> "1/4"
+                    0x1d.toByte() -> "1/3"
+                    0x1e.toByte() -> "1/2.5"
+                    0x1f.toByte() -> "1/2"
+                    0x20.toByte() -> "1/1.6"
+                    0x21.toByte() -> "1/1.3"
+                    0x22.toByte() -> "1s"
+                    0x23.toByte() -> "1.3s"
+                    0x24.toByte() -> "1.5s"
+                    0x25.toByte() -> "2s"
+                    0x26.toByte() -> "2.5s"
+                    0x27.toByte() -> "3s"
+                    0x28.toByte() -> "4s"
+                    0x29.toByte() -> "5s"
+                    0x2a.toByte() -> "6s"
+                    0x2b.toByte() -> "8s"
+                    0x2c.toByte() -> "10s"
+                    0x2d.toByte() -> "13s"
+                    0x2e.toByte() -> "15s"
+                    0x2f.toByte() -> "20s"
+                    0x30.toByte() -> "25s"
+                    0x31.toByte() -> "30s"
+
+                    else -> "($sv)"
+                }
+                statusHolder.updateValue(ICameraStatus.SHUTTER_SPEED, shutterSpeed)
             }
         }
         catch (e: Exception)
