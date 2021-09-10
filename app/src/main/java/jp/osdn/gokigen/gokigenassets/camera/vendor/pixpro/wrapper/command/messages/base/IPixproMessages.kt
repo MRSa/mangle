@@ -22,6 +22,9 @@ interface IPixproMessages
         const val  SEQ_ISO_SENSITIVITY = 32
         const val  SEQ_SHUTTER_SPEED = 33
 
+        const val  SEQ_IMAGE_SIZE = 34
+        const val  SEQ_VIDEO_SIZE = 35
+
         const val  SEQ_CHANGE_MODE_VIDEO = 40
         const val  SEQ_CHANGE_MODE = 41
 

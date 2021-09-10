@@ -122,9 +122,12 @@ class PixproStatusConvert(private val statusHolder: PixproStatusHolder)
         return (listOf("AUTO", "Daylight", "Cloudy", "Fluorescent", "Fluorescent CWF", "Incandescent"))
     }
 
-    fun getAvailableMeteringMode(): List<String?>
+    fun getAvailableMeteringMode(mode: String): List<String?>
     {
-        return (ArrayList())
+        return (when (mode) {
+            "Video" -> { listOf("V1", "V2", "V3", "V4", "V5") }
+            else -> {  listOf("s1", "s2","s3", "s4", "s5", "s6", "s7", "s8") }
+        })
     }
 
     fun getAvailablePictureEffect(): List<String?>

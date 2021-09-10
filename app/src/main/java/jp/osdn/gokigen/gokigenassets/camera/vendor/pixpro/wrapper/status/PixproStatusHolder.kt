@@ -64,7 +64,7 @@ class PixproStatusHolder
                 ICameraStatus.CAPTURE_MODE -> statusConvert.getAvailableCaptureMode()
                 ICameraStatus.ISO_SENSITIVITY -> statusConvert.getAvailableIsoSensitivity()
                 ICameraStatus.WHITE_BALANCE -> statusConvert.getAvailableWhiteBalance()
-                ICameraStatus.AE -> statusConvert.getAvailableMeteringMode()
+                ICameraStatus.AE -> statusConvert.getAvailableMeteringMode(currentTakeMode)
                 ICameraStatus.EFFECT -> statusConvert.getAvailablePictureEffect()
                 ICameraStatus.TORCH_MODE -> statusConvert.getAvailableTorchMode()
                 //ICameraStatus.BATTERY -> statusConvert.getAvailableRemainBattery()
@@ -99,7 +99,7 @@ class PixproStatusHolder
             //ICameraStatus.CAPTURE_MODE -> getCaptureMode()
             ICameraStatus.ISO_SENSITIVITY -> getIsoSensitivity()
             ICameraStatus.WHITE_BALANCE -> getWhiteBalance()
-            //ICameraStatus.AE -> getMeteringMode()
+            ICameraStatus.AE -> getMeteringMode()
             ICameraStatus.EFFECT -> getPictureEffect()
             ICameraStatus.BATTERY -> getRemainBattery()
             ICameraStatus.TORCH_MODE -> getTorchMode()
@@ -143,6 +143,11 @@ class PixproStatusHolder
         return ("WB: $currentWhiteBalance")
     }
 
+    private fun getMeteringMode() : String
+    {
+        return ("Size")
+    }
+
     private fun getPictureEffect() : String
     {
         return ("Zoom")
@@ -166,7 +171,7 @@ class PixproStatusHolder
                 //ICameraStatus.CAPTURE_MODE -> setCaptureMode(value)
                 ICameraStatus.ISO_SENSITIVITY -> setIsoSensitivity(value)
                 ICameraStatus.WHITE_BALANCE -> setWhiteBalance(value)
-                //ICameraStatus.AE -> setMeteringMode(value)
+                ICameraStatus.AE -> setMeteringMode(value)
                 ICameraStatus.EFFECT -> setPictureEffect(value)
                 ICameraStatus.TORCH_MODE -> setTorchMode(value)
                 //ICameraStatus.BATTERY -> setRemainBattery(value)
@@ -276,6 +281,42 @@ class PixproStatusHolder
             e.printStackTrace()
         }
     }
+
+
+    private fun setMeteringMode(value: String)
+    {
+        try
+        {
+            if (!::commandPublisher.isInitialized)
+            {
+                // 未初期化の場合はコマンドを送らない
+                return
+            }
+            Log.v(TAG, " setMeteringMode($value)")
+            when (value)
+            {
+                "s1" -> commandPublisher.enqueueCommand(PixproChangeImageSize(PixproCommandOnlyCallback(), 0x00010000))  // 4608x3456
+                "s2" -> commandPublisher.enqueueCommand(PixproChangeImageSize(PixproCommandOnlyCallback(), 0x00004000))  // 4608x3072
+                "s3" -> commandPublisher.enqueueCommand(PixproChangeImageSize(PixproCommandOnlyCallback(), 0x00001000))  // 4608x2592
+                "s4" -> commandPublisher.enqueueCommand(PixproChangeImageSize(PixproCommandOnlyCallback(), 0x00000400))  // 3648x2736
+                "s5" -> commandPublisher.enqueueCommand(PixproChangeImageSize(PixproCommandOnlyCallback(), 0x00000020))  // 2592x1944
+                "s6" -> commandPublisher.enqueueCommand(PixproChangeImageSize(PixproCommandOnlyCallback(), 0x00000008))  // 2048x1536
+                "s7" -> commandPublisher.enqueueCommand(PixproChangeImageSize(PixproCommandOnlyCallback(), 0x00000004))  // 1920x1080
+                "s8" -> commandPublisher.enqueueCommand(PixproChangeImageSize(PixproCommandOnlyCallback(), 0x00000001))  // 640x480
+                "V1" -> commandPublisher.enqueueCommand(PixproChangeVideoSize(PixproCommandOnlyCallback(), 0x00040000))
+                "V2" -> commandPublisher.enqueueCommand(PixproChangeVideoSize(PixproCommandOnlyCallback(), 0x00000040))
+                "V3" -> commandPublisher.enqueueCommand(PixproChangeVideoSize(PixproCommandOnlyCallback(), 0x00000100))
+                "V4" -> commandPublisher.enqueueCommand(PixproChangeVideoSize(PixproCommandOnlyCallback(), 0x00400000))
+                "V5" -> commandPublisher.enqueueCommand(PixproChangeVideoSize(PixproCommandOnlyCallback(), 0x00080000))
+                else -> { }
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
 
     private fun setIsoSensitivity(value: String)
     {
