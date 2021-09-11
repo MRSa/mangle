@@ -14,7 +14,7 @@ class SingleShotControl(private val commandPublisher: IPixproCommandPublisher, f
         try
         {
             // シャッター
-            Log.v(TAG, " doCapture() ")
+            Log.v(TAG, " doCapture() : $kind")
 
             // シャッターを切る
             commandPublisher.enqueueCommand(PixproExecuteShutter(this))
@@ -27,7 +27,7 @@ class SingleShotControl(private val commandPublisher: IPixproCommandPublisher, f
 
     override fun receivedMessage(id: Int, rx_body: ByteArray?)
     {
-        Log.v(TAG, " KodakCaptureControl::receivedMessage() : ")
+        Log.v(TAG, " SingleShotControl::receivedMessage() : ")
 /*
         try
         {

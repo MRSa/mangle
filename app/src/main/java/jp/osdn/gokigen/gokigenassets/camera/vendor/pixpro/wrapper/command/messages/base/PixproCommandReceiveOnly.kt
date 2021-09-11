@@ -3,7 +3,7 @@ package jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.messa
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.messages.IPixproCommandCallback
 
 
-class PixproCommandReceiveOnly(private val id: Int, private val callback: IPixproCommandCallback) : PixproCommandBase()
+class PixproCommandReceiveOnly(private val id: Int, private val callback: IPixproCommandCallback, private val isDumpLog:Boolean = false) : PixproCommandBase()
 {
     override fun responseCallback(): IPixproCommandCallback
     {
@@ -17,6 +17,6 @@ class PixproCommandReceiveOnly(private val id: Int, private val callback: IPixpr
 
     override fun dumpLog(): Boolean
     {
-        return false
+        return (isDumpLog)
     }
 }

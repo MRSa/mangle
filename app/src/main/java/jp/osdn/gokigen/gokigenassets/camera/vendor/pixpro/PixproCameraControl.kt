@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.*
 import jp.osdn.gokigen.gokigenassets.camera.preference.ICameraPreferenceProvider
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.operation.FocusControl
+import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.operation.MovieShotControl
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.operation.SingleShotControl
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.IPixproCamera
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.IPixproCameraInitializer
@@ -43,7 +44,9 @@ class PixproCameraControl(private val context: AppCompatActivity, private val vi
     private lateinit var liveViewControl : PixproLiveViewControl
     private lateinit var cachePositionProvider : ICachePositionProvider
     private lateinit var focusControl: FocusControl
-    private lateinit var captureControl: SingleShotControl
+    private lateinit var stillControl: SingleShotControl
+    private lateinit var movieControl: MovieShotControl
+
 
     private var cameraPositionId = 0
 
@@ -162,7 +165,8 @@ class PixproCameraControl(private val context: AppCompatActivity, private val vi
     {
         Log.v(TAG, "injectDisplay()")
         focusControl = FocusControl(commandCommunicator, frameDisplayer)
-        captureControl = SingleShotControl(commandCommunicator, frameDisplayer)
+        stillControl = SingleShotControl(commandCommunicator, frameDisplayer)
+        movieControl = MovieShotControl(commandCommunicator, frameDisplayer)
     }
 
     override fun setNeighborCameraControl(camera0: ICameraControl?, camera1: ICameraControl?, camera2: ICameraControl?, camera3: ICameraControl?) { }
@@ -240,9 +244,21 @@ class PixproCameraControl(private val context: AppCompatActivity, private val vi
                 vibrator.vibrate(IVibrator.VibratePattern.SIMPLE_SHORT)
                 return
             }
-            if (::captureControl.isInitialized)
+            when (statusChecker.getStatus(ICameraStatus.TAKE_MODE))
             {
-                captureControl.doCapture(0)
+                "Video" -> {
+                    if (::movieControl.isInitialized)
+                    {
+                        movieControl.doCapture(0)
+                        vibrator.vibrate(IVibrator.VibratePattern.SIMPLE_SHORT)
+                    }
+                }
+                else -> {
+                    if (::stillControl.isInitialized)
+                    {
+                        stillControl.doCapture(0)
+                    }
+                }
             }
         }
         catch (e : Exception)
@@ -256,9 +272,21 @@ class PixproCameraControl(private val context: AppCompatActivity, private val vi
         try
         {
             Log.v(TAG, " doShutterOff()")
-            if (::captureControl.isInitialized)
+            when (statusChecker.getStatus(ICameraStatus.TAKE_MODE))
             {
-                captureControl.doCapture(0)
+                "Video" -> {
+                    if (::movieControl.isInitialized)
+                    {
+                        movieControl.doCapture(-1)
+                        vibrator.vibrate(IVibrator.VibratePattern.SIMPLE_MIDDLE)
+                    }
+                }
+                else -> {
+                    if (::stillControl.isInitialized)
+                    {
+                        stillControl.doCapture(-1)
+                    }
+                }
             }
         }
         catch (e : Exception)

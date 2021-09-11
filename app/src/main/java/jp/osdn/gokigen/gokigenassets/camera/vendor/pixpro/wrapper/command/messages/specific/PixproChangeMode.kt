@@ -9,13 +9,13 @@ class PixproChangeMode(private val callback: IPixproCommandCallback, modeValue0:
     private val data0: Byte = modeValue0.toByte()
     private val data1: Byte = modeValue1.toByte()
 
-
     override fun getId() : Int
     {
         return (IPixproMessages.SEQ_CHANGE_MODE)
     }
 
-    override fun commandBody(): ByteArray {
+    override fun commandBody(): ByteArray
+    {
         return byteArrayOf(
             0x2e.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00.toByte(),
             0x20.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00.toByte(),

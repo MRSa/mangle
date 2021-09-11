@@ -12,6 +12,7 @@ interface IPixproMessages
         const val  SEQ_SHUTTER = 10
         const val  SEQ_FOCUS = 11
         const val  SEQ_ZOOM = 12
+        const val  SEQ_VIDEO = 13
 
         const val  SEQ_FLASH_OFF = 20
         const val  SEQ_FLASH_ON = 21

@@ -22,7 +22,7 @@ class PixproStatusChecker : IPixproCommandCallback, ICameraStatusWatcher, ICamer
     companion object
     {
         private val TAG = PixproStatusChecker::class.java.simpleName
-        private const val EVENT_POLL_QUEUE_MS = 350
+        private const val EVENT_POLL_QUEUE_MS = 550  // 550ms
         private const val isDumpLog = false
     }
 
@@ -278,7 +278,7 @@ class PixproStatusChecker : IPixproCommandCallback, ICameraStatusWatcher, ICamer
                     0x2f.toByte() -> "20s"
                     0x30.toByte() -> "25s"
                     0x31.toByte() -> "30s"
-
+                    0x00.toByte() -> ""
                     else -> "($sv)"
                 }
                 statusHolder.updateValue(ICameraStatus.SHUTTER_SPEED, shutterSpeed)
