@@ -11,11 +11,6 @@ class PixproStatusConvert(private val statusHolder: PixproStatusHolder)
     }
     private lateinit var commandPublisher : IPixproCommandPublisher
 
-    fun setCommandPublisher(commandPublisher : IPixproCommandPublisher)
-    {
-        this.commandPublisher = commandPublisher
-    }
-
     fun getAvailableTakeMode(): List<String?>
     {
         //return (listOf("P", "M", "ASCN"))
@@ -125,8 +120,8 @@ class PixproStatusConvert(private val statusHolder: PixproStatusHolder)
     fun getAvailableMeteringMode(mode: String): List<String?>
     {
         return (when (mode) {
-            "Video" -> { listOf("V1", "V2", "V3", "V4", "V5") }
-            else -> {  listOf("s1", "s2","s3", "s4", "s5", "s6", "s7", "s8") }
+            "Video" -> { listOf("1920×1080 30p", "1280x720 60p", "1280x720 30p", "640x480 30p", "640x480 120p") }
+            else -> {  listOf("4608x3456", "4608x3072","4608x2592", "3648x2736", "2592x1944", "2048x1536", "1920x1080", "640x480") }
         })
     }
 

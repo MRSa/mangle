@@ -26,6 +26,7 @@ class PixproStatusHolder
     private var currentExposureCompensation = ""
     private var currentShutterSpeed = ""
     private var currentRemainBattery = ""
+    private var currentCaptureMode = ""
 
     fun setCommandPublisher(commandPublisher : IPixproCommandPublisher)
     {
@@ -43,8 +44,8 @@ class PixproStatusHolder
             ICameraStatus.WHITE_BALANCE -> { currentWhiteBalance = value }
             ICameraStatus.TORCH_MODE -> { currentFlashMode = value }
             ICameraStatus.BATTERY -> { currentRemainBattery = value }
+            ICameraStatus.CAPTURE_MODE -> { currentCaptureMode = value }
             //ICameraStatus.APERTURE -> { }
-            //ICameraStatus.CAPTURE_MODE -> { }
             //ICameraStatus.AE -> { }
             //ICameraStatus.EFFECT -> { }
             //ICameraStatus.FOCUS_STATUS -> { }
@@ -85,6 +86,7 @@ class PixproStatusHolder
     {
         return (when (key) {
             ICameraStatus.BATTERY -> getRemainBatteryColor()
+            ICameraStatus.CAPTURE_MODE -> getCaptureModeColor()
             else -> Color.WHITE
         })
     }
@@ -96,7 +98,7 @@ class PixproStatusHolder
             ICameraStatus.SHUTTER_SPEED -> getShutterSpeed()
             //ICameraStatus.APERTURE -> getAperture()
             ICameraStatus.EXPREV -> getExpRev()
-            //ICameraStatus.CAPTURE_MODE -> getCaptureMode()
+            ICameraStatus.CAPTURE_MODE -> getCaptureMode()
             ICameraStatus.ISO_SENSITIVITY -> getIsoSensitivity()
             ICameraStatus.WHITE_BALANCE -> getWhiteBalance()
             ICameraStatus.AE -> getMeteringMode()
@@ -106,6 +108,15 @@ class PixproStatusHolder
             //ICameraStatus.FOCUS_STATUS -> getfocusStatus()
             else -> ""
         })
+    }
+
+    private fun getCaptureModeColor() : Int
+    {
+        if (currentCaptureMode.length > 1)
+        {
+            return (Color.RED)
+        }
+        return (Color.WHITE)
     }
 
     private fun getRemainBatteryColor() : Int
@@ -153,6 +164,11 @@ class PixproStatusHolder
         return ("Zoom")
     }
 
+    private fun getCaptureMode() : String
+    {
+        return (currentCaptureMode)
+    }
+
     private fun getTorchMode() : String
     {
         return ("Flash: $currentFlashMode")
@@ -168,7 +184,7 @@ class PixproStatusHolder
                 ICameraStatus.SHUTTER_SPEED -> setShutterSpeed(value)
                 //ICameraStatus.APERTURE -> setAperture(value)
                 ICameraStatus.EXPREV -> setExpRev(value)
-                //ICameraStatus.CAPTURE_MODE -> setCaptureMode(value)
+                ICameraStatus.CAPTURE_MODE -> updateValue(key, value)
                 ICameraStatus.ISO_SENSITIVITY -> setIsoSensitivity(value)
                 ICameraStatus.WHITE_BALANCE -> setWhiteBalance(value)
                 ICameraStatus.AE -> setMeteringMode(value)
@@ -295,19 +311,19 @@ class PixproStatusHolder
             Log.v(TAG, " setMeteringMode($value)")
             when (value)
             {
-                "s1" -> commandPublisher.enqueueCommand(PixproChangeImageSize(PixproCommandOnlyCallback(), 0x00010000))  // 4608x3456
-                "s2" -> commandPublisher.enqueueCommand(PixproChangeImageSize(PixproCommandOnlyCallback(), 0x00004000))  // 4608x3072
-                "s3" -> commandPublisher.enqueueCommand(PixproChangeImageSize(PixproCommandOnlyCallback(), 0x00001000))  // 4608x2592
-                "s4" -> commandPublisher.enqueueCommand(PixproChangeImageSize(PixproCommandOnlyCallback(), 0x00000400))  // 3648x2736
-                "s5" -> commandPublisher.enqueueCommand(PixproChangeImageSize(PixproCommandOnlyCallback(), 0x00000020))  // 2592x1944
-                "s6" -> commandPublisher.enqueueCommand(PixproChangeImageSize(PixproCommandOnlyCallback(), 0x00000008))  // 2048x1536
-                "s7" -> commandPublisher.enqueueCommand(PixproChangeImageSize(PixproCommandOnlyCallback(), 0x00000004))  // 1920x1080
-                "s8" -> commandPublisher.enqueueCommand(PixproChangeImageSize(PixproCommandOnlyCallback(), 0x00000001))  // 640x480
-                "V1" -> commandPublisher.enqueueCommand(PixproChangeVideoSize(PixproCommandOnlyCallback(), 0x00040000))
-                "V2" -> commandPublisher.enqueueCommand(PixproChangeVideoSize(PixproCommandOnlyCallback(), 0x00000040))
-                "V3" -> commandPublisher.enqueueCommand(PixproChangeVideoSize(PixproCommandOnlyCallback(), 0x00000100))
-                "V4" -> commandPublisher.enqueueCommand(PixproChangeVideoSize(PixproCommandOnlyCallback(), 0x00400000))
-                "V5" -> commandPublisher.enqueueCommand(PixproChangeVideoSize(PixproCommandOnlyCallback(), 0x00080000))
+                "4608x3456" -> commandPublisher.enqueueCommand(PixproChangeImageSize(PixproCommandOnlyCallback(), 0x00010000))  // 4608x3456
+                "4608x3072" -> commandPublisher.enqueueCommand(PixproChangeImageSize(PixproCommandOnlyCallback(), 0x00004000))  // 4608x3072
+                "4608x2592" -> commandPublisher.enqueueCommand(PixproChangeImageSize(PixproCommandOnlyCallback(), 0x00001000))  // 4608x2592
+                "3648x2736" -> commandPublisher.enqueueCommand(PixproChangeImageSize(PixproCommandOnlyCallback(), 0x00000400))  // 3648x2736
+                "2592x1944" -> commandPublisher.enqueueCommand(PixproChangeImageSize(PixproCommandOnlyCallback(), 0x00000020))  // 2592x1944
+                "2048x1536" -> commandPublisher.enqueueCommand(PixproChangeImageSize(PixproCommandOnlyCallback(), 0x00000008))  // 2048x1536
+                "1920x1080" -> commandPublisher.enqueueCommand(PixproChangeImageSize(PixproCommandOnlyCallback(), 0x00000004))  // 1920x1080
+                "640x480" -> commandPublisher.enqueueCommand(PixproChangeImageSize(PixproCommandOnlyCallback(), 0x00000001))  // 640x480
+                "1280x720 30p" -> commandPublisher.enqueueCommand(PixproChangeVideoSize(PixproCommandOnlyCallback(), 0x00040000))  // 1280x720 30p
+                "640x480 30p" -> commandPublisher.enqueueCommand(PixproChangeVideoSize(PixproCommandOnlyCallback(), 0x00000040))  // 640x480 30p
+                "640x480 120p" -> commandPublisher.enqueueCommand(PixproChangeVideoSize(PixproCommandOnlyCallback(), 0x00000100))  // 640x480  120p
+                "1920×1080 30p" -> commandPublisher.enqueueCommand(PixproChangeVideoSize(PixproCommandOnlyCallback(), 0x00400000))  // 1920x1080 30p
+                "1280x720 60p" -> commandPublisher.enqueueCommand(PixproChangeVideoSize(PixproCommandOnlyCallback(), 0x00080000))  // 1280x720  60p
                 else -> { }
             }
         }

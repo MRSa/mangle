@@ -166,7 +166,7 @@ class PixproCameraControl(private val context: AppCompatActivity, private val vi
         Log.v(TAG, "injectDisplay()")
         focusControl = FocusControl(commandCommunicator, frameDisplayer)
         stillControl = SingleShotControl(commandCommunicator, frameDisplayer)
-        movieControl = MovieShotControl(commandCommunicator, frameDisplayer)
+        movieControl = MovieShotControl(commandCommunicator, frameDisplayer, statusChecker)
     }
 
     override fun setNeighborCameraControl(camera0: ICameraControl?, camera1: ICameraControl?, camera2: ICameraControl?, camera3: ICameraControl?) { }

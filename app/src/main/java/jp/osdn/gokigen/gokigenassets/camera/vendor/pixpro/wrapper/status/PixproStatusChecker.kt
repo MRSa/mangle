@@ -17,14 +17,8 @@ class PixproStatusChecker : IPixproCommandCallback, ICameraStatusWatcher, ICamer
     private val statusHolder = PixproStatusHolder()
     private var whileFetching = false
     private var notifier: ICameraStatusUpdateNotify? = null
+    private var pollDuration: Int = EVENT_POLL_QUEUE_MS
     private lateinit var commandPublisher : IPixproCommandPublisher
-
-    companion object
-    {
-        private val TAG = PixproStatusChecker::class.java.simpleName
-        private const val EVENT_POLL_QUEUE_MS = 550  // 550ms
-        private const val isDumpLog = false
-    }
 
     fun setCommandPublisher(commandPublisher : IPixproCommandPublisher)
     {
@@ -101,7 +95,7 @@ class PixproStatusChecker : IPixproCommandCallback, ICameraStatusWatcher, ICamer
                 {
                     try
                     {
-                        Thread.sleep(EVENT_POLL_QUEUE_MS.toLong())
+                        Thread.sleep(pollDuration.toLong())
 
                         Log.v(TAG, " === POLL EVENT === ")
                         if (::commandPublisher.isInitialized)
@@ -289,4 +283,12 @@ class PixproStatusChecker : IPixproCommandCallback, ICameraStatusWatcher, ICamer
             e.printStackTrace()
         }
     }
+
+    companion object
+    {
+        private val TAG = PixproStatusChecker::class.java.simpleName
+        private const val EVENT_POLL_QUEUE_MS = 550  // 550ms
+        private const val isDumpLog = false
+    }
+
 }
