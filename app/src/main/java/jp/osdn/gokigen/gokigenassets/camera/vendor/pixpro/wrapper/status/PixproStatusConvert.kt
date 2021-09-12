@@ -127,7 +127,7 @@ class PixproStatusConvert(private val statusHolder: PixproStatusHolder)
 
     fun getAvailablePictureEffect(): List<String?>
     {
-        return (listOf("Zoom In", "Zoom Out"))
+        return (listOf("(+) Zoom In", "(-) Zoom Out"))
     }
 
     fun getAvailableTorchMode(): List<String?>

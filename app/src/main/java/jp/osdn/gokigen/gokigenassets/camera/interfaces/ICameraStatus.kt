@@ -26,6 +26,9 @@ interface ICameraStatus
         var TORCH_MODE = "torch"           // 明かり（トーチ）の設定
         var FOCUS_STATUS = "focusStatus"   // フォーカス状態（合焦かどうか）
 
+        var IMAGE_SIZE = "stillSize"        // 撮影画像サイズ
+        var MOVIE_SIZE = "movieSize"        // 動画画像サイズ
+
         //var STATE = "state"
         //var FOCUS_MODE = "focusMode"
         //var AF_MODE = "AFMode"
@@ -40,8 +43,6 @@ interface ICameraStatus
         //var AE_STATUS_CENTER = "center"
         //var AE_STATUS_CENTER2 = "Ctr-Weighted"
 
-        //var IMAGESIZE = "stillSize"
-        //var MOVIESIZE = "movieSize"
 
         //var FLASH_XV = "flashxv"
         //var SELF_TIMER = "selftimer"

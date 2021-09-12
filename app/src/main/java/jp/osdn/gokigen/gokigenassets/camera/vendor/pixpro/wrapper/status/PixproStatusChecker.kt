@@ -219,7 +219,6 @@ class PixproStatusChecker : IPixproCommandCallback, ICameraStatusWatcher, ICamer
                 }
                 statusHolder.updateValue(ICameraStatus.EXPREV, exposureCompensation)
 
-
                 // Shutter Speed
                 val shutterSpeed = when (val sv = rx_body?.get(16 * 75 + 8))
                 {
@@ -276,6 +275,34 @@ class PixproStatusChecker : IPixproCommandCallback, ICameraStatusWatcher, ICamer
                     else -> "($sv)"
                 }
                 statusHolder.updateValue(ICameraStatus.SHUTTER_SPEED, shutterSpeed)
+
+                // IMAGE SIZE
+                val imageSize = when (val picSize = (rx_body?.get(16 * 129 + 8) ?: 0).toInt() + (rx_body?.get(16 * 129 + 9) ?: 0) * 256 + ((rx_body?.get(16 * 129 + 10) ?: 0) * 65536) + ((rx_body?.get(16 * 129 + 11) ?: 0) * 16777216))
+                {
+                    0x00010000 -> "4608x3456"
+                    0x00004000 -> "4608x3072"
+                    0x00001000 -> "4608x2592"
+                    0x00000400 -> "3648x2736"
+                    0x00000020 -> "2592x1944"
+                    0x00000008 -> "2048x1536"
+                    0x00000004 -> "1920x1080"
+                    0x00000001 ->  "640x480"
+                    else -> "($picSize)"
+                }
+                statusHolder.updateValue(ICameraStatus.IMAGE_SIZE, imageSize)
+
+                // MOVIE SIZE
+                val movieSize = when (val videoSize = (rx_body?.get(16 * 132 + 0) ?: 0).toInt() + (rx_body?.get(16 * 132 + 1) ?: 0) * 256 + ((rx_body?.get(16 * 132 + 2) ?: 0) * 65536) + ((rx_body?.get(16 * 132 + 3) ?: 0) * 16777216))
+                {
+                    0x00400000 -> "1920×1080 30p"
+                    0x00080000 -> "1280x720 60p"
+                    0x00040000 -> "1280x720 30p"
+                    0x00000100 -> "640x480 120p"
+                    0x00000040 -> "640x480 30p"
+                    else -> "[$videoSize]"
+                }
+                statusHolder.updateValue(ICameraStatus.MOVIE_SIZE, movieSize)
+
             }
         }
         catch (e: Exception)

@@ -27,6 +27,8 @@ class PixproStatusHolder
     private var currentShutterSpeed = ""
     private var currentRemainBattery = ""
     private var currentCaptureMode = ""
+    private var currentImageSize = ""
+    private var currentMovieSize = ""
 
     fun setCommandPublisher(commandPublisher : IPixproCommandPublisher)
     {
@@ -45,6 +47,9 @@ class PixproStatusHolder
             ICameraStatus.TORCH_MODE -> { currentFlashMode = value }
             ICameraStatus.BATTERY -> { currentRemainBattery = value }
             ICameraStatus.CAPTURE_MODE -> { currentCaptureMode = value }
+            ICameraStatus.IMAGE_SIZE -> { currentImageSize = value }
+            ICameraStatus.MOVIE_SIZE -> { currentMovieSize = value }
+
             //ICameraStatus.APERTURE -> { }
             //ICameraStatus.AE -> { }
             //ICameraStatus.EFFECT -> { }
@@ -156,7 +161,11 @@ class PixproStatusHolder
 
     private fun getMeteringMode() : String
     {
-        return ("Size")
+        return (when (currentTakeMode) {
+            "Video" -> { currentMovieSize }
+            else -> { currentImageSize }
+        })
+        // return ("Size")
     }
 
     private fun getPictureEffect() : String
@@ -443,8 +452,8 @@ class PixproStatusHolder
             Log.v(TAG, " setPictureEffect($value)")
             when (value)
             {
-                "Zoom In" -> commandPublisher.enqueueCommand(PixproExecuteZoom(PixproCommandOnlyCallback(), 1))
-                "Zoom Out" -> commandPublisher.enqueueCommand(PixproExecuteZoom(PixproCommandOnlyCallback(), -1))
+                "(+) Zoom In" -> commandPublisher.enqueueCommand(PixproExecuteZoom(PixproCommandOnlyCallback(), 1))
+                "(-) Zoom Out" -> commandPublisher.enqueueCommand(PixproExecuteZoom(PixproCommandOnlyCallback(), -1))
                 else -> { }
             }
         }
