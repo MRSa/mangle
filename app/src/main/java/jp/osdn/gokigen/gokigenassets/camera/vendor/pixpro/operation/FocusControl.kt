@@ -75,12 +75,14 @@ class FocusControl(private val commandPublisher: IPixproCommandPublisher, privat
         lockAutoFocus(PointF(0.5f, 0.5f))
     }
 
-    private fun lockAutoFocus(point: PointF) {
-        val maxPointLimitWidth = 1000000.0f
-        val maxPointLimitHeight = 1000000.0f
+    private fun lockAutoFocus(point: PointF)
+    {
+        // 現物実測で合わせる...
+        val maxPointLimitWidth = 991684.0f //  942080.0f // 1000000.0f
+        val maxPointLimitHeight = 959912.0f // 942080.0f // 1000000.0f
         try {
-            val x = 0x00ffffff and (point.x * maxPointLimitWidth).roundToInt() + 1
-            val y = 0x00ffffff and (point.y * maxPointLimitHeight).roundToInt() + 1
+            val x = 0x00ffffff and (point.x * maxPointLimitWidth).roundToInt() +  4150 // 1 // 40960
+            val y = 0x00ffffff and (point.y * maxPointLimitHeight).roundToInt() + 32528 // 1 // 40960
             Log.v(TAG, "Lock AF: [$x,$y]")
             commandPublisher.enqueueCommand(PixproExecuteFocus(this, x, y))
         } catch (e: Exception) {
