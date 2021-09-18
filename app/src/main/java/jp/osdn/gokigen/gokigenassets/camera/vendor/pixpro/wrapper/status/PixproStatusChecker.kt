@@ -287,6 +287,7 @@ class PixproStatusChecker : IPixproCommandCallback, ICameraStatusWatcher, ICamer
                     0x00000008 -> "2048x1536"
                     0x00000004 -> "1920x1080"
                     0x00000001 ->  "640x480"
+                    0x00000010 -> "2336x1752"
                     else -> "($picSize)"
                 }
                 statusHolder.updateValue(ICameraStatus.IMAGE_SIZE, imageSize)
