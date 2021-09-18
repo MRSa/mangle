@@ -14,7 +14,6 @@ import jp.osdn.gokigen.gokigenassets.camera.vendor.omds.status.OmdsCameraStatusW
 import jp.osdn.gokigen.gokigenassets.camera.vendor.omds.wrapper.OmdsCaptureControl
 import jp.osdn.gokigen.gokigenassets.camera.vendor.omds.wrapper.OmdsFocusControl
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert
-import jp.osdn.gokigen.gokigenassets.constants.ICameraConstantConvert
 import jp.osdn.gokigen.gokigenassets.liveview.ICachePositionProvider
 import jp.osdn.gokigen.gokigenassets.liveview.IIndicatorControl
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveView
@@ -30,12 +29,12 @@ class OmdsCameraControl(private val context: AppCompatActivity, private val vibr
 {
     private val liveViewListener = CameraLiveViewListenerImpl(context, informationNotify)
     private val statusChecker = OmdsCameraStatusWatcher()
-    private val cameraConnection = OmdsCameraConnection(context, provider)
     private val runModeControl = OmdsRunModeControl()
     private val zoomLensControl = OmdsZoomLensControl(statusChecker)
     private val storeImage = StoreImage(context, liveViewListener)
+    private val liveViewControl = OmdsLiveViewControl(liveViewListener, statusChecker)
+    private val cameraConnection = OmdsCameraConnection(context, provider, statusChecker, liveViewControl)
 
-    private lateinit var liveViewControl : OmdsLiveViewControl
     private lateinit var cachePositionProvider : ICachePositionProvider
     private lateinit var focusControl: OmdsFocusControl
     private lateinit var captureControl: OmdsCaptureControl
@@ -88,10 +87,7 @@ class OmdsCameraControl(private val context: AppCompatActivity, private val vibr
     {
         try
         {
-            if (::liveViewControl.isInitialized)
-            {
-                liveViewControl.stopLiveView()
-            }
+            liveViewControl.stopLiveView()
             statusChecker.stopStatusWatch()
             cameraConnection.disconnect(false)
             cameraConnection.stopWatchWifiStatus(context)

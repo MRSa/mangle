@@ -5,12 +5,13 @@ import androidx.appcompat.app.AppCompatActivity
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnection
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnectionStatus
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
+import jp.osdn.gokigen.gokigenassets.camera.vendor.omds.status.IOmdsCommunicationInfo
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConstantConvert
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
 import java.lang.Exception
 import java.util.HashMap
 
-class OmdsCameraConnectSequence(private val context: AppCompatActivity, private val cameraStatusReceiver: ICameraStatusReceiver, private val cameraConnection : ICameraConnection, private val liveViewQuality : String, userAgent : String, private val executeUrl : String) : Runnable
+class OmdsCameraConnectSequence(private val context: AppCompatActivity, private val cameraStatusReceiver: ICameraStatusReceiver, private val cameraConnection : ICameraConnection, private val communicationInfo: IOmdsCommunicationInfo, private val liveViewQuality : String, userAgent : String, private val executeUrl : String) : Runnable
 {
     private val headerMap: MutableMap<String, String> = HashMap()
     private val http = SimpleHttpClient()
@@ -30,7 +31,9 @@ class OmdsCameraConnectSequence(private val context: AppCompatActivity, private 
             if (response.isNotEmpty())
             {
                 val response2: String = http.httpGetWithHeader(getCommandListUrl, headerMap, null, TIMEOUT_MS) ?: ""
-                Log.v(TAG, " $getCommandListUrl $response2")
+                Log.v(TAG, " $getCommandListUrl (${response2.length})")
+                communicationInfo.setOmdsCommandList(response2)
+
                 val response3: String = http.httpGetWithHeader(camInfoUrl, headerMap, null, TIMEOUT_MS) ?: ""
                 Log.v(TAG, " $camInfoUrl $response3")
 

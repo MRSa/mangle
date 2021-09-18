@@ -24,9 +24,8 @@
         <item>Panasonic</item>
         <item>Sony</item>
         <item>PIXPRO WPZ2</item>
+        <item>OMDS(OM-D/Pen/Air)</item>
         <!--
-                <item>OPC(Olympus Air)</item>
-                <item>Olympus(OM-D/PEN)</item>
                 <item>Fuji X Series</item>
                 <item>Canon</item>
                 <item>Nikon</item>
@@ -43,9 +42,8 @@
         <item>PANASONIC</item>
         <item>SONY</item>
         <item>PIXPRO</item>
+        <item>OMDS</item>
         <!--
-                <item>OPC</item>
-                <item>OLYMPUS</item>
                 <item>FUJI_X</item>
                 <item>CANON</item>
                 <item>NIKON</item>

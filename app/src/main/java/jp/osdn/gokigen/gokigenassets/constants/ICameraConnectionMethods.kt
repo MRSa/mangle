@@ -14,5 +14,7 @@ interface ICameraConnectionMethods
         const val PREFERENCE_CAMERA_METHOD_PANASONIC = "PANASONIC"
         const val PREFERENCE_CAMERA_METHOD_SONY = "SONY"
         const val PREFERENCE_CAMERA_METHOD_PIXPRO = "PIXPRO"
+        const val PREFERENCE_CAMERA_METHOD_OMDS = "OMDS"
+
     }
 }

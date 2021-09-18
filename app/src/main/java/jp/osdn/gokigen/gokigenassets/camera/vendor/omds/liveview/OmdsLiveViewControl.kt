@@ -1,11 +1,9 @@
 package jp.osdn.gokigen.gokigenassets.camera.vendor.omds.liveview
 
 import android.util.Log
-import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusUpdateNotify
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ILiveViewController
 import jp.osdn.gokigen.gokigenassets.camera.vendor.omds.status.OmdsCameraStatusWatcher
 import jp.osdn.gokigen.gokigenassets.liveview.image.IImageDataReceiver
-import jp.osdn.gokigen.gokigenassets.liveview.message.IMessageDrawer
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
 import java.io.ByteArrayOutputStream
 import java.lang.Exception
@@ -15,11 +13,9 @@ import java.util.*
 
 class OmdsLiveViewControl(private val imageDataReceiver: IImageDataReceiver,
                           private val statusWatcher: OmdsCameraStatusWatcher,
-                          private val indicator: IMessageDrawer?,
-                          private val notifier: ICameraStatusUpdateNotify?,
                           userAgent: String = "OlympusCameraKit",
                           private val executeUrl : String = "http://192.168.0.10",
-                          ) : ILiveViewController
+                          ) : ILiveViewController, IOmdsLiveViewControl
 {
     private val headerMap: MutableMap<String, String> = HashMap()
     private val http = SimpleHttpClient()
@@ -51,7 +47,6 @@ class OmdsLiveViewControl(private val imageDataReceiver: IImageDataReceiver,
                 }
             })
             thread.start()
-            statusWatcher.startStatusWatch(indicator, notifier)
         }
         catch (e: Exception)
         {
@@ -253,6 +248,16 @@ class OmdsLiveViewControl(private val imageDataReceiver: IImageDataReceiver,
         {
             e.printStackTrace()
         }
+    }
+
+    override fun startOmdsLiveView()
+    {
+        startLiveView()
+    }
+
+    override fun stopOmdsLiveView()
+    {
+        stopLiveView()
     }
 
     init

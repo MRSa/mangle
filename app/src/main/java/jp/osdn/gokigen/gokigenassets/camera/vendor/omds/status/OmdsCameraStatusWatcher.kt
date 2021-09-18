@@ -9,13 +9,20 @@ import jp.osdn.gokigen.gokigenassets.liveview.message.IMessageDrawer
 import java.lang.Exception
 import kotlin.collections.ArrayList
 
-class OmdsCameraStatusWatcher : ICameraStatusWatcher, ICameraStatus
+class OmdsCameraStatusWatcher : ICameraStatusWatcher, ICameraStatus, IOmdsCommunicationInfo
 {
     private var buffer: ByteArray? = null
     private var isWatching = false
     private var statusReceived = false
     private var notifier: ICameraStatusUpdateNotify? = null
     private var focusingStatus = 0
+    private var omdsCommandList : String = ""
+
+    override fun setOmdsCommandList(commandList: String)
+    {
+        Log.v(TAG, " setOmdsCommandList() : $commandList")
+        omdsCommandList = commandList
+    }
 
     fun setRtpHeader(byteBuffer: ByteArray?)
     {
