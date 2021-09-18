@@ -6,6 +6,8 @@ import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.messag
 
 class PixproExecuteShutter(private val callback: IPixproCommandCallback, posX: Int = 0x00004dbf, posY: Int = 0xb6658801.toInt()) : PixproCommandBase()
 {
+
+/*
     private val data00: Byte = (0x000000ff and posX).toByte()
     private val data01: Byte = (0x0000ff00 and posX shr 8).toByte()
     private val data02: Byte = (0x00ff0000 and posX shr 16).toByte()
@@ -15,6 +17,7 @@ class PixproExecuteShutter(private val callback: IPixproCommandCallback, posX: I
     private val data11: Byte = (0x0000ff00 and posY shr 8).toByte()
     private val data12: Byte = (0x00ff0000 and posY shr 16).toByte()
     private val data13: Byte = (-0x1000000 and posY shr 24).toByte()
+*/
 
     override fun getId() : Int
     {
