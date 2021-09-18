@@ -24,6 +24,7 @@ class OmdsCameraConnectSequence(private val context: AppCompatActivity, private 
             val getCommandListUrl = "$executeUrl/get_commandlist.cgi"
             val getConnectModeUrl = "$executeUrl/get_connectmode.cgi"
             val switchCameraModeUrl = "$executeUrl/switch_cammode.cgi"
+            val switchOpcCameraModeUrl = "$executeUrl/switch_cameramode.cgi"
             //val getCameraStatusUrl = "$executeUrl/get_activate.cgi"
 
             val response: String = http.httpGetWithHeader(getConnectModeUrl, headerMap, null, TIMEOUT_MS) ?: ""
@@ -41,6 +42,12 @@ class OmdsCameraConnectSequence(private val context: AppCompatActivity, private 
                 val lvUrl = "$switchCameraModeUrl?mode=rec&lvqty=$liveViewQuality"
                 val response4: String = http.httpGetWithHeader(lvUrl, headerMap, null, TIMEOUT_MS) ?: ""
                 Log.v(TAG, " $lvUrl $response4")
+                if (response4.isEmpty())
+                {
+                    // エラーになった場合は、OPCのコマンドを発行する
+                    val response5: String = http.httpGetWithHeader("$switchOpcCameraModeUrl?mode=rec", headerMap, null, TIMEOUT_MS) ?: ""
+                    Log.v(TAG, " $switchOpcCameraModeUrl?mode=rec $response5")
+                }
 
                 //// カメラのステータス取得
                 //String response5 = SimpleHttpClient.httpGetWithHeader(getCameraStatusUrl, headerMap, null, TIMEOUT_MS);
