@@ -8,7 +8,7 @@ import jp.osdn.gokigen.gokigenassets.liveview.IIndicatorControl
 import jp.osdn.gokigen.gokigenassets.liveview.focusframe.IAutoFocusFrameDisplay
 import java.lang.Exception
 
-class OmdsCaptureControl(private val frameDisplay: IAutoFocusFrameDisplay, indicator: IIndicatorControl, statusChecker : ICameraStatus): ICaptureControl
+class OmdsCaptureControl(frameDisplay: IAutoFocusFrameDisplay, indicator: IIndicatorControl, statusChecker : ICameraStatus): ICaptureControl
 {
     private val singleShotControl = OmdsSingleShotControl(frameDisplay, indicator)
 
@@ -27,7 +27,7 @@ class OmdsCaptureControl(private val frameDisplay: IAutoFocusFrameDisplay, indic
 
     companion object
     {
-        private val TAG: String = OmdsCaptureControl::class.java.getSimpleName()
+        private val TAG: String = OmdsCaptureControl::class.java.simpleName
     }
 
 }

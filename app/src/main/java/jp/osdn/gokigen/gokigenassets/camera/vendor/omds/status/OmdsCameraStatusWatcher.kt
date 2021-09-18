@@ -9,7 +9,7 @@ import jp.osdn.gokigen.gokigenassets.liveview.message.IMessageDrawer
 import java.lang.Exception
 import kotlin.collections.ArrayList
 
-class OmdsCameraStatusWatcher() : ICameraStatusWatcher, ICameraStatus
+class OmdsCameraStatusWatcher : ICameraStatusWatcher, ICameraStatus
 {
     private var buffer: ByteArray? = null
     private var isWatching = false

@@ -10,7 +10,7 @@ import java.lang.Exception
 import java.util.*
 import kotlin.math.floor
 
-class OmdsAutoFocusControl(private val frameDisplayer: IAutoFocusFrameDisplay, private val indicator: IIndicatorControl, private val executeUrl : String = "http://192.168.0.10")
+class OmdsAutoFocusControl(private val frameDisplayer: IAutoFocusFrameDisplay, private val indicator: IIndicatorControl, userAgent: String = "OlympusCameraKit", private val executeUrl : String = "http://192.168.0.10")
 {
     private val headerMap: MutableMap<String, String> = HashMap()
     private val http = SimpleHttpClient()
@@ -176,7 +176,8 @@ class OmdsAutoFocusControl(private val frameDisplayer: IAutoFocusFrameDisplay, p
         )
     }
 
-    private fun findTouchAFPositionResult(replyXml: String, position: String): Boolean {
+    private fun findTouchAFPositionResult(replyXml: String, position: String): Boolean
+    {
         try {
             Log.v(
                 TAG,
@@ -193,8 +194,8 @@ class OmdsAutoFocusControl(private val frameDisplayer: IAutoFocusFrameDisplay, p
 
     init
     {
-        headerMap["User-Agent"] = "OlympusCameraKit" // "OI.Share"
-        headerMap["X-Protocol"] = "OlympusCameraKit" // "OI.Share"
+        headerMap["User-Agent"] = userAgent // "OlympusCameraKit" // "OI.Share"
+        headerMap["X-Protocol"] = userAgent // "OlympusCameraKit" // "OI.Share"
     }
 
     companion object

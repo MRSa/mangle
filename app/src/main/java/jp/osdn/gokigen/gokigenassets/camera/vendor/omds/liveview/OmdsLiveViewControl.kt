@@ -13,20 +13,20 @@ import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.util.*
 
-
 class OmdsLiveViewControl(private val imageDataReceiver: IImageDataReceiver,
                           private val statusWatcher: OmdsCameraStatusWatcher,
                           private val indicator: IMessageDrawer?,
                           private val notifier: ICameraStatusUpdateNotify?,
+                          userAgent: String = "OlympusCameraKit",
                           private val executeUrl : String = "http://192.168.0.10",
                           ) : ILiveViewController
 {
     private val headerMap: MutableMap<String, String> = HashMap()
     private val http = SimpleHttpClient()
+    private val receivedByteStream = ByteArrayOutputStream(RECEIVE_BUFFER_SIZE)
 
     private var receiveSocket: DatagramSocket? = null
     private var whileStreamReceive = false
-    private val receivedByteStream: ByteArrayOutputStream
 
     override fun startLiveView(isCameraScreen: Boolean)
     {
@@ -141,8 +141,6 @@ class OmdsLiveViewControl(private val imageDataReceiver: IImageDataReceiver,
             if (receivedData[0] == 0x90.toByte())
             {
                 // 先頭パケット (RTPヘッダは 12bytes + 拡張ヘッダ...)
-                //extensionLength = (receivedData[14]);
-                //extensionLength = (extensionLength * 256) + (receivedData[15]);
                 extensionLength = 16
                 extensionLength = checkJpegStartPosition(receivedData, extensionLength) - position
                 statusWatcher.setRtpHeader(Arrays.copyOf(receivedData, extensionLength))
@@ -202,12 +200,12 @@ class OmdsLiveViewControl(private val imageDataReceiver: IImageDataReceiver,
         {
             try
             {
-                val receive_packet = DatagramPacket(buffer, buffer.size)
+                val receivePacket = DatagramPacket(buffer, buffer.size)
                 if (receiveSocket != null)
                 {
                     receiveSocket?.soTimeout = TIMEOUT_MS
-                    receiveSocket?.receive(receive_packet)
-                    checkReceiveImage(receive_packet)
+                    receiveSocket?.receive(receivePacket)
+                    checkReceiveImage(receivePacket)
                     exceptionCount = 0
                 }
                 else
@@ -226,13 +224,6 @@ class OmdsLiveViewControl(private val imageDataReceiver: IImageDataReceiver,
                         //  ライブビューの送信が来なくなった... それも回数が超えた...
                         Log.v(TAG, "LV : RETRY REQUEST")
                         exceptionCount = 0
-                        /*
-                        String reply = SimpleHttpClient.httpGet(camera.getCmdUrl() + LIVEVIEW_START_REQUEST, TIMEOUT_MS);
-                        if (!reply.contains("ok"))
-                        {
-                            Log.v(TAG, "LV : RETRY COMMAND FAIL...");
-                        }
-*/
                     }
                     catch (ee: Exception)
                     {
@@ -254,7 +245,7 @@ class OmdsLiveViewControl(private val imageDataReceiver: IImageDataReceiver,
             if (receiveSocket != null)
             {
                 Log.v(TAG, "  ----- SOCKET CLOSE -----  ")
-                receiveSocket!!.close()
+                receiveSocket?.close()
                 receiveSocket = null
             }
         }
@@ -266,10 +257,8 @@ class OmdsLiveViewControl(private val imageDataReceiver: IImageDataReceiver,
 
     init
     {
-        headerMap["User-Agent"] = "OlympusCameraKit" // "OI.Share"
-        headerMap["X-Protocol"] = "OlympusCameraKit" // "OI.Share"
-
-        receivedByteStream = ByteArrayOutputStream(RECEIVE_BUFFER_SIZE)
+        headerMap["User-Agent"] = userAgent // "OlympusCameraKit" // "OI.Share"
+        headerMap["X-Protocol"] = userAgent // "OlympusCameraKit" // "OI.Share"
     }
 
     companion object

@@ -1,12 +1,13 @@
-package jp.osdn.gokigen.gokigenassets.camera.vendor.omds.wrapper
+package jp.osdn.gokigen.gokigenassets.camera.vendor.omds.operation
 
 import android.util.Log
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.IZoomLensControl
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
 import java.lang.Exception
 import java.util.HashMap
 
-class OmdsZoomLensControl(private val executeUrl : String = "http://192.168.0.10") : IZoomLensControl
+class OmdsZoomLensControl(statusChecker: ICameraStatus, userAgent: String = "OlympusCameraKit", private val executeUrl : String = "http://192.168.0.10") : IZoomLensControl
 {
     private val headerMap: MutableMap<String, String> = HashMap()
     private val http = SimpleHttpClient()
@@ -104,7 +105,7 @@ class OmdsZoomLensControl(private val executeUrl : String = "http://192.168.0.10
 
     init
     {
-        headerMap["User-Agent"] = "OlympusCameraKit" // "OI.Share"
-        headerMap["X-Protocol"] = "OlympusCameraKit" // "OI.Share"
+        headerMap["User-Agent"] = userAgent // "OlympusCameraKit" // "OI.Share"
+        headerMap["X-Protocol"] = userAgent // "OlympusCameraKit" // "OI.Share"
     }
 }

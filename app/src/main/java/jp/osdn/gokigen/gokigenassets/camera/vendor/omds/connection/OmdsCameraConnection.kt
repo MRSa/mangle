@@ -13,7 +13,7 @@ import java.lang.Exception
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
-class OmdsCameraConnection(private val context: AppCompatActivity, private val statusReceiver: ICameraStatusReceiver) : ICameraConnection, ICameraConnectionStatus
+class OmdsCameraConnection(private val context: AppCompatActivity, private val statusReceiver: ICameraStatusReceiver, private val liveViewQuality : String = "0640x0480", private val userAgent : String = "OlympusCameraKit", private val executeUrl : String = "http://192.168.0.10") : ICameraConnection, ICameraConnectionStatus
 {
     private val cameraExecutor: Executor = Executors.newFixedThreadPool(1)
     private var connectionStatus: ICameraConnectionStatus.CameraConnectionStatus = ICameraConnectionStatus.CameraConnectionStatus.UNKNOWN
@@ -164,7 +164,7 @@ class OmdsCameraConnection(private val context: AppCompatActivity, private val s
         Log.v(TAG, "disconnectFromCamera()")
         try
         {
-            cameraExecutor.execute(OmdsCameraDisconnectSequence(context, powerOff))
+            cameraExecutor.execute(OmdsCameraDisconnectSequence(context, powerOff, userAgent, executeUrl))
         }
         catch (e: Exception)
         {
@@ -181,7 +181,7 @@ class OmdsCameraConnection(private val context: AppCompatActivity, private val s
         connectionStatus = ICameraConnectionStatus.CameraConnectionStatus.CONNECTING
         try
         {
-            cameraExecutor.execute(OmdsCameraConnectSequence(context, statusReceiver, this))
+            cameraExecutor.execute(OmdsCameraConnectSequence(context, statusReceiver, this, liveViewQuality, userAgent, executeUrl))
         }
         catch (e: Exception)
         {

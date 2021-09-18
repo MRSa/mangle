@@ -8,6 +8,8 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.*
 import jp.osdn.gokigen.gokigenassets.camera.preference.ICameraPreferenceProvider
 import jp.osdn.gokigen.gokigenassets.camera.vendor.omds.connection.OmdsCameraConnection
 import jp.osdn.gokigen.gokigenassets.camera.vendor.omds.liveview.OmdsLiveViewControl
+import jp.osdn.gokigen.gokigenassets.camera.vendor.omds.operation.OmdsRunModeControl
+import jp.osdn.gokigen.gokigenassets.camera.vendor.omds.operation.OmdsZoomLensControl
 import jp.osdn.gokigen.gokigenassets.camera.vendor.omds.status.OmdsCameraStatusWatcher
 import jp.osdn.gokigen.gokigenassets.camera.vendor.omds.wrapper.OmdsCaptureControl
 import jp.osdn.gokigen.gokigenassets.camera.vendor.omds.wrapper.OmdsFocusControl
@@ -29,6 +31,8 @@ class OmdsCameraControl(private val context: AppCompatActivity, private val vibr
     private val liveViewListener = CameraLiveViewListenerImpl(context, informationNotify)
     private val statusChecker = OmdsCameraStatusWatcher()
     private val cameraConnection = OmdsCameraConnection(context, provider)
+    private val runModeControl = OmdsRunModeControl()
+    private val zoomLensControl = OmdsZoomLensControl(statusChecker)
     private val storeImage = StoreImage(context, liveViewListener)
 
     private lateinit var liveViewControl : OmdsLiveViewControl
@@ -98,8 +102,16 @@ class OmdsCameraControl(private val context: AppCompatActivity, private val vibr
         }
     }
 
-    override fun changeCaptureMode(mode: String) { }
+    override fun changeCaptureMode(mode: String)
+    {
+        Log.v(TAG, "changeCaptureMode($mode) : ${runModeControl.isRecordingMode()}")
+
+        //dummy call
+        Log.v(TAG, " canZoom() : ${zoomLensControl.canZoom()}")
+    }
+
     override fun needRotateImage(): Boolean { return (false) }
+
     override fun setRefresher(id : Int, refresher: ILiveViewRefresher, imageView: ILiveView, cachePosition : ICachePositionProvider)
     {
         try

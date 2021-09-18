@@ -1,4 +1,4 @@
-package jp.osdn.gokigen.gokigenassets.camera.vendor.omds.operation
+package jp.osdn.gokigen.gokigenassets.camera.vendor.omds.wrapper
 
 import android.content.Context
 import androidx.preference.Preference

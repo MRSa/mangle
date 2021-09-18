@@ -10,20 +10,21 @@ import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
 import java.lang.Exception
 import java.util.HashMap
 
-class OmdsCameraConnectSequence(private val context: AppCompatActivity, private val cameraStatusReceiver: ICameraStatusReceiver, private val cameraConnection : ICameraConnection, private val liveViewQuality : String = "0640x0480", private val executeUrl : String = "http://192.168.0.10") : Runnable
+class OmdsCameraConnectSequence(private val context: AppCompatActivity, private val cameraStatusReceiver: ICameraStatusReceiver, private val cameraConnection : ICameraConnection, private val liveViewQuality : String, userAgent : String, private val executeUrl : String) : Runnable
 {
     private val headerMap: MutableMap<String, String> = HashMap()
     private val http = SimpleHttpClient()
 
     override fun run()
     {
-        val camInfoUrl = "$executeUrl/get_caminfo.cgi"
-        val getCommandListUrl = "$executeUrl/get_commandlist.cgi"
-        val getConnectModeUrl = "$executeUrl/get_connectmode.cgi"
-        val switchCameraModeUrl = "$executeUrl/switch_cammode.cgi"
-        //final String getCameraStatusUrl = "$executeUrl/get_activate.cgi";
         try
         {
+            val camInfoUrl = "$executeUrl/get_caminfo.cgi"
+            val getCommandListUrl = "$executeUrl/get_commandlist.cgi"
+            val getConnectModeUrl = "$executeUrl/get_connectmode.cgi"
+            val switchCameraModeUrl = "$executeUrl/switch_cammode.cgi"
+            //val getCameraStatusUrl = "$executeUrl/get_activate.cgi"
+
             val response: String = http.httpGetWithHeader(getConnectModeUrl, headerMap, null, TIMEOUT_MS) ?: ""
             Log.v(TAG, " $getConnectModeUrl $response")
             if (response.isNotEmpty())
@@ -75,8 +76,8 @@ class OmdsCameraConnectSequence(private val context: AppCompatActivity, private 
 
     init
     {
-        headerMap["User-Agent"] = "OlympusCameraKit" // "OI.Share"
-        headerMap["X-Protocol"] = "OlympusCameraKit" // "OI.Share"
+        headerMap["User-Agent"] = userAgent // "OlympusCameraKit" // "OI.Share"
+        headerMap["X-Protocol"] = userAgent // "OlympusCameraKit" // "OI.Share"
     }
 
     companion object
