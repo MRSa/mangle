@@ -25,7 +25,7 @@ import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
 import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 
-class OmdsCameraControl(private val context: AppCompatActivity, private val vibrator: IVibrator, informationNotify : IInformationReceiver, private val preference: ICameraPreferenceProvider, provider: ICameraStatusReceiver) : ICameraControl, View.OnClickListener, View.OnLongClickListener, ICameraShutter, IKeyDown, IDisplayInjector
+class OmdsCameraControl(private val context: AppCompatActivity, private val vibrator: IVibrator, informationNotify : IInformationReceiver, private val preference: ICameraPreferenceProvider, provider: ICameraStatusReceiver) : ICameraControl, View.OnClickListener, View.OnLongClickListener, ICameraShutter, IKeyDown, IDisplayInjector, IOmdsProtocolNotify
 {
     private val liveViewListener = CameraLiveViewListenerImpl(context, informationNotify)
     private val statusChecker = OmdsCameraStatusWatcher()
@@ -33,7 +33,7 @@ class OmdsCameraControl(private val context: AppCompatActivity, private val vibr
     private val zoomLensControl = OmdsZoomLensControl(statusChecker)
     private val storeImage = StoreImage(context, liveViewListener)
     private val liveViewControl = OmdsLiveViewControl(liveViewListener, statusChecker)
-    private val cameraConnection = OmdsCameraConnection(context, provider, statusChecker, liveViewControl)
+    private val cameraConnection = OmdsCameraConnection(context, provider, statusChecker, liveViewControl, this)
 
     private lateinit var cachePositionProvider : ICachePositionProvider
     private lateinit var focusControl: OmdsFocusControl
@@ -251,6 +251,13 @@ class OmdsCameraControl(private val context: AppCompatActivity, private val vibr
             e.printStackTrace()
         }
         return (false)
+    }
+
+    override fun detectedOpcProtocol(opcProtocol: Boolean)
+    {
+        zoomLensControl.detectedOpcProtocol(opcProtocol)
+        focusControl.detectedOpcProtocol(opcProtocol)
+        captureControl.detectedOpcProtocol(opcProtocol)
     }
 
     companion object

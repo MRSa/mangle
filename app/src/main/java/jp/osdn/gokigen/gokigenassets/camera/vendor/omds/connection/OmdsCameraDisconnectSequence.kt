@@ -6,7 +6,7 @@ import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
 import java.lang.Exception
 import java.util.HashMap
 
-class OmdsCameraDisconnectSequence(private val context: AppCompatActivity, private val powerOff: Boolean, userAgent: String, private val executeUrl : String) : Runnable
+class OmdsCameraDisconnectSequence(private val context: AppCompatActivity, private val powerOff: Boolean, userAgent : String = "OlympusCameraKit", private val  executeUrl : String = "http://192.168.0.10") : Runnable
 {
     private val headerMap: MutableMap<String, String> = HashMap()
     private val http = SimpleHttpClient()

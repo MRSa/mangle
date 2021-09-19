@@ -20,8 +20,11 @@ class OmdsCameraStatusWatcher : ICameraStatusWatcher, ICameraStatus, IOmdsCommun
 
     override fun setOmdsCommandList(commandList: String)
     {
-        Log.v(TAG, " setOmdsCommandList() : $commandList")
+        //Log.v(TAG, " setOmdsCommandList() : $commandList")
         omdsCommandList = commandList
+
+        val commandListParser = OmdsCommandListParser()
+        commandListParser.startParse(omdsCommandList)
     }
 
     fun setRtpHeader(byteBuffer: ByteArray?)

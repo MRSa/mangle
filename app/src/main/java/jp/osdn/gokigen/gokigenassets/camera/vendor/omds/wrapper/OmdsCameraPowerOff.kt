@@ -1,12 +1,13 @@
 package jp.osdn.gokigen.gokigenassets.camera.vendor.omds.wrapper
 
-import android.content.Context
+import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.Preference
+import jp.osdn.gokigen.gokigenassets.camera.vendor.omds.connection.OmdsCameraDisconnectSequence
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert
 import jp.osdn.gokigen.gokigenassets.scene.IChangeSceneBasic
 import jp.osdn.gokigen.gokigenassets.utils.ConfirmationDialog
 
-class OmdsCameraPowerOff(private val context: Context, private val changeScene: IChangeSceneBasic) : Preference.OnPreferenceClickListener, ConfirmationDialog.ConfirmationCallback
+class OmdsCameraPowerOff(private val context: AppCompatActivity, private val changeScene: IChangeSceneBasic) : Preference.OnPreferenceClickListener, ConfirmationDialog.ConfirmationCallback
 {
     private var preferenceKey: String? = null
 
@@ -42,6 +43,8 @@ class OmdsCameraPowerOff(private val context: Context, private val changeScene: 
         if ((isContain != null)&&(isContain))
         {
             // カメラの電源をOFFにしたうえで、アプリケーションを終了する。
+            val thread = Thread { OmdsCameraDisconnectSequence(context, true) }
+            thread.start()
             changeScene.exitApplication()
         }
     }

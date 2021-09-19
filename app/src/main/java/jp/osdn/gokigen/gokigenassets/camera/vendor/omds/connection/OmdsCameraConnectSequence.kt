@@ -5,13 +5,14 @@ import androidx.appcompat.app.AppCompatActivity
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnection
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnectionStatus
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
+import jp.osdn.gokigen.gokigenassets.camera.vendor.omds.IOmdsProtocolNotify
 import jp.osdn.gokigen.gokigenassets.camera.vendor.omds.status.IOmdsCommunicationInfo
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConstantConvert
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
 import java.lang.Exception
 import java.util.HashMap
 
-class OmdsCameraConnectSequence(private val context: AppCompatActivity, private val cameraStatusReceiver: ICameraStatusReceiver, private val cameraConnection : ICameraConnection, private val communicationInfo: IOmdsCommunicationInfo, private val liveViewQuality : String, userAgent : String, private val executeUrl : String) : Runnable
+class OmdsCameraConnectSequence(private val context: AppCompatActivity, private val cameraStatusReceiver: ICameraStatusReceiver, private val cameraConnection : ICameraConnection, private val communicationInfo: IOmdsCommunicationInfo, private val useOpcProtocolNotify: IOmdsProtocolNotify, private val liveViewQuality : String, userAgent : String = "OlympusCameraKit", private val executeUrl : String = "http://192.168.0.10") : Runnable
 {
     private val headerMap: MutableMap<String, String> = HashMap()
     private val http = SimpleHttpClient()
@@ -47,6 +48,11 @@ class OmdsCameraConnectSequence(private val context: AppCompatActivity, private 
                     // エラーになった場合は、OPCのコマンドを発行する
                     val response5: String = http.httpGetWithHeader("$switchOpcCameraModeUrl?mode=rec", headerMap, null, TIMEOUT_MS) ?: ""
                     Log.v(TAG, " $switchOpcCameraModeUrl?mode=rec $response5")
+                    if (response5.length > 5)
+                    {
+                        Log.v(TAG, " -=-=-=-=-=- DETECTED OPC CAMERA -=-=-=-=-=-")
+                        useOpcProtocolNotify.detectedOpcProtocol(true)
+                    }
                 }
 
                 //// カメラのステータス取得

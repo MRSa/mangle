@@ -4,12 +4,13 @@ import android.graphics.PointF
 import android.util.Log
 import android.view.MotionEvent
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.IFocusingControl
+import jp.osdn.gokigen.gokigenassets.camera.vendor.omds.IOmdsProtocolNotify
 import jp.osdn.gokigen.gokigenassets.camera.vendor.omds.operation.OmdsAutoFocusControl
 import jp.osdn.gokigen.gokigenassets.liveview.IIndicatorControl
 import jp.osdn.gokigen.gokigenassets.liveview.focusframe.IAutoFocusFrameDisplay
 import java.lang.Exception
 
-class OmdsFocusControl(private val frameDisplay: IAutoFocusFrameDisplay, indicator: IIndicatorControl) : IFocusingControl
+class OmdsFocusControl(private val frameDisplay: IAutoFocusFrameDisplay, indicator: IIndicatorControl) : IFocusingControl, IOmdsProtocolNotify
 {
     private val afControl = OmdsAutoFocusControl(frameDisplay, indicator)
 
@@ -66,6 +67,11 @@ class OmdsFocusControl(private val frameDisplay: IAutoFocusFrameDisplay, indicat
         {
             e.printStackTrace()
         }
+    }
+
+    override fun detectedOpcProtocol(opcProtocol: Boolean)
+    {
+        afControl.detectedOpcProtocol(opcProtocol)
     }
 
     companion object

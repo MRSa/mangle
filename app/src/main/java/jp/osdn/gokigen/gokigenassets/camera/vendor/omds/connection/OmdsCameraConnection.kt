@@ -8,6 +8,7 @@ import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.*
+import jp.osdn.gokigen.gokigenassets.camera.vendor.omds.IOmdsProtocolNotify
 import jp.osdn.gokigen.gokigenassets.camera.vendor.omds.liveview.IOmdsLiveViewControl
 import jp.osdn.gokigen.gokigenassets.camera.vendor.omds.status.IOmdsCommunicationInfo
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConstantConvert
@@ -15,7 +16,7 @@ import java.lang.Exception
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
-class OmdsCameraConnection(private val context: AppCompatActivity, private val statusReceiver: ICameraStatusReceiver, private val communicationInfo: IOmdsCommunicationInfo, private val liveViewControl: IOmdsLiveViewControl, private val liveViewQuality : String = "0640x0480", private val userAgent : String = "OlympusCameraKit", private val executeUrl : String = "http://192.168.0.10") : ICameraConnection, ICameraConnectionStatus
+class OmdsCameraConnection(private val context: AppCompatActivity, private val statusReceiver: ICameraStatusReceiver, private val communicationInfo: IOmdsCommunicationInfo, private val liveViewControl: IOmdsLiveViewControl, private val useOpcProtocolNotify: IOmdsProtocolNotify, private val liveViewQuality : String = "0640x0480", private val userAgent : String = "OlympusCameraKit", private val executeUrl : String = "http://192.168.0.10") : ICameraConnection, ICameraConnectionStatus
 {
     private val cameraExecutor: Executor = Executors.newFixedThreadPool(1)
     private var connectionStatus: ICameraConnectionStatus.CameraConnectionStatus = ICameraConnectionStatus.CameraConnectionStatus.UNKNOWN
@@ -191,7 +192,7 @@ class OmdsCameraConnection(private val context: AppCompatActivity, private val s
         connectionStatus = ICameraConnectionStatus.CameraConnectionStatus.CONNECTING
         try
         {
-            cameraExecutor.execute(OmdsCameraConnectSequence(context, statusReceiver, this, communicationInfo, liveViewQuality, userAgent, executeUrl))
+            cameraExecutor.execute(OmdsCameraConnectSequence(context, statusReceiver, this, communicationInfo, useOpcProtocolNotify, liveViewQuality, userAgent, executeUrl))
         }
         catch (e: Exception)
         {
