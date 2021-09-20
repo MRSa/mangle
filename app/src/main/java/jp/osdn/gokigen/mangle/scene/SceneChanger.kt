@@ -221,6 +221,7 @@ class SceneChanger(private val activity: AppCompatActivity, private val informat
             object : ConfirmationDialog.ConfirmationCallback {
                 override fun confirm()
                 {
+                    // finish()
                     activity.finish()
                 }
             }
@@ -258,6 +259,7 @@ class SceneChanger(private val activity: AppCompatActivity, private val informat
 
     fun finish()
     {
+        Log.v(TAG, " finishCamera() ")
         cameraControl1.finishCamera()
         cameraControl2.finishCamera()
         cameraControl3.finishCamera()

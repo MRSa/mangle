@@ -89,7 +89,7 @@ class OmdsCameraControl(private val context: AppCompatActivity, private val vibr
         {
             liveViewControl.stopLiveView()
             statusChecker.stopStatusWatch()
-            cameraConnection.disconnect(false)
+            cameraConnection.disconnect(true)
             cameraConnection.stopWatchWifiStatus(context)
         }
         catch (e: Exception)

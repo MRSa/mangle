@@ -141,7 +141,7 @@ class RicohPentaxCameraControl(private val context: AppCompatActivity, private v
                 statusChecker.stopStatusWatch()
                 isStatusWatch = false
             }
-            gr2Connection.disconnect(false)
+            gr2Connection.disconnect(true)
             gr2Connection.stopWatchWifiStatus(context)
         }
         catch (e : Exception)
