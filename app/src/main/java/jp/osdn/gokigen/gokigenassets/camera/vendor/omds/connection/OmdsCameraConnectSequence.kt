@@ -46,7 +46,7 @@ class OmdsCameraConnectSequence(private val context: AppCompatActivity, private 
                 if (response4.isEmpty())
                 {
                     // エラーになった場合は、OPCのコマンドを発行する
-                    val response5: String = http.httpGetWithHeader("$switchOpcCameraModeUrl?mode=rec", headerMap, null, TIMEOUT_MS) ?: ""
+                    val response5: String = http.httpGetWithHeader("$switchOpcCameraModeUrl?mode=rec&lvqty=$liveViewQuality", headerMap, null, TIMEOUT_MS) ?: ""
                     Log.v(TAG, " $switchOpcCameraModeUrl?mode=rec $response5")
                     if (response5.length > 5)
                     {

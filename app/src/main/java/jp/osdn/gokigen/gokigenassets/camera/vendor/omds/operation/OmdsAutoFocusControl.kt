@@ -102,9 +102,9 @@ class OmdsAutoFocusControl(private val frameDisplayer: IAutoFocusFrameDisplay, p
         val preFocusFrameRect = getPreFocusFrameRect(point)
         try
         {
-            val releaseUrl = executeUrl + AF_RELEASE_COMMAND_OPC
+            val releaseUrl = executeUrl + AF_UNLOCK_COMMAND_OPC
             val preReply: String = http.httpGetWithHeader(releaseUrl, headerMap, null, TIMEOUT_MS) ?: ""
-            Log.v(TAG, "setTouchAFPosition() pre-release. : $releaseUrl ($preReply)")
+            Log.v(TAG, "unlock AF : $releaseUrl ($preReply)")
 
             showFocusFrame(preFocusFrameRect, IAutoFocusFrameDisplay.FocusFrameStatus.Running, 0.0)
             val posX = floor((point.x * scaleX).toDouble()).toInt()
@@ -147,18 +147,13 @@ class OmdsAutoFocusControl(private val frameDisplayer: IAutoFocusFrameDisplay, p
         Log.v(TAG, "unlockAutoFocus()")
         try {
             val thread = Thread {
-                try {
-                    val sendUrl = if (useOpcProtocol) { executeUrl + AF_RELEASE_COMMAND_OPC } else { executeUrl + AF_RELEASE_COMMAND }
-                    val reply: String = http.httpGetWithHeader(sendUrl, headerMap, null, TIMEOUT_MS) ?: ""
-                    if (!reply.contains("ok"))
-                    {
-                        Log.v(TAG, "unlockAutoFocus() reply is null.")
-                    }
-                    hideFocusFrame()
-                }
-                catch (e: Exception)
+                if (useOpcProtocol)
                 {
-                    e.printStackTrace()
+                    unlockAFOpc()
+                }
+                else
+                {
+                    unlockAFOmds()
                 }
             }
             thread.start()
@@ -168,6 +163,47 @@ class OmdsAutoFocusControl(private val frameDisplayer: IAutoFocusFrameDisplay, p
             e.printStackTrace()
         }
     }
+
+    private fun unlockAFOmds()
+    {
+        try
+        {
+            val sendUrl = executeUrl + AF_RELEASE_COMMAND
+            val reply: String = http.httpGetWithHeader(sendUrl, headerMap, null, TIMEOUT_MS) ?: ""
+            if (!reply.contains("ok"))
+            {
+                Log.v(TAG, "unlockAutoFocus() reply is null.")
+            }
+            hideFocusFrame()
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    private fun unlockAFOpc()
+    {
+        try
+        {
+            val releaseUrl = executeUrl + AF_UNLOCK_COMMAND_OPC
+            val preReply: String = http.httpGetWithHeader(releaseUrl, headerMap, null, TIMEOUT_MS) ?: ""
+            Log.v(TAG, "unlock AF : $releaseUrl ($preReply)")
+
+            val sendUrl = executeUrl + AF_RELEASE_COMMAND_OPC
+            val reply: String = http.httpGetWithHeader(sendUrl, headerMap, null, TIMEOUT_MS) ?: ""
+            if (!reply.contains("ok"))
+            {
+                Log.v(TAG, "unlockAutoFocus() reply is null.")
+            }
+            hideFocusFrame()
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
 
     private fun showFocusFrame(rect: RectF, status: IAutoFocusFrameDisplay.FocusFrameStatus, duration: Double)
     {
@@ -234,6 +270,7 @@ class OmdsAutoFocusControl(private val frameDisplayer: IAutoFocusFrameDisplay, p
         private const val AF_RELEASE_COMMAND_OPC = "/exec_takemotion.cgi?com=newreleaseafframe"
 
         private const val AF_LOCK_COMMAND_OPC = "/exec_takemotion.cgi?com=newexecaflock"
+        private const val AF_UNLOCK_COMMAND_OPC = "/exec_takemotion.cgi?com=newreleaseaflock"
 
         private const val scaleX = 640.0f
         private const val scaleY = 480.0f
