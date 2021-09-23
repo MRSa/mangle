@@ -26,7 +26,6 @@ class OmdsCameraConnectSequence(private val context: AppCompatActivity, private 
             val getConnectModeUrl = "$executeUrl/get_connectmode.cgi"
             val switchCameraModeUrl = "$executeUrl/switch_cammode.cgi"
             val switchOpcCameraModeUrl = "$executeUrl/switch_cameramode.cgi"
-            //val getCameraStatusUrl = "$executeUrl/get_activate.cgi"
 
             val response: String = http.httpGetWithHeader(getConnectModeUrl, headerMap, null, TIMEOUT_MS) ?: ""
             Log.v(TAG, " $getConnectModeUrl $response")
@@ -55,9 +54,27 @@ class OmdsCameraConnectSequence(private val context: AppCompatActivity, private 
                     }
                 }
 
-                //// カメラのステータス取得
-                //String response5 = SimpleHttpClient.httpGetWithHeader(getCameraStatusUrl, headerMap, null, TIMEOUT_MS);
-                //Log.v(TAG, " " + getCameraStatusUrl + " " + response5);
+                ////////////////  for TEST   ////////////////
+                if (checkStatusDump)
+                {
+                    //val testUrl = "$executeUrl/get_proplist.cgi"  // プロパティ一覧 (OPC)
+                    val testUrl = "$executeUrl/get_camprop.cgi?com=desc&propname=desclist"  // コマンド一覧
+                    val testResponse: String = http.httpGetWithHeader(testUrl, headerMap, null, TIMEOUT_MS) ?: ""
+                    Log.v(TAG, "     ------------------------------------------ ")
+                    for (pos in 0..testResponse.length step 768)
+                    {
+                        val lastIndex = if ((pos + 768) > testResponse.length) { testResponse.length } else { pos + 768 }
+                        Log.v(TAG, " $testUrl ($pos/${testResponse.length}) ${testResponse.substring(pos, lastIndex)}")
+                    }
+                    Log.v(TAG, "     ------------------------------------------ ")
+
+                    //// カメラのステータス取得
+                    val getCameraStatusUrl = "$executeUrl/get_activate.cgi"
+                    val response5 : String = http.httpGetWithHeader(getCameraStatusUrl, headerMap, null, TIMEOUT_MS) ?: ""
+                    Log.v(TAG, " $getCameraStatusUrl $response5")
+                }
+                ////////////////  for TEST   ////////////////
+
                 onConnectNotify()
             }
             else
@@ -100,5 +117,6 @@ class OmdsCameraConnectSequence(private val context: AppCompatActivity, private 
     {
         private val TAG = OmdsCameraConnectSequence::class.java.simpleName
         private const val TIMEOUT_MS = 5000
+        private const val checkStatusDump = false
     }
 }

@@ -1,9 +1,6 @@
 package jp.osdn.gokigen.gokigenassets.camera.vendor.omds.status
 
 import android.util.Log
-import android.util.Xml
-import org.xmlpull.v1.XmlPullParser
-import java.io.StringReader
 
 class OmdsCommandListParser
 {
@@ -11,7 +8,9 @@ class OmdsCommandListParser
     {
         try
         {
-            var parsedData = ""
+/*
+
+            var parsedData = targetData
             val parser: XmlPullParser = Xml.newPullParser()
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
             parser.setInput(StringReader(targetData))
@@ -33,8 +32,26 @@ class OmdsCommandListParser
                 }
                 eventType = parser.next()
             }
-            Log.v(TAG, " <<< COMMAND LIST >>>")
-            Log.v(TAG, parsedData)
+*/
+            if (isDumpLog)
+            {
+                val parsedData = targetData
+                Log.v(TAG, "     ------------------------------------------ ")
+                Log.v(TAG, " <<< COMMAND LIST >>>")
+                for (pos in 0..parsedData.length step 768)
+                {
+                    val lastIndex = if ((pos + 768) > parsedData.length)
+                    {
+                        parsedData.length
+                    }
+                    else
+                    {
+                        pos + 768
+                    }
+                    Log.v(TAG, " ${parsedData.substring(pos, lastIndex)}")
+                }
+                Log.v(TAG, "     ------------------------------------------ ")
+            }
         }
         catch (e: Exception)
         {
@@ -46,6 +63,7 @@ class OmdsCommandListParser
     companion object
     {
         private val TAG = OmdsCommandListParser::class.java.simpleName
+        private const val isDumpLog = false
     }
 
 }

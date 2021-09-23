@@ -21,8 +21,10 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.B
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.CAPTURE_MODE
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.EFFECT
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.EXPREV
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.FOCAL_LENGTH
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.FOCUS_STATUS
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.ISO_SENSITIVITY
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.REMAIN_SHOTS
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.SHUTTER_SPEED
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.TAKE_MODE
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.TORCH_MODE
@@ -330,6 +332,8 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
                 drawPictureEffect(canvas, currentCameraStatus)
                 drawFocusStatus(canvas, currentCameraStatus)
                 drawTorchMode(canvas, currentCameraStatus)
+                drawFocalLength(canvas, currentCameraStatus)
+                drawRemainShotNumber(canvas, currentCameraStatus)
                 drawBatteryLevel(canvas, currentCameraStatus)
             }
             drawFramingGrid(canvas)
@@ -543,14 +547,15 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
         }
     }
 
-    private fun drawTorchMode(canvas: Canvas, currentCameraStatus : ICameraStatus)
+    private fun drawFocalLength(canvas: Canvas, currentCameraStatus : ICameraStatus)
     {
         try
         {
-            //  area : bottom-right UP
-            val rect = RectF(canvasWidth * 2.0f, canvasHeight * 6.0f, canvas.width.toFloat(), canvasHeight * 7.0f)
-            val msg = currentCameraStatus.getStatus(TORCH_MODE)
-            drawString(canvas, rect, msg, Color.WHITE)
+            //  area : bottom-left UP
+            val rect = RectF(canvasWidth * 0.0f, canvasHeight * 7.0f, canvasWidth * 1.0f, canvasHeight * 8.0f)
+            val msg = currentCameraStatus.getStatus(FOCAL_LENGTH)
+            val color = currentCameraStatus.getStatusColor(FOCAL_LENGTH)
+            drawString(canvas, rect, msg, color)
         }
         catch (e : Exception)
         {
@@ -558,6 +563,37 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
         }
     }
 
+    private fun drawTorchMode(canvas: Canvas, currentCameraStatus : ICameraStatus)
+    {
+        try
+        {
+            //  area : bottom-right UP
+            val rect = RectF(canvasWidth * 2.0f, canvasHeight * 6.0f, canvas.width.toFloat(), canvasHeight * 7.0f)
+            val msg = currentCameraStatus.getStatus(TORCH_MODE)
+            val color = currentCameraStatus.getStatusColor(TORCH_MODE)
+            drawString(canvas, rect, msg, color)
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    private fun drawRemainShotNumber(canvas: Canvas, currentCameraStatus : ICameraStatus)
+    {
+        try
+        {
+            //  area : bottom-right UP
+            val rect = RectF(canvasWidth * 2.0f, canvasHeight * 7.0f, canvas.width.toFloat(), canvasHeight * 8.0f)
+            val msg = currentCameraStatus.getStatus(REMAIN_SHOTS)
+            val color = currentCameraStatus.getStatusColor(FOCUS_STATUS)
+            drawString(canvas, rect, msg, color)
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+    }
 
     private fun drawBatteryLevel(canvas: Canvas, currentCameraStatus : ICameraStatus)
     {

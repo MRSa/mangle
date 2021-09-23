@@ -90,7 +90,7 @@ class OmdsCameraControl(private val context: AppCompatActivity, private val vibr
             liveViewControl.stopLiveView()
             statusChecker.stopStatusWatch()
             cameraConnection.disconnect(true)
-            cameraConnection.stopWatchWifiStatus(context)
+
         }
         catch (e: Exception)
         {
@@ -258,6 +258,7 @@ class OmdsCameraControl(private val context: AppCompatActivity, private val vibr
         zoomLensControl.detectedOpcProtocol(opcProtocol)
         focusControl.detectedOpcProtocol(opcProtocol)
         captureControl.detectedOpcProtocol(opcProtocol)
+        statusChecker.detectedOpcProtocol(opcProtocol)
     }
 
     companion object
