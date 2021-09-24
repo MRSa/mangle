@@ -151,8 +151,11 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
             // OMDS機のイベント受信
             val omdsEventUrl = "$executeUrl/get_camprop.cgi?com=desc&propname=desclist"
             latestEventResponse = http.httpGetWithHeader(omdsEventUrl, headerMap, null, TIMEOUT_MS) ?: ""
-            dumpLog(omdsEventUrl, latestEventResponse)
-            parseOmdsProperties(latestEventResponse)
+            if (latestEventResponse.isNotEmpty())
+            {
+                dumpLog(omdsEventUrl, latestEventResponse)
+                parseOmdsProperties(latestEventResponse)
+            }
         }
         catch (e: Exception)
         {
@@ -188,7 +191,7 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
             currentIsoSensitivity = "ISO " + getPropertyValue(eventResponse, "<propname>isospeedvalue</propname>")
             currentExpRev = getPropertyValue(eventResponse, "<propname>expcomp</propname>")
 
-            currentWhiteBalance = decideWhiteBalance(getPropertyValue(eventResponse, "<propname>wbvalue</propname>"))
+            currentWhiteBalance = "WB: " + decideWhiteBalance(getPropertyValue(eventResponse, "<propname>wbvalue</propname>"))
             currentPictureEffect = getPropertyValue(eventResponse, "<propname>colortone</propname>")
             currentCaptureMode = " DRIVE: " + getPropertyValue(eventResponse, "<propname>drivemode</propname>")
 
@@ -201,10 +204,61 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
 
     private fun decideWhiteBalance(wbValue: String) : String
     {
-
-        return ("WB: ($wbValue)")
+        try
+        {
+            return (when (wbValue)
+            {
+                "0" -> "AUTO"
+                "18" -> "Daylight"
+                "16" -> "Shade"
+                "17" -> "Cloudy"
+                "20" -> "Incandescent"
+                "35" -> "Fluorescent"
+                "64" -> "Underwater"
+                "23" -> "Flash"
+                "256" -> "WB1"
+                "257" -> "WB2"
+                "258" -> "WB3"
+                "259" -> "WB4"
+                "512" -> "CWB"
+                else -> "($wbValue)"
+            })
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+        return ("($wbValue)")
     }
 
+    private fun decideWhiteBalanceValue(wbName: String) : String
+    {
+        try
+        {
+            return (when (wbName)
+            {
+                "AUTO" -> "0"
+                "Daylight" -> "18"
+                "Shade" -> "16"
+                "Cloudy" -> "17"
+                "Incandescent" -> "20"
+                "Fluorescent" -> "35"
+                "Underwater" -> "64"
+                "Flash" -> "23"
+                "WB1" -> "256"
+                "WB2" -> "257"
+                "WB3" -> "258"
+                "WB4" -> "259"
+                "CWB" -> "512"
+                else -> "0"
+            })
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+        return ("0")
+    }
 
     private fun getPropertySelectionList(responseString: String, propertyString: String) : List<String>
     {
@@ -402,37 +456,106 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
 
     override fun getStatusList(key: String): List<String>
     {
-/**/
+        if (useOpcProtocol)
+        {
+            return (getStatusListOpc(key, latestEventResponse))
+        }
+        else
+        {
+            return (getStatusListOmds(key, latestEventResponse))
+        }
+    }
+
+    private fun getStatusListOpc(key: String, eventString: String): List<String>
+    {
         try
         {
-            Log.v(TAG, " getStatusList($key)")
+            Log.v(TAG, " getStatusListOpc($key)")
             return (when (key) {
+/*
                 ICameraStatus.TAKE_MODE -> getPropertySelectionList(latestEventResponse, "<propname>takemode</propname>")
                 ICameraStatus.SHUTTER_SPEED -> getPropertySelectionList(latestEventResponse, "<propname>shutspeedvalue</propname>")
                 ICameraStatus.APERTURE -> getPropertySelectionList(latestEventResponse, "<propname>focalvalue</propname>")
-                ICameraStatus.EXPREV -> getPropertySelectionList(latestEventResponse, "<propname>expcomp</propname>")
+
                 ICameraStatus.ISO_SENSITIVITY -> getPropertySelectionList(latestEventResponse, "<propname>isospeedvalue</propname>")
-/*
-                ICameraStatus.CAPTURE_MODE -> getAvailableCaptureMode()
-                ICameraStatus.WHITE_BALANCE -> getAvailableWhiteBalance()
+                ICameraStatus.EXPREV -> getPropertySelectionList(latestEventResponse, "<propname>expcomp</propname>")
+
+                ICameraStatus.WHITE_BALANCE -> getAvailableWhiteBalance(latestEventResponse)
+                ICameraStatus.EFFECT -> getPropertySelectionList(latestEventResponse, "<propname>colortone</propname>")
+                ICameraStatus.CAPTURE_MODE -> getPropertySelectionList(latestEventResponse, "<propname>drivemode</propname>")
+
                 ICameraStatus.AE -> getAvailableMeteringMode()
-                ICameraStatus.EFFECT -> getAvailablePictureEffect()
                 ICameraStatus.TORCH_MODE -> getAvailableTorchMode()
                 ICameraStatus.BATTERY -> getAvailableRemainBattery()
                 ICameraStatus.FOCUS_STATUS -> getAvailableFocusStatus()
                 ICameraStatus.FOCAL_LENGTH  -> getAvailableFocalLength()
                 ICameraStatus.REMAIN_SHOTS  -> getAvailableRemainShots()
 */
-                else -> java.util.ArrayList()
+                else -> ArrayList()
             })
         }
         catch (e: Exception)
         {
             e.printStackTrace()
         }
-/**/
         return (ArrayList())
     }
+
+
+    private fun getStatusListOmds(key: String, eventString: String): List<String>
+    {
+        try
+        {
+            Log.v(TAG, " getStatusListOmds($key)")
+            return (when (key) {
+                ICameraStatus.TAKE_MODE -> getPropertySelectionList(eventString, "<propname>takemode</propname>")
+                ICameraStatus.SHUTTER_SPEED -> getPropertySelectionList(eventString, "<propname>shutspeedvalue</propname>")
+                ICameraStatus.APERTURE -> getPropertySelectionList(eventString, "<propname>focalvalue</propname>")
+
+                ICameraStatus.ISO_SENSITIVITY -> getPropertySelectionList(eventString, "<propname>isospeedvalue</propname>")
+                ICameraStatus.EXPREV -> getPropertySelectionList(eventString, "<propname>expcomp</propname>")
+
+                ICameraStatus.WHITE_BALANCE -> getAvailableWhiteBalance(eventString)
+                ICameraStatus.EFFECT -> getPropertySelectionList(eventString, "<propname>colortone</propname>")
+                ICameraStatus.CAPTURE_MODE -> getPropertySelectionList(eventString, "<propname>drivemode</propname>")
+
+/*
+                ICameraStatus.AE -> getAvailableMeteringMode()
+                ICameraStatus.TORCH_MODE -> getAvailableTorchMode()
+                ICameraStatus.BATTERY -> getAvailableRemainBattery()
+                ICameraStatus.FOCUS_STATUS -> getAvailableFocusStatus()
+                ICameraStatus.FOCAL_LENGTH  -> getAvailableFocalLength()
+                ICameraStatus.REMAIN_SHOTS  -> getAvailableRemainShots()
+*/
+                else -> ArrayList()
+            })
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+        return (ArrayList())
+    }
+
+    private fun getAvailableWhiteBalance(eventResponse: String) : List<String>
+    {
+        try
+        {
+            val wbValueList = getPropertySelectionList(eventResponse, "<propname>wbvalue</propname>")
+            val wbItemList : ArrayList<String> = ArrayList()
+            for (wbValue in wbValueList)
+            {
+                wbItemList.add(decideWhiteBalance(wbValue))
+            }
+            return (wbItemList)
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+        return (ArrayList())
+    }
+
 
     override fun getStatus(key: String): String
     {
@@ -470,20 +593,13 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
 
     override fun setStatus(key: String, value: String)
     {
-        try
+        if (useOpcProtocol)
         {
-            if (useOpcProtocol)
-            {
-                setStatusOpc(key, value)
-            }
-            else
-            {
-                setStatusOmds(key, value)
-            }
+            setStatusOpc(key, value)
         }
-        catch (e: Exception)
+        else
         {
-            e.printStackTrace()
+            setStatusOmds(key, value)
         }
     }
 
@@ -498,10 +614,10 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
                 ICameraStatus.APERTURE ->  sendStatusRequestOmds("focalvalue", value)
                 ICameraStatus.EXPREV ->  sendStatusRequestOmds("expcomp", value)
                 ICameraStatus.ISO_SENSITIVITY ->  sendStatusRequestOmds("isospeedvalue", value)
-                ICameraStatus.CAPTURE_MODE ->  { }
-                ICameraStatus.WHITE_BALANCE ->  { }
+                ICameraStatus.CAPTURE_MODE ->  sendStatusRequestOmds("drivemode", value)
+                ICameraStatus.WHITE_BALANCE ->  sendStatusRequestOmds("wbvalue", decideWhiteBalanceValue(value))
+                ICameraStatus.EFFECT ->  sendStatusRequestOmds("colortone", value)
                 ICameraStatus.AE ->  { }
-                ICameraStatus.EFFECT ->  { }
                 ICameraStatus.TORCH_MODE ->  { }
                 ICameraStatus.BATTERY ->  { }
                 ICameraStatus.FOCUS_STATUS ->  { }
