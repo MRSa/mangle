@@ -185,8 +185,8 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
         try
         {
             currentTakeMode = getPropertyValue(eventResponse, "<propname>takemode</propname>")
-            currentShutterSpeed = getPropertyValue(eventResponse, "<propname>shutspeedvalue</propname>")
-            currentAperture = "F" + getPropertyValue(eventResponse, "<propname>focalvalue</propname>")
+            //currentShutterSpeed = getPropertyValue(eventResponse, "<propname>shutspeedvalue</propname>")
+            //currentAperture = "F" + getPropertyValue(eventResponse, "<propname>focalvalue</propname>")
 
             currentIsoSensitivity = "ISO " + getPropertyValue(eventResponse, "<propname>isospeedvalue</propname>")
             currentExpRev = getPropertyValue(eventResponse, "<propname>expcomp</propname>")
@@ -395,8 +395,8 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
                     ID_AVAILABLE_SHOTS -> { }
                     ID_OMDS_UNKNOWN_01 -> { }
                     ID_OMDS_UNKNOWN_02 -> { }
-                    ID_SHUTTER_SPEED -> { }
-                    ID_APERTURE -> { }
+                    ID_SHUTTER_SPEED -> { checkShutterSpeed(buffer, position, length)  }
+                    ID_APERTURE -> { checkAperture(buffer, position, length) }
                     ID_EXPOSURE_COMPENSATION -> { }
                     ID_OMDS_UNKNOWN_03 -> { }
                     ID_ISO_SENSITIVITY -> { }
@@ -445,6 +445,48 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
             }
             focusingStatus = status
         }
+    }
+
+    private fun checkShutterSpeed(buffer: ByteArray?, position: Int, length: Int)
+    {
+        if ((length != 3)||(buffer == null))
+        {
+            // データがそろっていないので何もしない
+            return
+        }
+
+        val numerator = ((((buffer[position + 12].toUInt()).toInt() and 0xff) * 256)) + ((buffer[position + 13].toUInt()).toInt() and 0x00ff)
+        val denominator = ((((buffer[position + 14].toUInt()).toInt() and 0xff) * 256)) + ((buffer[position + 15].toUInt()).toInt() and 0x00ff)
+        //Log.v(TAG, " checkShutterSpeed : $numerator / $denominator")
+        //val dumper = SimpleLogDumper
+        //dumper.dumpBytes("[SS($position)]", buffer)
+        if ((numerator == 0)||(denominator == 0))
+        {
+            // 値が変なので、なにもしない
+            return
+        }
+        if (numerator > denominator)
+        {
+            // 分子が大きい
+            currentShutterSpeed = if (denominator == 1)  { String.format("%d\"", numerator) } else { String.format("%.1f\"", (numerator.toFloat() / denominator.toFloat())) }
+        }
+        else
+        {
+            // 分母が大きい
+            currentShutterSpeed = if (numerator == 1) { String.format("%d/%d", numerator, denominator) } else {String.format("1/%.1f", (denominator.toFloat() / numerator.toFloat())) }
+        }
+    }
+
+    private fun checkAperture(buffer: ByteArray?, position: Int, length: Int)
+    {
+        if ((length != 3)||(buffer == null))
+        {
+            // データがそろっていないので何もしない
+            return
+        }
+
+        val focalValue = ((((buffer[position + 12].toUInt()).toInt() and 0xff) * 16777216)) + (((buffer[position + 13].toUInt()).toInt() and 0xff) * 65536) + (((buffer[position + 14].toUInt()).toInt() and 0xff) * 256) + ((buffer[position + 15].toUInt()).toInt() and 0x00ff)
+        currentAperture = String.format("F%.1f", (focalValue.toFloat() / 10.0f))
     }
 
     override fun stopStatusWatch()
