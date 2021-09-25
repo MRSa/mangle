@@ -23,8 +23,6 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
     private var isWatching = false
     private var isWatchingEvent = false
     private var statusReceived = false
-    private var notifier: ICameraStatusUpdateNotify? = null
-    private var focusingStatus = 0
     private var omdsCommandList : String = ""
     private var latestEventResponse : String = ""
 
@@ -42,8 +40,6 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
     private var currentRemainShots = ""
     private var currentExposureWarning = ""
     private var currentFocusType = ""
-    //  private var currentMeteringMode = ""  // currentFocusType を代わりに使用
-    //  private var currentTorchMode = ""     // currentExposureWarning を代わりに使用
 
     private var opcTakeModeSelectionList = ""
     private var opcWhiteBalanceSelectionList = ""
@@ -91,7 +87,7 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
     {
         try
         {
-            startRtpStatusWatch(notifier)
+            startRtpStatusWatch()
             startEventStatusWatch()
 
         }
@@ -101,12 +97,11 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
         }
     }
 
-    private fun startRtpStatusWatch(notifier: ICameraStatusUpdateNotify?)
+    private fun startRtpStatusWatch()
     {
         try
         {
             Log.v(TAG, " startStatusWatch()")
-            this.notifier = notifier
             val thread = Thread {
                 isWatching = true
                 while (isWatching)
@@ -182,7 +177,7 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
         {
             // OPC機のイベント受信
             val opcEventUrl = "$executeUrl/get_camprop.cgi?com=getlist"
-            val postData = "<?xml version=\"1.0\"?><get><prop name=\"AE\"/><prop name=\"APERTURE\"/><prop name=\"BATTERY_LEVEL\"/><prop name=\"COLORTONE\"/><prop name=\"EXPREV\"/><prop name=\"ISO\"/><prop name=\"RECENTLY_ART_FILTER\"/><prop name=\"SHUTTER\"/><prop name=\"TAKEMODE\"/><prop name=\"TAKE_DRIVE\"/><prop name=\"WB\"/><prop name=\"AE_LOCK_STATE\"/></get>"
+            val postData = "<?xml version=\"1.0\"?><get><prop name=\"AE\"/><prop name=\"APERTURE\"/><prop name=\"BATTERY_LEVEL\"/><prop name=\"COLORTONE\"/><prop name=\"EXPREV\"/><prop name=\"ISO\"/><prop name=\"RECENTLY_ART_FILTER\"/><prop name=\"SHUTTER\"/><prop name=\"TAKEMODE\"/><prop name=\"TAKE_DRIVE\"/><prop name=\"WB\"/><prop name=\"AE_LOCK_STATE\"/><prop name=\"AF_LOCK_STATE\"/></get>"
             latestEventResponse = http.httpPostWithHeader(opcEventUrl, postData, headerMap, null, TIMEOUT_MS) ?: ""
             dumpLog(opcEventUrl, latestEventResponse)
             parseOpcProperties(latestEventResponse)
@@ -330,6 +325,26 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
             currentWhiteBalance = getPropertyValue(eventResponse, "<prop name=\"WB\">")
             currentPictureEffect = getPropertyValue(eventResponse, "<prop name=\"COLORTONE\">")
             currentCaptureMode = getPropertyValue(eventResponse, "<prop name=\"TAKE_DRIVE\">")
+
+/*
+            //val aeLockState = getPropertyValue(eventResponse, "<prop name=\"AE_LOCK_STATE\">")
+            //val afLockState = getPropertyValue(eventResponse, "<prop name=\"AF_LOCK_STATE\">")
+            if (afLockState != currentAfLockState)
+            {
+                // AFロック状態 or AEロック状態が変化したとき
+                currentAfLockState = afLockState
+                if (currentAfLockState == "LOCK")
+                {
+                    notifier?.updateFocusedStatus(true, false)
+                }
+                else
+                {
+                    notifier?.updateFocusedStatus(false, false)
+                }
+                //notifier?.updateFocusedStatus(focus, isError)
+            }
+*/
+
             if (takeMode != currentTakeMode)
             {
                 currentTakeMode = takeMode
@@ -516,7 +531,7 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
                 val length: Int = ((buffer?.get(position + 2) ?: 0).toInt() and 0xff) * 256 + ((buffer?.get(position + 3) ?: 0).toInt() and 0xff)
                 when (commandId)
                 {
-                    ID_AF_FRAME_INFO -> { checkFocused(buffer, position, length) }
+                    ID_AF_FRAME_INFO -> {  }  // { checkFocused(buffer, position, length) }
                     ID_FRAME_SIZE -> { }
                     ID_MEDIA_INFO -> { }
                     ID_ROTATION_INFO -> { }
@@ -554,27 +569,28 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
         }
     }
 
+/*
     private fun checkFocused(buffer: ByteArray?, position: Int, length: Int)
     {
+        // 結局 OPC機でも動いていなさそうなので、このロジックはお蔵入りとする
         if ((length != 5)||(buffer == null))
         {
             // データがそろっていないので何もしない
             return
         }
-        //val status: Int = buffer[position + 7].toInt() and 0xff
         val status: Int = (buffer[position + 11].toUInt()).toInt() and 0xff
         if (status != focusingStatus)
         {
             // ドライブ停止時には、マーカの色は消さない
             if (status > 0)
             {
-                val focus = status == 1
-                val isError = status == 2
-                notifier?.updateFocusedStatus(focus, isError)
+                val focus = status == 1     // 合焦成功
+                val isError = status == 2   // 合焦失敗
             }
             focusingStatus = status
         }
     }
+*/
 
     private fun checkShutterSpeed(buffer: ByteArray?, position: Int, length: Int)
     {
@@ -961,5 +977,4 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
 
         private const val isDumpLog = false
     }
-
 }
