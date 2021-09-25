@@ -45,6 +45,17 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
     //  private var currentMeteringMode = ""  // currentFocusType を代わりに使用
     //  private var currentTorchMode = ""     // currentExposureWarning を代わりに使用
 
+    private var opcTakeModeSelectionList = ""
+    private var opcWhiteBalanceSelectionList = ""
+    private var opcColorToneSelectionList = ""
+    private var opcDriveModeSelectionList = ""
+    private var opcShutterSpeedSelectionList = ""
+    private var opcApertureSelectionList = ""
+    private var opcIsoSensitivitySelectionList = ""
+    private var opcExpRevSelectionList = ""
+    private var opcFocusModeSelectionList = ""
+
+
     override fun setOmdsCommandList(commandList: String)
     {
         omdsCommandList = commandList
@@ -171,7 +182,7 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
         {
             // OPC機のイベント受信
             val opcEventUrl = "$executeUrl/get_camprop.cgi?com=getlist"
-            val postData = "<?xml version=\"1.0\"?><get><prop name=\"AE\"/><prop name=\"APERTURE\"/><prop name=\"BATTERY_LEVEL\"/><prop name=\"COLORTONE\"/><prop name=\"EXPREV\"/><prop name=\"ISO\"/><prop name=\"RECENTLY_ART_FILTER\"/><prop name=\"SHUTTER\"/><prop name=\"TAKEMODE\"/><prop name=\"TAKE_DRIVE\"/><prop name=\"WB\"/><prop name=\"AE_LOCK_STATE\"/></get"
+            val postData = "<?xml version=\"1.0\"?><get><prop name=\"AE\"/><prop name=\"APERTURE\"/><prop name=\"BATTERY_LEVEL\"/><prop name=\"COLORTONE\"/><prop name=\"EXPREV\"/><prop name=\"ISO\"/><prop name=\"RECENTLY_ART_FILTER\"/><prop name=\"SHUTTER\"/><prop name=\"TAKEMODE\"/><prop name=\"TAKE_DRIVE\"/><prop name=\"WB\"/><prop name=\"AE_LOCK_STATE\"/></get>"
             latestEventResponse = http.httpPostWithHeader(opcEventUrl, postData, headerMap, null, TIMEOUT_MS) ?: ""
             dumpLog(opcEventUrl, latestEventResponse)
             parseOpcProperties(latestEventResponse)
@@ -187,15 +198,13 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
         try
         {
             currentTakeMode = getPropertyValue(eventResponse, "<propname>takemode</propname>")
+            currentWhiteBalance = "WB: " + decideWhiteBalance(getPropertyValue(eventResponse, "<propname>wbvalue</propname>"))
+            currentPictureEffect = getPropertyValue(eventResponse, "<propname>colortone</propname>")
+            currentCaptureMode = " DRIVE: " + getPropertyValue(eventResponse, "<propname>drivemode</propname>")
             //currentShutterSpeed = getPropertyValue(eventResponse, "<propname>shutspeedvalue</propname>")
             //currentAperture = "F" + getPropertyValue(eventResponse, "<propname>focalvalue</propname>")
             // currentIsoSensitivity = "ISO " + getPropertyValue(eventResponse, "<propname>isospeedvalue</propname>")
             // currentExpRev = getPropertyValue(eventResponse, "<propname>expcomp</propname>")
-
-            currentWhiteBalance = "WB: " + decideWhiteBalance(getPropertyValue(eventResponse, "<propname>wbvalue</propname>"))
-            currentPictureEffect = getPropertyValue(eventResponse, "<propname>colortone</propname>")
-            currentCaptureMode = " DRIVE: " + getPropertyValue(eventResponse, "<propname>drivemode</propname>")
-
         }
         catch (e: Exception)
         {
@@ -317,6 +326,124 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
     {
         try
         {
+            val takeMode = getPropertyValue(eventResponse, "<prop name=\"TAKEMODE\">")
+            currentWhiteBalance = getPropertyValue(eventResponse, "<prop name=\"WB\">")
+            currentPictureEffect = getPropertyValue(eventResponse, "<prop name=\"COLORTONE\">")
+            currentCaptureMode = getPropertyValue(eventResponse, "<prop name=\"TAKE_DRIVE\">")
+            if (takeMode != currentTakeMode)
+            {
+                currentTakeMode = takeMode
+
+                // 撮影モードが変わったときには、選択肢を更新する
+                updateOpcSelectionList(true)
+            }
+            else
+            {
+                // 撮影モードが変わらないときには、選択肢がない場合のみ補完する
+                updateOpcSelectionList(false)
+            }
+
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    private fun updateOpcSelectionList(isResetList: Boolean = false)
+    {
+        if (isResetList)
+        {
+            opcTakeModeSelectionList = ""
+            opcWhiteBalanceSelectionList = ""
+            opcColorToneSelectionList = ""
+            opcDriveModeSelectionList = ""
+            opcShutterSpeedSelectionList = ""
+            opcApertureSelectionList = ""
+            opcIsoSensitivitySelectionList = ""
+            opcExpRevSelectionList = ""
+            opcFocusModeSelectionList = ""
+        }
+
+        if (opcTakeModeSelectionList.isEmpty())
+        {
+            updateOpcPropertyList("TAKEMODE", object: IPropertyListCallback {
+                override fun receivedReply(replyValue: String) { opcTakeModeSelectionList = replyValue }
+            })
+        }
+
+        if (opcWhiteBalanceSelectionList.isEmpty())
+        {
+            updateOpcPropertyList("WB", object: IPropertyListCallback {
+                override fun receivedReply(replyValue: String) { opcWhiteBalanceSelectionList = replyValue }
+            })
+        }
+
+        if (opcColorToneSelectionList.isEmpty())
+        {
+            updateOpcPropertyList("COLORTONE", object: IPropertyListCallback {
+                override fun receivedReply(replyValue: String) { opcColorToneSelectionList = replyValue }
+            })
+        }
+
+        if (opcDriveModeSelectionList.isEmpty())
+        {
+            updateOpcPropertyList("TAKE_DRIVE", object: IPropertyListCallback {
+                override fun receivedReply(replyValue: String) { opcDriveModeSelectionList = replyValue }
+            })
+        }
+
+        if (opcShutterSpeedSelectionList.isEmpty())
+        {
+            updateOpcPropertyList("SHUTTER", object: IPropertyListCallback {
+                override fun receivedReply(replyValue: String) { opcShutterSpeedSelectionList = replyValue }
+            })
+        }
+
+        if (opcApertureSelectionList.isEmpty())
+        {
+            updateOpcPropertyList("APERTURE", object: IPropertyListCallback {
+                override fun receivedReply(replyValue: String) { opcApertureSelectionList = replyValue }
+            })
+        }
+
+        if (opcIsoSensitivitySelectionList.isEmpty())
+        {
+            updateOpcPropertyList("ISO", object: IPropertyListCallback {
+                override fun receivedReply(replyValue: String) { opcIsoSensitivitySelectionList = replyValue }
+            })
+        }
+
+        if (opcExpRevSelectionList.isEmpty())
+        {
+            updateOpcPropertyList("EXPREV", object: IPropertyListCallback {
+                override fun receivedReply(replyValue: String) { opcExpRevSelectionList = replyValue }
+            })
+        }
+        if (opcFocusModeSelectionList.isEmpty())
+        {
+            updateOpcPropertyList("FOCUS_STILL", object: IPropertyListCallback {
+                override fun receivedReply(replyValue: String) { opcFocusModeSelectionList = replyValue }
+            })
+        }
+    }
+
+    private fun updateOpcPropertyList(propertyName: String, callback : IPropertyListCallback)
+    {
+        try
+        {
+            val thread = Thread {
+
+                // OPC機のイベント受信
+                val propertyGetUrl = "$executeUrl/get_camprop.cgi?com=desc&propname=$propertyName"
+                val selectionListResponse = http.httpGetWithHeader(propertyGetUrl, headerMap, null, TIMEOUT_MS) ?: ""
+                dumpLog(propertyGetUrl, selectionListResponse)
+                if (selectionListResponse.isNotEmpty())
+                {
+                    callback.receivedReply(selectionListResponse)
+                }
+            }
+            thread.start()
 
         }
         catch (e: Exception)
@@ -434,7 +561,8 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
             // データがそろっていないので何もしない
             return
         }
-        val status: Int = buffer[position + 7].toInt() and 0xff
+        //val status: Int = buffer[position + 7].toInt() and 0xff
+        val status: Int = (buffer[position + 11].toUInt()).toInt() and 0xff
         if (status != focusingStatus)
         {
             // ドライブ停止時には、マーカの色は消さない
@@ -458,23 +586,17 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
 
         val numerator = ((((buffer[position + 12].toUInt()).toInt() and 0xff) * 256)) + ((buffer[position + 13].toUInt()).toInt() and 0x00ff)
         val denominator = ((((buffer[position + 14].toUInt()).toInt() and 0xff) * 256)) + ((buffer[position + 15].toUInt()).toInt() and 0x00ff)
-        //Log.v(TAG, " checkShutterSpeed : $numerator / $denominator")
-        //val dumper = SimpleLogDumper
-        //dumper.dumpBytes("[SS($position)]", buffer)
         if ((numerator == 0)||(denominator == 0))
         {
             // 値が変なので、なにもしない
             return
         }
-        if (numerator > denominator)
-        {
+        currentShutterSpeed = if (numerator > denominator) {
             // 分子が大きい
-            currentShutterSpeed = if (denominator == 1)  { String.format("%d\"", numerator) } else { String.format("%.1f\"", (numerator.toFloat() / denominator.toFloat())) }
-        }
-        else
-        {
+            if (denominator == 1)  { String.format("%d\"", numerator) } else { String.format("%.1f\"", (numerator.toFloat() / denominator.toFloat())) }
+        } else {
             // 分母が大きい
-            currentShutterSpeed = if (numerator == 1) { String.format("%d/%d", numerator, denominator) } else {String.format("1/%.1f", (denominator.toFloat() / numerator.toFloat())) }
+            if (numerator == 1) { String.format("%d/%d", numerator, denominator) } else {String.format("1/%.1f", (denominator.toFloat() / numerator.toFloat())) }
         }
     }
 
@@ -558,7 +680,6 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
             1 -> "C-AF"
             2 -> "MF"
             else -> ""
-
         }
     }
 
@@ -571,35 +692,27 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
 
     override fun getStatusList(key: String): List<String>
     {
-        if (useOpcProtocol)
-        {
-            return (getStatusListOpc(key, latestEventResponse))
-        }
-        else
-        {
-            return (getStatusListOmds(key, latestEventResponse))
-        }
+        return (if (useOpcProtocol) { getStatusListOpc(key) } else { getStatusListOmds(key, latestEventResponse) })
     }
 
-    private fun getStatusListOpc(key: String, eventString: String): List<String>
+    private fun getStatusListOpc(key: String): List<String>
     {
         try
         {
             Log.v(TAG, " getStatusListOpc($key)")
             return (when (key) {
+                ICameraStatus.TAKE_MODE -> getPropertySelectionList(opcTakeModeSelectionList, "<propname>TAKEMODE</propname>")
+                ICameraStatus.SHUTTER_SPEED -> getPropertySelectionList(opcShutterSpeedSelectionList, "<propname>SHUTTER</propname>")
+                ICameraStatus.APERTURE -> getPropertySelectionList(opcApertureSelectionList, "<propname>APERTURE</propname>")
+
+                ICameraStatus.ISO_SENSITIVITY -> getPropertySelectionList(opcIsoSensitivitySelectionList, "<propname>ISO</propname>")
+                ICameraStatus.EXPREV -> getPropertySelectionList(opcExpRevSelectionList, "<propname>EXPREV</propname>")
+                ICameraStatus.AE -> getPropertySelectionList(opcFocusModeSelectionList, "<propname>FOCUS_STILL</propname>")
+
+                ICameraStatus.WHITE_BALANCE -> getPropertySelectionList(opcWhiteBalanceSelectionList, "<propname>WB</propname>")
+                ICameraStatus.EFFECT -> getPropertySelectionList(opcColorToneSelectionList, "<propname>COLORTONE</propname>")
+                ICameraStatus.CAPTURE_MODE -> getPropertySelectionList(opcDriveModeSelectionList, "<propname>TAKE_DRIVE</propname>")
 /*
-                ICameraStatus.TAKE_MODE -> getPropertySelectionList(latestEventResponse, "<propname>takemode</propname>")
-                ICameraStatus.SHUTTER_SPEED -> getPropertySelectionList(latestEventResponse, "<propname>shutspeedvalue</propname>")
-                ICameraStatus.APERTURE -> getPropertySelectionList(latestEventResponse, "<propname>focalvalue</propname>")
-
-                ICameraStatus.ISO_SENSITIVITY -> getPropertySelectionList(latestEventResponse, "<propname>isospeedvalue</propname>")
-                ICameraStatus.EXPREV -> getPropertySelectionList(latestEventResponse, "<propname>expcomp</propname>")
-
-                ICameraStatus.WHITE_BALANCE -> getAvailableWhiteBalance(latestEventResponse)
-                ICameraStatus.EFFECT -> getPropertySelectionList(latestEventResponse, "<propname>colortone</propname>")
-                ICameraStatus.CAPTURE_MODE -> getPropertySelectionList(latestEventResponse, "<propname>drivemode</propname>")
-
-                ICameraStatus.AE -> getAvailableMeteringMode()
                 ICameraStatus.TORCH_MODE -> getAvailableTorchMode()
                 ICameraStatus.BATTERY -> getAvailableRemainBattery()
                 ICameraStatus.FOCUS_STATUS -> getAvailableFocusStatus()
@@ -728,14 +841,14 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
         {
             when (key)
             {
-                ICameraStatus.TAKE_MODE ->  sendStatusRequestOmds("takemode", value)
-                ICameraStatus.SHUTTER_SPEED ->  sendStatusRequestOmds("shutspeedvalue", value)
-                ICameraStatus.APERTURE ->  sendStatusRequestOmds("focalvalue", value)
-                ICameraStatus.EXPREV ->  sendStatusRequestOmds("expcomp", value)
-                ICameraStatus.ISO_SENSITIVITY ->  sendStatusRequestOmds("isospeedvalue", value)
-                ICameraStatus.CAPTURE_MODE ->  sendStatusRequestOmds("drivemode", value)
-                ICameraStatus.WHITE_BALANCE ->  sendStatusRequestOmds("wbvalue", decideWhiteBalanceValue(value))
-                ICameraStatus.EFFECT ->  sendStatusRequestOmds("colortone", value)
+                ICameraStatus.TAKE_MODE ->  sendStatusRequest("takemode", value)
+                ICameraStatus.SHUTTER_SPEED ->  sendStatusRequest("shutspeedvalue", value)
+                ICameraStatus.APERTURE ->  sendStatusRequest("focalvalue", value)
+                ICameraStatus.EXPREV ->  sendStatusRequest("expcomp", value)
+                ICameraStatus.ISO_SENSITIVITY ->  sendStatusRequest("isospeedvalue", value)
+                ICameraStatus.CAPTURE_MODE ->  sendStatusRequest("drivemode", value)
+                ICameraStatus.WHITE_BALANCE ->  sendStatusRequest("wbvalue", decideWhiteBalanceValue(value))
+                ICameraStatus.EFFECT ->  sendStatusRequest("colortone", value)
                 ICameraStatus.AE ->  { }
                 ICameraStatus.TORCH_MODE ->  { }
                 ICameraStatus.BATTERY ->  { }
@@ -751,7 +864,7 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
         }
     }
 
-    private fun sendStatusRequestOmds(property: String, value: String)
+    private fun sendStatusRequest(property: String, value: String)
     {
         val requestUrl = "$executeUrl/set_camprop.cgi?com=set&propname=$property"
         val postData = "<?xml version=\"1.0\"?><set><value>$value</value></set>"
@@ -765,15 +878,18 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
         {
             when (key)
             {
-                ICameraStatus.TAKE_MODE ->  { }
-                ICameraStatus.SHUTTER_SPEED ->  { }
-                ICameraStatus.APERTURE ->  { }
-                ICameraStatus.EXPREV ->  { }
-                ICameraStatus.CAPTURE_MODE ->  { }
-                ICameraStatus.ISO_SENSITIVITY ->  { }
-                ICameraStatus.WHITE_BALANCE ->  { }
-                ICameraStatus.AE ->  { }
-                ICameraStatus.EFFECT ->  { }
+                ICameraStatus.TAKE_MODE -> sendStatusRequest("TAKEMODE", value)
+                ICameraStatus.SHUTTER_SPEED -> sendStatusRequest("SHUTTER", value)
+                ICameraStatus.APERTURE -> sendStatusRequest("APERTURE", value)
+
+                ICameraStatus.ISO_SENSITIVITY -> sendStatusRequest("ISO", value)
+                ICameraStatus.EXPREV -> sendStatusRequest("EXPREV", value)
+                ICameraStatus.AE -> sendStatusRequest("FOCUS_STILL", value)
+
+                ICameraStatus.WHITE_BALANCE -> sendStatusRequest("WB", value)
+                ICameraStatus.EFFECT -> sendStatusRequest("COLORTONE", value)
+                ICameraStatus.CAPTURE_MODE -> sendStatusRequest("TAKE_DRIVE", value)
+
                 ICameraStatus.TORCH_MODE ->  { }
                 ICameraStatus.BATTERY ->  { }
                 ICameraStatus.FOCUS_STATUS ->  { }
@@ -800,13 +916,19 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
         headerMap["X-Protocol"] = userAgent // "OlympusCameraKit" // "OI.Share"
     }
 
+    interface IPropertyListCallback
+    {
+        fun receivedReply(replyValue: String)
+    }
+
     companion object
     {
         private val TAG = OmdsCameraStatusWatcher::class.java.simpleName
 
+        // TIMEOUT VALUES
         private const val SLEEP_TIME_MS = 250
         private const val SLEEP_EVENT_TIME_MS = 350
-        private const val TIMEOUT_MS = 4000
+        private const val TIMEOUT_MS = 2500
 
         // RTP HEADER IDs
         private const val ID_FRAME_SIZE = 0x01
