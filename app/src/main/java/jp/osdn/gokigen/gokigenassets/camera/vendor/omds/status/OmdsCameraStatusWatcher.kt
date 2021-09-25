@@ -35,13 +35,15 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
     private var currentCaptureMode = ""
     private var currentIsoSensitivity = ""
     private var currentWhiteBalance = ""
-    private var currentMeteringMode = ""
     private var currentPictureEffect = ""
-    private var currentTorchMode = ""
     private var currentRemainBattery = ""
     private var currentFocusStatus = ""
     private var currentFocalLength = ""
     private var currentRemainShots = ""
+    private var currentExposureWarning = ""
+    private var currentFocusType = ""
+    //  private var currentMeteringMode = ""  // currentFocusType を代わりに使用
+    //  private var currentTorchMode = ""     // currentExposureWarning を代わりに使用
 
     override fun setOmdsCommandList(commandList: String)
     {
@@ -187,9 +189,8 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
             currentTakeMode = getPropertyValue(eventResponse, "<propname>takemode</propname>")
             //currentShutterSpeed = getPropertyValue(eventResponse, "<propname>shutspeedvalue</propname>")
             //currentAperture = "F" + getPropertyValue(eventResponse, "<propname>focalvalue</propname>")
-
-            currentIsoSensitivity = "ISO " + getPropertyValue(eventResponse, "<propname>isospeedvalue</propname>")
-            currentExpRev = getPropertyValue(eventResponse, "<propname>expcomp</propname>")
+            // currentIsoSensitivity = "ISO " + getPropertyValue(eventResponse, "<propname>isospeedvalue</propname>")
+            // currentExpRev = getPropertyValue(eventResponse, "<propname>expcomp</propname>")
 
             currentWhiteBalance = "WB: " + decideWhiteBalance(getPropertyValue(eventResponse, "<propname>wbvalue</propname>"))
             currentPictureEffect = getPropertyValue(eventResponse, "<propname>colortone</propname>")
@@ -397,14 +398,14 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
                     ID_OMDS_UNKNOWN_02 -> { }
                     ID_SHUTTER_SPEED -> { checkShutterSpeed(buffer, position, length)  }
                     ID_APERTURE -> { checkAperture(buffer, position, length) }
-                    ID_EXPOSURE_COMPENSATION -> { }
+                    ID_EXPOSURE_COMPENSATION -> { checkExposureCompensation(buffer, position, length) }
                     ID_OMDS_UNKNOWN_03 -> { }
-                    ID_ISO_SENSITIVITY -> { }
+                    ID_ISO_SENSITIVITY -> { checkIsoSensitivity(buffer, position, length) }
                     ID_OMDS_UNKNOWN_04 -> { }
                     ID_OMDS_UNKNOWN_05 -> { }
                     ID_OMDS_UNKNOWN_06 -> { }
-                    ID_OPTICAL_WARNING -> { }
-                    ID_FOCUS_TYPE -> { }
+                    ID_EXPOSURE_WARNING -> { checkExposureWarning(buffer, position, length) }
+                    ID_FOCUS_TYPE -> { checkFocusType(buffer, position, length) }
                     ID_ZOOM_LENS_INFO -> { }
                     ID_REMAIN_VIDEO_TIME -> { }
                     ID_POSITION_LEVEL_INFO -> { }
@@ -487,6 +488,78 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
 
         val focalValue = ((((buffer[position + 12].toUInt()).toInt() and 0xff) * 16777216)) + (((buffer[position + 13].toUInt()).toInt() and 0xff) * 65536) + (((buffer[position + 14].toUInt()).toInt() and 0xff) * 256) + ((buffer[position + 15].toUInt()).toInt() and 0x00ff)
         currentAperture = String.format("F%.1f", (focalValue.toFloat() / 10.0f))
+    }
+
+    private fun checkExposureCompensation(buffer: ByteArray?, position: Int, length: Int)
+    {
+        if ((length != 3)||(buffer == null))
+        {
+            // データがそろっていないので何もしない
+            return
+        }
+
+        var expRevValue = ((((buffer[position + 12].toUInt()).toInt() and 0xff) * 16777216)) + (((buffer[position + 13].toUInt()).toInt() and 0xff) * 65536) + (((buffer[position + 14].toUInt()).toInt() and 0xff) * 256) + ((buffer[position + 15].toUInt()).toInt() and 0x00ff)
+        if (expRevValue > 2147483647) // 0x7fffffff を超えた場合は、反転
+        {
+            expRevValue = (expRevValue.toLong() - 4294967296).toInt()
+        }
+        currentExpRev = String.format("%+.1f", (expRevValue.toFloat() / 10.0f))
+    }
+
+    private fun checkIsoSensitivity(buffer: ByteArray?, position: Int, length: Int)
+    {
+        if ((length != 3) || (buffer == null))
+        {
+            // データがそろっていないので何もしない
+            return
+        }
+        val autoFlag = ((((buffer[position + 8].toUInt()).toInt() and 0xff) * 256)) + ((buffer[position + 9].toUInt()).toInt() and 0x00ff)
+        val isoSensValue = ((((buffer[position + 4].toUInt()).toInt() and 0xff) * 16777216)) + (((buffer[position + 5].toUInt()).toInt() and 0xff) * 65536) + (((buffer[position + 6].toUInt()).toInt() and 0xff) * 256) + ((buffer[position + 7].toUInt()).toInt() and 0x00ff)
+        if (autoFlag != 0)
+        {
+            currentIsoSensitivity = "ISO-A($isoSensValue)"
+            if (isoSensValue == 0xfffe)
+            {
+                currentIsoSensitivity = "ISO-A(LOW)"
+            }
+        }
+        else
+        {
+            currentIsoSensitivity = "ISO $isoSensValue"
+            if (isoSensValue == 0xfffe)
+            {
+                currentIsoSensitivity = "ISO LOW"
+            }
+        }
+    }
+
+    private fun checkExposureWarning(buffer: ByteArray?, position: Int, length: Int)
+    {
+        if ((length != 1)||(buffer == null))
+        {
+            // データがそろっていないので何もしない
+            return
+        }
+        val exposureWarningValue = ((((buffer[position + 4].toUInt()).toInt() and 0xff) * 16777216)) + (((buffer[position + 5].toUInt()).toInt() and 0xff) * 65536) + (((buffer[position + 6].toUInt()).toInt() and 0xff) * 256) + ((buffer[position + 7].toUInt()).toInt() and 0x00ff)
+        currentExposureWarning = if (exposureWarningValue != 0) { "Exp.WARN" } else { "" }
+    }
+
+    private fun checkFocusType(buffer: ByteArray?, position: Int, length: Int)
+    {
+        if ((length != 1)||(buffer == null))
+        {
+            // データがそろっていないので何もしない
+            return
+        }
+        val focusType = ((((buffer[position + 4].toUInt()).toInt() and 0xff) * 256)) + ((buffer[position + 5].toUInt()).toInt() and 0x00ff)
+        currentFocusType = when (focusType)
+        {
+            0 -> "S-AF"
+            1 -> "C-AF"
+            2 -> "MF"
+            else -> ""
+
+        }
     }
 
     override fun stopStatusWatch()
@@ -611,9 +684,9 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
                 ICameraStatus.CAPTURE_MODE -> currentCaptureMode
                 ICameraStatus.ISO_SENSITIVITY -> currentIsoSensitivity
                 ICameraStatus.WHITE_BALANCE -> currentWhiteBalance
-                ICameraStatus.AE -> currentMeteringMode
+                ICameraStatus.AE -> currentFocusType               // currentMeteringMode
                 ICameraStatus.EFFECT -> currentPictureEffect
-                ICameraStatus.TORCH_MODE -> currentTorchMode
+                ICameraStatus.TORCH_MODE -> currentExposureWarning // currentTorchMode
                 ICameraStatus.BATTERY -> currentRemainBattery
                 ICameraStatus.FOCUS_STATUS -> currentFocusStatus
                 ICameraStatus.FOCAL_LENGTH  -> currentFocalLength
@@ -630,6 +703,10 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
 
     override fun getStatusColor(key: String): Int
     {
+        if (key == ICameraStatus.TORCH_MODE)
+        {
+            return (Color.YELLOW) // 黄色にしてみる
+        }
         return (Color.WHITE)
     }
 
@@ -747,7 +824,7 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
         private const val ID_OMDS_UNKNOWN_04 = 0x0d
         private const val ID_OMDS_UNKNOWN_05 = 0x0e
         private const val ID_OMDS_UNKNOWN_06 = 0x0f
-        private const val ID_OPTICAL_WARNING = 0x10
+        private const val ID_EXPOSURE_WARNING = 0x10
         private const val ID_FOCUS_TYPE = 0x11
         private const val ID_ZOOM_LENS_INFO = 0x12
         private const val ID_REMAIN_VIDEO_TIME = 0x6a
