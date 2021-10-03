@@ -267,8 +267,11 @@ class CameraLiveViewListenerImpl(private val context: Context,  private val info
             val rotationMatrix = Matrix()
             rotationMatrix.postRotate(image.rotationDegrees.toFloat())
             imageBitmap = BitmapFactory.decodeByteArray(image.imageData, 0, image.imageData.size)
-            imageBitmap = Bitmap.createBitmap(imageBitmap, 0, 0, imageBitmap.width, imageBitmap.height, rotationMatrix, true)
-            System.gc()
+            if (imageBitmap != null)
+            {
+                imageBitmap = Bitmap.createBitmap(imageBitmap, 0, 0, imageBitmap.width, imageBitmap.height, rotationMatrix, true)
+                System.gc()
+            }
         }
         catch (t: Throwable)
         {

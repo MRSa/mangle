@@ -51,6 +51,8 @@ class OmdsCameraConnectSequence(private val context: AppCompatActivity, private 
                     {
                         Log.v(TAG, " -=-=-=-=-=- DETECTED OPC CAMERA -=-=-=-=-=-")
                         useOpcProtocolNotify.detectedOpcProtocol(true)
+
+                        communicationInfo.startReceiveOpcEvent()
                     }
                 }
 

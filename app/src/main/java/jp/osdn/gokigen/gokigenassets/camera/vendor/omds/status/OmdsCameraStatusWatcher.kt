@@ -9,7 +9,13 @@ import jp.osdn.gokigen.gokigenassets.camera.vendor.omds.IOmdsProtocolNotify
 import jp.osdn.gokigen.gokigenassets.liveview.message.IMessageDrawer
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleLogDumper
+import java.io.ByteArrayOutputStream
+import java.io.InputStream
 import java.lang.Exception
+import java.net.HttpURLConnection
+import java.net.ServerSocket
+import java.net.Socket
+import java.net.URL
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -17,11 +23,13 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
 {
     private val headerMap: MutableMap<String, String> = HashMap()
     private val http = SimpleHttpClient()
+
     private var useOpcProtocol = false
 
     private var buffer: ByteArray? = null
     private var isWatching = false
     private var isWatchingEvent = false
+    private var whileEventReceive = false
     private var statusReceived = false
     private var omdsCommandList : String = ""
     private var latestEventResponse : String = ""
@@ -51,7 +59,6 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
     private var opcExpRevSelectionList = ""
     private var opcFocusModeSelectionList = ""
 
-
     override fun setOmdsCommandList(commandList: String)
     {
         omdsCommandList = commandList
@@ -60,6 +67,12 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
         commandListParser.startParse(omdsCommandList)
 
         startStatusWatch(null, null)
+    }
+
+    override fun startReceiveOpcEvent()
+    {
+        // OPCの場合は、、イベントも監視する
+        startEventWatch()
     }
 
     fun setRtpHeader(byteBuffer: ByteArray?)
@@ -83,13 +96,142 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
         }
     }
 
+
+    private fun startEventWatch(portNumber: Int = 65000)
+    {
+        if (whileEventReceive)
+        {
+            Log.v(TAG, "startReceiveStream() : already starting.")
+            return
+        }
+
+        // イベント受信用の準備...
+        finishEventReceiverThread()
+        requestOpcEventWatch()
+
+        // 受信スレッドを動かす
+        val thread = Thread { eventReceiverThread(portNumber) }
+        try
+        {
+            thread.start()
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    private fun requestOpcEventWatch(portNo: Int = 65000)
+    {
+        try
+        {
+            // OPC機のイベント通知開始
+            val eventWatchUrl = "$executeUrl/start_pushevent.cgi?port=$portNo"
+            Log.v(TAG, " requestOpcEventWatch : $eventWatchUrl")
+            val response = http.httpGetWithHeader(eventWatchUrl, headerMap, null, TIMEOUT_MS) ?: ""
+            if (response.isNotEmpty())
+            {
+                dumpLog(eventWatchUrl, response)
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    private fun eventReceiverThread(portNumber: Int)
+    {
+        try
+        {
+            //finishEventReceiverThread()
+            //requestOpcEventWatch()
+            whileEventReceive = true
+            val bufferSize = RECEIVE_BUFFER_SIZE
+            val byteArray = ByteArray(bufferSize)
+            val hostName = executeUrl.substring("http://".length)
+            Log.v(TAG, " OPC: EVENT LISTEN : $hostName, $portNumber")
+            val eventReceiveSocket = Socket(hostName, portNumber)
+            val inputStream = eventReceiveSocket.getInputStream()
+            while (whileEventReceive)
+            {
+                try
+                {
+                    sleep(SLEEP_EVENT_TIME_MS)
+                    val dataBytes = inputStream.available()
+                    if (dataBytes > 0)
+                    {
+                        // データがあった...受信する
+                        Log.v(TAG, " RECEIVE OPC EVENT : $dataBytes bytes")
+                        val byteStream = ByteArrayOutputStream()
+                        var readIndex = 0
+                        while (readIndex < dataBytes)
+                        {
+                            val readBytes = inputStream.read(byteArray, 0, bufferSize)
+                            if (readBytes <= 0)
+                            {
+                                Log.v(TAG, " RECEIVED MESSAGE FINISHED ($dataBytes)")
+                                break
+                            }
+                            readIndex += readBytes
+                            byteStream.write(byteArray, 0, readBytes)
+                        }
+                        if (isDumpLog)
+                        {
+                            SimpleLogDumper.dumpBytes("[RX EVT(OPC):$dataBytes]", byteStream.toByteArray())
+                        }
+                    }
+                    else
+                    {
+                        if (isDumpLog)
+                        {
+                            Log.v(TAG, " NOT RECEIVE OPC EVENT ...WAIT AGAIN...")
+                        }
+                    }
+                    sleep(SLEEP_EVENT_TIME_MS)
+                }
+                catch (e: Exception)
+                {
+                    e.printStackTrace()
+                    whileEventReceive = false
+                    finishEventReceiverThread()
+                }
+            }
+            //finishEventReceiverThread()
+            System.gc()
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    private fun finishEventReceiverThread()
+    {
+        try
+        {
+            Log.v(TAG, "finishEventReceiverThread()")
+
+            // OPC機のイベント通知開始
+            val eventWatchUrl = "$executeUrl/stop_pushevent.cgi"
+            val response = http.httpGetWithHeader(eventWatchUrl, headerMap, null, TIMEOUT_MS) ?: ""
+            if (response.isNotEmpty())
+            {
+                dumpLog(eventWatchUrl, response)
+            }
+         }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
     override fun startStatusWatch(indicator: IMessageDrawer?, notifier: ICameraStatusUpdateNotify?)
     {
         try
         {
             startRtpStatusWatch()
             startEventStatusWatch()
-
         }
         catch (e: Exception)
         {
@@ -127,7 +269,7 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
     {
         try
         {
-            Log.v(TAG, " startEventStatusWatch()")
+            Log.v(TAG, " startEventStatusWatch() : $useOpcProtocol")
             val thread = Thread {
                 isWatchingEvent = true
                 while (isWatchingEvent)
@@ -703,7 +845,9 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
     {
         isWatching = false
         isWatchingEvent = false
+        whileEventReceive = false
 
+        finishEventReceiverThread()
     }
 
     override fun getStatusList(key: String): List<String>
@@ -930,6 +1074,8 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
     {
         headerMap["User-Agent"] = userAgent // "OlympusCameraKit" // "OI.Share"
         headerMap["X-Protocol"] = userAgent // "OlympusCameraKit" // "OI.Share"
+
+        //startEventWatch()
     }
 
     interface IPropertyListCallback
@@ -945,6 +1091,8 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
         private const val SLEEP_TIME_MS = 250
         private const val SLEEP_EVENT_TIME_MS = 350
         private const val TIMEOUT_MS = 2500
+
+        private const val RECEIVE_BUFFER_SIZE = 16384
 
         // RTP HEADER IDs
         private const val ID_FRAME_SIZE = 0x01
