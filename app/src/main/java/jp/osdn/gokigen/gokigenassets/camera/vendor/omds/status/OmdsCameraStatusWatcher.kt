@@ -6,16 +6,13 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusUpdateNotify
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusWatcher
 import jp.osdn.gokigen.gokigenassets.camera.vendor.omds.IOmdsProtocolNotify
+import jp.osdn.gokigen.gokigenassets.camera.vendor.omds.operation.IOpcFocusLockResult
 import jp.osdn.gokigen.gokigenassets.liveview.message.IMessageDrawer
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleLogDumper
 import java.io.ByteArrayOutputStream
-import java.io.InputStream
 import java.lang.Exception
-import java.net.HttpURLConnection
-import java.net.ServerSocket
 import java.net.Socket
-import java.net.URL
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -24,6 +21,7 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
     private val headerMap: MutableMap<String, String> = HashMap()
     private val http = SimpleHttpClient()
 
+    private var focusLockResult : IOpcFocusLockResult? = null
     private var useOpcProtocol = false
 
     private var buffer: ByteArray? = null
@@ -31,7 +29,6 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
     private var isWatchingEvent = false
     private var whileEventReceive = false
     private var statusReceived = false
-    private var omdsCommandList : String = ""
     private var latestEventResponse : String = ""
 
     private var currentTakeMode = ""
@@ -61,11 +58,6 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
 
     override fun setOmdsCommandList(commandList: String)
     {
-        omdsCommandList = commandList
-
-        val commandListParser = OmdsCommandListParser()
-        commandListParser.startParse(omdsCommandList)
-
         startStatusWatch(null, null)
     }
 
@@ -96,6 +88,10 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
         }
     }
 
+    fun setIOpcFocusLockResult(lockResult: IOpcFocusLockResult?)
+    {
+        focusLockResult = lockResult
+    }
 
     private fun startEventWatch(portNumber: Int = 65000)
     {
@@ -176,10 +172,33 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
                             readIndex += readBytes
                             byteStream.write(byteArray, 0, readBytes)
                         }
-                        if (isDumpLog)
+                        val dataString = byteStream.toString()
+                        if (dataString.indexOf("<root><result>") >= 0)
                         {
-                            SimpleLogDumper.dumpBytes("[RX EVT(OPC):$dataBytes]", byteStream.toByteArray())
+                            if ((dataString.indexOf("ok") >= 0)&&(dataString.indexOf("<location>") >= 0))
+                            {
+                                // Focus Locked
+                                focusLockResult?.focusResult(true)
+                                Log.v(TAG, " FOCUS OK! ")
+                            }
+                            else if ((dataString.indexOf("ng") >= 0)||(dataString.indexOf("none") >= 0))
+                            {
+                                Log.v(TAG, " FOCUS NG... ")
+                                focusLockResult?.focusResult(false)
+                            }
+                            else
+                            {
+                                Log.v(TAG, " --- RECEIVE OPC EVENT $dataString ---")
+                            }
                         }
+                        else
+                        {
+                            Log.v(TAG, " RECEIVE OPC EVENT $dataString")
+                        }
+                        //if (isDumpLog)
+                        //{
+                        //    SimpleLogDumper.dumpBytes("[RX EVT(OPC):$dataBytes]", byteStream.toByteArray())
+                        //}
                     }
                     else
                     {
@@ -1088,8 +1107,8 @@ class OmdsCameraStatusWatcher(userAgent: String = "OlympusCameraKit", private va
         private val TAG = OmdsCameraStatusWatcher::class.java.simpleName
 
         // TIMEOUT VALUES
-        private const val SLEEP_TIME_MS = 250
-        private const val SLEEP_EVENT_TIME_MS = 350
+        private const val SLEEP_TIME_MS = 300
+        private const val SLEEP_EVENT_TIME_MS = 500
         private const val TIMEOUT_MS = 2500
 
         private const val RECEIVE_BUFFER_SIZE = 16384

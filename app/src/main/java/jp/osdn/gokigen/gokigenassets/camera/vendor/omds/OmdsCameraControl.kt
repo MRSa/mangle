@@ -156,6 +156,7 @@ class OmdsCameraControl(private val context: AppCompatActivity, private val vibr
         Log.v(TAG, "injectDisplay()")
         focusControl = OmdsFocusControl(frameDisplayer, indicator)
         captureControl = OmdsCaptureControl(frameDisplayer, indicator, statusChecker)
+        statusChecker.setIOpcFocusLockResult(focusControl.getFocusLockResult())
     }
 
     override fun setNeighborCameraControl(camera0: ICameraControl?, camera1: ICameraControl?, camera2: ICameraControl?, camera3: ICameraControl?) { }

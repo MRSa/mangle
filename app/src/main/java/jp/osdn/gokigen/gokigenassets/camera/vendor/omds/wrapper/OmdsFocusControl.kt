@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.MotionEvent
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.IFocusingControl
 import jp.osdn.gokigen.gokigenassets.camera.vendor.omds.IOmdsProtocolNotify
+import jp.osdn.gokigen.gokigenassets.camera.vendor.omds.operation.IOpcFocusLockResult
 import jp.osdn.gokigen.gokigenassets.camera.vendor.omds.operation.OmdsAutoFocusControl
 import jp.osdn.gokigen.gokigenassets.liveview.IIndicatorControl
 import jp.osdn.gokigen.gokigenassets.liveview.focusframe.IAutoFocusFrameDisplay
@@ -72,6 +73,11 @@ class OmdsFocusControl(private val frameDisplay: IAutoFocusFrameDisplay, indicat
     override fun detectedOpcProtocol(opcProtocol: Boolean)
     {
         afControl.detectedOpcProtocol(opcProtocol)
+    }
+
+    fun getFocusLockResult() : IOpcFocusLockResult
+    {
+        return (afControl)
     }
 
     companion object

@@ -11,10 +11,11 @@ import java.lang.Exception
 import java.util.*
 import kotlin.math.floor
 
-class OmdsAutoFocusControl(private val frameDisplayer: IAutoFocusFrameDisplay, private val indicator: IIndicatorControl, userAgent: String = "OlympusCameraKit", private val executeUrl : String = "http://192.168.0.10") : IOmdsProtocolNotify
+class OmdsAutoFocusControl(private val frameDisplayer: IAutoFocusFrameDisplay, private val indicator: IIndicatorControl, userAgent: String = "OlympusCameraKit", private val executeUrl : String = "http://192.168.0.10") : IOmdsProtocolNotify, IOpcFocusLockResult
 {
     private val headerMap: MutableMap<String, String> = HashMap()
     private val http = SimpleHttpClient()
+    private lateinit var preFocusFrameRect : RectF
     private var useOpcProtocol = false
 
     fun lockAutoFocus(point: PointF)
@@ -41,7 +42,7 @@ class OmdsAutoFocusControl(private val frameDisplayer: IAutoFocusFrameDisplay, p
                     e.printStackTrace()
                     try
                     {
-                        val preFocusFrameRect = getPreFocusFrameRect(point)
+                        preFocusFrameRect = getPreFocusFrameRect(point)
                         showFocusFrame(preFocusFrameRect, IAutoFocusFrameDisplay.FocusFrameStatus.Errored, 1.0)
                     }
                     catch (ee: Exception)
@@ -60,7 +61,7 @@ class OmdsAutoFocusControl(private val frameDisplayer: IAutoFocusFrameDisplay, p
 
     private fun lockCommandOmds(point: PointF)
     {
-        val preFocusFrameRect = getPreFocusFrameRect(point)
+        preFocusFrameRect = getPreFocusFrameRect(point)
         try
         {
             // AF駆動前にAF UNLOCK
@@ -99,7 +100,7 @@ class OmdsAutoFocusControl(private val frameDisplayer: IAutoFocusFrameDisplay, p
 
     private fun lockCommandOpc(point: PointF)
     {
-        val preFocusFrameRect = getPreFocusFrameRect(point)
+        preFocusFrameRect = getPreFocusFrameRect(point)
         try
         {
             val releaseUrl = executeUrl + AF_UNLOCK_COMMAND_OPC
@@ -250,6 +251,29 @@ class OmdsAutoFocusControl(private val frameDisplayer: IAutoFocusFrameDisplay, p
     {
         Log.v(TAG, " --- detectedOpcProtocol($opcProtocol)")
         useOpcProtocol = opcProtocol
+    }
+
+    override fun focusResult(isFocusLocked: Boolean)
+    {
+        try
+        {
+            if (isFocusLocked)
+            {
+                // AF FOCUSED
+                Log.v(TAG, "focusResult() : FOCUSED")
+                showFocusFrame(preFocusFrameRect, IAutoFocusFrameDisplay.FocusFrameStatus.Focused, 0.0)
+            }
+            else
+            {
+                // AF FOCUS FAILURE
+                Log.v(TAG, "focusResult() : ERROR")
+                showFocusFrame(preFocusFrameRect, IAutoFocusFrameDisplay.FocusFrameStatus.Failed, 1.0)
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
     }
 
     init
