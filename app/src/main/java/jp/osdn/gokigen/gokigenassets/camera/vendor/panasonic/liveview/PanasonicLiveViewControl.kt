@@ -167,7 +167,8 @@ class PanasonicLiveViewControl(private val liveViewListener : CameraLiveViewList
         val dataLength: Int = packet.length
         var searchIndex = 0
         var startPosition = 0
-        val startmarker = intArrayOf(0xff, 0xd8)
+        //val startmarker = intArrayOf(0xff, 0xd8)
+        val startmarker = byteArrayOf(0xff.toByte(), 0xd8.toByte())
         val receivedData: ByteArray = packet.data
         if (receivedData == null)
         {
@@ -175,19 +176,23 @@ class PanasonicLiveViewControl(private val liveViewListener : CameraLiveViewList
             Log.v(TAG, "RECEIVED DATA IS NULL...")
             return
         }
-        //Log.v(TAG, "RECEIVED PACKET : " + dataLength);
+        // Log.v(TAG, "RECEIVED PACKET : " + dataLength);
         while (startPosition < dataLength)
         {
             // 先頭のjpegマーカーが出てくるまで読み飛ばす
             try
             {
-                if (receivedData[startPosition++] == startmarker[searchIndex].toByte())
+                if (receivedData[startPosition++] == startmarker[searchIndex])
                 {
                     searchIndex++
                     if (searchIndex >= startmarker.size)
                     {
                         break
                     }
+                }
+                else
+                {
+                    searchIndex = 0
                 }
             }
             catch (e: Exception)
