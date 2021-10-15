@@ -108,7 +108,7 @@ class CameraStatusConvert(private val statusHolder: CameraStatusHolder, remote: 
                     34 -> "STAR"
                     105 -> "FAN"
                     60 -> "Movie"
-                    0 -> "($value2)"
+                    0 -> "iA"
                     else -> "$value($value2)"
                 }
             }
@@ -394,11 +394,19 @@ class CameraStatusConvert(private val statusHolder: CameraStatusHolder, remote: 
                         9 -> "CINELIKE D"
                         10 -> "CINELIKE V"
                         12 -> "L.MONO"
+                        13 -> "709L"
                         14 -> "CUSTOM1"
                         15 -> "CUSTOM2"
                         16 -> "CUSTOM3"
                         17 -> "CUSTOM4"
                         19 -> "L.MONO D"
+                        20 -> "FLAT"
+                        21 -> "MY1"
+                        22 -> "MY2"
+                        23 -> "MY3"
+                        24 -> "MY4"
+                        37 -> "L.CLAS N"
+                        38 -> "L.MONO S"
                         else -> "($value)"
                     }
                 }
@@ -646,6 +654,6 @@ class CameraStatusConvert(private val statusHolder: CameraStatusHolder, remote: 
     companion object
     {
         private val TAG = CameraStatusConvert::class.java.simpleName
-        private const val isDumpData = true
+        private const val isDumpData = false
     }
 }
