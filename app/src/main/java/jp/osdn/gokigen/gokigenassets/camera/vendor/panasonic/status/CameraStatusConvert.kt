@@ -273,7 +273,10 @@ class CameraStatusConvert(private val statusHolder: CameraStatusHolder, remote: 
                 val value = (eventData?.get(index) ?: 0).toInt()
                 val value2 = (eventData?.get(index + 1) ?: 0).toInt()
                 val value3 = value * 10 + if (value2 > 0) { 3 } else if (value2 == 0) { 0 } else if (value2 < -100) { 5 }  else { 6 }
-
+                if (value2 == -1)
+                {
+                    return ("F0.0")
+                }
                 //return (getApertureAlternate(value, value2))
                 aperture = when (value3) {
                     0 -> "F0.9"
@@ -421,45 +424,115 @@ class CameraStatusConvert(private val statusHolder: CameraStatusHolder, remote: 
 
     private fun getIsoSensitivity() : String
     {
+        try
+        {
+            val dataSize = eventData?.size ?: 0
+            val mftIndex = 16 * 8 + 15
+            var mftValue = 0
+/*
+            val dcS1Index = 16 * 13 + 11
+            if ((eventData != null) && (dataSize > dcS1Index))
+            {
+                val value = (eventData?.get(dcS1Index) ?: 0).toInt()
+                return (getIsoSensitivityDcS1(value))
+            }
+*/
+            if ((eventData != null) && (dataSize > mftIndex))
+            {
+                mftValue = (eventData?.get(mftIndex) ?: 0).toInt()
+            }
+            return (getIsoSensitivityMft(mftValue))
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+        return ("")
+    }
+
+    private fun getIsoSensitivityDcS1(value : Int) : String
+    {
         // ISO感度
         var iso = ""
         try
         {
-            val index = 16 * 8 + 15
-            if ((eventData != null)&&((eventData?.size ?: 0) > (index)))
-            {
-                val value = (eventData?.get(index) ?: 0).toInt()
-                iso = when (value) {
-                    0 -> "ISO:auto"
-                    1 -> "ISO:100"
-                    35 -> "iso:100"
-                    2 -> "ISO:125"
-                    3 -> "ISO:160"
-                    4 -> "ISO:200"
-                    5 -> "ISO:250"
-                    6 -> "ISO:320"
-                    7 -> "ISO:400"
-                    8 -> "ISO:500"
-                    9 -> "ISO:640"
-                    10 -> "ISO:800"
-                    11 -> "ISO:1000"
-                    12 -> "ISO:1250"
-                    13 -> "ISO:1600"
-                    14 -> "ISO:2000"
-                    15 -> "ISO:2500"
-                    16 -> "ISO:3200"
-                    17 -> "ISO:4000"
-                    18 -> "ISO:5000"
-                    19 -> "ISO:6400"
-                    20 -> "ISO:8000"
-                    22 -> "ISO:10000"
-                    24 -> "ISO:12800"
-                    32 -> "ISO:16000"
-                    33 -> "ISO:20000"
-                    34 -> "ISO:25600"
-                    29 -> "ISO-i"
-                    else -> "ISO:($value)"
-                }
+            iso = when (value) {
+/*
+                0 -> "ISO:auto"
+                1 -> "ISO:100"
+                35 -> "iso:100"
+                2 -> "ISO:125"
+                3 -> "ISO:160"
+                4 -> "ISO:200"
+                5 -> "ISO:250"
+                6 -> "ISO:320"
+                7 -> "ISO:400"
+                8 -> "ISO:500"
+                9 -> "ISO:640"
+                10 -> "ISO:800"
+                11 -> "ISO:1000"
+                12 -> "ISO:1250"
+                13 -> "ISO:1600"
+                14 -> "ISO:2000"
+                15 -> "ISO:2500"
+                16 -> "ISO:3200"
+                17 -> "ISO:4000"
+                18 -> "ISO:5000"
+                19 -> "ISO:6400"
+                20 -> "ISO:8000"
+                22 -> "ISO:10000"
+                24 -> "ISO:12800"
+                32 -> "ISO:16000"
+                33 -> "ISO:20000"
+                34 -> "ISO:25600"
+                29 -> "ISO-i"
+*/
+                else -> "iso:($value)"
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+        return (iso)
+    }
+
+    private fun getIsoSensitivityMft(value : Int) : String
+    {
+        // ISO感度
+        var iso = ""
+        try
+        {
+            iso = when (value) {
+                0 -> "ISO:auto"
+                1 -> "ISO:100"
+                35 -> "iso:100"
+                2 -> "ISO:125"
+                3 -> "ISO:160"
+                4 -> "ISO:200"
+                5 -> "ISO:250"
+                6 -> "ISO:320"
+                7 -> "ISO:400"
+                8 -> "ISO:500"
+                9 -> "ISO:640"
+                10 -> "ISO:800"
+                11 -> "ISO:1000"
+                12 -> "ISO:1250"
+                13 -> "ISO:1600"
+                14 -> "ISO:2000"
+                15 -> "ISO:2500"
+                16 -> "ISO:3200"
+                17 -> "ISO:4000"
+                18 -> "ISO:5000"
+                19 -> "ISO:6400"
+                20 -> "ISO:8000"
+                22 -> "ISO:10000"
+                24 -> "ISO:12800"
+                32 -> "ISO:16000"
+                33 -> "ISO:20000"
+                34 -> "ISO:25600"
+                29 -> "ISO-i"
+                else -> "ISO:($value)"
             }
         }
         catch (e : Exception)

@@ -258,7 +258,10 @@ class CameraStatusListHolder(private val remote: IPanasonicCamera)
             "16000",
             "20000",
             "25600",
+            "32000",
+            "40000",
             "50000",
+            "51200",
         ))
     }
 

@@ -222,6 +222,7 @@ class PanasonicCameraControl(private val context: AppCompatActivity, private val
             }
             cameraConnection.disconnect(false)
             cameraConnection.stopWatchWifiStatus(context)
+            stopLiveView()
         }
         catch (e : Exception)
         {
