@@ -298,8 +298,11 @@ class CameraStatusListHolder(private val remote: IPanasonicCamera)
             "MONO",
             "L.MONO",
             "L.MONO D",
+            "L.MONO S",
             "SCENERY",
             "PORTRAIT",
+            "L.CLAS N",
+            "FLAT",
             "CUSTOM",
             "CUSTOM1",
             "CUSTOM2",
@@ -527,11 +530,14 @@ class CameraStatusListHolder(private val remote: IPanasonicCamera)
             "CUSTOM4" -> "custom4"
             "CINELIKE_D" -> "cinelike_d"
             "CINELIKE_V" -> "cinelike_v"
-            "L.MONO.D" -> "l_bw_d"
-            "Like709" -> "Like709"
+            "L.MONO D" -> "l_bw_d"
+            "Like709" -> "709like"
             "VLOG-L" -> "vlog-l"
             "VLOG-G" -> "vlog-g"
             "VLOG-GAMMA" -> "vlog-gamma"
+            "FLAT" -> "flat"
+            "L.CLAS N" -> "l_cla_neo"
+            "L.MONO S" -> "l_bw_s"
             else -> return
         }
         sendCamSetSettingCmd("colormode", setValue, null)
