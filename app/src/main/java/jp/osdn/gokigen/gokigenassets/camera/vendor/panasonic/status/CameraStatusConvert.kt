@@ -429,14 +429,16 @@ class CameraStatusConvert(private val statusHolder: CameraStatusHolder, remote: 
             val dataSize = eventData?.size ?: 0
             val mftIndex = 16 * 8 + 15
             var mftValue = 0
-/*
-            val dcS1Index = 16 * 13 + 11
+            val dcS1Index = 16 * 13 + 10
+
+            // for DC-S1
             if ((eventData != null) && (dataSize > dcS1Index))
             {
                 val value = (eventData?.get(dcS1Index) ?: 0).toInt()
                 return (getIsoSensitivityDcS1(value))
             }
-*/
+
+            // for MFT
             if ((eventData != null) && (dataSize > mftIndex))
             {
                 mftValue = (eventData?.get(mftIndex) ?: 0).toInt()
@@ -452,41 +454,40 @@ class CameraStatusConvert(private val statusHolder: CameraStatusHolder, remote: 
 
     private fun getIsoSensitivityDcS1(value : Int) : String
     {
-        // ISO感度
+        // ISO感度設定 for DC-S1
         var iso = ""
         try
         {
             iso = when (value) {
-/*
-                0 -> "ISO:auto"
-                1 -> "ISO:100"
-                35 -> "iso:100"
-                2 -> "ISO:125"
-                3 -> "ISO:160"
-                4 -> "ISO:200"
-                5 -> "ISO:250"
-                6 -> "ISO:320"
-                7 -> "ISO:400"
-                8 -> "ISO:500"
-                9 -> "ISO:640"
-                10 -> "ISO:800"
-                11 -> "ISO:1000"
-                12 -> "ISO:1250"
-                13 -> "ISO:1600"
-                14 -> "ISO:2000"
-                15 -> "ISO:2500"
-                16 -> "ISO:3200"
-                17 -> "ISO:4000"
-                18 -> "ISO:5000"
-                19 -> "ISO:6400"
-                20 -> "ISO:8000"
-                22 -> "ISO:10000"
-                24 -> "ISO:12800"
-                32 -> "ISO:16000"
-                33 -> "ISO:20000"
-                34 -> "ISO:25600"
-                29 -> "ISO-i"
-*/
+                0 -> "iso:auto"
+                4 -> "iso:100"
+                5 -> "iso:125"
+                6 -> "iso:160"
+                7 -> "iso:200"
+                8 -> "iso:250"
+                9 -> "iso:320"
+                10 -> "iso:400"
+                11 -> "iso:500"
+                12 -> "iso:640"
+                13 -> "iso:800"
+                14 -> "iso:1000"
+                15 -> "iso:1250"
+                16 -> "iso:1600"
+                17 -> "iso:2000"
+                18 -> "iso:2500"
+                19 -> "iso:3200"
+                20 -> "iso:4000"
+                21 -> "iso:5000"
+                22 -> "iso:6400"
+                23 -> "iso:8000"
+                25 -> "iso:10000"
+                27 -> "iso:12800"
+                28 -> "iso:16000"
+                29 -> "iso:20000"
+                31 -> "iso:25600"
+                32 -> "iso:32000"
+                33 -> "iso:40000"
+                34 -> "iso:51200"
                 else -> "iso:($value)"
             }
         }
