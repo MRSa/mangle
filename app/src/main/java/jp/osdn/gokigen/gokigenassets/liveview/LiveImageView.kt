@@ -51,6 +51,7 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
     private var focusFrameHideTimer: Timer? = null
     private var isRotationImage = false
     private var anotherDrawer : IAnotherDrawer? = null
+    private var overwriteDrawer : IAnotherDrawer? = null
 
     constructor(context: Context) : super(context)
     {
@@ -102,10 +103,11 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
         this.imageProvider = provider
     }
 
-    override fun setAnotherDrawer(drawer: IAnotherDrawer?)
+    override fun setAnotherDrawer(drawer: IAnotherDrawer?, drawer2: IAnotherDrawer?)
     {
         Log.v(TAG, " setAnotherDrawer() ")
         this.anotherDrawer = drawer
+        this.overwriteDrawer = drawer2
     }
 
     override fun updateImageRotation(degrees: Int)
@@ -144,6 +146,13 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
         this.drawFocusFrame(canvas,imageRectF.width(), imageRectF.height())
         informationDrawer.drawInformationMessages(canvas, imageRectF)
         informationDrawer.drawLevelGauge(canvas, imageRotationDegrees)
+
+        if (overwriteDrawer != null)
+        {
+            // 画面の上にデータを載せる場合...
+            overwriteDrawer?.onDraw(canvas)
+            return
+        }
     }
 
     override fun showGridFrame(isShowGrid: Boolean, color : Int)

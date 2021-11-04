@@ -155,7 +155,7 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
         try
         {
             this.refresher = refresher
-            imageView.setAnotherDrawer(this)
+            imageView.setAnotherDrawer(this, null)
             startConsoleRefresh()
         }
         catch (e : Exception)
