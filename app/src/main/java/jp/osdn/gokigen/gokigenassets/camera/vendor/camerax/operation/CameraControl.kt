@@ -159,55 +159,10 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
             val imageCapture = fileControl.prepare()
             val option1 = preference.getCameraOption1()  // プレビューサイズを設定する
-            val previewSize = if (option1.isNotBlank()) {
-                when (option1) {
-                    "_8K" -> Size(4320, 7680)
-                    "_6K" -> Size(3384, 6016)
-                    "_4K"   -> Size(4096, 2160)
-                    "_WQHD" -> Size(2560, 1440)
-                    "_2K" -> Size(2048, 1080)
-                    "_FHD" -> Size(1920, 1080)
-                    "_SXGA" -> Size(1280, 1024) // SXGA : 1600x1200 @ Pixel3a
-                    "_XGA" -> Size(1024, 768)   // XGA  : 1600x1200 @ Pixel3a
-                    "_SVGA" -> Size(800, 600)   // SVGA : 1280x960  @ Pixel3a
-                    "_VGA" -> Size(640, 480)   // SVGA : 1280x960  @ Pixel3a
-                    "8K" -> Size(7680, 4320)
-                    "6K" -> Size(6016, 3384)
-                    "4K"   -> Size(2160, 4096)
-                    "WQHD" -> Size(1440, 2560)
-                    "2K" -> Size(1080, 2048)
-                    "FHD" -> Size(1080, 1920)
-                    "SXGA" -> Size(1024, 1280)
-                    "XGA" -> Size(768, 1024)
-                    "SVGA" -> Size(600, 800)
-                    "VGA" -> Size(480, 640)
-                    else -> Size(480, 640)     // VGA : 1024x768   @ Pixel3a
-                }
-            }
-            else
-            {
-                Size(640, 480)
-            }
+            val option2 = preference.getCameraOption2()  // テスト用オプション...
             try
             {
-                val imageAnalyzer = if (option1.isNotBlank()) {
-                    ImageAnalysis.Builder()
-                        .setTargetResolution(previewSize)
-                        .setTargetRotation(getImageRotation())
-                        .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                        .build()
-                        .also {
-                            it.setAnalyzer(cameraExecutor, liveViewListener)
-                        }
-                } else {
-                    ImageAnalysis.Builder()
-                        .setTargetRotation(getImageRotation())
-                        .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                        .build()
-                        .also {
-                            it.setAnalyzer(cameraExecutor, liveViewListener)
-                        }
-                }
+                val imageAnalyzer = getImageAnalysis(option1, option2)
                 cameraProvider.unbindAll()
                 cameraXCamera = cameraProvider.bindToLifecycle(activity, cameraSelector, imageCapture, imageAnalyzer)
                 cameraXCameraControl.setCameraControl(cameraXCamera)
@@ -221,6 +176,85 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
             }
 
         }, ContextCompat.getMainExecutor(activity))
+    }
+
+    private fun getImageAnalysis(option1 : String, option2 : String) : ImageAnalysis
+    {
+        Log.v(TAG, " getImageAnalysis(option1 = '$option1', option2 = '$option2') ")
+        val previewSize = if (option1.isNotBlank()) {
+            when (option1) {
+                "_8K" -> Size(4320, 7680)
+                "_6K" -> Size(3384, 6016)
+                "_4K"   -> Size(4096, 2160)
+                "_WQHD" -> Size(2560, 1440)
+                "_2K" -> Size(2048, 1080)
+                "_FHD" -> Size(1920, 1080)
+                "_SXGA" -> Size(1280, 1024) // SXGA : 1600x1200 @ Pixel3a
+                "_XGA" -> Size(1024, 768)   // XGA  : 1600x1200 @ Pixel3a
+                "_SVGA" -> Size(800, 600)   // SVGA : 1280x960  @ Pixel3a
+                "_VGA" -> Size(640, 480)   // SVGA : 1280x960  @ Pixel3a
+                "8K" -> Size(7680, 4320)
+                "6K" -> Size(6016, 3384)
+                "4K"   -> Size(2160, 4096)
+                "WQHD" -> Size(1440, 2560)
+                "2K" -> Size(1080, 2048)
+                "FHD" -> Size(1080, 1920)
+                "SXGA" -> Size(1024, 1280)
+                "XGA" -> Size(768, 1024)
+                "SVGA" -> Size(600, 800)
+                "VGA" -> Size(480, 640)
+                else -> Size(480, 640)     // VGA : 1024x768   @ Pixel3a
+            }
+        }
+        else
+        {
+            Size(640, 480)
+        }
+        //val useImageFormatOption = false
+        return (//if (!useImageFormatOption) {
+                    if (option1.isNotBlank()) {
+                        ImageAnalysis.Builder()
+                            .setTargetResolution(previewSize)
+                            .setTargetRotation(getImageRotation())
+                            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                            .build()
+                            .also {
+                                it.setAnalyzer(cameraExecutor, liveViewListener)
+                            }
+                    } else {
+                        ImageAnalysis.Builder()
+                            .setTargetRotation(getImageRotation())
+                            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                            .build()
+                            .also {
+                                it.setAnalyzer(cameraExecutor, liveViewListener)
+                            }
+                    }
+                //}
+                /*else
+                {
+                    if (option1.isNotBlank()) {
+                        ImageAnalysis.Builder()
+                            .setTargetResolution(previewSize)
+                            .setTargetRotation(getImageRotation())
+                            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                            .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
+                            .build()
+                            .also {
+                                it.setAnalyzer(cameraExecutor, liveViewListener)
+                            }
+                    } else {
+                        ImageAnalysis.Builder()
+                            .setTargetRotation(getImageRotation())
+                            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                            .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
+                            .build()
+                            .also {
+                                it.setAnalyzer(cameraExecutor, liveViewListener)
+                            }
+                    }
+                }*/
+                )
     }
 
     @SuppressLint("UnsafeOptInUsageError")
