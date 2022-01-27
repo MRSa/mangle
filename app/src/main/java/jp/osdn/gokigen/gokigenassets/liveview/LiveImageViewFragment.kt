@@ -274,8 +274,12 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
             }
             else
             {
-                val preferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
-                this.isCacheImage = preferences.getBoolean(ID_PREFERENCE_CACHE_LIVE_VIEW_PICTURES, false)
+                val appContext = activity?.applicationContext
+                if (appContext != null)
+                {
+                    val preferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(appContext)
+                    this.isCacheImage = preferences.getBoolean(ID_PREFERENCE_CACHE_LIVE_VIEW_PICTURES, false)
+                }
             }
         }
         catch (e : Exception)

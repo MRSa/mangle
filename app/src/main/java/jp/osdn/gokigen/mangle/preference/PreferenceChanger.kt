@@ -47,10 +47,10 @@ class PreferenceChanger(private val activity : AppCompatActivity, private val ch
         }
     }
 
-    override fun onPreferenceClick(preference: Preference?): Boolean
+    override fun onPreferenceClick(preference: Preference): Boolean
     {
         var ret = true
-        when (preference?.key)
+        when (preference.key)
         {
             IPreferencePropertyAccessor.LABEL_WIFI_SETTINGS -> activity.startActivity(
                 Intent(
@@ -59,7 +59,7 @@ class PreferenceChanger(private val activity : AppCompatActivity, private val ch
             IPreferencePropertyAccessor.LABEL_EXIT_APPLICATION -> changeSceneBasic.exitApplication()
             IPreferencePropertyAccessor.LABEL_DEBUG_INFO -> changeSceneBasic.changeToDebugInformation()
             IPreferencePropertyAccessor.PREFERENCE_CONNECTION_METHOD -> changeScene.selectConnectionMethod()
-            else -> { Log.v(TAG, " onPreferenceClick() : " + preference?.key); ret = false; }
+            else -> { Log.v(TAG, " onPreferenceClick() : " + preference.key); ret = false; }
         }
         return (ret)
     }
