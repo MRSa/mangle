@@ -10,6 +10,8 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraChangeListener
 import jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.IPanasonicCamera
 import jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.IPanasonicCameraHolder
 import jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.connection.PanasonicCameraConnection
+import jp.osdn.gokigen.gokigenassets.camera.vendor.CameraControlManager
+import jp.osdn.gokigen.gokigenassets.camera.vendor.ICameraControlManager
 import jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.liveview.PanasonicLiveViewControl
 import jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.operation.PanasonicCameraCaptureControl
 import jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.operation.PanasonicCameraFocusControl
@@ -28,11 +30,11 @@ import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
 
-class PanasonicCameraControl(private val context: AppCompatActivity, private val vibrator : IVibrator, informationNotify: IInformationReceiver, private val preference: ICameraPreferenceProvider, provider: ICameraStatusReceiver) : IPanasonicCameraHolder, IDisplayInjector,ILiveViewController, ICameraControl, View.OnClickListener, View.OnLongClickListener, ICameraShutter, IKeyDown
+class PanasonicCameraControl(private val context: AppCompatActivity, private val vibrator : IVibrator, informationNotify: IInformationReceiver, private val preference: ICameraPreferenceProvider, provider: ICameraStatusReceiver, cameraManager: ICameraControlManager, private val number: Int) : IPanasonicCameraHolder, IDisplayInjector,ILiveViewController, ICameraControl, View.OnClickListener, View.OnLongClickListener, ICameraShutter, IKeyDown
 {
     private val cardSlotSelector = PanasonicCardSlotSelector()
     private val liveViewListener = CameraLiveViewListenerImpl(context, informationNotify)
-    private val cameraConnection: PanasonicCameraConnection = PanasonicCameraConnection(context, provider, this, this, cardSlotSelector)
+    private val cameraConnection: PanasonicCameraConnection = PanasonicCameraConnection(context, provider, this, this, cardSlotSelector, cameraManager, number)
     private val storeImage = StoreImage(context, liveViewListener)
 
     private lateinit var cachePositionProvider : ICachePositionProvider
@@ -435,5 +437,10 @@ class PanasonicCameraControl(private val context: AppCompatActivity, private val
             return (null)
         }
         return (statusChecker.getCameraStatusConvert())
+    }
+
+    override fun getCameraNumber(): Int
+    {
+        return (number)
     }
 }

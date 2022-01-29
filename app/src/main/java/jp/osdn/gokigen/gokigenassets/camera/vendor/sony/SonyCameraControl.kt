@@ -33,7 +33,7 @@ import org.json.JSONObject
 import kotlin.collections.ArrayList
 
 
-class SonyCameraControl(private val context: AppCompatActivity, private val vibrator : IVibrator, private val informationNotify : IInformationReceiver, private val preference: ICameraPreferenceProvider, provider: ICameraStatusReceiver) : ISonyCameraHolder,
+class SonyCameraControl(private val context: AppCompatActivity, private val vibrator : IVibrator, private val informationNotify : IInformationReceiver, private val preference: ICameraPreferenceProvider, provider: ICameraStatusReceiver, private val number : Int = 0) : ISonyCameraHolder,
     IDisplayInjector, ICameraControl, View.OnClickListener, View.OnLongClickListener, ICameraShutter, IKeyDown
 {
     private val sonyCameraStatus = SonyStatus(JSONObject())
@@ -455,5 +455,10 @@ class SonyCameraControl(private val context: AppCompatActivity, private val vibr
     override fun getCameraStatus(): ICameraStatus
     {
         return (sonyCameraStatus)
+    }
+
+    override fun getCameraNumber(): Int
+    {
+        return (number)
     }
 }

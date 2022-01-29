@@ -50,10 +50,10 @@ class SceneChanger(private val activity: AppCompatActivity, private val informat
     {
         Log.v(TAG, " SceneChanger is created. ")
 
-        cameraControl1 = cameraProvider.decideCameraControl(PREFERENCE_CAMERA_METHOD_1)
-        cameraControl2 = cameraProvider.decideCameraControl(PREFERENCE_CAMERA_METHOD_2)
-        cameraControl3 = cameraProvider.decideCameraControl(PREFERENCE_CAMERA_METHOD_3)
-        cameraControl4 = cameraProvider.decideCameraControl(PREFERENCE_CAMERA_METHOD_4)
+        cameraControl1 = cameraProvider.decideCameraControl(PREFERENCE_CAMERA_METHOD_1, 1)
+        cameraControl2 = cameraProvider.decideCameraControl(PREFERENCE_CAMERA_METHOD_2, 2)
+        cameraControl3 = cameraProvider.decideCameraControl(PREFERENCE_CAMERA_METHOD_3, 3)
+        cameraControl4 = cameraProvider.decideCameraControl(PREFERENCE_CAMERA_METHOD_4, 4)
 
         cameraControl1.initialize()
         cameraControl2.initialize()

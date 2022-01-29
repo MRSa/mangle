@@ -14,7 +14,6 @@ import jp.osdn.gokigen.gokigenassets.constants.ICameraConstantConvert.Companion.
 
 class PanasonicCameraConnectSequence(private val context: AppCompatActivity, private val cameraStatusReceiver: ICameraStatusReceiver, private val cameraConnection: ICameraConnection, private val cameraHolder: IPanasonicCameraHolder, private val listener: ICameraChangeListener) : Runnable, PanasonicSsdpClient.ISearchResultCallback
 {
-
     companion object
     {
         private val TAG = PanasonicCameraConnectSequence::class.java.simpleName

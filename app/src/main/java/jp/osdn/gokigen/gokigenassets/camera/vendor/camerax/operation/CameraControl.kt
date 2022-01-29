@@ -30,7 +30,7 @@ import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class CameraControl(private val activity : AppCompatActivity, private val preference: ICameraPreferenceProvider, private val vibrator : IVibrator, private val informationReceiver : IInformationReceiver) : ICameraControl
+class CameraControl(private val activity : AppCompatActivity, private val preference: ICameraPreferenceProvider, private val vibrator : IVibrator, private val informationReceiver : IInformationReceiver, private val number : Int = 0) : ICameraControl
 {
     private lateinit var cameraExecutor: ExecutorService
     private lateinit var liveViewListener : CameraLiveViewListenerImpl
@@ -330,6 +330,11 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
     override fun getDisplayInjector(): IDisplayInjector
     {
         return (cameraXCameraControl)
+    }
+
+    override fun getCameraNumber(): Int
+    {
+        return (number)
     }
 
     private fun getClickKeyDownListener(id : Int) : CameraClickKeyDownListener

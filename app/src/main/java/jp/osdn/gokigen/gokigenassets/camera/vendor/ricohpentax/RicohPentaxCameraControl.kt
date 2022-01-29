@@ -26,7 +26,7 @@ import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
 import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 
-class RicohPentaxCameraControl(private val context: AppCompatActivity, private val vibrator : IVibrator, informationNotify: IInformationReceiver, private val preference: ICameraPreferenceProvider, statusReceiver : ICameraStatusReceiver)  : ILiveViewController, ICameraControl, View.OnClickListener, View.OnLongClickListener, ICaptureModeReceiver, ICameraShutter, IDisplayInjector, IUseGR2CommandNotify, IKeyDown
+class RicohPentaxCameraControl(private val context: AppCompatActivity, private val vibrator : IVibrator, informationNotify: IInformationReceiver, private val preference: ICameraPreferenceProvider, statusReceiver : ICameraStatusReceiver, private val number : Int = 0)  : ILiveViewController, ICameraControl, View.OnClickListener, View.OnLongClickListener, ICaptureModeReceiver, ICameraShutter, IDisplayInjector, IUseGR2CommandNotify, IKeyDown
 {
 
     //private final Activity activity;
@@ -335,6 +335,11 @@ class RicohPentaxCameraControl(private val context: AppCompatActivity, private v
     override fun getCameraStatus(): ICameraStatus
     {
         return (statusChecker)
+    }
+
+    override fun getCameraNumber(): Int
+    {
+        return (number)
     }
 
     /**

@@ -4,7 +4,6 @@ import android.view.View
 import jp.osdn.gokigen.gokigenassets.liveview.ICachePositionProvider
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveView
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveViewRefresher
-import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 
 interface ICameraControl
 {
@@ -28,4 +27,5 @@ interface ICameraControl
     fun getAnotherTouchListener(id : Int = 0) : View.OnTouchListener? = null
     fun setNeighborCameraControl(camera0: ICameraControl?, camera1: ICameraControl?, camera2: ICameraControl?, camera3: ICameraControl?)
     fun getCameraStatus() : ICameraStatus?
+    fun getCameraNumber() : Int
 }

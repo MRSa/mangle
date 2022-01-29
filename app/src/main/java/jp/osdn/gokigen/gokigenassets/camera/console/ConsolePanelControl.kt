@@ -44,7 +44,7 @@ import jp.osdn.gokigen.gokigenassets.liveview.focusframe.IAutoFocusFrameDisplay
 import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 
-class ConsolePanelControl (private val context: AppCompatActivity, private val vibrator : IVibrator, informationNotify: IInformationReceiver, private val preference: ICameraPreferenceProvider) : IDisplayInjector,
+class ConsolePanelControl (private val context: AppCompatActivity, private val vibrator : IVibrator, informationNotify: IInformationReceiver, private val preference: ICameraPreferenceProvider, private val number : Int = 0) : IDisplayInjector,
     ILiveViewController, ICameraControl, View.OnClickListener, View.OnLongClickListener, ICaptureModeReceiver, ICameraShutter, IKeyDown, IAnotherDrawer, View.OnTouchListener, ICameraStatus, IDetectPositionReceiver
 {
     private val gestureListener = ConsolePanelGestureListener(this)
@@ -110,6 +110,7 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
     override fun doShutter() { }
     override fun doShutterOff() { }
     override fun getAnotherTouchListener(id : Int) : View.OnTouchListener { return (this) }
+    override fun getCameraNumber(): Int { return (number) }
 
     override fun setNeighborCameraControl(camera0: ICameraControl?, camera1: ICameraControl?, camera2: ICameraControl?, camera3: ICameraControl?)
     {

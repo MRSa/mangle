@@ -8,7 +8,7 @@ import jp.osdn.gokigen.gokigenassets.liveview.ICachePositionProvider
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveView
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveViewRefresher
 
-class DummyCameraControl() : ICameraControl, View.OnClickListener, View.OnLongClickListener, IKeyDown, ICameraStatus
+class DummyCameraControl(private val number : Int = 0) : ICameraControl, View.OnClickListener, View.OnLongClickListener, IKeyDown, ICameraStatus
 {
     override fun getConnectionMethod(): String { return ("NONE") }
     override fun initialize() { }
@@ -25,7 +25,7 @@ class DummyCameraControl() : ICameraControl, View.OnClickListener, View.OnLongCl
     override fun getDisplayInjector(): IDisplayInjector? { return (null) }
     override fun setNeighborCameraControl(camera0: ICameraControl?, camera1: ICameraControl?, camera2: ICameraControl?, camera3: ICameraControl?) { }
     override fun getCameraStatus(): ICameraStatus { return (this) }
-
+    override fun getCameraNumber(): Int { return (number) }
     override fun onClick(v: View?) { }
     override fun handleKeyDown(keyCode: Int, event: KeyEvent): Boolean { return (false) }
     override fun onLongClick(v: View?): Boolean { return (false) }

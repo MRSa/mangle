@@ -12,12 +12,14 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnectionStatus.C
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ILiveViewController
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraChangeListener
+import jp.osdn.gokigen.gokigenassets.camera.vendor.CameraControlManager
+import jp.osdn.gokigen.gokigenassets.camera.vendor.ICameraControlManager
 import jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.IPanasonicCameraHolder
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConstantConvert
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
-class PanasonicCameraConnection(private val context: AppCompatActivity, private val statusReceiver: ICameraStatusReceiver, private val liveViewControl: ILiveViewController, private val cameraHolder: IPanasonicCameraHolder, private val listener: ICameraChangeListener) : ICameraConnection
+class PanasonicCameraConnection(private val context: AppCompatActivity, private val statusReceiver: ICameraStatusReceiver, private val liveViewControl: ILiveViewController, private val cameraHolder: IPanasonicCameraHolder, private val listener: ICameraChangeListener, private val cameraManager: ICameraControlManager, private val number : Int) : ICameraConnection
 {
     companion object
     {

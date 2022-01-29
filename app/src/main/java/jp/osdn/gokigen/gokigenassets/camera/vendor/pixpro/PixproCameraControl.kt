@@ -32,7 +32,7 @@ import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
 import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 
-class PixproCameraControl(private val context: AppCompatActivity, private val vibrator: IVibrator, private val informationNotify : IInformationReceiver, private val preference: ICameraPreferenceProvider, provider: ICameraStatusReceiver) : ICameraControl, View.OnClickListener, View.OnLongClickListener, ICameraShutter, IKeyDown, IPixproInternalInterfaces, IPixproCommunicationNotify, IDisplayInjector
+class PixproCameraControl(private val context: AppCompatActivity, private val vibrator: IVibrator, private val informationNotify : IInformationReceiver, private val preference: ICameraPreferenceProvider, provider: ICameraStatusReceiver, private val number : Int = 0) : ICameraControl, View.OnClickListener, View.OnLongClickListener, ICameraShutter, IKeyDown, IPixproInternalInterfaces, IPixproCommunicationNotify, IDisplayInjector
 {
     private val statusChecker = PixproStatusChecker()
     private val liveViewListener = CameraLiveViewListenerImpl(context, informationNotify)
@@ -293,6 +293,11 @@ class PixproCameraControl(private val context: AppCompatActivity, private val vi
         {
             e.printStackTrace()
         }
+    }
+
+    override fun getCameraNumber(): Int
+    {
+        return (number)
     }
 
     private fun captureImageLiveView() : Boolean

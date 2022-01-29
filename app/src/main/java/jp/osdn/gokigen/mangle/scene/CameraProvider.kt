@@ -10,6 +10,7 @@ import jp.osdn.gokigen.gokigenassets.camera.console.ConsolePanelControl
 import jp.osdn.gokigen.gokigenassets.camera.example.ExamplePictureControl
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.*
 import jp.osdn.gokigen.gokigenassets.camera.vendor.omds.OmdsCameraControl
+import jp.osdn.gokigen.gokigenassets.camera.vendor.CameraControlManager
 import jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.wrapper.PanasonicCameraControl
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.PixproCameraControl
 import jp.osdn.gokigen.gokigenassets.camera.vendor.ricohpentax.RicohPentaxCameraControl
@@ -89,6 +90,7 @@ import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.U
 
 class CameraProvider(private val activity: AppCompatActivity, private val informationNotify: IInformationReceiver, private val vibrator : IVibrator, private val statusReceiver : ICameraStatusReceiver)
 {
+    private val cameraManager = CameraControlManager()
     private var cameraXisCreated = false
     private var isOnlySingleCamera = false
     private lateinit var cameraXControl0: ICameraControl
@@ -96,7 +98,7 @@ class CameraProvider(private val activity: AppCompatActivity, private val inform
     private lateinit var cameraXControl2: ICameraControl
     private lateinit var cameraXControl3: ICameraControl
 
-    fun decideCameraControl(preferenceKey : String) : ICameraControl
+    fun decideCameraControl(preferenceKey : String, number : Int) : ICameraControl
     {
         try
         {
@@ -111,17 +113,17 @@ class CameraProvider(private val activity: AppCompatActivity, private val inform
                 else -> setupCameraPreference0(wrapper)
             }
             return (when (cameraPreference.getCameraMethod()) {
-                PREFERENCE_CAMERA_METHOD_NONE -> DummyCameraControl()
-                PREFERENCE_CAMERA_METHOD_CONSOLE -> prepareConsolePanelControl(cameraPreference)
-                PREFERENCE_CAMERA_METHOD_EXAMPLE -> prepareExamplePictureControl(cameraPreference)
-                PREFERENCE_CAMERA_METHOD_CAMERAX -> prepareCameraXControl(cameraPreference)
-                PREFERENCE_CAMERA_METHOD_THETA -> prepareThetaCameraControl(cameraPreference)
-                PREFERENCE_CAMERA_METHOD_PENTAX -> preparePentaxCameraControl(cameraPreference)
-                PREFERENCE_CAMERA_METHOD_PANASONIC -> preparePanasonicCameraControl(cameraPreference)
-                PREFERENCE_CAMERA_METHOD_SONY -> prepareSonyCameraControl(cameraPreference)
-                PREFERENCE_CAMERA_METHOD_PIXPRO -> preparePixproCameraControl(cameraPreference)
-                PREFERENCE_CAMERA_METHOD_OMDS -> prepareOmdsCameraControl(cameraPreference)
-                else -> DummyCameraControl()
+                PREFERENCE_CAMERA_METHOD_NONE -> DummyCameraControl(number)
+                PREFERENCE_CAMERA_METHOD_CONSOLE -> prepareConsolePanelControl(cameraPreference, number)
+                PREFERENCE_CAMERA_METHOD_EXAMPLE -> prepareExamplePictureControl(cameraPreference, number)
+                PREFERENCE_CAMERA_METHOD_CAMERAX -> prepareCameraXControl(cameraPreference, number)
+                PREFERENCE_CAMERA_METHOD_THETA -> prepareThetaCameraControl(cameraPreference, number)
+                PREFERENCE_CAMERA_METHOD_PENTAX -> preparePentaxCameraControl(cameraPreference, number)
+                PREFERENCE_CAMERA_METHOD_PANASONIC -> preparePanasonicCameraControl(cameraPreference, number)
+                PREFERENCE_CAMERA_METHOD_SONY -> prepareSonyCameraControl(cameraPreference, number)
+                PREFERENCE_CAMERA_METHOD_PIXPRO -> preparePixproCameraControl(cameraPreference, number)
+                PREFERENCE_CAMERA_METHOD_OMDS -> prepareOmdsCameraControl(cameraPreference, number)
+                else -> DummyCameraControl(number)
             })
         }
         catch (e : Exception)
@@ -131,11 +133,11 @@ class CameraProvider(private val activity: AppCompatActivity, private val inform
         return (DummyCameraControl())
     }
 
-    fun getCameraXControl() : ICameraControl
+    fun getCameraXControl(number : Int = 0) : ICameraControl
     {
         try
         {
-            return (prepareCameraXControl(setupCameraPreference0(PreferenceAccessWrapper(activity))))
+            return (prepareCameraXControl(setupCameraPreference0(PreferenceAccessWrapper(activity)), number))
         }
         catch (e : Exception)
         {
@@ -216,47 +218,47 @@ class CameraProvider(private val activity: AppCompatActivity, private val inform
         return (CameraPreference(4, wrapper, method, false, sequence, option1, option2, option3, option4, option5, CameraPreferenceKeySet(PREFERENCE_CAMERA_OPTION1_4, PREFERENCE_CAMERA_OPTION2_4, PREFERENCE_CAMERA_OPTION3_4, PREFERENCE_CAMERA_OPTION4_4, PREFERENCE_CAMERA_OPTION5_4)))
     }
 
-    private fun prepareThetaCameraControl(cameraPreference : ICameraPreferenceProvider) : ICameraControl
+    private fun prepareThetaCameraControl(cameraPreference : ICameraPreferenceProvider, number : Int) : ICameraControl
     {
-        return (ThetaCameraControl(activity, vibrator, informationNotify, cameraPreference, statusReceiver))
+        return (ThetaCameraControl(activity, vibrator, informationNotify, cameraPreference, statusReceiver, number))
     }
 
-    private fun preparePentaxCameraControl(cameraPreference : ICameraPreferenceProvider) : ICameraControl
+    private fun preparePentaxCameraControl(cameraPreference : ICameraPreferenceProvider, number : Int) : ICameraControl
     {
-        return (RicohPentaxCameraControl(activity, vibrator, informationNotify, cameraPreference, statusReceiver))
+        return (RicohPentaxCameraControl(activity, vibrator, informationNotify, cameraPreference, statusReceiver, number))
     }
 
-    private fun preparePanasonicCameraControl(cameraPreference : ICameraPreferenceProvider) : ICameraControl
+    private fun preparePanasonicCameraControl(cameraPreference : ICameraPreferenceProvider, number : Int) : ICameraControl
     {
-        return (PanasonicCameraControl(activity, vibrator, informationNotify, cameraPreference, statusReceiver))
+        return (PanasonicCameraControl(activity, vibrator, informationNotify, cameraPreference, statusReceiver, cameraManager, number))
     }
 
-    private fun prepareSonyCameraControl(cameraPreference : ICameraPreferenceProvider) : ICameraControl
+    private fun prepareSonyCameraControl(cameraPreference : ICameraPreferenceProvider, number : Int) : ICameraControl
     {
-        return (SonyCameraControl(activity, vibrator, informationNotify, cameraPreference, statusReceiver))
+        return (SonyCameraControl(activity, vibrator, informationNotify, cameraPreference, statusReceiver, number))
     }
 
-    private fun preparePixproCameraControl(cameraPreference : ICameraPreferenceProvider) : ICameraControl
+    private fun preparePixproCameraControl(cameraPreference : ICameraPreferenceProvider, number : Int) : ICameraControl
     {
-        return (PixproCameraControl(activity, vibrator, informationNotify, cameraPreference, statusReceiver))
+        return (PixproCameraControl(activity, vibrator, informationNotify, cameraPreference, statusReceiver, number))
     }
 
-    private fun prepareOmdsCameraControl(cameraPreference : ICameraPreferenceProvider) : ICameraControl
+    private fun prepareOmdsCameraControl(cameraPreference : ICameraPreferenceProvider, number : Int) : ICameraControl
     {
-        return (OmdsCameraControl(activity, vibrator, informationNotify, cameraPreference, statusReceiver))
+        return (OmdsCameraControl(activity, vibrator, informationNotify, cameraPreference, statusReceiver, number))
     }
 
-    private fun prepareConsolePanelControl(cameraPreference : ICameraPreferenceProvider) : ICameraControl
+    private fun prepareConsolePanelControl(cameraPreference : ICameraPreferenceProvider, number : Int) : ICameraControl
     {
-        return (ConsolePanelControl(activity, vibrator, informationNotify, cameraPreference))
+        return (ConsolePanelControl(activity, vibrator, informationNotify, cameraPreference, number))
     }
 
-    private fun prepareExamplePictureControl(cameraPreference : ICameraPreferenceProvider) : ICameraControl
+    private fun prepareExamplePictureControl(cameraPreference : ICameraPreferenceProvider, number : Int) : ICameraControl
     {
-        return (ExamplePictureControl(activity, vibrator, informationNotify, cameraPreference))
+        return (ExamplePictureControl(activity, vibrator, informationNotify, cameraPreference, number))
     }
 
-    private fun prepareCameraXControl(cameraPreference : ICameraPreferenceProvider): ICameraControl
+    private fun prepareCameraXControl(cameraPreference : ICameraPreferenceProvider, number : Int): ICameraControl
     {
         if ((cameraXisCreated)&&(::cameraXControl0.isInitialized))
         {
@@ -287,7 +289,7 @@ class CameraProvider(private val activity: AppCompatActivity, private val inform
             }
             return (cameraXControl0)
         }
-        cameraXControl0 = CameraControl(activity, cameraPreference, vibrator, informationNotify)
+        cameraXControl0 = CameraControl(activity, cameraPreference, vibrator, informationNotify, number)
         cameraXisCreated = true
         return (cameraXControl0)
     }
