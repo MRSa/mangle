@@ -12,7 +12,6 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnectionStatus.C
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ILiveViewController
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraChangeListener
-import jp.osdn.gokigen.gokigenassets.camera.vendor.CameraControlManager
 import jp.osdn.gokigen.gokigenassets.camera.vendor.ICameraControlManager
 import jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.IPanasonicCameraHolder
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConstantConvert
@@ -208,7 +207,7 @@ class PanasonicCameraConnection(private val context: AppCompatActivity, private 
         Log.v(TAG, "disconnectFromCamera() $powerOff")
         try
         {
-            cameraExecutor.execute(PanasonicCameraDisconnectSequence(context, powerOff))
+            cameraExecutor.execute(PanasonicCameraDisconnectSequence(context, powerOff, cameraManager, number))
         }
         catch (e: Exception)
         {
@@ -230,7 +229,9 @@ class PanasonicCameraConnection(private val context: AppCompatActivity, private 
                     statusReceiver,
                     this,
                     cameraHolder,
-                    listener
+                    listener,
+                    cameraManager,
+                    number
                 )
             )
         } catch (e: Exception) {

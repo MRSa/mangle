@@ -10,7 +10,6 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraChangeListener
 import jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.IPanasonicCamera
 import jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.IPanasonicCameraHolder
 import jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.connection.PanasonicCameraConnection
-import jp.osdn.gokigen.gokigenassets.camera.vendor.CameraControlManager
 import jp.osdn.gokigen.gokigenassets.camera.vendor.ICameraControlManager
 import jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.liveview.PanasonicLiveViewControl
 import jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.operation.PanasonicCameraCaptureControl
@@ -66,7 +65,7 @@ class PanasonicCameraControl(private val context: AppCompatActivity, private val
                 }
                 if (liveViewControl == null)
                 {
-                    liveViewControl = PanasonicLiveViewControl(liveViewListener, panasonicCamera, statusChecker.getCameraStatusEventObserver())
+                    liveViewControl = PanasonicLiveViewControl(liveViewListener, panasonicCamera, statusChecker.getCameraStatusEventObserver(), number)
                 }
                 focusControl?.setCamera(panasonicCamera)
                 captureControl?.setCamera(panasonicCamera)

@@ -7,11 +7,10 @@ import jp.osdn.gokigen.gokigenassets.liveview.image.CameraLiveViewListenerImpl
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
 import java.net.DatagramPacket
 import java.net.DatagramSocket
-import java.util.*
 
-
-class PanasonicLiveViewControl(private val liveViewListener : CameraLiveViewListenerImpl, private val camera: IPanasonicCamera, private val eventObserver: ICameraEventObserver)
+class PanasonicLiveViewControl(private val liveViewListener : CameraLiveViewListenerImpl, private val camera: IPanasonicCamera, private val eventObserver: ICameraEventObserver, number: Int)
 {
+    private val liveViewPortNumber = 49151 + number   // Base : 49152
     private var receiverSocket: DatagramSocket? = null
     private var whileStreamReceive = false
     private var errorOccur = 0
@@ -23,16 +22,15 @@ class PanasonicLiveViewControl(private val liveViewListener : CameraLiveViewList
         private const val ERROR_MAX = 30
         private const val RECEIVE_BUFFER_SIZE = 1024 * 1024 * 4
         private const val TIMEOUT_MS = 1500
-        private const val LIVEVIEW_PORT = 49152
-        private const val LIVEVIEW_START_REQUEST = "cam.cgi?mode=startstream&value=49152"
+        //private const val LIVEVIEW_PORT = 49152
+        //private const val LIVEVIEW_START_REQUEST = "cam.cgi?mode=startstream&value=49152"
+        private const val LIVEVIEW_START_REQUEST = "cam.cgi?mode=startstream&value="
         private const val LIVEVIEW_STOP_REQUEST = "cam.cgi?mode=stopstream"
     }
 
-    fun changeLiveViewSize(size: String?) {}
-
     fun startLiveView()
     {
-        Log.v(TAG, "startLiveView()")
+        Log.v(TAG, "startLiveView() port: $liveViewPortNumber")
         try
         {
             val thread = Thread(Runnable {
@@ -45,7 +43,7 @@ class PanasonicLiveViewControl(private val liveViewListener : CameraLiveViewList
                         return@Runnable
                     }
                     val http = SimpleHttpClient()
-                    val requestUrl = camera.getCmdUrl() + LIVEVIEW_START_REQUEST
+                    val requestUrl = camera.getCmdUrl() + LIVEVIEW_START_REQUEST + liveViewPortNumber
                     val reply: String = http.httpGet(requestUrl, TIMEOUT_MS)
                     if (!reply.contains("<result>ok</result>"))
                     {
@@ -124,6 +122,7 @@ class PanasonicLiveViewControl(private val liveViewListener : CameraLiveViewList
         }
     }
 
+    fun changeLiveViewSize(size: String?) {}
     fun updateDigitalZoom() {}
     fun updateMagnifyingLiveViewScale(isChangeScale: Boolean) {}
     fun getMagnifyingLiveViewScale(): Float { return 1.0f }
@@ -140,7 +139,7 @@ class PanasonicLiveViewControl(private val liveViewListener : CameraLiveViewList
         // ソケットをあける (UDP)
         try
         {
-            receiverSocket = DatagramSocket(LIVEVIEW_PORT)
+            receiverSocket = DatagramSocket(liveViewPortNumber)
             whileStreamReceive = true
         }
         catch (e: Exception)
@@ -168,24 +167,24 @@ class PanasonicLiveViewControl(private val liveViewListener : CameraLiveViewList
         var searchIndex = 0
         var startPosition = 0
         //val startmarker = intArrayOf(0xff, 0xd8)
-        val startmarker = byteArrayOf(0xff.toByte(), 0xd8.toByte())
+        val startMarker = byteArrayOf(0xff.toByte(), 0xd8.toByte())
         val receivedData: ByteArray = packet.data
-        if (receivedData == null)
-        {
-            // 受信データが取れなかったので終了する
-            Log.v(TAG, "RECEIVED DATA IS NULL...")
-            return
-        }
+        //if (receivedData == null)
+        //{
+        //    // 受信データが取れなかったので終了する
+        //    Log.v(TAG, "RECEIVED DATA IS NULL...")
+        //    return
+        //}
         // Log.v(TAG, "RECEIVED PACKET : " + dataLength);
         while (startPosition < dataLength)
         {
             // 先頭のjpegマーカーが出てくるまで読み飛ばす
             try
             {
-                if (receivedData[startPosition++] == startmarker[searchIndex])
+                if (receivedData[startPosition++] == startMarker[searchIndex])
                 {
                     searchIndex++
-                    if (searchIndex >= startmarker.size)
+                    if (searchIndex >= startMarker.size)
                     {
                         break
                     }
@@ -201,7 +200,7 @@ class PanasonicLiveViewControl(private val liveViewListener : CameraLiveViewList
                 return
             }
         }
-        val offset = startPosition - startmarker.size
+        val offset = startPosition - startMarker.size
         if (offset > 0)
         {
             eventObserver.receivedEvent(receivedData.copyOfRange(0, offset))
@@ -217,12 +216,12 @@ class PanasonicLiveViewControl(private val liveViewListener : CameraLiveViewList
         {
             try
             {
-                val receive_packet = DatagramPacket(buffer, buffer.size)
+                val receivePacket = DatagramPacket(buffer, buffer.size)
                 if (receiverSocket != null)
                 {
                     receiverSocket?.soTimeout = TIMEOUT_MS
-                    receiverSocket?.receive(receive_packet)
-                    checkReceiveImage(receive_packet)
+                    receiverSocket?.receive(receivePacket)
+                    checkReceiveImage(receivePacket)
                     exceptionCount = 0
                 }
                 else
@@ -241,7 +240,7 @@ class PanasonicLiveViewControl(private val liveViewListener : CameraLiveViewList
                         Log.v(TAG, "LV : RETRY REQUEST")
                         exceptionCount = 0
                         val http = SimpleHttpClient()
-                        val reply: String = http.httpGet(camera.getCmdUrl() + LIVEVIEW_START_REQUEST, TIMEOUT_MS)
+                        val reply: String = http.httpGet(camera.getCmdUrl() + LIVEVIEW_START_REQUEST + liveViewPortNumber, TIMEOUT_MS)
                         if (!reply.contains("ok"))
                         {
                             Log.v(TAG, "LV : RETRY COMMAND FAIL...")

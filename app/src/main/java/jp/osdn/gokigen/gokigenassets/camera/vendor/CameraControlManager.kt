@@ -5,7 +5,7 @@ import jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.IPanasonicCamera
 
 class CameraControlManager : ICameraControlManager
 {
-    private val panasonicCameraDeviceMap = mutableMapOf<Int, IPanasonicCamera>()
+    private val panasonicCameraDeviceMap = mutableMapOf<Int, String>()
 
     override fun isAlreadyAssignedCameraControl(number: Int): Boolean
     {
@@ -32,12 +32,12 @@ class CameraControlManager : ICameraControlManager
         }
     }
 
-    override fun assignPanasonicCamera(number: Int, cameraDevice: IPanasonicCamera)
+    override fun assignCameraControl(number: Int, deviceId: String)
     {
         try
         {
-            Log.v(TAG, "assignPanasonicCamera($number, cameraDevice)")
-            panasonicCameraDeviceMap[number] = cameraDevice
+            Log.v(TAG, "assignPanasonicCamera($number, $deviceId)")
+            panasonicCameraDeviceMap[number] = deviceId
         }
         catch (e: Exception)
         {
@@ -45,11 +45,11 @@ class CameraControlManager : ICameraControlManager
         }
     }
 
-    override fun isAssignedPanasonicCamera(cameraDevice: IPanasonicCamera): Boolean
+    override fun isAssignedCameraControl(deviceId: String): Boolean
     {
         try
         {
-            return (panasonicCameraDeviceMap.containsValue(cameraDevice))
+            return (panasonicCameraDeviceMap.containsValue(deviceId))
         }
         catch (e: Exception)
         {

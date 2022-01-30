@@ -3,6 +3,7 @@ package jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.connection
 import android.content.Context
 import android.util.Log
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
+import jp.osdn.gokigen.gokigenassets.camera.vendor.ICameraControlManager
 import jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.IPanasonicCamera
 import jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.wrapper.PanasonicCameraDeviceProvider
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConstantConvert.Companion.ID_STRING_CAMERA_NOT_FOUND
@@ -20,7 +21,7 @@ import java.nio.charset.Charset
 import kotlin.collections.ArrayList
 
 
-class PanasonicSsdpClient(private val context: Context, private val callback: ISearchResultCallback, private val cameraStatusReceiver: ICameraStatusReceiver, private var sendRepeatCount: Int = 0)
+class PanasonicSsdpClient(private val context: Context, private val callback: ISearchResultCallback, private val cameraStatusReceiver: ICameraStatusReceiver, private val cameraManager: ICameraControlManager, private val number : Int, private var sendRepeatCount: Int = 0)
 {
     companion object
     {
@@ -95,18 +96,19 @@ class PanasonicSsdpClient(private val context: Context, private val callback: IS
                 socket.soTimeout = SSDP_RECEIVE_TIMEOUT
                 socket.receive(receivePacket)
                 val ssdpReplyMessage = String(receivePacket.getData(), 0, receivePacket.length, Charset.forName("UTF-8"))
-                var ddUsn: String?
+                var ddUsn: String
                 if (ssdpReplyMessage.contains("HTTP/1.1 200"))
                 {
                     ddUsn = findParameterValue(ssdpReplyMessage, "USN")
+                    Log.v(TAG, "- - - - - - - USN : $ddUsn")
                     cameraStatusReceiver.onStatusNotify(context.getString(ID_STRING_CONNECT_CAMERA_RECEIVED_REPLY))
-                    if (!foundDevices.contains(ddUsn))
+                    if ((ddUsn.isNotEmpty())&&(!foundDevices.contains(ddUsn))&&(!cameraManager.isAssignedCameraControl(ddUsn)))
                     {
                         val ddLocation = findParameterValue(ssdpReplyMessage, "LOCATION")
                         foundDevices.add(ddUsn)
 
                         //// Fetch Device Description XML and parse it.
-                        if (ddLocation != null)
+                        if (ddLocation.isNotEmpty())
                         {
                             val http = SimpleHttpClient()
                             cameraStatusReceiver.onStatusNotify("LOCATION : $ddLocation")
@@ -119,8 +121,7 @@ class PanasonicSsdpClient(private val context: Context, private val callback: IS
                                 var retryTimeout = 3
                                 val registUrl =
                                     device.getCmdUrl() + "cam.cgi?mode=accctrl&type=req_acc&value=" + device.getClientDeviceUuId() + "&value2=GOKIGEN_a01Series"
-                                var reply: String =
-                                    http.httpGet(registUrl, SSDP_RECEIVE_TIMEOUT)
+                                var reply: String = http.httpGet(registUrl, SSDP_RECEIVE_TIMEOUT)
                                 while (retryTimeout > 0 && reply.contains("ok_under_research_no_msg")) {
                                     try
                                     {
@@ -136,8 +137,10 @@ class PanasonicSsdpClient(private val context: Context, private val callback: IS
                                 }
                                 if (reply.contains("ok"))
                                 {
+                                    cameraManager.assignCameraControl(number, ddUsn)
                                     callback.onDeviceFound(device)
                                     // カメラと接続できた場合は breakする
+                                    Log.v(TAG, "  assignCameraControl execution Result: " + cameraManager.isAssignedCameraControl(ddUsn))
                                     break
                                 }
                                 // 接続(デバイス登録)エラー...
@@ -187,7 +190,7 @@ class PanasonicSsdpClient(private val context: Context, private val callback: IS
         callback.onFinished()
     }
 
-    private fun findParameterValue(ssdpMessage: String, paramName: String): String?
+    private fun findParameterValue(ssdpMessage: String, paramName: String): String
     {
         var name = paramName
         if (!name.endsWith(":"))
@@ -208,7 +211,7 @@ class PanasonicSsdpClient(private val context: Context, private val callback: IS
                 e.printStackTrace()
             }
         }
-        return null
+        return ("")
     }
 
     /**
