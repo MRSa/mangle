@@ -289,17 +289,20 @@ class CameraLiveViewListenerImpl(private val context: Context,  private val info
                 cachePics.removeAt(0)
             }
             cachePics.add(MyImageByteArray(byteArray, rotationDegrees))
-            if ((maxCachePics > 0)&&(cachePics.size != maxCachePics))
+            if (maxCachePics > 0)
             {
-                Log.v(TAG, " -=-=- image cache : ${cachePics.size} / $maxCachePics")
-                informationReceiver.updateMessage("cache:${cachePics.size}/$maxCachePics")
-            }
-            else
-            {
-                if (!cacheIsFull)
+                if (cachePics.size != maxCachePics)
                 {
-                    informationReceiver.updateMessage("")
-                    cacheIsFull = true
+                    Log.v(TAG, " -=-=- image cache : ${cachePics.size} / $maxCachePics")
+                    informationReceiver.updateMessage("cache:${cachePics.size}/$maxCachePics")
+                }
+                else
+                {
+                    if (!cacheIsFull)
+                    {
+                        informationReceiver.updateMessage("")
+                        cacheIsFull = true
+                    }
                 }
             }
         }

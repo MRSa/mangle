@@ -1,11 +1,12 @@
 package jp.osdn.gokigen.gokigenassets.camera.vendor
 
 import android.util.Log
-import jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.IPanasonicCamera
+import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 
-class CameraControlManager : ICameraControlManager
+class CameraControlCoordinator(private val informationReceiver: IInformationReceiver) : ICameraControlCoordinator
 {
     private val panasonicCameraDeviceMap = mutableMapOf<Int, String>()
+    private val cameraControlInfo = mutableMapOf<Int, String>()
 
     override fun isAlreadyAssignedCameraControl(number: Int): Boolean
     {
@@ -25,6 +26,8 @@ class CameraControlManager : ICameraControlManager
         try
         {
             panasonicCameraDeviceMap.remove(number)
+            cameraControlInfo.remove(number)
+            updateInformation()
         }
         catch (e: Exception)
         {
@@ -38,6 +41,8 @@ class CameraControlManager : ICameraControlManager
         {
             Log.v(TAG, "assignPanasonicCamera($number, $deviceId)")
             panasonicCameraDeviceMap[number] = deviceId
+            cameraControlInfo[number] = "$number "
+            updateInformation()
         }
         catch (e: Exception)
         {
@@ -58,8 +63,20 @@ class CameraControlManager : ICameraControlManager
         return (false)
     }
 
+    private fun updateInformation()
+    {
+        var message = ""
+        for ((k, v) in cameraControlInfo)
+        {
+            message += v
+        }
+        informationReceiver.updateMessage(message)
+
+    }
+
+
     companion object
     {
-        private val TAG = CameraControlManager::class.java.simpleName
+        private val TAG = CameraControlCoordinator::class.java.simpleName
     }
 }

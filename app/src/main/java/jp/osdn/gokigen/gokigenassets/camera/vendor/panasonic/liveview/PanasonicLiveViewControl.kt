@@ -21,7 +21,7 @@ class PanasonicLiveViewControl(private val liveViewListener : CameraLiveViewList
         private const val TIMEOUT_MAX = 3
         private const val ERROR_MAX = 30
         private const val RECEIVE_BUFFER_SIZE = 1024 * 1024 * 4
-        private const val TIMEOUT_MS = 1500
+        private const val TIMEOUT_MS = 3500
         //private const val LIVEVIEW_PORT = 49152
         //private const val LIVEVIEW_START_REQUEST = "cam.cgi?mode=startstream&value=49152"
         private const val LIVEVIEW_START_REQUEST = "cam.cgi?mode=startstream&value="

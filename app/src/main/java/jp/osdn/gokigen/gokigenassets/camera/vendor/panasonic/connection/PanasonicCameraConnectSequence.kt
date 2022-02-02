@@ -6,20 +6,20 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnection
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnectionStatus
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraChangeListener
-import jp.osdn.gokigen.gokigenassets.camera.vendor.ICameraControlManager
+import jp.osdn.gokigen.gokigenassets.camera.vendor.ICameraControlCoordinator
 import jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.IPanasonicCamera
 import jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.IPanasonicCameraHolder
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConstantConvert
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConstantConvert.Companion.ID_STRING_CONNECT_CAMERA_DETECTED
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConstantConvert.Companion.ID_STRING_CONNECT_START
 
-class PanasonicCameraConnectSequence(private val context: AppCompatActivity, private val cameraStatusReceiver: ICameraStatusReceiver, private val cameraConnection: ICameraConnection, private val cameraHolder: IPanasonicCameraHolder, private val listener: ICameraChangeListener, cameraManager: ICameraControlManager, number : Int) : Runnable, PanasonicSsdpClient.ISearchResultCallback
+class PanasonicCameraConnectSequence(private val context: AppCompatActivity, private val cameraStatusReceiver: ICameraStatusReceiver, private val cameraConnection: ICameraConnection, private val cameraHolder: IPanasonicCameraHolder, private val listener: ICameraChangeListener, cameraCoordinator: ICameraControlCoordinator, number : Int) : Runnable, PanasonicSsdpClient.ISearchResultCallback
 {
     companion object
     {
         private val TAG = PanasonicCameraConnectSequence::class.java.simpleName
     }
-    private val client = PanasonicSsdpClient(context, this, cameraStatusReceiver, cameraManager, number, 1)
+    private val client = PanasonicSsdpClient(context, this, cameraStatusReceiver, cameraCoordinator, number, 1)
 
     override fun run()
     {

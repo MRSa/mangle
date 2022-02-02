@@ -12,13 +12,13 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnectionStatus.C
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ILiveViewController
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraChangeListener
-import jp.osdn.gokigen.gokigenassets.camera.vendor.ICameraControlManager
+import jp.osdn.gokigen.gokigenassets.camera.vendor.ICameraControlCoordinator
 import jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.IPanasonicCameraHolder
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConstantConvert
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
-class PanasonicCameraConnection(private val context: AppCompatActivity, private val statusReceiver: ICameraStatusReceiver, private val liveViewControl: ILiveViewController, private val cameraHolder: IPanasonicCameraHolder, private val listener: ICameraChangeListener, private val cameraManager: ICameraControlManager, private val number : Int) : ICameraConnection
+class PanasonicCameraConnection(private val context: AppCompatActivity, private val statusReceiver: ICameraStatusReceiver, private val liveViewControl: ILiveViewController, private val cameraHolder: IPanasonicCameraHolder, private val listener: ICameraChangeListener, private val cameraCoordinator: ICameraControlCoordinator, private val number : Int) : ICameraConnection
 {
     companion object
     {
@@ -207,7 +207,7 @@ class PanasonicCameraConnection(private val context: AppCompatActivity, private 
         Log.v(TAG, "disconnectFromCamera() $powerOff")
         try
         {
-            cameraExecutor.execute(PanasonicCameraDisconnectSequence(context, powerOff, cameraManager, number))
+            cameraExecutor.execute(PanasonicCameraDisconnectSequence(context, powerOff, cameraCoordinator, number))
         }
         catch (e: Exception)
         {
@@ -230,7 +230,7 @@ class PanasonicCameraConnection(private val context: AppCompatActivity, private 
                     this,
                     cameraHolder,
                     listener,
-                    cameraManager,
+                    cameraCoordinator,
                     number
                 )
             )

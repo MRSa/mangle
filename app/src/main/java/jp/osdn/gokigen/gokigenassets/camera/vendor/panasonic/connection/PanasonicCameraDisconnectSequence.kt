@@ -2,9 +2,9 @@ package jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.connection
 
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import jp.osdn.gokigen.gokigenassets.camera.vendor.ICameraControlManager
+import jp.osdn.gokigen.gokigenassets.camera.vendor.ICameraControlCoordinator
 
-class PanasonicCameraDisconnectSequence(private val context: AppCompatActivity, private val powerOff: Boolean, private val cameraManager: ICameraControlManager, private val number : Int) : Runnable
+class PanasonicCameraDisconnectSequence(private val context: AppCompatActivity, private val powerOff: Boolean, private val cameraCoordinator: ICameraControlCoordinator, private val number : Int) : Runnable
 {
     override fun run()
     {
@@ -13,7 +13,7 @@ class PanasonicCameraDisconnectSequence(private val context: AppCompatActivity, 
         try
         {
             // カメラとの接続を切る
-            cameraManager.releaseCameraControl(number)
+            cameraCoordinator.releaseCameraControl(number)
         }
         catch (e: Exception)
         {

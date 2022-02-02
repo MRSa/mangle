@@ -1,6 +1,6 @@
 package jp.osdn.gokigen.gokigenassets.camera.vendor
 
-interface ICameraControlManager
+interface ICameraControlCoordinator
 {
     fun isAlreadyAssignedCameraControl(number: Int) : Boolean
     fun releaseCameraControl(number: Int)

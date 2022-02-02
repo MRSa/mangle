@@ -10,7 +10,7 @@ import jp.osdn.gokigen.gokigenassets.camera.console.ConsolePanelControl
 import jp.osdn.gokigen.gokigenassets.camera.example.ExamplePictureControl
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.*
 import jp.osdn.gokigen.gokigenassets.camera.vendor.omds.OmdsCameraControl
-import jp.osdn.gokigen.gokigenassets.camera.vendor.CameraControlManager
+import jp.osdn.gokigen.gokigenassets.camera.vendor.CameraControlCoordinator
 import jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.wrapper.PanasonicCameraControl
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.PixproCameraControl
 import jp.osdn.gokigen.gokigenassets.camera.vendor.ricohpentax.RicohPentaxCameraControl
@@ -90,7 +90,7 @@ import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.U
 
 class CameraProvider(private val activity: AppCompatActivity, private val informationNotify: IInformationReceiver, private val vibrator : IVibrator, private val statusReceiver : ICameraStatusReceiver)
 {
-    private val cameraManager = CameraControlManager()
+    private val cameraCoordinator = CameraControlCoordinator(informationNotify)
     private var cameraXisCreated = false
     private var isOnlySingleCamera = false
     private lateinit var cameraXControl0: ICameraControl
@@ -230,7 +230,7 @@ class CameraProvider(private val activity: AppCompatActivity, private val inform
 
     private fun preparePanasonicCameraControl(cameraPreference : ICameraPreferenceProvider, number : Int) : ICameraControl
     {
-        return (PanasonicCameraControl(activity, vibrator, informationNotify, cameraPreference, statusReceiver, cameraManager, number))
+        return (PanasonicCameraControl(activity, vibrator, informationNotify, cameraPreference, statusReceiver, cameraCoordinator, number))
     }
 
     private fun prepareSonyCameraControl(cameraPreference : ICameraPreferenceProvider, number : Int) : ICameraControl

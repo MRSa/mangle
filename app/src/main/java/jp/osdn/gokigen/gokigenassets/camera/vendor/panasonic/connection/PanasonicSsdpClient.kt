@@ -3,7 +3,7 @@ package jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.connection
 import android.content.Context
 import android.util.Log
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
-import jp.osdn.gokigen.gokigenassets.camera.vendor.ICameraControlManager
+import jp.osdn.gokigen.gokigenassets.camera.vendor.ICameraControlCoordinator
 import jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.IPanasonicCamera
 import jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.wrapper.PanasonicCameraDeviceProvider
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConstantConvert.Companion.ID_STRING_CAMERA_NOT_FOUND
@@ -21,7 +21,7 @@ import java.nio.charset.Charset
 import kotlin.collections.ArrayList
 
 
-class PanasonicSsdpClient(private val context: Context, private val callback: ISearchResultCallback, private val cameraStatusReceiver: ICameraStatusReceiver, private val cameraManager: ICameraControlManager, private val number : Int, private var sendRepeatCount: Int = 0)
+class PanasonicSsdpClient(private val context: Context, private val callback: ISearchResultCallback, private val cameraStatusReceiver: ICameraStatusReceiver, private val cameraCoordinator: ICameraControlCoordinator, private val number : Int, private var sendRepeatCount: Int = 0)
 {
     companion object
     {
@@ -102,7 +102,7 @@ class PanasonicSsdpClient(private val context: Context, private val callback: IS
                     ddUsn = findParameterValue(ssdpReplyMessage, "USN")
                     Log.v(TAG, "- - - - - - - USN : $ddUsn")
                     cameraStatusReceiver.onStatusNotify(context.getString(ID_STRING_CONNECT_CAMERA_RECEIVED_REPLY))
-                    if ((ddUsn.isNotEmpty())&&(!foundDevices.contains(ddUsn))&&(!cameraManager.isAssignedCameraControl(ddUsn)))
+                    if ((ddUsn.isNotEmpty())&&(!foundDevices.contains(ddUsn))&&(!cameraCoordinator.isAssignedCameraControl(ddUsn)))
                     {
                         val ddLocation = findParameterValue(ssdpReplyMessage, "LOCATION")
                         foundDevices.add(ddUsn)
@@ -137,10 +137,10 @@ class PanasonicSsdpClient(private val context: Context, private val callback: IS
                                 }
                                 if (reply.contains("ok"))
                                 {
-                                    cameraManager.assignCameraControl(number, ddUsn)
+                                    cameraCoordinator.assignCameraControl(number, ddUsn)
                                     callback.onDeviceFound(device)
                                     // カメラと接続できた場合は breakする
-                                    Log.v(TAG, "  assignCameraControl execution Result: " + cameraManager.isAssignedCameraControl(ddUsn))
+                                    Log.v(TAG, "  assignCameraControl execution Result: " + cameraCoordinator.isAssignedCameraControl(ddUsn))
                                     break
                                 }
                                 // 接続(デバイス登録)エラー...
