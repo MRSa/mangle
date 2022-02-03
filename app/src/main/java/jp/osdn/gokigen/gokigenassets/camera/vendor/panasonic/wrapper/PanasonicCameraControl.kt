@@ -29,7 +29,7 @@ import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
 
-class PanasonicCameraControl(private val context: AppCompatActivity, private val vibrator : IVibrator, informationNotify: IInformationReceiver, private val preference: ICameraPreferenceProvider, provider: ICameraStatusReceiver, cameraCoordinator: ICameraControlCoordinator, private val number: Int) : IPanasonicCameraHolder, IDisplayInjector,ILiveViewController, ICameraControl, View.OnClickListener, View.OnLongClickListener, ICameraShutter, IKeyDown
+class PanasonicCameraControl(private val context: AppCompatActivity, private val vibrator : IVibrator, informationNotify: IInformationReceiver, private val preference: ICameraPreferenceProvider, provider: ICameraStatusReceiver, private val cameraCoordinator: ICameraControlCoordinator, private val number: Int) : IPanasonicCameraHolder, IDisplayInjector,ILiveViewController, ICameraControl, View.OnClickListener, View.OnLongClickListener, ICameraShutter, IKeyDown
 {
     private val cardSlotSelector = PanasonicCardSlotSelector()
     private val liveViewListener = CameraLiveViewListenerImpl(context, informationNotify)
@@ -50,6 +50,7 @@ class PanasonicCameraControl(private val context: AppCompatActivity, private val
     {
         private val TAG = PanasonicCameraControl::class.java.simpleName
         private const val TIMEOUT_MS = 3000
+        private const val CONNECT_DELAY_MS : Long = 350
     }
 
     override fun prepare()
@@ -182,6 +183,18 @@ class PanasonicCameraControl(private val context: AppCompatActivity, private val
         Log.v(TAG, " connectToCamera() : PANASONIC ")
         try
         {
+            while (cameraCoordinator.isOtherCameraConnecting(number))
+            {
+                try
+                {
+                    Thread.sleep(CONNECT_DELAY_MS)
+                }
+                catch (e: Exception)
+                {
+                    e.printStackTrace()
+                }
+            }
+            cameraCoordinator.startConnectToCamera(number)
             cameraConnection.connect()
         }
         catch (e : Exception)

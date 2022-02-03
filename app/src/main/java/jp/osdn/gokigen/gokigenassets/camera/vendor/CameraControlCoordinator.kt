@@ -7,6 +7,17 @@ class CameraControlCoordinator(private val informationReceiver: IInformationRece
 {
     private val panasonicCameraDeviceMap = mutableMapOf<Int, String>()
     private val cameraControlInfo = mutableMapOf<Int, String>()
+    private var connectingCameraNumber = -1
+
+    override fun startConnectToCamera(number: Int)
+    {
+        connectingCameraNumber = number
+    }
+
+    override fun isOtherCameraConnecting(number: Int): Boolean
+    {
+        return (connectingCameraNumber != number)
+    }
 
     override fun isAlreadyAssignedCameraControl(number: Int): Boolean
     {
@@ -25,6 +36,7 @@ class CameraControlCoordinator(private val informationReceiver: IInformationRece
     {
         try
         {
+            connectingCameraNumber = -1
             panasonicCameraDeviceMap.remove(number)
             cameraControlInfo.remove(number)
             updateInformation()
@@ -40,6 +52,7 @@ class CameraControlCoordinator(private val informationReceiver: IInformationRece
         try
         {
             Log.v(TAG, "assignPanasonicCamera($number, $deviceId)")
+            connectingCameraNumber = -1
             panasonicCameraDeviceMap[number] = deviceId
             cameraControlInfo[number] = "$number "
             updateInformation()
@@ -73,7 +86,6 @@ class CameraControlCoordinator(private val informationReceiver: IInformationRece
         informationReceiver.updateMessage(message)
 
     }
-
 
     companion object
     {
