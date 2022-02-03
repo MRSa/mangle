@@ -79,7 +79,7 @@ class CameraControlCoordinator(private val informationReceiver: IInformationRece
     private fun updateInformation()
     {
         var message = ""
-        for ((k, v) in cameraControlInfo)
+        for ((_, v) in cameraControlInfo)
         {
             message += v
         }
