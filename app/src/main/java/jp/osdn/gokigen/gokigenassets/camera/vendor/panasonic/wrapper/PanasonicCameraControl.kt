@@ -142,32 +142,6 @@ class PanasonicCameraControl(private val context: AppCompatActivity, private val
         panasonicCamera = camera
     }
 
-/*
-    fun getPanasonicCameraConnection(): ICameraConnection
-    {
-        return (cameraConnection)
-    }
-
-    fun getFocusingControl(): IFocusingControl?
-    {
-        return focusControl
-    }
-
-    fun getCameraInformation(): ICameraInformation?
-    {
-        return null
-    }
-
-    fun getZoomLensControl(): IZoomLensControl?
-    {
-        return zoomControl
-    }
-
-    fun getCaptureControl(): ICaptureControl?
-    {
-        return captureControl
-    }
-*/
     override fun getConnectionMethod(): String
     {
         return ("PANASONIC")
@@ -359,7 +333,6 @@ class PanasonicCameraControl(private val context: AppCompatActivity, private val
         }
     }
 
-
     override fun doShutter()
     {
         try
@@ -442,6 +415,7 @@ class PanasonicCameraControl(private val context: AppCompatActivity, private val
     }
 
     override fun setNeighborCameraControl(camera0: ICameraControl?, camera1: ICameraControl?, camera2: ICameraControl?, camera3: ICameraControl?) { }
+
     override fun getCameraStatus(): ICameraStatus?
     {
         if (!::statusChecker.isInitialized)

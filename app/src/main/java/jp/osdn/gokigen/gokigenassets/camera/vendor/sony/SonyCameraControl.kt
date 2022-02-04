@@ -6,6 +6,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import jp.osdn.gokigen.gokigenassets.camera.preference.ICameraPreferenceProvider
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.*
+import jp.osdn.gokigen.gokigenassets.camera.vendor.ICameraControlCoordinator
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert
 import jp.osdn.gokigen.gokigenassets.liveview.ICachePositionProvider
 import jp.osdn.gokigen.gokigenassets.liveview.IIndicatorControl
@@ -33,12 +34,12 @@ import org.json.JSONObject
 import kotlin.collections.ArrayList
 
 
-class SonyCameraControl(private val context: AppCompatActivity, private val vibrator : IVibrator, private val informationNotify : IInformationReceiver, private val preference: ICameraPreferenceProvider, provider: ICameraStatusReceiver, private val number : Int = 0) : ISonyCameraHolder,
+class SonyCameraControl(private val context: AppCompatActivity, private val vibrator : IVibrator, private val informationNotify : IInformationReceiver, private val preference: ICameraPreferenceProvider, provider: ICameraStatusReceiver, private val cameraCoordinator: ICameraControlCoordinator, private val number : Int = 0) : ISonyCameraHolder,
     IDisplayInjector, ICameraControl, View.OnClickListener, View.OnLongClickListener, ICameraShutter, IKeyDown
 {
     private val sonyCameraStatus = SonyStatus(JSONObject())
     private val liveViewListener = CameraLiveViewListenerImpl(context, informationNotify)
-    private val cameraConnection = SonyCameraConnection(context, provider, this)
+    private val cameraConnection = SonyCameraConnection(context, provider, this, cameraCoordinator, number)
     private val storeImage = StoreImage(context, liveViewListener)
 
     private lateinit var cachePositionProvider : ICachePositionProvider
@@ -50,12 +51,13 @@ class SonyCameraControl(private val context: AppCompatActivity, private val vibr
     private lateinit var captureControl: SonyCameraCaptureControl
 
     private val zoomControl = SonyCameraZoomLensControl()
-    private var isStatusWatch = false
+    //private var isStatusWatch = false
     private var cameraPositionId = 0
 
     companion object
     {
         private val TAG = SonyCameraControl::class.java.simpleName
+        private const val CONNECT_DELAY_MS : Long = 350
     }
 
     override fun prepare()
@@ -177,6 +179,18 @@ class SonyCameraControl(private val context: AppCompatActivity, private val vibr
         Log.v(TAG, " connectToCamera() : SONY ")
         try
         {
+            while (cameraCoordinator.isOtherCameraConnecting(number))
+            {
+                try
+                {
+                    Thread.sleep(CONNECT_DELAY_MS)
+                }
+                catch (e: Exception)
+                {
+                    e.printStackTrace()
+                }
+            }
+            cameraCoordinator.startConnectToCamera(number)
             cameraConnection.connect()
         }
         catch (e : Exception)
@@ -208,17 +222,13 @@ class SonyCameraControl(private val context: AppCompatActivity, private val vibr
     {
         try
         {
-            if (isStatusWatch)
+            if (::eventObserver.isInitialized)
             {
-                if (::eventObserver.isInitialized)
-                {
-                    eventObserver.stop()
-                }
-                isStatusWatch = false
-                if (::liveViewControl.isInitialized)
-                {
-                    liveViewControl.stopLiveView()
-                }
+                eventObserver.stop()
+            }
+            if (::liveViewControl.isInitialized)
+            {
+                liveViewControl.stopLiveView()
             }
             cameraConnection.disconnect(false)
             cameraConnection.stopWatchWifiStatus(context)
@@ -232,7 +242,6 @@ class SonyCameraControl(private val context: AppCompatActivity, private val vibr
     override fun changeCaptureMode(mode: String)
     {
         Log.v(TAG, " --- changeCaptureMode(mode: $mode)")
-        // TODO("Not yet implemented")
     }
 
     override fun needRotateImage(): Boolean
@@ -289,52 +298,6 @@ class SonyCameraControl(private val context: AppCompatActivity, private val vibr
         focusControl = SonyCameraFocusControl(frameDisplayer, indicator)
         captureControl = SonyCameraCaptureControl(frameDisplayer, indicator)
     }
-/*
-    override fun startLiveView(isCameraScreen: Boolean)
-    {
-        Log.v(TAG, " startLiveView($isCameraScreen) ")
-        try
-        {
-            if (!isStatusWatch)
-            {
-                if (::eventObserver.isInitialized)
-                {
-                    eventObserver.activate()
-                    eventObserver.start()
-                    val holder = eventObserver.getCameraStatusHolder()
-                    holder?.getLiveviewStatus()
-                    isStatusWatch = true
-                }
-            }
-            liveViewControl.startLiveView()
-        }
-        catch (e : Exception)
-        {
-            e.printStackTrace()
-        }
-    }
-
-    override fun stopLiveView()
-    {
-        Log.v(TAG, " stopLiveView() ")
-        try
-        {
-            liveViewControl.stopLiveView()
-            if (isStatusWatch)
-            {
-                if (::eventObserver.isInitialized)
-                {
-                    eventObserver.stop()
-                    isStatusWatch = false
-                }
-            }
-        }
-        catch (e : Exception)
-        {
-            e.printStackTrace()
-        }
-    }
-*/
 
     override fun onClick(v: View?)
     {
@@ -452,6 +415,7 @@ class SonyCameraControl(private val context: AppCompatActivity, private val vibr
     }
 
     override fun setNeighborCameraControl(camera0: ICameraControl?, camera1: ICameraControl?, camera2: ICameraControl?, camera3: ICameraControl?) { }
+
     override fun getCameraStatus(): ICameraStatus
     {
         return (sonyCameraStatus)

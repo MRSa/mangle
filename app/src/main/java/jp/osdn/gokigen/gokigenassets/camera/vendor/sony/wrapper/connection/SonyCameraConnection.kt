@@ -11,12 +11,13 @@ import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnection
+import jp.osdn.gokigen.gokigenassets.camera.vendor.ICameraControlCoordinator
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConstantConvert
 import java.lang.Exception
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
-class SonyCameraConnection(private val context: AppCompatActivity, private val statusReceiver: ICameraStatusReceiver, private val cameraHolder: ISonyCameraHolder) : ICameraConnection
+class SonyCameraConnection(private val context: AppCompatActivity, private val statusReceiver: ICameraStatusReceiver, private val cameraHolder: ISonyCameraHolder, private val cameraCoordinator: ICameraControlCoordinator, private val number : Int) : ICameraConnection
 {
     companion object
     {
@@ -190,7 +191,7 @@ class SonyCameraConnection(private val context: AppCompatActivity, private val s
         Log.v(TAG, "disconnectFromCamera()")
         try
         {
-            cameraExecutor.execute(SonyCameraDisconnectSequence(context, powerOff))
+            cameraExecutor.execute(SonyCameraDisconnectSequence(context, powerOff, cameraCoordinator, number))
         }
         catch (e: Exception)
         {
@@ -207,7 +208,7 @@ class SonyCameraConnection(private val context: AppCompatActivity, private val s
         connectionStatus = CameraConnectionStatus.CONNECTING
         try
         {
-            cameraExecutor.execute(SonyCameraConnectSequence(context, statusReceiver, this, cameraHolder))
+            cameraExecutor.execute(SonyCameraConnectSequence(context, statusReceiver, this, cameraHolder, cameraCoordinator, number))
         }
         catch (e: Exception)
         {

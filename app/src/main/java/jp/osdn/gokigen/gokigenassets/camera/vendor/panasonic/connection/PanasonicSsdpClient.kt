@@ -218,7 +218,7 @@ class PanasonicSsdpClient(private val context: Context, private val callback: IS
      *
      *
      */
-    fun searchPanasonicCameraDevice(ddUrl: String): IPanasonicCamera?
+    private fun searchPanasonicCameraDevice(ddUrl: String): IPanasonicCamera?
     {
         var device: PanasonicCameraDeviceProvider? = null
         val ddXml: String

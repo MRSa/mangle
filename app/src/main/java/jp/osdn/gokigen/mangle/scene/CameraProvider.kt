@@ -235,7 +235,7 @@ class CameraProvider(private val activity: AppCompatActivity, private val inform
 
     private fun prepareSonyCameraControl(cameraPreference : ICameraPreferenceProvider, number : Int) : ICameraControl
     {
-        return (SonyCameraControl(activity, vibrator, informationNotify, cameraPreference, statusReceiver, number))
+        return (SonyCameraControl(activity, vibrator, informationNotify, cameraPreference, statusReceiver, cameraCoordinator, number))
     }
 
     private fun preparePixproCameraControl(cameraPreference : ICameraPreferenceProvider, number : Int) : ICameraControl

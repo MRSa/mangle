@@ -6,6 +6,7 @@ import jp.osdn.gokigen.gokigenassets.camera.vendor.sony.wrapper.ISonyCamera
 import jp.osdn.gokigen.gokigenassets.camera.vendor.sony.wrapper.ISonyCameraHolder
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnection
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
+import jp.osdn.gokigen.gokigenassets.camera.vendor.ICameraControlCoordinator
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConstantConvert.Companion.ID_STRING_CONNECT_CAMERA_FOUND
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConstantConvert.Companion.ID_STRING_CONNECT_CONNECTED
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConstantConvert.Companion.ID_STRING_CONNECT_START
@@ -14,9 +15,11 @@ import java.lang.Exception
 class SonyCameraConnectSequence(private val context: AppCompatActivity,
                                 private val cameraStatusReceiver: ICameraStatusReceiver,
                                 private val cameraConnection: ICameraConnection?,
-                                private val cameraHolder: ISonyCameraHolder) : Runnable, SonySsdpClient.ISearchResultCallback
+                                private val cameraHolder: ISonyCameraHolder,
+                                cameraCoordinator: ICameraControlCoordinator,
+                                number : Int) : Runnable, SonySsdpClient.ISearchResultCallback
 {
-    private var client = SonySsdpClient(context, this, cameraStatusReceiver, 1)
+    private var client = SonySsdpClient(context, this, cameraStatusReceiver,cameraCoordinator, number, 1)
 
     companion object
     {
