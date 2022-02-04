@@ -72,10 +72,15 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
         return (isActive)
     }
 
-    fun setCameraControl(informationReceiver: IInformationReceiver, isCameraControl0 : Boolean, cameraControl0 : ICameraControl, isCameraControl1 : Boolean, cameraControl1 : ICameraControl, isCameraControl2 : Boolean, cameraControl2 : ICameraControl, isCameraControl3 : Boolean, cameraControl3 : ICameraControl)
+    fun setCameraControlFinished(informationReceiver: IInformationReceiver)
     {
         this.informationReceiver = informationReceiver
+        updateCameraLayout()
+    }
 
+    fun setCameraControl(index: Int, isCameraControl0 : Boolean, cameraControl0 : ICameraControl, isCameraControl1 : Boolean, cameraControl1 : ICameraControl, isCameraControl2 : Boolean, cameraControl2 : ICameraControl, isCameraControl3 : Boolean, cameraControl3 : ICameraControl)
+    {
+        Log.v(TAG, "setCameraControl($index) => $isCameraControl0, $isCameraControl1, $isCameraControl2, $isCameraControl3")
         this.isCameraControl0 = isCameraControl0
         this.cameraControl0 = cameraControl0
 
@@ -100,7 +105,6 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
         cameraControl3.setNeighborCameraControl(0, cameraControl0, cameraControl1, cameraControl2, cameraControl3)
         cameraControl3.setNeighborCameraControlFinished()
 
-        updateCameraLayout()
     }
 
     @SuppressLint("ClickableViewAccessibility")

@@ -84,7 +84,8 @@ class SceneChanger(private val activity: AppCompatActivity, private val informat
             val isEnableCamera4 = cameraControl4.getConnectionMethod() != "NONE"
 
             liveviewFragment = LiveImageViewFragment.newInstance()
-            liveviewFragment.setCameraControl(informationNotify, isEnableCamera1, cameraControl1, isEnableCamera2, cameraControl2, isEnableCamera3, cameraControl3, isEnableCamera4, cameraControl4)
+            liveviewFragment.setCameraControl(0, isEnableCamera1, cameraControl1, isEnableCamera2, cameraControl2, isEnableCamera3, cameraControl3, isEnableCamera4, cameraControl4)
+            liveviewFragment.setCameraControlFinished(informationNotify)
         }
         setDefaultFragment(liveviewFragment)
 
@@ -139,12 +140,13 @@ class SceneChanger(private val activity: AppCompatActivity, private val informat
             val isEnableCamera4 = cameraControl4.getConnectionMethod() != "NONE"
             liveviewFragment = LiveImageViewFragment.newInstance()
             liveviewFragment.setCameraControl(
-                informationNotify,
+                0,
                 isEnableCamera1, cameraControl1,
                 isEnableCamera2, cameraControl2,
                 isEnableCamera3, cameraControl3,
                 isEnableCamera4, cameraControl4
             )
+            liveviewFragment.setCameraControlFinished(informationNotify)
         }
         changeFragment(liveviewFragment)
     }
