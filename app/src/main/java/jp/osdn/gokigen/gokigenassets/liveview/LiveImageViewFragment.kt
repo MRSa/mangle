@@ -88,10 +88,17 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
         this.isCameraControl3 = isCameraControl3
         this.cameraControl3 = cameraControl3
 
-        cameraControl0.setNeighborCameraControl(cameraControl0, cameraControl1, cameraControl2, cameraControl3)
-        cameraControl1.setNeighborCameraControl(cameraControl0, cameraControl1, cameraControl2, cameraControl3)
-        cameraControl2.setNeighborCameraControl(cameraControl0, cameraControl1, cameraControl2, cameraControl3)
-        cameraControl3.setNeighborCameraControl(cameraControl0, cameraControl1, cameraControl2, cameraControl3)
+        cameraControl0.setNeighborCameraControl(0, cameraControl0, cameraControl1, cameraControl2, cameraControl3)
+        cameraControl0.setNeighborCameraControlFinished()
+
+        cameraControl1.setNeighborCameraControl(0, cameraControl0, cameraControl1, cameraControl2, cameraControl3)
+        cameraControl1.setNeighborCameraControlFinished()
+
+        cameraControl2.setNeighborCameraControl(0, cameraControl0, cameraControl1, cameraControl2, cameraControl3)
+        cameraControl2.setNeighborCameraControlFinished()
+
+        cameraControl3.setNeighborCameraControl(0, cameraControl0, cameraControl1, cameraControl2, cameraControl3)
+        cameraControl3.setNeighborCameraControlFinished()
 
         updateCameraLayout()
     }

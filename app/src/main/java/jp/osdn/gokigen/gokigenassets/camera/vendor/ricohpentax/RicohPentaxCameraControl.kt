@@ -330,7 +330,8 @@ class RicohPentaxCameraControl(private val context: AppCompatActivity, private v
         return (false)
     }
 
-    override fun setNeighborCameraControl(camera0: ICameraControl?, camera1: ICameraControl?, camera2: ICameraControl?, camera3: ICameraControl?) { }
+    override fun setNeighborCameraControl(index: Int, camera0: ICameraControl?, camera1: ICameraControl?, camera2: ICameraControl?, camera3: ICameraControl?) { }
+    override fun setNeighborCameraControlFinished() { }
 
     override fun getCameraStatus(): ICameraStatus
     {

@@ -169,7 +169,8 @@ class PixproCameraControl(private val context: AppCompatActivity, private val vi
         movieControl = MovieShotControl(commandCommunicator, frameDisplayer, statusChecker)
     }
 
-    override fun setNeighborCameraControl(camera0: ICameraControl?, camera1: ICameraControl?, camera2: ICameraControl?, camera3: ICameraControl?) { }
+    override fun setNeighborCameraControl(index: Int, camera0: ICameraControl?, camera1: ICameraControl?, camera2: ICameraControl?, camera3: ICameraControl?) { }
+    override fun setNeighborCameraControlFinished() { }
     override fun getCameraStatus(): ICameraStatus { return (statusChecker) }
 
     override fun onClick(v: View?)

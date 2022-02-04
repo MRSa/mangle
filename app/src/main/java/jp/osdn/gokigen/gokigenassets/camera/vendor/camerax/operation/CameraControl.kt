@@ -356,7 +356,8 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
         clickKeyDownListeners[id] = listener
         return (listener)
     }
-    override fun setNeighborCameraControl(camera0: ICameraControl?, camera1: ICameraControl?, camera2: ICameraControl?, camera3: ICameraControl?) { }
+    override fun setNeighborCameraControl(index: Int, camera0: ICameraControl?, camera1: ICameraControl?, camera2: ICameraControl?, camera3: ICameraControl?) { }
+    override fun setNeighborCameraControlFinished() { }
     override fun getCameraStatus(): ICameraStatus { return (cameraXCameraStatusHolder) }
 
     companion object

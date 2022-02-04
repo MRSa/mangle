@@ -82,7 +82,8 @@ class ExamplePictureControl(private val context: AppCompatActivity, private val 
     override fun doShutter() { }
     override fun doShutterOff() { }
     override fun handleKeyDown(keyCode: Int, event: KeyEvent): Boolean { return (false) }
-    override fun setNeighborCameraControl(camera0: ICameraControl?, camera1: ICameraControl?, camera2: ICameraControl?, camera3: ICameraControl?) { }
+    override fun setNeighborCameraControl(index: Int, camera0: ICameraControl?, camera1: ICameraControl?, camera2: ICameraControl?, camera3: ICameraControl?) { }
+    override fun setNeighborCameraControlFinished() { }
     override fun getCameraStatus(): ICameraStatus { return (this) }
     override fun getStatusList(key: String): List<String?> { return (ArrayList<String>()) }
     override fun getStatus(key: String): String { return ("") }

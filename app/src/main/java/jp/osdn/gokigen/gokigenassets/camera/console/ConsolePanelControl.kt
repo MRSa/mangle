@@ -57,10 +57,16 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
     private var isRefreshLoop = false
     private var currentCameraControlId : Int = -1
     private var currentCameraControl : ICameraControl? = null
+
     private var camera0: ICameraControl? = null
     private var camera1: ICameraControl? = null
     private var camera2: ICameraControl? = null
     private var camera3: ICameraControl? = null
+    private var camera4: ICameraControl? = null
+    private var camera5: ICameraControl? = null
+    private var camera6: ICameraControl? = null
+    private var camera7: ICameraControl? = null
+
     private var canvasWidth : Float = 0.0f
     private var canvasHeight : Float = 0.0f
     private var touchedX : Float = -1.0f
@@ -69,7 +75,7 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
     companion object
     {
         private val TAG = ConsolePanelControl::class.java.simpleName
-        private const val MAX_CONTROL_CAMERAS = 4
+        private const val MAX_CONTROL_CAMERAS = 8
         private const val MARGIN = 10.0f
         private const val sleepMs = 1000L
         private const val NOF_AREA_HORIZONTAL = 3.0f
@@ -112,13 +118,28 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
     override fun getAnotherTouchListener(id : Int) : View.OnTouchListener { return (this) }
     override fun getCameraNumber(): Int { return (number) }
 
-    override fun setNeighborCameraControl(camera0: ICameraControl?, camera1: ICameraControl?, camera2: ICameraControl?, camera3: ICameraControl?)
+    override fun setNeighborCameraControl(index: Int, camera0: ICameraControl?, camera1: ICameraControl?, camera2: ICameraControl?, camera3: ICameraControl?)
     {
-        Log.v(TAG, " setNeighborCameraControl() ")
-        this.camera0 = camera0
-        this.camera1 = camera1
-        this.camera2 = camera2
-        this.camera3 = camera3
+        Log.v(TAG, " setNeighborCameraControl($index) ")
+        if (index == 0)
+        {
+            this.camera0 = camera0
+            this.camera1 = camera1
+            this.camera2 = camera2
+            this.camera3 = camera3
+        }
+        else  // if (index == 1)
+        {
+            this.camera4 = camera0
+            this.camera5 = camera1
+            this.camera6 = camera2
+            this.camera7 = camera3
+        }
+    }
+
+    override fun setNeighborCameraControlFinished()
+    {
+        Log.v(TAG, " setNeighborCameraControlFinished() ")
         decideCameraControl()
     }
 
@@ -622,6 +643,10 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
                 1 -> camera1
                 2 -> camera2
                 3 -> camera3
+                4 -> camera4
+                5 -> camera5
+                6 -> camera6
+                7 -> camera7
                 else -> null
             } ?: return (false)
 
@@ -654,6 +679,10 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
             1 -> camera1
             2 -> camera2
             3 -> camera3
+            4 -> camera4
+            5 -> camera5
+            6 -> camera6
+            7 -> camera7
             else -> null
         }
     }

@@ -23,7 +23,8 @@ class DummyCameraControl(private val number : Int = 0) : ICameraControl, View.On
     override fun keyDownReceiver(id: Int): IKeyDown { return (this) }
     override fun getFocusingControl(id: Int): IFocusingControl? { return (null) }
     override fun getDisplayInjector(): IDisplayInjector? { return (null) }
-    override fun setNeighborCameraControl(camera0: ICameraControl?, camera1: ICameraControl?, camera2: ICameraControl?, camera3: ICameraControl?) { }
+    override fun setNeighborCameraControl(index: Int, camera0: ICameraControl?, camera1: ICameraControl?, camera2: ICameraControl?, camera3: ICameraControl?) { }
+    override fun setNeighborCameraControlFinished() { }
     override fun getCameraStatus(): ICameraStatus { return (this) }
     override fun getCameraNumber(): Int { return (number) }
     override fun onClick(v: View?) { }
