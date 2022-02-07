@@ -37,6 +37,14 @@ import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.P
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_METHOD_3_DEFAULT_VALUE
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_METHOD_4
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_METHOD_4_DEFAULT_VALUE
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_METHOD_5
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_METHOD_5_DEFAULT_VALUE
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_METHOD_6
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_METHOD_6_DEFAULT_VALUE
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_METHOD_7
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_METHOD_7_DEFAULT_VALUE
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_METHOD_8
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_METHOD_8_DEFAULT_VALUE
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION1_1
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION1_1_DEFAULT_VALUE
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION1_2
@@ -45,6 +53,14 @@ import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.P
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION1_3_DEFAULT_VALUE
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION1_4
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION1_4_DEFAULT_VALUE
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION1_5
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION1_5_DEFAULT_VALUE
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION1_6
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION1_6_DEFAULT_VALUE
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION1_7
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION1_7_DEFAULT_VALUE
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION1_8
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION1_8_DEFAULT_VALUE
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION2_1
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION2_1_DEFAULT_VALUE
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION2_2
@@ -53,6 +69,14 @@ import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.P
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION2_3_DEFAULT_VALUE
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION2_4
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION2_4_DEFAULT_VALUE
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION2_5
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION2_5_DEFAULT_VALUE
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION2_6
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION2_6_DEFAULT_VALUE
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION2_7
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION2_7_DEFAULT_VALUE
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION2_8
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION2_8_DEFAULT_VALUE
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION3_1
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION3_1_DEFAULT_VALUE
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION3_2
@@ -61,6 +85,14 @@ import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.P
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION3_3_DEFAULT_VALUE
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION3_4
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION3_4_DEFAULT_VALUE
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION3_5
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION3_5_DEFAULT_VALUE
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION3_6
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION3_6_DEFAULT_VALUE
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION3_7
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION3_7_DEFAULT_VALUE
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION3_8
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION3_8_DEFAULT_VALUE
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION4_1
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION4_1_DEFAULT_VALUE
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION4_2
@@ -69,6 +101,14 @@ import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.P
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION4_3_DEFAULT_VALUE
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION4_4
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION4_4_DEFAULT_VALUE
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION4_5
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION4_5_DEFAULT_VALUE
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION4_6
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION4_6_DEFAULT_VALUE
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION4_7
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION4_7_DEFAULT_VALUE
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION4_8
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION4_8_DEFAULT_VALUE
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION5_1
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION5_1_DEFAULT_VALUE
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION5_2
@@ -77,6 +117,14 @@ import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.P
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION5_3_DEFAULT_VALUE
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION5_4
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION5_4_DEFAULT_VALUE
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION5_5
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION5_5_DEFAULT_VALUE
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION5_6
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION5_6_DEFAULT_VALUE
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION5_7
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION5_7_DEFAULT_VALUE
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION5_8
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_OPTION5_8_DEFAULT_VALUE
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_SEQUENCE_1
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_SEQUENCE_1_DEFAULT_VALUE
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_SEQUENCE_2
@@ -85,6 +133,14 @@ import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.P
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_SEQUENCE_3_DEFAULT_VALUE
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_SEQUENCE_4
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_SEQUENCE_4_DEFAULT_VALUE
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_SEQUENCE_5
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_SEQUENCE_5_DEFAULT_VALUE
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_SEQUENCE_6
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_SEQUENCE_6_DEFAULT_VALUE
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_SEQUENCE_7
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_SEQUENCE_7_DEFAULT_VALUE
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_SEQUENCE_8
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_SEQUENCE_8_DEFAULT_VALUE
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.USE_ONLY_SINGLE_CAMERA_X
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.USE_ONLY_SINGLE_CAMERA_X_DEFAULT_VALUE
 
@@ -97,6 +153,10 @@ class CameraProvider(private val activity: AppCompatActivity, private val inform
     private lateinit var cameraXControl1: ICameraControl
     private lateinit var cameraXControl2: ICameraControl
     private lateinit var cameraXControl3: ICameraControl
+    private lateinit var cameraXControl4: ICameraControl
+    private lateinit var cameraXControl5: ICameraControl
+    private lateinit var cameraXControl6: ICameraControl
+    private lateinit var cameraXControl7: ICameraControl
 
     fun decideCameraControl(preferenceKey : String, number : Int) : ICameraControl
     {
@@ -110,6 +170,10 @@ class CameraProvider(private val activity: AppCompatActivity, private val inform
                 PREFERENCE_CAMERA_METHOD_2 -> setupCameraPreference2(wrapper)
                 PREFERENCE_CAMERA_METHOD_3 -> setupCameraPreference3(wrapper)
                 PREFERENCE_CAMERA_METHOD_4 -> setupCameraPreference4(wrapper)
+                PREFERENCE_CAMERA_METHOD_5 -> setupCameraPreference5(wrapper)
+                PREFERENCE_CAMERA_METHOD_6 -> setupCameraPreference6(wrapper)
+                PREFERENCE_CAMERA_METHOD_7 -> setupCameraPreference7(wrapper)
+                PREFERENCE_CAMERA_METHOD_8 -> setupCameraPreference8(wrapper)
                 else -> setupCameraPreference0(wrapper)
             }
             return (when (cameraPreference.getCameraMethod()) {
@@ -218,6 +282,58 @@ class CameraProvider(private val activity: AppCompatActivity, private val inform
         return (CameraPreference(4, wrapper, method, false, sequence, option1, option2, option3, option4, option5, CameraPreferenceKeySet(PREFERENCE_CAMERA_OPTION1_4, PREFERENCE_CAMERA_OPTION2_4, PREFERENCE_CAMERA_OPTION3_4, PREFERENCE_CAMERA_OPTION4_4, PREFERENCE_CAMERA_OPTION5_4)))
     }
 
+    private fun setupCameraPreference5(wrapper : PreferenceAccessWrapper) : ICameraPreferenceProvider
+    {
+        val method  = wrapper.getString(PREFERENCE_CAMERA_METHOD_5, PREFERENCE_CAMERA_METHOD_5_DEFAULT_VALUE)
+        val sequence  = wrapper.getString(PREFERENCE_CAMERA_SEQUENCE_5, PREFERENCE_CAMERA_SEQUENCE_5_DEFAULT_VALUE)
+        val option1  = wrapper.getString(PREFERENCE_CAMERA_OPTION1_5, PREFERENCE_CAMERA_OPTION1_5_DEFAULT_VALUE)
+        val option2  = wrapper.getString(PREFERENCE_CAMERA_OPTION2_5, PREFERENCE_CAMERA_OPTION2_5_DEFAULT_VALUE)
+        val option3  = wrapper.getString(PREFERENCE_CAMERA_OPTION3_5, PREFERENCE_CAMERA_OPTION3_5_DEFAULT_VALUE)
+        val option4  = wrapper.getString(PREFERENCE_CAMERA_OPTION4_5, PREFERENCE_CAMERA_OPTION4_5_DEFAULT_VALUE)
+        val option5  = wrapper.getString(PREFERENCE_CAMERA_OPTION5_5, PREFERENCE_CAMERA_OPTION5_5_DEFAULT_VALUE)
+
+        return (CameraPreference(5, wrapper, method, false, sequence, option1, option2, option3, option4, option5, CameraPreferenceKeySet(PREFERENCE_CAMERA_OPTION1_5, PREFERENCE_CAMERA_OPTION2_5, PREFERENCE_CAMERA_OPTION3_5, PREFERENCE_CAMERA_OPTION4_5, PREFERENCE_CAMERA_OPTION5_5)))
+    }
+
+    private fun setupCameraPreference6(wrapper : PreferenceAccessWrapper) : ICameraPreferenceProvider
+    {
+        val method  = wrapper.getString(PREFERENCE_CAMERA_METHOD_6, PREFERENCE_CAMERA_METHOD_6_DEFAULT_VALUE)
+        val sequence  = wrapper.getString(PREFERENCE_CAMERA_SEQUENCE_6, PREFERENCE_CAMERA_SEQUENCE_6_DEFAULT_VALUE)
+        val option1  = wrapper.getString(PREFERENCE_CAMERA_OPTION1_6, PREFERENCE_CAMERA_OPTION1_6_DEFAULT_VALUE)
+        val option2  = wrapper.getString(PREFERENCE_CAMERA_OPTION2_6, PREFERENCE_CAMERA_OPTION2_6_DEFAULT_VALUE)
+        val option3  = wrapper.getString(PREFERENCE_CAMERA_OPTION3_6, PREFERENCE_CAMERA_OPTION3_6_DEFAULT_VALUE)
+        val option4  = wrapper.getString(PREFERENCE_CAMERA_OPTION4_6, PREFERENCE_CAMERA_OPTION4_6_DEFAULT_VALUE)
+        val option5  = wrapper.getString(PREFERENCE_CAMERA_OPTION5_6, PREFERENCE_CAMERA_OPTION5_6_DEFAULT_VALUE)
+
+        return (CameraPreference(6, wrapper, method, false, sequence, option1, option2, option3, option4, option5, CameraPreferenceKeySet(PREFERENCE_CAMERA_OPTION1_6, PREFERENCE_CAMERA_OPTION2_6, PREFERENCE_CAMERA_OPTION3_6, PREFERENCE_CAMERA_OPTION4_6, PREFERENCE_CAMERA_OPTION5_6)))
+    }
+
+    private fun setupCameraPreference7(wrapper : PreferenceAccessWrapper) : ICameraPreferenceProvider
+    {
+        val method  = wrapper.getString(PREFERENCE_CAMERA_METHOD_7, PREFERENCE_CAMERA_METHOD_7_DEFAULT_VALUE)
+        val sequence  = wrapper.getString(PREFERENCE_CAMERA_SEQUENCE_7, PREFERENCE_CAMERA_SEQUENCE_7_DEFAULT_VALUE)
+        val option1  = wrapper.getString(PREFERENCE_CAMERA_OPTION1_7, PREFERENCE_CAMERA_OPTION1_7_DEFAULT_VALUE)
+        val option2  = wrapper.getString(PREFERENCE_CAMERA_OPTION2_7, PREFERENCE_CAMERA_OPTION2_7_DEFAULT_VALUE)
+        val option3  = wrapper.getString(PREFERENCE_CAMERA_OPTION3_7, PREFERENCE_CAMERA_OPTION3_7_DEFAULT_VALUE)
+        val option4  = wrapper.getString(PREFERENCE_CAMERA_OPTION4_7, PREFERENCE_CAMERA_OPTION4_7_DEFAULT_VALUE)
+        val option5  = wrapper.getString(PREFERENCE_CAMERA_OPTION5_7, PREFERENCE_CAMERA_OPTION5_7_DEFAULT_VALUE)
+
+        return (CameraPreference(7, wrapper, method, false, sequence, option1, option2, option3, option4, option5, CameraPreferenceKeySet(PREFERENCE_CAMERA_OPTION1_7, PREFERENCE_CAMERA_OPTION2_7, PREFERENCE_CAMERA_OPTION3_7, PREFERENCE_CAMERA_OPTION4_7, PREFERENCE_CAMERA_OPTION5_7)))
+    }
+
+    private fun setupCameraPreference8(wrapper : PreferenceAccessWrapper) : ICameraPreferenceProvider
+    {
+        val method  = wrapper.getString(PREFERENCE_CAMERA_METHOD_8, PREFERENCE_CAMERA_METHOD_8_DEFAULT_VALUE)
+        val sequence  = wrapper.getString(PREFERENCE_CAMERA_SEQUENCE_8, PREFERENCE_CAMERA_SEQUENCE_8_DEFAULT_VALUE)
+        val option1  = wrapper.getString(PREFERENCE_CAMERA_OPTION1_8, PREFERENCE_CAMERA_OPTION1_8_DEFAULT_VALUE)
+        val option2  = wrapper.getString(PREFERENCE_CAMERA_OPTION2_8, PREFERENCE_CAMERA_OPTION2_8_DEFAULT_VALUE)
+        val option3  = wrapper.getString(PREFERENCE_CAMERA_OPTION3_8, PREFERENCE_CAMERA_OPTION3_8_DEFAULT_VALUE)
+        val option4  = wrapper.getString(PREFERENCE_CAMERA_OPTION4_8, PREFERENCE_CAMERA_OPTION4_8_DEFAULT_VALUE)
+        val option5  = wrapper.getString(PREFERENCE_CAMERA_OPTION5_8, PREFERENCE_CAMERA_OPTION5_8_DEFAULT_VALUE)
+
+        return (CameraPreference(8, wrapper, method, false, sequence, option1, option2, option3, option4, option5, CameraPreferenceKeySet(PREFERENCE_CAMERA_OPTION1_8, PREFERENCE_CAMERA_OPTION2_8, PREFERENCE_CAMERA_OPTION3_8, PREFERENCE_CAMERA_OPTION4_8, PREFERENCE_CAMERA_OPTION5_8)))
+    }
+
     private fun prepareThetaCameraControl(cameraPreference : ICameraPreferenceProvider, number : Int) : ICameraControl
     {
         return (ThetaCameraControl(activity, vibrator, informationNotify, cameraPreference, statusReceiver, number))
@@ -280,6 +396,26 @@ class CameraProvider(private val activity: AppCompatActivity, private val inform
                     {
                         cameraXControl3 = CameraControl(activity, cameraPreference, vibrator, informationNotify)
                         return (cameraXControl3)
+                    }
+                    if (!::cameraXControl4.isInitialized)
+                    {
+                        cameraXControl4 = CameraControl(activity, cameraPreference, vibrator, informationNotify)
+                        return (cameraXControl4)
+                    }
+                    if (!::cameraXControl5.isInitialized)
+                    {
+                        cameraXControl5 = CameraControl(activity, cameraPreference, vibrator, informationNotify)
+                        return (cameraXControl5)
+                    }
+                    if (!::cameraXControl6.isInitialized)
+                    {
+                        cameraXControl6 = CameraControl(activity, cameraPreference, vibrator, informationNotify)
+                        return (cameraXControl6)
+                    }
+                    if (!::cameraXControl7.isInitialized)
+                    {
+                        cameraXControl7 = CameraControl(activity, cameraPreference, vibrator, informationNotify)
+                        return (cameraXControl7)
                     }
                 }
                 catch (e : Exception)

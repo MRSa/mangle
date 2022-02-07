@@ -325,6 +325,229 @@
     </PreferenceCategory>
 
     <PreferenceCategory
+        app:title="@string/label_connection_method5">
+
+        <DropDownPreference
+            android:entries="@array/connection_method"
+            android:entryValues="@array/connection_method_value"
+            android:key="camera_method5"
+            android:title="@string/pref_connection_method5"
+            android:defaultValue="NONE"
+            />
+
+        <DropDownPreference
+            android:entries="@array/connection_sequence"
+            android:entryValues="@array/connection_sequence_value"
+            android:key="camera_sequence5"
+            android:title="@string/pref_connection_sequence5"
+            android:defaultValue="0"
+            app:isPreferenceVisible="false"
+            />
+
+        <EditTextPreference
+            android:key="camera_option15"
+            android:title="@string/pref_camera_option15"
+            android:defaultValue=""
+            app:isPreferenceVisible="false"
+            android:summary="@string/pref_summary_camera_option15" />
+
+        <EditTextPreference
+            android:key="camera_option25"
+            android:title="@string/pref_camera_option25"
+            android:defaultValue=""
+            app:isPreferenceVisible="false"
+            android:summary="@string/pref_summary_camera_option25" />
+
+        <EditTextPreference
+            android:key="camera_option35"
+            android:title="@string/pref_camera_option35"
+            android:defaultValue=""
+            app:isPreferenceVisible="false"
+            android:summary="@string/pref_summary_camera_option35" />
+
+        <EditTextPreference
+            android:key="camera_option45"
+            android:title="@string/pref_camera_option45"
+            android:defaultValue=""
+            app:isPreferenceVisible="false"
+            android:summary="@string/pref_summary_camera_option45" />
+
+        <EditTextPreference
+            android:key="camera_option55"
+            android:title="@string/pref_camera_option55"
+            android:defaultValue=""
+            app:isPreferenceVisible="false"
+            android:summary="@string/pref_summary_camera_option55" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:title="@string/label_connection_method6">
+
+        <DropDownPreference
+            android:entries="@array/connection_method"
+            android:entryValues="@array/connection_method_value"
+            android:key="camera_method6"
+            android:title="@string/pref_connection_method6"
+            android:defaultValue="NONE"
+            />
+
+        <DropDownPreference
+            android:entries="@array/connection_sequence"
+            android:entryValues="@array/connection_sequence_value"
+            android:key="camera_sequence6"
+            android:title="@string/pref_connection_sequence6"
+            android:defaultValue="0"
+            app:isPreferenceVisible="false"
+            />
+
+        <EditTextPreference
+            android:key="camera_option16"
+            android:title="@string/pref_camera_option16"
+            android:defaultValue=""
+            app:isPreferenceVisible="false"
+            android:summary="@string/pref_summary_camera_option16" />
+
+        <EditTextPreference
+            android:key="camera_option26"
+            android:title="@string/pref_camera_option26"
+            android:defaultValue=""
+            app:isPreferenceVisible="false"
+            android:summary="@string/pref_summary_camera_option26" />
+
+        <EditTextPreference
+            android:key="camera_option36"
+            android:title="@string/pref_camera_option36"
+            android:defaultValue=""
+            app:isPreferenceVisible="false"
+            android:summary="@string/pref_summary_camera_option36" />
+
+        <EditTextPreference
+            android:key="camera_option46"
+            android:title="@string/pref_camera_option46"
+            android:defaultValue=""
+            app:isPreferenceVisible="false"
+            android:summary="@string/pref_summary_camera_option46" />
+
+        <EditTextPreference
+            android:key="camera_option56"
+            android:title="@string/pref_camera_option56"
+            android:defaultValue=""
+            app:isPreferenceVisible="false"
+            android:summary="@string/pref_summary_camera_option56" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:title="@string/label_connection_method7">
+
+        <DropDownPreference
+            android:entries="@array/connection_method"
+            android:entryValues="@array/connection_method_value"
+            android:key="camera_method7"
+            android:title="@string/pref_connection_method7"
+            android:defaultValue="NONE"
+            />
+
+        <DropDownPreference
+            android:entries="@array/connection_sequence"
+            android:entryValues="@array/connection_sequence_value"
+            android:key="camera_sequence7"
+            android:title="@string/pref_connection_sequence7"
+            android:defaultValue="0"
+            app:isPreferenceVisible="false"
+            />
+
+        <EditTextPreference
+            android:key="camera_option17"
+            android:title="@string/pref_camera_option17"
+            android:defaultValue=""
+            app:isPreferenceVisible="false"
+            android:summary="@string/pref_summary_camera_option17" />
+
+        <EditTextPreference
+            android:key="camera_option27"
+            android:title="@string/pref_camera_option27"
+            android:defaultValue=""
+            app:isPreferenceVisible="false"
+            android:summary="@string/pref_summary_camera_option27" />
+
+        <EditTextPreference
+            android:key="camera_option37"
+            android:title="@string/pref_camera_option37"
+            android:defaultValue=""
+            app:isPreferenceVisible="false"
+            android:summary="@string/pref_summary_camera_option37" />
+
+        <EditTextPreference
+            android:key="camera_option47"
+            android:title="@string/pref_camera_option47"
+            android:defaultValue=""
+            app:isPreferenceVisible="false"
+            android:summary="@string/pref_summary_camera_option47" />
+
+        <EditTextPreference
+            android:key="camera_option57"
+            android:title="@string/pref_camera_option57"
+            android:defaultValue=""
+            app:isPreferenceVisible="false"
+            android:summary="@string/pref_summary_camera_option57" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        app:title="@string/label_connection_method8">
+
+        <DropDownPreference
+            android:entries="@array/connection_method"
+            android:entryValues="@array/connection_method_value"
+            android:key="camera_method8"
+            android:title="@string/pref_connection_method8"
+            android:defaultValue="NONE"
+            />
+
+        <DropDownPreference
+            android:entries="@array/connection_sequence"
+            android:entryValues="@array/connection_sequence_value"
+            android:key="camera_sequence8"
+            android:title="@string/pref_connection_sequence8"
+            android:defaultValue="0"
+            app:isPreferenceVisible="false"
+            />
+
+        <EditTextPreference
+            android:key="camera_option18"
+            android:title="@string/pref_camera_option18"
+            android:defaultValue=""
+            app:isPreferenceVisible="false"
+            android:summary="@string/pref_summary_camera_option18" />
+
+        <EditTextPreference
+            android:key="camera_option28"
+            android:title="@string/pref_camera_option28"
+            android:defaultValue=""
+            app:isPreferenceVisible="false"
+            android:summary="@string/pref_summary_camera_option28" />
+
+        <EditTextPreference
+            android:key="camera_option38"
+            android:title="@string/pref_camera_option38"
+            android:defaultValue=""
+            app:isPreferenceVisible="false"
+            android:summary="@string/pref_summary_camera_option38" />
+
+        <EditTextPreference
+            android:key="camera_option48"
+            android:title="@string/pref_camera_option48"
+            android:defaultValue=""
+            app:isPreferenceVisible="false"
+            android:summary="@string/pref_summary_camera_option48" />
+
+        <EditTextPreference
+            android:key="camera_option58"
+            android:title="@string/pref_camera_option58"
+            android:defaultValue=""
+            app:isPreferenceVisible="false"
+            android:summary="@string/pref_summary_camera_option58" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
         app:title="@string/pref_cat_gokigen">
         <Preference
             android:key="instruction_link"

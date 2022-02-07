@@ -19,6 +19,10 @@ import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Compa
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_CACHE_SEEKBAR_1
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_CACHE_SEEKBAR_2
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_CACHE_SEEKBAR_3
+import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_CACHE_SEEKBAR_4
+import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_CACHE_SEEKBAR_5
+import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_CACHE_SEEKBAR_6
+import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_CACHE_SEEKBAR_7
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_LIVE_VIEW_LAYOUT_DEFAULT
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_CACHE_LIVE_VIEW_PICTURES
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_SELF_TIMER_SECONDS
@@ -29,11 +33,21 @@ import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Compa
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_AREA_1
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_AREA_2
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_AREA_3
+import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_AREA_4
+import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_AREA_5
+import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_AREA_6
+import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_AREA_7
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_FINDER_0
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_FINDER_1
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_FINDER_2
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_FINDER_3
+import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_FINDER_4
+import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_FINDER_5
+import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_FINDER_6
+import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_FINDER_7
+import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_LOWERMIDDLE_AREA
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_LOWER_AREA
+import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_UPPERMIDDLE_AREA
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_VIEW_UPPER_AREA
 import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
 import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
@@ -46,6 +60,10 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
     private lateinit var cameraControl1: ICameraControl
     private lateinit var cameraControl2: ICameraControl
     private lateinit var cameraControl3: ICameraControl
+    private lateinit var cameraControl4: ICameraControl
+    private lateinit var cameraControl5: ICameraControl
+    private lateinit var cameraControl6: ICameraControl
+    private lateinit var cameraControl7: ICameraControl
 
     private lateinit var wrapper: PreferenceAccessWrapper
     private lateinit var informationReceiver: IInformationReceiver
@@ -54,6 +72,10 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
     private var isCameraControl1 = false
     private var isCameraControl2 = false
     private var isCameraControl3 = false
+    private var isCameraControl4 = false
+    private var isCameraControl5 = false
+    private var isCameraControl6 = false
+    private var isCameraControl7 = false
 
     private var isCacheImage = false
     private var rotationDegrees = 0
@@ -75,36 +97,73 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
     fun setCameraControlFinished(informationReceiver: IInformationReceiver)
     {
         this.informationReceiver = informationReceiver
+
+        cameraControl0.setNeighborCameraControl(0, cameraControl0, cameraControl1, cameraControl2, cameraControl3)
+        cameraControl0.setNeighborCameraControl(1, cameraControl4, cameraControl5, cameraControl6, cameraControl7)
+        cameraControl0.setNeighborCameraControlFinished()
+
+        cameraControl1.setNeighborCameraControl(0, cameraControl0, cameraControl1, cameraControl2, cameraControl3)
+        cameraControl1.setNeighborCameraControl(1, cameraControl4, cameraControl5, cameraControl6, cameraControl7)
+        cameraControl1.setNeighborCameraControlFinished()
+
+        cameraControl2.setNeighborCameraControl(0, cameraControl0, cameraControl1, cameraControl2, cameraControl3)
+        cameraControl2.setNeighborCameraControl(1, cameraControl4, cameraControl5, cameraControl6, cameraControl7)
+        cameraControl2.setNeighborCameraControlFinished()
+
+        cameraControl3.setNeighborCameraControl(0, cameraControl0, cameraControl1, cameraControl2, cameraControl3)
+        cameraControl3.setNeighborCameraControl(1, cameraControl4, cameraControl5, cameraControl6, cameraControl7)
+        cameraControl3.setNeighborCameraControlFinished()
+
+        cameraControl4.setNeighborCameraControl(0, cameraControl0, cameraControl1, cameraControl2, cameraControl3)
+        cameraControl4.setNeighborCameraControl(1, cameraControl4, cameraControl5, cameraControl6, cameraControl7)
+        cameraControl4.setNeighborCameraControlFinished()
+
+        cameraControl5.setNeighborCameraControl(0, cameraControl0, cameraControl1, cameraControl2, cameraControl3)
+        cameraControl5.setNeighborCameraControl(1, cameraControl4, cameraControl5, cameraControl6, cameraControl7)
+        cameraControl5.setNeighborCameraControlFinished()
+
+        cameraControl6.setNeighborCameraControl(0, cameraControl0, cameraControl1, cameraControl2, cameraControl3)
+        cameraControl6.setNeighborCameraControl(1, cameraControl4, cameraControl5, cameraControl6, cameraControl7)
+        cameraControl6.setNeighborCameraControlFinished()
+
+        cameraControl7.setNeighborCameraControl(0, cameraControl0, cameraControl1, cameraControl2, cameraControl3)
+        cameraControl7.setNeighborCameraControl(1, cameraControl4, cameraControl5, cameraControl6, cameraControl7)
+        cameraControl7.setNeighborCameraControlFinished()
+
         updateCameraLayout()
     }
 
     fun setCameraControl(index: Int, isCameraControl0 : Boolean, cameraControl0 : ICameraControl, isCameraControl1 : Boolean, cameraControl1 : ICameraControl, isCameraControl2 : Boolean, cameraControl2 : ICameraControl, isCameraControl3 : Boolean, cameraControl3 : ICameraControl)
     {
         Log.v(TAG, "setCameraControl($index) => $isCameraControl0, $isCameraControl1, $isCameraControl2, $isCameraControl3")
-        this.isCameraControl0 = isCameraControl0
-        this.cameraControl0 = cameraControl0
+        if (index == 0)
+        {
+            this.isCameraControl0 = isCameraControl0
+            this.cameraControl0 = cameraControl0
 
-        this.isCameraControl1 = isCameraControl1
-        this.cameraControl1 = cameraControl1
+            this.isCameraControl1 = isCameraControl1
+            this.cameraControl1 = cameraControl1
 
-        this.isCameraControl2 = isCameraControl2
-        this.cameraControl2 = cameraControl2
+            this.isCameraControl2 = isCameraControl2
+            this.cameraControl2 = cameraControl2
 
-        this.isCameraControl3 = isCameraControl3
-        this.cameraControl3 = cameraControl3
+            this.isCameraControl3 = isCameraControl3
+            this.cameraControl3 = cameraControl3
+        }
+        else
+        {
+            this.isCameraControl4 = isCameraControl0
+            this.cameraControl4 = cameraControl0
 
-        cameraControl0.setNeighborCameraControl(0, cameraControl0, cameraControl1, cameraControl2, cameraControl3)
-        cameraControl0.setNeighborCameraControlFinished()
+            this.isCameraControl5 = isCameraControl1
+            this.cameraControl5 = cameraControl1
 
-        cameraControl1.setNeighborCameraControl(0, cameraControl0, cameraControl1, cameraControl2, cameraControl3)
-        cameraControl1.setNeighborCameraControlFinished()
+            this.isCameraControl6 = isCameraControl2
+            this.cameraControl6 = cameraControl2
 
-        cameraControl2.setNeighborCameraControl(0, cameraControl0, cameraControl1, cameraControl2, cameraControl3)
-        cameraControl2.setNeighborCameraControlFinished()
-
-        cameraControl3.setNeighborCameraControl(0, cameraControl0, cameraControl1, cameraControl2, cameraControl3)
-        cameraControl3.setNeighborCameraControlFinished()
-
+            this.isCameraControl7 = isCameraControl3
+            this.cameraControl7 = cameraControl3
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -248,12 +307,142 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
                     area3.visibility = View.GONE
                 }
             }
+            if (::cameraControl4.isInitialized)
+            {
+                val area4 = liveviewView.findViewById<LinearLayout>(ID_VIEW_AREA_4)
+                val imageCache4 = liveviewView.findViewById<SeekBar>(ID_CACHE_SEEKBAR_4)
+                imageCache4.visibility = View.GONE
+
+                val imageView4 = liveviewView.findViewById<LiveImageView>(ID_VIEW_FINDER_4)
+                if (isCameraControl4)
+                {
+                    cameraControl4.setRefresher(4, imageView4, imageView4, imageView4)
+                    imageView4.injectDisplay(cameraControl4)
+                    imageView4.setOnLongClickListener(this)
+                    imageView4.setOnTouchListener(LiveViewOnTouchListener(cameraControl4, 4))
+                    if (isCacheImage)
+                    {
+                        imageCache4.visibility = View.VISIBLE
+                        imageCache4.setOnSeekBarChangeListener(imageView4)
+                    }
+                    if (showGrid)
+                    {
+                        imageView4.showGridFrame(showGrid)
+                    }
+                    area4.visibility = View.VISIBLE
+                }
+                else
+                {
+                    imageView4.visibility = View.GONE
+                    area4.visibility = View.GONE
+                }
+            }
+            if (::cameraControl5.isInitialized)
+            {
+                val area5 = liveviewView.findViewById<LinearLayout>(ID_VIEW_AREA_5)
+                val imageCache5 = liveviewView.findViewById<SeekBar>(ID_CACHE_SEEKBAR_5)
+                imageCache5.visibility = View.GONE
+
+                val imageView5 = liveviewView.findViewById<LiveImageView>(ID_VIEW_FINDER_5)
+                if (isCameraControl5)
+                {
+                    cameraControl5.setRefresher(5, imageView5, imageView5, imageView5)
+                    imageView5.injectDisplay(cameraControl5)
+                    imageView5.setOnLongClickListener(this)
+                    imageView5.setOnTouchListener(LiveViewOnTouchListener(cameraControl5, 5))
+                    if (isCacheImage)
+                    {
+                        imageCache5.visibility = View.VISIBLE
+                        imageCache5.setOnSeekBarChangeListener(imageView5)
+                    }
+                    if (showGrid)
+                    {
+                        imageView5.showGridFrame(showGrid)
+                    }
+                    area5.visibility = View.VISIBLE
+                }
+                else
+                {
+                    imageView5.visibility = View.GONE
+                    area5.visibility = View.GONE
+                }
+            }
+            if (::cameraControl6.isInitialized)
+            {
+                val area6 = liveviewView.findViewById<LinearLayout>(ID_VIEW_AREA_6)
+                val imageCache6 = liveviewView.findViewById<SeekBar>(ID_CACHE_SEEKBAR_6)
+                imageCache6.visibility = View.GONE
+
+                val imageView6 = liveviewView.findViewById<LiveImageView>(ID_VIEW_FINDER_6)
+                if (isCameraControl6)
+                {
+                    cameraControl6.setRefresher(6, imageView6, imageView6, imageView6)
+                    imageView6.injectDisplay(cameraControl6)
+                    imageView6.setOnLongClickListener(this)
+                    imageView6.setOnTouchListener(LiveViewOnTouchListener(cameraControl6, 6))
+                    if (isCacheImage)
+                    {
+                        imageCache6.visibility = View.VISIBLE
+                        imageCache6.setOnSeekBarChangeListener(imageView6)
+                    }
+                    if (showGrid)
+                    {
+                        imageView6.showGridFrame(showGrid)
+                    }
+                    area6.visibility = View.VISIBLE
+                }
+                else
+                {
+                    imageView6.visibility = View.GONE
+                    area6.visibility = View.GONE
+                }
+            }
+            if (::cameraControl7.isInitialized)
+            {
+                val area7 = liveviewView.findViewById<LinearLayout>(ID_VIEW_AREA_7)
+                val imageCache7 = liveviewView.findViewById<SeekBar>(ID_CACHE_SEEKBAR_7)
+                imageCache7.visibility = View.GONE
+
+                val imageView7 = liveviewView.findViewById<LiveImageView>(ID_VIEW_FINDER_7)
+                if (isCameraControl7)
+                {
+                    cameraControl7.setRefresher(7, imageView7, imageView7, imageView7)
+                    imageView7.injectDisplay(cameraControl7)
+                    imageView7.setOnLongClickListener(this)
+                    imageView7.setOnTouchListener(LiveViewOnTouchListener(cameraControl7, 7))
+                    if (isCacheImage)
+                    {
+                        imageCache7.visibility = View.VISIBLE
+                        imageCache7.setOnSeekBarChangeListener(imageView7)
+                    }
+                    if (showGrid)
+                    {
+                        imageView7.showGridFrame(showGrid)
+                    }
+                    area7.visibility = View.VISIBLE
+                }
+                else
+                {
+                    imageView7.visibility = View.GONE
+                    area7.visibility = View.GONE
+                }
+            }
             if ((!isCameraControl0)&&(!isCameraControl1))
             {
                 val area = liveviewView.findViewById<View>(ID_VIEW_UPPER_AREA)
                 area.visibility = View.GONE
             }
             if ((!isCameraControl2)&&(!isCameraControl3))
+            {
+                val area = liveviewView.findViewById<View>(ID_VIEW_UPPERMIDDLE_AREA)
+                area.visibility = View.GONE
+            }
+            if ((!isCameraControl4)&&(!isCameraControl5))
+            {
+                val area = liveviewView.findViewById<View>(ID_VIEW_LOWERMIDDLE_AREA)
+                area.visibility = View.GONE
+            }
+            if ((!isCameraControl6)&&(!isCameraControl7))
             {
                 val area = liveviewView.findViewById<View>(ID_VIEW_LOWER_AREA)
                 area.visibility = View.GONE
@@ -351,6 +540,30 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
             {
                 imageView3.showGridFrame(showGrid)
             }
+
+            val imageView4 = liveviewView.findViewById<LiveImageView>(ID_VIEW_FINDER_4)
+            if (imageView4.isVisible)
+            {
+                imageView4.showGridFrame(showGrid)
+            }
+
+            val imageView5 = liveviewView.findViewById<LiveImageView>(ID_VIEW_FINDER_5)
+            if (imageView5.isVisible)
+            {
+                imageView5.showGridFrame(showGrid)
+            }
+
+            val imageView6 = liveviewView.findViewById<LiveImageView>(ID_VIEW_FINDER_6)
+            if (imageView6.isVisible)
+            {
+                imageView6.showGridFrame(showGrid)
+            }
+
+            val imageView7 = liveviewView.findViewById<LiveImageView>(ID_VIEW_FINDER_7)
+            if (imageView7.isVisible)
+            {
+                imageView7.showGridFrame(showGrid)
+            }
         }
         catch (e : Exception)
         {
@@ -428,6 +641,22 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
             {
                 cameraControl3.keyDownReceiver(3).handleKeyDown(keyCode, event)
             }
+            if ((::cameraControl4.isInitialized)&&(isCameraControl4))
+            {
+                cameraControl4.keyDownReceiver(4).handleKeyDown(keyCode, event)
+            }
+            if ((::cameraControl5.isInitialized)&&(isCameraControl5))
+            {
+                cameraControl5.keyDownReceiver(5).handleKeyDown(keyCode, event)
+            }
+            if ((::cameraControl6.isInitialized)&&(isCameraControl6))
+            {
+                cameraControl6.keyDownReceiver(6).handleKeyDown(keyCode, event)
+            }
+            if ((::cameraControl7.isInitialized)&&(isCameraControl7))
+            {
+                cameraControl7.keyDownReceiver(7).handleKeyDown(keyCode, event)
+            }
             return (true)
         }
         catch (e : Exception)
@@ -458,6 +687,22 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
             if ((::cameraControl3.isInitialized)&&(isCameraControl3))
             {
                 cameraControl3.captureButtonReceiver(3).onClick(v)
+            }
+            if ((::cameraControl4.isInitialized)&&(isCameraControl4))
+            {
+                cameraControl4.captureButtonReceiver(4).onClick(v)
+            }
+            if ((::cameraControl5.isInitialized)&&(isCameraControl5))
+            {
+                cameraControl5.captureButtonReceiver(5).onClick(v)
+            }
+            if ((::cameraControl6.isInitialized)&&(isCameraControl6))
+            {
+                cameraControl6.captureButtonReceiver(6).onClick(v)
+            }
+            if ((::cameraControl7.isInitialized)&&(isCameraControl7))
+            {
+                cameraControl7.captureButtonReceiver(7).onClick(v)
             }
         }
         catch (e : Exception)
@@ -574,6 +819,26 @@ class LiveImageViewFragment(private val contentLayoutId: Int = ID_LIVE_VIEW_LAYO
             if ((::cameraControl3.isInitialized)&&(isCameraControl3)&&(id == ID_VIEW_FINDER_3))
             {
                 cameraControl3.onLongClickReceiver(3).onLongClick(v)
+                ret = true
+            }
+            if ((::cameraControl4.isInitialized)&&(isCameraControl4)&&(id == ID_VIEW_FINDER_4))
+            {
+                cameraControl4.onLongClickReceiver(4).onLongClick(v)
+                ret = true
+            }
+            if ((::cameraControl5.isInitialized)&&(isCameraControl5)&&(id == ID_VIEW_FINDER_5))
+            {
+                cameraControl5.onLongClickReceiver(5).onLongClick(v)
+                ret = true
+            }
+            if ((::cameraControl6.isInitialized)&&(isCameraControl6)&&(id == ID_VIEW_FINDER_6))
+            {
+                cameraControl6.onLongClickReceiver(6).onLongClick(v)
+                ret = true
+            }
+            if ((::cameraControl7.isInitialized)&&(isCameraControl7)&&(id == ID_VIEW_FINDER_7))
+            {
+                cameraControl7.onLongClickReceiver(7).onLongClick(v)
                 ret = true
             }
         }

@@ -144,6 +144,22 @@ class PreferenceValueInitializer() : IPreferenceValueInitializer
             {
                 editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_4, IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_4_DEFAULT_VALUE)
             }
+            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_5))
+            {
+                editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_5, IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_5_DEFAULT_VALUE)
+            }
+            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_6))
+            {
+                editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_6, IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_6_DEFAULT_VALUE)
+            }
+            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_7))
+            {
+                editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_7, IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_7_DEFAULT_VALUE)
+            }
+            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_8))
+            {
+                editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_8, IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_8_DEFAULT_VALUE)
+            }
 
             ///// CONNECTION SEQUENCE /////
             if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_SEQUENCE_1))
@@ -161,6 +177,22 @@ class PreferenceValueInitializer() : IPreferenceValueInitializer
             if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_SEQUENCE_4))
             {
                 editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_SEQUENCE_4, IPreferencePropertyAccessor.PREFERENCE_CAMERA_SEQUENCE_4_DEFAULT_VALUE)
+            }
+            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_SEQUENCE_5))
+            {
+                editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_SEQUENCE_5, IPreferencePropertyAccessor.PREFERENCE_CAMERA_SEQUENCE_5_DEFAULT_VALUE)
+            }
+            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_SEQUENCE_6))
+            {
+                editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_SEQUENCE_6, IPreferencePropertyAccessor.PREFERENCE_CAMERA_SEQUENCE_6_DEFAULT_VALUE)
+            }
+            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_SEQUENCE_7))
+            {
+                editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_SEQUENCE_7, IPreferencePropertyAccessor.PREFERENCE_CAMERA_SEQUENCE_7_DEFAULT_VALUE)
+            }
+            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_SEQUENCE_8))
+            {
+                editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_SEQUENCE_8, IPreferencePropertyAccessor.PREFERENCE_CAMERA_SEQUENCE_8_DEFAULT_VALUE)
             }
 
             ////////// CAMERA 1 //////////
@@ -249,6 +281,94 @@ class PreferenceValueInitializer() : IPreferenceValueInitializer
             if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION5_4))
             {
                 editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION5_4, IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION5_4_DEFAULT_VALUE)
+            }
+
+            ////////// CAMERA 5 //////////
+            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION1_5))
+            {
+                editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION1_5, IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION1_5_DEFAULT_VALUE)
+            }
+            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION2_5))
+            {
+                editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION2_5, IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION2_5_DEFAULT_VALUE)
+            }
+            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION3_5))
+            {
+                editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION3_5, IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION3_5_DEFAULT_VALUE)
+            }
+            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION4_5))
+            {
+                editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION4_5, IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION4_5_DEFAULT_VALUE)
+            }
+            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION5_5))
+            {
+                editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION5_5, IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION5_5_DEFAULT_VALUE)
+            }
+
+            ////////// CAMERA 6 //////////
+            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION1_6))
+            {
+                editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION1_6, IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION1_6_DEFAULT_VALUE)
+            }
+            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION2_6))
+            {
+                editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION2_6, IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION2_6_DEFAULT_VALUE)
+            }
+            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION3_6))
+            {
+                editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION3_6, IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION3_6_DEFAULT_VALUE)
+            }
+            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION4_6))
+            {
+                editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION4_6, IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION4_6_DEFAULT_VALUE)
+            }
+            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION5_6))
+            {
+                editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION5_6, IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION5_6_DEFAULT_VALUE)
+            }
+
+            ////////// CAMERA 7 //////////
+            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION1_7))
+            {
+                editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION1_7, IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION1_7_DEFAULT_VALUE)
+            }
+            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION2_7))
+            {
+                editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION2_7, IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION2_7_DEFAULT_VALUE)
+            }
+            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION3_7))
+            {
+                editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION3_7, IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION3_7_DEFAULT_VALUE)
+            }
+            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION4_7))
+            {
+                editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION4_7, IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION4_7_DEFAULT_VALUE)
+            }
+            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION5_7))
+            {
+                editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION5_7, IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION5_7_DEFAULT_VALUE)
+            }
+
+            ////////// CAMERA 8 //////////
+            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION1_8))
+            {
+                editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION1_8, IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION1_8_DEFAULT_VALUE)
+            }
+            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION2_8))
+            {
+                editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION2_8, IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION2_8_DEFAULT_VALUE)
+            }
+            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION3_8))
+            {
+                editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION3_8, IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION3_8_DEFAULT_VALUE)
+            }
+            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION4_8))
+            {
+                editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION4_8, IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION4_8_DEFAULT_VALUE)
+            }
+            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION5_8))
+            {
+                editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION5_8, IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION5_8_DEFAULT_VALUE)
             }
 
             editor.apply()

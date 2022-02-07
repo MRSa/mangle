@@ -23,10 +23,18 @@ import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.P
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_METHOD_2
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_METHOD_3
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_METHOD_4
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_METHOD_5
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_METHOD_6
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_METHOD_7
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_METHOD_8
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_SEQUENCE_1
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_SEQUENCE_2
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_SEQUENCE_3
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_SEQUENCE_4
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_SEQUENCE_5
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_SEQUENCE_6
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_SEQUENCE_7
+import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.PREFERENCE_CAMERA_SEQUENCE_8
 import jp.osdn.gokigen.mangle.preference.PreferenceChanger
 import jp.osdn.gokigen.mangle.preference.PreferenceValueInitializer
 
@@ -39,6 +47,10 @@ class SceneChanger(private val activity: AppCompatActivity, private val informat
     private val cameraControl2: ICameraControl
     private val cameraControl3: ICameraControl
     private val cameraControl4: ICameraControl
+    private val cameraControl5: ICameraControl
+    private val cameraControl6: ICameraControl
+    private val cameraControl7: ICameraControl
+    private val cameraControl8: ICameraControl
 
     private val preferenceChanger = PreferenceChanger(activity, this, this)
     private lateinit var liveviewFragment : LiveImageViewFragment
@@ -54,11 +66,20 @@ class SceneChanger(private val activity: AppCompatActivity, private val informat
         cameraControl2 = cameraProvider.decideCameraControl(PREFERENCE_CAMERA_METHOD_2, 2)
         cameraControl3 = cameraProvider.decideCameraControl(PREFERENCE_CAMERA_METHOD_3, 3)
         cameraControl4 = cameraProvider.decideCameraControl(PREFERENCE_CAMERA_METHOD_4, 4)
+        cameraControl5 = cameraProvider.decideCameraControl(PREFERENCE_CAMERA_METHOD_5, 5)
+        cameraControl6 = cameraProvider.decideCameraControl(PREFERENCE_CAMERA_METHOD_6, 6)
+        cameraControl7 = cameraProvider.decideCameraControl(PREFERENCE_CAMERA_METHOD_7, 7)
+        cameraControl8 = cameraProvider.decideCameraControl(PREFERENCE_CAMERA_METHOD_8, 8)
 
         cameraControl1.initialize()
         cameraControl2.initialize()
         cameraControl3.initialize()
         cameraControl4.initialize()
+        cameraControl5.initialize()
+        cameraControl6.initialize()
+        cameraControl7.initialize()
+        cameraControl8.initialize()
+
     }
 
     private fun initializeFragmentForPreview()
@@ -82,9 +103,14 @@ class SceneChanger(private val activity: AppCompatActivity, private val informat
             val isEnableCamera2 = cameraControl2.getConnectionMethod() != "NONE"
             val isEnableCamera3 = cameraControl3.getConnectionMethod() != "NONE"
             val isEnableCamera4 = cameraControl4.getConnectionMethod() != "NONE"
+            val isEnableCamera5 = cameraControl5.getConnectionMethod() != "NONE"
+            val isEnableCamera6 = cameraControl6.getConnectionMethod() != "NONE"
+            val isEnableCamera7 = cameraControl7.getConnectionMethod() != "NONE"
+            val isEnableCamera8 = cameraControl8.getConnectionMethod() != "NONE"
 
             liveviewFragment = LiveImageViewFragment.newInstance()
             liveviewFragment.setCameraControl(0, isEnableCamera1, cameraControl1, isEnableCamera2, cameraControl2, isEnableCamera3, cameraControl3, isEnableCamera4, cameraControl4)
+            liveviewFragment.setCameraControl(1, isEnableCamera5, cameraControl5, isEnableCamera6, cameraControl6, isEnableCamera7, cameraControl7, isEnableCamera8, cameraControl8)
             liveviewFragment.setCameraControlFinished(informationNotify)
         }
         setDefaultFragment(liveviewFragment)
@@ -104,6 +130,22 @@ class SceneChanger(private val activity: AppCompatActivity, private val informat
         cameraControl4.startCamera(
             isPreviewView = false,
             cameraSequence = cameraProvider.getCameraSelection(PREFERENCE_CAMERA_SEQUENCE_4)
+        )
+        cameraControl5.startCamera(
+            isPreviewView = false,
+            cameraSequence = cameraProvider.getCameraSelection(PREFERENCE_CAMERA_SEQUENCE_5)
+        )
+        cameraControl6.startCamera(
+            isPreviewView = false,
+            cameraSequence = cameraProvider.getCameraSelection(PREFERENCE_CAMERA_SEQUENCE_6)
+        )
+        cameraControl7.startCamera(
+            isPreviewView = false,
+            cameraSequence = cameraProvider.getCameraSelection(PREFERENCE_CAMERA_SEQUENCE_7)
+        )
+        cameraControl8.startCamera(
+            isPreviewView = false,
+            cameraSequence = cameraProvider.getCameraSelection(PREFERENCE_CAMERA_SEQUENCE_8)
         )
 
         val msg = activity.getString(R.string.app_name)
@@ -138,6 +180,10 @@ class SceneChanger(private val activity: AppCompatActivity, private val informat
             val isEnableCamera2 = cameraControl2.getConnectionMethod() != "NONE"
             val isEnableCamera3 = cameraControl3.getConnectionMethod() != "NONE"
             val isEnableCamera4 = cameraControl4.getConnectionMethod() != "NONE"
+            val isEnableCamera5 = cameraControl5.getConnectionMethod() != "NONE"
+            val isEnableCamera6 = cameraControl6.getConnectionMethod() != "NONE"
+            val isEnableCamera7 = cameraControl7.getConnectionMethod() != "NONE"
+            val isEnableCamera8 = cameraControl8.getConnectionMethod() != "NONE"
             liveviewFragment = LiveImageViewFragment.newInstance()
             liveviewFragment.setCameraControl(
                 0,
@@ -145,6 +191,13 @@ class SceneChanger(private val activity: AppCompatActivity, private val informat
                 isEnableCamera2, cameraControl2,
                 isEnableCamera3, cameraControl3,
                 isEnableCamera4, cameraControl4
+            )
+            liveviewFragment.setCameraControl(
+                1,
+                isEnableCamera5, cameraControl5,
+                isEnableCamera6, cameraControl6,
+                isEnableCamera7, cameraControl7,
+                isEnableCamera8, cameraControl8
             )
             liveviewFragment.setCameraControlFinished(informationNotify)
         }
@@ -181,6 +234,38 @@ class SceneChanger(private val activity: AppCompatActivity, private val informat
         try
         {
             cameraControl4.connectToCamera()
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+        try
+        {
+            cameraControl5.connectToCamera()
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+        try
+        {
+            cameraControl6.connectToCamera()
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+        try
+        {
+            cameraControl7.connectToCamera()
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+        try
+        {
+            cameraControl8.connectToCamera()
         }
         catch (e : Exception)
         {
@@ -266,6 +351,10 @@ class SceneChanger(private val activity: AppCompatActivity, private val informat
         cameraControl2.finishCamera()
         cameraControl3.finishCamera()
         cameraControl4.finishCamera()
+        cameraControl5.finishCamera()
+        cameraControl6.finishCamera()
+        cameraControl7.finishCamera()
+        cameraControl8.finishCamera()
     }
 
     fun handleKeyDown(keyCode: Int, event: KeyEvent): Boolean
