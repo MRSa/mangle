@@ -6,5 +6,5 @@ import android.graphics.RectF
 
 interface IGridFrameDrawer
 {
-    fun drawFramingGrid(canvas: Canvas, rect: RectF, color : Int = Color.argb(130, 235, 235, 235))
+    fun drawFramingGrid(canvas: Canvas, rect: RectF, color : Int = Color.argb(130, 235, 235, 235), rotationDegrees: Int)
 }

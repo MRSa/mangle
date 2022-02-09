@@ -136,12 +136,29 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
             return
         }
 
+        var addDegrees = 0
+        if (isRotationImage)
+        {
+            try
+            {
+                val config = context.resources.configuration
+                if (config.orientation == Configuration.ORIENTATION_LANDSCAPE)
+                {
+                    addDegrees = 90
+                }
+            }
+            catch (e: Exception)
+            {
+                e.printStackTrace()
+            }
+        }
+
         //Log.v(TAG, " ----- onDraw() ----- ")
         canvas.drawARGB(255, 0, 0, 0)
-        val imageRectF = drawImage(canvas)
+        val imageRectF = drawImage(canvas, addDegrees)
         if (showGrid)
         {
-            gridFrameDrawer.drawFramingGrid(canvas, imageRectF, gridColor)
+            gridFrameDrawer.drawFramingGrid(canvas, imageRectF, gridColor, addDegrees)
         }
         this.drawFocusFrame(canvas,imageRectF.width(), imageRectF.height())
         informationDrawer.drawInformationMessages(canvas, imageRectF)
@@ -162,7 +179,7 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
         refreshCanvas()
     }
 
-    private fun drawImage(canvas: Canvas) : RectF
+    private fun drawImage(canvas: Canvas, addDegrees: Int) : RectF
     {
         val centerX = canvas.width / 2
         val centerY = canvas.height / 2
@@ -173,22 +190,6 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
 
         imageBitmap = imageProvider.getImage(sliderPosition)
 
-        var addDegrees = 0
-        if (isRotationImage)
-        {
-            try
-            {
-                val config = context.resources.configuration
-                if (config.orientation == Configuration.ORIENTATION_LANDSCAPE)
-                {
-                    addDegrees = 90
-                }
-            }
-            catch (e: Exception)
-            {
-                e.printStackTrace()
-            }
-        }
         val degrees = imageRotationDegrees + addDegrees
         val viewRect = decideViewRect(canvas, imageBitmap, degrees)
         val width : Int = imageBitmap.width
