@@ -5,25 +5,25 @@ import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 
 class CameraControlCoordinator(private val informationReceiver: IInformationReceiver) : ICameraControlCoordinator
 {
-    private val panasonicCameraDeviceMap = mutableMapOf<Int, String>()
+    private val cameraDeviceMap = mutableMapOf<Int, String>()
     private val cameraControlInfo = mutableMapOf<Int, String>()
     private var connectingCameraNumber = -1
 
-    override fun startConnectToCamera(number: Int)
+    override fun startConnectToCamera(number: Int) : Boolean
     {
-        connectingCameraNumber = number
-    }
-
-    override fun isOtherCameraConnecting(number: Int): Boolean
-    {
-        return (connectingCameraNumber != number)
+        Log.v(TAG, "startConnectToCamera($number) : $connectingCameraNumber")
+        if (connectingCameraNumber == -1)
+        {
+            connectingCameraNumber = number
+        }
+        return (connectingCameraNumber == number)
     }
 
     override fun isAlreadyAssignedCameraControl(number: Int): Boolean
     {
         try
         {
-            return (panasonicCameraDeviceMap.containsKey(number))
+            return (cameraDeviceMap.containsKey(number))
         }
         catch (e: Exception)
         {
@@ -36,9 +36,10 @@ class CameraControlCoordinator(private val informationReceiver: IInformationRece
     {
         try
         {
-            connectingCameraNumber = -1
-            panasonicCameraDeviceMap.remove(number)
+            Log.v(TAG, "releaseCameraControl($number)")
+            cameraDeviceMap.remove(number)
             cameraControlInfo.remove(number)
+            connectingCameraNumber = -1
             updateInformation()
         }
         catch (e: Exception)
@@ -51,10 +52,10 @@ class CameraControlCoordinator(private val informationReceiver: IInformationRece
     {
         try
         {
-            Log.v(TAG, "assignPanasonicCamera($number, $deviceId)")
-            connectingCameraNumber = -1
-            panasonicCameraDeviceMap[number] = deviceId
+            Log.v(TAG, "assignCameraControl($number, $deviceId)")
+            cameraDeviceMap[number] = deviceId
             cameraControlInfo[number] = "$number "
+            connectingCameraNumber = -1
             updateInformation()
         }
         catch (e: Exception)
@@ -67,7 +68,7 @@ class CameraControlCoordinator(private val informationReceiver: IInformationRece
     {
         try
         {
-            return (panasonicCameraDeviceMap.containsValue(deviceId))
+            return (cameraDeviceMap.containsValue(deviceId))
         }
         catch (e: Exception)
         {

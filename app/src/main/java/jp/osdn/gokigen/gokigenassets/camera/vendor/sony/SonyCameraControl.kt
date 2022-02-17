@@ -57,7 +57,7 @@ class SonyCameraControl(private val context: AppCompatActivity, private val vibr
     companion object
     {
         private val TAG = SonyCameraControl::class.java.simpleName
-        private const val CONNECT_DELAY_MS : Long = 350
+        private const val CONNECT_DELAY_MS : Long = 150
     }
 
     override fun prepare()
@@ -179,7 +179,7 @@ class SonyCameraControl(private val context: AppCompatActivity, private val vibr
         Log.v(TAG, " connectToCamera() : SONY ")
         try
         {
-            while (cameraCoordinator.isOtherCameraConnecting(number))
+            while (!cameraCoordinator.startConnectToCamera(number))
             {
                 try
                 {
@@ -190,7 +190,6 @@ class SonyCameraControl(private val context: AppCompatActivity, private val vibr
                     e.printStackTrace()
                 }
             }
-            cameraCoordinator.startConnectToCamera(number)
             cameraConnection.connect()
         }
         catch (e : Exception)

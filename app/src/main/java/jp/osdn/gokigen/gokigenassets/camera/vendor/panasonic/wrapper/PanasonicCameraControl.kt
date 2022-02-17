@@ -50,7 +50,7 @@ class PanasonicCameraControl(private val context: AppCompatActivity, private val
     {
         private val TAG = PanasonicCameraControl::class.java.simpleName
         private const val TIMEOUT_MS = 3000
-        private const val CONNECT_DELAY_MS : Long = 350
+        private const val CONNECT_DELAY_MS : Long = 150
     }
 
     override fun prepare()
@@ -157,7 +157,7 @@ class PanasonicCameraControl(private val context: AppCompatActivity, private val
         Log.v(TAG, " connectToCamera() : PANASONIC ")
         try
         {
-            while (cameraCoordinator.isOtherCameraConnecting(number))
+            while (!cameraCoordinator.startConnectToCamera(number))
             {
                 try
                 {
@@ -168,7 +168,6 @@ class PanasonicCameraControl(private val context: AppCompatActivity, private val
                     e.printStackTrace()
                 }
             }
-            cameraCoordinator.startConnectToCamera(number)
             cameraConnection.connect()
         }
         catch (e : Exception)
