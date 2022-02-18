@@ -8,8 +8,10 @@ import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Compa
 
 class ShowMessage(private val activity : AppCompatActivity) : IInformationReceiver
 {
+    private var currentMessage : String = ""
     override fun updateMessage(message: String, isBold: Boolean, isColor: Boolean, color: Int)
     {
+        currentMessage = message
         val messageArea = activity.findViewById<TextView>(ID_AREA_MESSAGE)
         activity.runOnUiThread {
             messageArea?.text = message
@@ -28,4 +30,15 @@ class ShowMessage(private val activity : AppCompatActivity) : IInformationReceiv
             messageArea?.invalidate()
         }
     }
+
+    override fun appendMessage(message: String, isBold: Boolean, isColor: Boolean, color: Int)
+    {
+        updateMessage(currentMessage + message, isBold, isColor, color)
+    }
+
+    override fun getCurrentMessage(): String
+    {
+        return (currentMessage)
+    }
+
 }

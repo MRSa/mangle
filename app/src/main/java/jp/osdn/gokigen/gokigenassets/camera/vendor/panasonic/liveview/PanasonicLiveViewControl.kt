@@ -4,13 +4,14 @@ import android.util.Log
 import jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.IPanasonicCamera
 import jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.status.ICameraEventObserver
 import jp.osdn.gokigen.gokigenassets.liveview.image.CameraLiveViewListenerImpl
+import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 
-class PanasonicLiveViewControl(private val liveViewListener : CameraLiveViewListenerImpl, private val camera: IPanasonicCamera, private val eventObserver: ICameraEventObserver, number: Int)
+class PanasonicLiveViewControl(private val liveViewListener : CameraLiveViewListenerImpl, private val camera: IPanasonicCamera, private val eventObserver: ICameraEventObserver, private val informationReceiver: IInformationReceiver, private val portNumber: Int)
 {
-    private val liveViewPortNumber = 49151 + number   // Base : 49152
+    private val liveViewPortNumber = 49151 + portNumber  // Base port number : 49152
     private var receiverSocket: DatagramSocket? = null
     private var whileStreamReceive = false
     private var errorOccur = 0
@@ -22,8 +23,6 @@ class PanasonicLiveViewControl(private val liveViewListener : CameraLiveViewList
         private const val ERROR_MAX = 30
         private const val RECEIVE_BUFFER_SIZE = 1024 * 1024 * 4
         private const val TIMEOUT_MS = 3500
-        //private const val LIVEVIEW_PORT = 49152
-        //private const val LIVEVIEW_START_REQUEST = "cam.cgi?mode=startstream&value=49152"
         private const val LIVEVIEW_START_REQUEST = "cam.cgi?mode=startstream&value="
         private const val LIVEVIEW_STOP_REQUEST = "cam.cgi?mode=stopstream"
     }
@@ -122,11 +121,13 @@ class PanasonicLiveViewControl(private val liveViewListener : CameraLiveViewList
         }
     }
 
+/*
     fun changeLiveViewSize(size: String?) {}
     fun updateDigitalZoom() {}
     fun updateMagnifyingLiveViewScale(isChangeScale: Boolean) {}
     fun getMagnifyingLiveViewScale(): Float { return 1.0f }
     fun getDigitalZoomScale(): Float { return 1.0f }
+*/
 
     private fun startReceiveStream()
     {
@@ -231,6 +232,7 @@ class PanasonicLiveViewControl(private val liveViewListener : CameraLiveViewList
             }
             catch (e: Exception)
             {
+                showExceptionInformation()
                 exceptionCount++
                 e.printStackTrace()
                 if (exceptionCount > TIMEOUT_MAX)
@@ -245,6 +247,10 @@ class PanasonicLiveViewControl(private val liveViewListener : CameraLiveViewList
                         {
                             Log.v(TAG, "LV : RETRY COMMAND FAIL...")
                         }
+                        else
+                        {
+                            clearExceptionInformation()
+                        }
                     }
                     catch (ee: Exception)
                     {
@@ -256,6 +262,39 @@ class PanasonicLiveViewControl(private val liveViewListener : CameraLiveViewList
         closeReceiveSocket()
         Log.v(TAG, "  ----- startReceiveStream() : Finished.")
         System.gc()
+    }
+
+    private fun showExceptionInformation()
+    {
+        try
+        {
+            val msgToShow = "l${portNumber}e"
+            if (!informationReceiver.getCurrentMessage().contains(msgToShow))
+            {
+                informationReceiver.appendMessage(" $msgToShow")
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    private fun clearExceptionInformation()
+    {
+        try
+        {
+            val msgToShow = "l${portNumber}e"
+            val currentMessage = informationReceiver.getCurrentMessage()
+            if (currentMessage.contains(msgToShow))
+            {
+                informationReceiver.updateMessage(currentMessage.replace(msgToShow, ""))
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
     }
 
     private fun closeReceiveSocket()

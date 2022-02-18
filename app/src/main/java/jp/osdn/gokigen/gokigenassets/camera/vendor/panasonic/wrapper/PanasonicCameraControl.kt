@@ -29,7 +29,7 @@ import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
 
-class PanasonicCameraControl(private val context: AppCompatActivity, private val vibrator : IVibrator, informationNotify: IInformationReceiver, private val preference: ICameraPreferenceProvider, provider: ICameraStatusReceiver, private val cameraCoordinator: ICameraControlCoordinator, private val number: Int) : IPanasonicCameraHolder, IDisplayInjector,ILiveViewController, ICameraControl, View.OnClickListener, View.OnLongClickListener, ICameraShutter, IKeyDown
+class PanasonicCameraControl(private val context: AppCompatActivity, private val vibrator : IVibrator, private val informationNotify: IInformationReceiver, private val preference: ICameraPreferenceProvider, provider: ICameraStatusReceiver, private val cameraCoordinator: ICameraControlCoordinator, private val number: Int) : IPanasonicCameraHolder, IDisplayInjector,ILiveViewController, ICameraControl, View.OnClickListener, View.OnLongClickListener, ICameraShutter, IKeyDown
 {
     private val cardSlotSelector = PanasonicCardSlotSelector()
     private val liveViewListener = CameraLiveViewListenerImpl(context, informationNotify)
@@ -66,7 +66,7 @@ class PanasonicCameraControl(private val context: AppCompatActivity, private val
                 }
                 if (liveViewControl == null)
                 {
-                    liveViewControl = PanasonicLiveViewControl(liveViewListener, panasonicCamera, statusChecker.getCameraStatusEventObserver(), number)
+                    liveViewControl = PanasonicLiveViewControl(liveViewListener, panasonicCamera, statusChecker.getCameraStatusEventObserver(), informationNotify, number)
                 }
                 focusControl?.setCamera(panasonicCamera)
                 captureControl?.setCamera(panasonicCamera)
