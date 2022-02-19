@@ -3,10 +3,7 @@ package jp.osdn.gokigen.mangle
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Build
-import android.os.Bundle
-import android.os.VibrationEffect
-import android.os.Vibrator
+import android.os.*
 import android.util.Log
 import android.view.KeyEvent
 import android.view.WindowManager
@@ -23,6 +20,7 @@ import jp.osdn.gokigen.gokigenassets.utils.IScopedStorageAccessPermission
 import jp.osdn.gokigen.mangle.preference.PreferenceValueInitializer
 import jp.osdn.gokigen.mangle.scene.MainButtonHandler
 import jp.osdn.gokigen.mangle.scene.SceneChanger
+
 
 class MainActivity : AppCompatActivity(), IVibrator, ICameraStatusReceiver
 {
@@ -122,7 +120,16 @@ class MainActivity : AppCompatActivity(), IVibrator, ICameraStatusReceiver
         try
         {
             // バイブレータをつかまえる
-            val vibrator = getSystemService(VIBRATOR_SERVICE) as Vibrator
+            val vibrator  = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+            {
+                val vibratorManager =  this.getSystemService(VIBRATOR_MANAGER_SERVICE) as VibratorManager
+                vibratorManager.defaultVibrator
+            }
+            else
+            {
+                @Suppress("DEPRECATION")
+                getSystemService(VIBRATOR_SERVICE) as Vibrator
+            }
             if (!vibrator.hasVibrator())
             {
                 Log.v(TAG, " not have Vibrator...")
