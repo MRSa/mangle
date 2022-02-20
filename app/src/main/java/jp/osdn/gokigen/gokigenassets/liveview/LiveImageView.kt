@@ -28,13 +28,14 @@ import jp.osdn.gokigen.gokigenassets.liveview.message.InformationDrawer
 import java.util.*
 import kotlin.math.min
 
-class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSeekBarChangeListener, IFocusingModeNotify, IFocusFrameDrawer, IAutoFocusFrameDisplay, ICachePositionProvider
+class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSeekBarChangeListener, IFocusingModeNotify, IFocusFrameDrawer, IAutoFocusFrameDisplay, ICachePositionProvider, IImageRotation
 {
     companion object
     {
         private val TAG = LiveImageView::class.java.simpleName
     }
 
+    private lateinit var orientationEventListener : CameraOrientationEventReceiver
     private var sliderPosition : Float = 0.0f
     private var imageRotationDegrees : Int = 0
     private var showGrid : Boolean = false
@@ -80,6 +81,8 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
         informationDrawer = InformationDrawer(this)
         indicatorControl = IndicatorControl()
         imageBitmap = BitmapFactory.decodeResource(context.resources, ID_DRAWABLE_BACKGROUND_IMAGE)
+        orientationEventListener = CameraOrientationEventReceiver(context)
+        orientationEventListener.enable()
     }
 
     fun injectDisplay(cameraControl: ICameraControl)
@@ -144,7 +147,7 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
                 val config = context.resources.configuration
                 if (config.orientation == Configuration.ORIENTATION_LANDSCAPE)
                 {
-                    addDegrees = 90
+                    addDegrees = if (orientationEventListener.isPositionIsClockWise()) { 90 } else { 270 }
                 }
             }
             catch (e: Exception)
@@ -603,5 +606,4 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
         }
         return PointF(imagePointX, imagePointY)
     }
-
 }
