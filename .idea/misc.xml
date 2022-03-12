@@ -8,6 +8,20 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/MRSa/AndroidStudioProjects/android/mangle/app/src/main/res/drawable/ic_baseline_camera_24.xml" value="0.145" />
+        <entry key="..\:/Users/MRSa/AndroidStudioProjects/android/mangle/app/src/main/res/drawable/ic_baseline_camera_alt_24.xml" value="0.145" />
+        <entry key="..\:/Users/MRSa/AndroidStudioProjects/android/mangle/app/src/main/res/drawable/ic_baseline_cloud_24.xml" value="0.1055" />
+        <entry key="..\:/Users/MRSa/AndroidStudioProjects/android/mangle/app/src/main/res/drawable/ic_baseline_cloud_done_24.xml" value="0.145" />
+        <entry key="..\:/Users/MRSa/AndroidStudioProjects/android/mangle/app/src/main/res/drawable/ic_baseline_cloud_queue_24.xml" value="0.145" />
+        <entry key="..\:/Users/MRSa/AndroidStudioProjects/android/mangle/app/src/main/res/drawable/ic_baseline_linked_camera_24.xml" value="0.145" />
+        <entry key="..\:/Users/MRSa/AndroidStudioProjects/android/mangle/app/src/main/res/drawable/ic_baseline_power_settings_new_24.xml" value="0.145" />
+        <entry key="..\:/Users/MRSa/AndroidStudioProjects/android/mangle/app/src/main/res/drawable/ic_baseline_radio_button_checked_24.xml" value="0.145" />
+        <entry key="..\:/Users/MRSa/AndroidStudioProjects/android/mangle/app/src/main/res/drawable/ic_baseline_radio_button_unchecked_24.xml" value="0.145" />
+        <entry key="..\:/Users/MRSa/AndroidStudioProjects/android/mangle/app/src/main/res/drawable/ic_baseline_refresh_24.xml" value="0.145" />
+        <entry key="..\:/Users/MRSa/AndroidStudioProjects/android/mangle/app/src/main/res/drawable/ic_baseline_settings_24.xml" value="0.145" />
+        <entry key="..\:/Users/MRSa/AndroidStudioProjects/android/mangle/app/src/main/res/drawable/ic_baseline_wifi_24.xml" value="0.145" />
+        <entry key="..\:/Users/MRSa/AndroidStudioProjects/android/mangle/app/src/main/res/drawable/ic_launcher_background.xml" value="0.145" />
+        <entry key="..\:/Users/MRSa/AndroidStudioProjects/android/mangle/app/src/main/res/drawable/ic_launcher_foreground.xml" value="0.145" />
         <entry key="..\:/Users/MRSa/AndroidStudioProjects/android/mangle/app/src/main/res/layout-land/activity_main.xml" value="0.2865961199294533" />
         <entry key="..\:/Users/MRSa/AndroidStudioProjects/android/mangle/app/src/main/res/layout-land/camera_capture.xml" value="0.2865961199294533" />
         <entry key="..\:/Users/MRSa/AndroidStudioProjects/android/mangle/app/src/main/res/layout-land/camera_connection_method.xml" value="0.2865961199294533" />
