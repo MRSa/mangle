@@ -14,7 +14,7 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ILiveViewController
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraChangeListener
 import jp.osdn.gokigen.gokigenassets.camera.vendor.ICameraControlCoordinator
 import jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.IPanasonicCameraHolder
-import jp.osdn.gokigen.gokigenassets.constants.ICameraConstantConvert
+import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
@@ -45,8 +45,8 @@ class PanasonicCameraConnection(private val context: AppCompatActivity, private 
      */
     private fun onReceiveBroadcastOfConnection(context: Context, intent: Intent)
     {
-        statusReceiver.onStatusNotify(context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CHECK_WIFI))
-        Log.v(TAG, context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CHECK_WIFI))
+        statusReceiver.onStatusNotify(context.getString(IStringResourceConstantConvert.ID_STRING_CONNECT_CHECK_WIFI))
+        Log.v(TAG, context.getString(IStringResourceConstantConvert.ID_STRING_CONNECT_CHECK_WIFI))
         try
         {
             val action = intent.action
@@ -146,13 +146,13 @@ class PanasonicCameraConnection(private val context: AppCompatActivity, private 
         try
         {
             val builder: AlertDialog.Builder = AlertDialog.Builder(context)
-                .setTitle(context.getString(ICameraConstantConvert.ID_STRING_DIALOG_TITLE_CONNECT_FAILED))
+                .setTitle(context.getString(IStringResourceConstantConvert.ID_STRING_DIALOG_TITLE_CONNECT_FAILED))
                 .setMessage(message)
                 .setPositiveButton(
-                    context.getString(ICameraConstantConvert.ID_STRING_DIALOG_BUTTON_RETRY)
+                    context.getString(IStringResourceConstantConvert.ID_STRING_DIALOG_BUTTON_RETRY)
                 ) { _, _ -> connect() }
                 .setNeutralButton(
-                    ICameraConstantConvert.ID_STRING_DIALOG_BUTTON_NETWORK_SETTINGS
+                    IStringResourceConstantConvert.ID_STRING_DIALOG_BUTTON_NETWORK_SETTINGS
                 ) { _, _ ->
                     try {
                         // Wifi 設定画面を表示する

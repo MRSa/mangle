@@ -19,6 +19,7 @@ import androidx.core.content.ContextCompat
 import jp.osdn.gokigen.gokigenassets.camera.preference.ICameraPreferenceProvider
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.*
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_CAMERA_X_PREVIEW_LAYOUT
+import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveView
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveViewRefresher
 import jp.osdn.gokigen.gokigenassets.liveview.image.CameraLiveViewListenerImpl
@@ -30,13 +31,13 @@ import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class CameraControl(private val activity : AppCompatActivity, private val preference: ICameraPreferenceProvider, private val vibrator : IVibrator, private val informationReceiver : IInformationReceiver, private val number : Int = 0) : ICameraControl
+class CameraControl(private val activity : AppCompatActivity, private val preference: ICameraPreferenceProvider, private val vibrator : IVibrator, private val informationReceiver : IInformationReceiver, private val statusReceiver : ICameraStatusReceiver, private val number : Int = 0, private val liveViewListener:CameraLiveViewListenerImpl = CameraLiveViewListenerImpl(activity, informationReceiver)) : ICameraControl, ICameraShutter, IZoomLensControl
 {
     private lateinit var cameraExecutor: ExecutorService
-    private lateinit var liveViewListener : CameraLiveViewListenerImpl
     private lateinit var fileControl : FileControl
     private lateinit var storeImage : StoreImage
     private lateinit var cameraXCamera : Camera
+    private lateinit var clickKeyDownListener : CameraClickKeyDownListener
     private var cameraIsStarted = false
     private val cameraXCameraControl = CameraXCameraControl()
     private val cameraXCameraStatusHolder = CameraXCameraStatusHolder(cameraXCameraControl)
@@ -51,11 +52,11 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
     override fun initialize()
     {
         Log.v(TAG, " initialize()")
-        liveViewListener = CameraLiveViewListenerImpl(activity, informationReceiver)
         cameraExecutor = Executors.newSingleThreadExecutor()
         storeImage = StoreImage(activity, liveViewListener)
         clickKeyDownListeners.clear()
         fileControl = FileControl(activity, storeImage, vibrator)
+        clickKeyDownListener = CameraClickKeyDownListener(0, fileControl, null)
     }
 
     override fun connectToCamera()
@@ -112,6 +113,16 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
         {
             // Liveview View
             startCameraForLiveView(cameraSelector)
+        }
+
+        try
+        {
+            statusReceiver.onStatusNotify(activity.getString(IStringResourceConstantConvert.ID_STRING_CONNECT_CONNECTED))
+            statusReceiver.onCameraConnected()
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
         }
     }
 
@@ -283,7 +294,7 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
         }
     }
 
-    override fun finishCamera()
+    override fun finishCamera(isPowerOff: Boolean)
     {
         try
         {
@@ -337,6 +348,20 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
         return (number)
     }
 
+    override fun getCameraShutter(id: Int): ICameraShutter { return (this) }
+    override fun getZoomControl(id: Int): IZoomLensControl { return (this) }
+
+    override fun canZoom(): Boolean { return (false) }
+    override fun updateStatus() { }
+    override fun getMaximumFocalLength(): Float { return (0.0f) }
+    override fun getMinimumFocalLength(): Float { return (0.0f) }
+    override fun getCurrentFocalLength(): Float { return (0.0f) }
+    override fun driveZoomLens(targetLength: Float) { }
+    override fun driveZoomLens(isZoomIn: Boolean) { }
+    override fun moveInitialZoomPosition() { }
+    override fun isDrivingZoomLens(): Boolean { return (false) }
+
+
     private fun getClickKeyDownListener(id : Int) : CameraClickKeyDownListener
     {
         try
@@ -359,6 +384,22 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
     override fun setNeighborCameraControl(index: Int, camera0: ICameraControl?, camera1: ICameraControl?, camera2: ICameraControl?, camera3: ICameraControl?) { }
     override fun setNeighborCameraControlFinished() { }
     override fun getCameraStatus(): ICameraStatus { return (cameraXCameraStatusHolder) }
+
+    override fun doShutter()
+    {
+        try
+        {
+            if (::fileControl.isInitialized)
+            {
+                fileControl.takePhoto(0)
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+    override fun doShutterOff() { }
 
     companion object
     {

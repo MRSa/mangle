@@ -15,10 +15,10 @@ import jp.osdn.gokigen.gokigenassets.camera.vendor.theta.status.ICaptureModeRece
 import jp.osdn.gokigen.gokigenassets.camera.vendor.theta.status.ThetaCameraStatusWatcher
 import jp.osdn.gokigen.gokigenassets.camera.vendor.theta.status.ThetaSessionHolder
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_BUTTON_SHUTTER
-import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW
-import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW_DEFAULT_VALUE
-import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE
-import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE_DEFAULT_VALUE
+import jp.osdn.gokigen.gokigenassets.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW
+import jp.osdn.gokigen.gokigenassets.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW_DEFAULT_VALUE
+import jp.osdn.gokigen.gokigenassets.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE
+import jp.osdn.gokigen.gokigenassets.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE_DEFAULT_VALUE
 import jp.osdn.gokigen.gokigenassets.liveview.ICachePositionProvider
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveView
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveViewRefresher
@@ -29,12 +29,11 @@ import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
 import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 
-class ThetaCameraControl(private val context: AppCompatActivity, private val vibrator : IVibrator, informationNotify: IInformationReceiver, private val preference: ICameraPreferenceProvider, statusReceiver : ICameraStatusReceiver, private val number : Int = 0) : ILiveViewController,
-    ICameraControl, View.OnClickListener, View.OnLongClickListener, ICaptureModeReceiver, ICameraShutter, IKeyDown
+class ThetaCameraControl(private val context: AppCompatActivity, private val vibrator : IVibrator, informationNotify: IInformationReceiver, private val preference: ICameraPreferenceProvider, statusReceiver : ICameraStatusReceiver, private val number : Int = 0, private val liveViewListener : CameraLiveViewListenerImpl = CameraLiveViewListenerImpl(context, informationNotify)) : ILiveViewController,
+    ICameraControl, View.OnClickListener, View.OnLongClickListener, ICaptureModeReceiver, ICameraShutter, IKeyDown, IZoomLensControl
 {
     private val sessionIdHolder = ThetaSessionHolder()
     private val cameraConnection = ThetaCameraConnection(context, statusReceiver, sessionIdHolder, sessionIdHolder, this)
-    private var liveViewListener = CameraLiveViewListenerImpl(context, informationNotify)
     private val liveViewControl = ThetaLiveViewControl(liveViewListener)
     private var indicator : IMessageDrawer? = null
 
@@ -122,7 +121,7 @@ class ThetaCameraControl(private val context: AppCompatActivity, private val vib
         }
     }
 
-    override fun finishCamera()
+    override fun finishCamera(isPowerOff: Boolean)
     {
         try
         {
@@ -131,7 +130,7 @@ class ThetaCameraControl(private val context: AppCompatActivity, private val vib
                 statusWatcher.stopStatusWatch()
                 isStatusWatch = false
             }
-            cameraConnection.disconnect(false)
+            cameraConnection.disconnect(isPowerOff)
             cameraConnection.stopWatchWifiStatus(context)
         }
         catch (e : Exception)
@@ -358,4 +357,17 @@ class ThetaCameraControl(private val context: AppCompatActivity, private val vib
     {
         return (number)
     }
+
+    override fun getCameraShutter(id: Int): ICameraShutter { return (this) }
+    override fun getZoomControl(id: Int): IZoomLensControl { return (this) }
+
+    override fun canZoom(): Boolean { return (false) }
+    override fun updateStatus() { }
+    override fun getMaximumFocalLength(): Float { return (0.0f) }
+    override fun getMinimumFocalLength(): Float { return (0.0f) }
+    override fun getCurrentFocalLength(): Float { return (0.0f) }
+    override fun driveZoomLens(targetLength: Float) { }
+    override fun driveZoomLens(isZoomIn: Boolean) { }
+    override fun moveInitialZoomPosition() { }
+    override fun isDrivingZoomLens(): Boolean { return (false) }
 }

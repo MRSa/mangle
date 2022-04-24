@@ -12,7 +12,7 @@ interface ICameraControl
 
     fun connectToCamera()
     fun startCamera(isPreviewView : Boolean = true, cameraSequence : Int = 0)
-    fun finishCamera()
+    fun finishCamera(isPowerOff: Boolean)
 
     fun changeCaptureMode(mode : String)
     fun needRotateImage() : Boolean
@@ -27,6 +27,8 @@ interface ICameraControl
     fun getAnotherTouchListener(id : Int = 0) : View.OnTouchListener? = null
     fun getCameraStatus() : ICameraStatus?
     fun getCameraNumber() : Int
+    fun getCameraShutter(id: Int = 0) : ICameraShutter?
+    fun getZoomControl(id : Int = 0) : IZoomLensControl?
 
     fun setNeighborCameraControl(index: Int, camera0: ICameraControl?, camera1: ICameraControl?, camera2: ICameraControl?, camera3: ICameraControl?)
     fun setNeighborCameraControlFinished()

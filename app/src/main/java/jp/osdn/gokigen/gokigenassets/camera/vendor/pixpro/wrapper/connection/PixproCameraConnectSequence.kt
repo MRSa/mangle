@@ -29,7 +29,7 @@ import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.messag
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.messages.specific.PixproFlashOff
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.messages.specific.PixproFlashOn
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.status.PixproStatusChecker
-import jp.osdn.gokigen.gokigenassets.constants.ICameraConstantConvert
+import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert
 
 class PixproCameraConnectSequence(private val context: AppCompatActivity, private val cameraStatusReceiver: ICameraStatusReceiver, private val cameraConnection : ICameraConnection, private val interfaceProvider : IPixproInternalInterfaces, private val statusChecker: PixproStatusChecker) : Runnable, IPixproCommandCallback, IPixproMessages, PixproConnectionClient.ISearchResultCallback
 {
@@ -55,7 +55,7 @@ class PixproCameraConnectSequence(private val context: AppCompatActivity, privat
         Log.v(TAG, "search()")
         try
         {
-            cameraStatusReceiver.onStatusNotify(context.getString(ICameraConstantConvert.ID_STRING_CONNECT_START))
+            cameraStatusReceiver.onStatusNotify(context.getString(IStringResourceConstantConvert.ID_STRING_CONNECT_START))
             client.search()
         }
         catch (e: java.lang.Exception)
@@ -76,12 +76,12 @@ class PixproCameraConnectSequence(private val context: AppCompatActivity, privat
                 {
                     // 接続失敗...
                     interfaceProvider.getInformationReceiver().updateMessage(
-                        context.getString(ICameraConstantConvert.ID_STRING_DIALOG_TITLE_CONNECT_FAILED),
+                        context.getString(IStringResourceConstantConvert.ID_STRING_DIALOG_TITLE_CONNECT_FAILED),
                         isBold = false,
                         isColor = true,
                         color = Color.RED
                     )
-                    onConnectError(context.getString(ICameraConstantConvert.ID_STRING_DIALOG_TITLE_CONNECT_FAILED))
+                    onConnectError(context.getString(IStringResourceConstantConvert.ID_STRING_DIALOG_TITLE_CONNECT_FAILED))
                     return
                 }
             }
@@ -99,7 +99,7 @@ class PixproCameraConnectSequence(private val context: AppCompatActivity, privat
         {
             e.printStackTrace()
             interfaceProvider.getInformationReceiver().updateMessage(
-                context.getString(ICameraConstantConvert.ID_STRING_DIALOG_TITLE_CONNECT_FAILED),
+                context.getString(IStringResourceConstantConvert.ID_STRING_DIALOG_TITLE_CONNECT_FAILED),
                 isBold = false,
                 isColor = true,
                 color = Color.RED
@@ -118,7 +118,7 @@ class PixproCameraConnectSequence(private val context: AppCompatActivity, privat
         when (id) {
             SEQ_CONNECT_01 -> {
                 interfaceProvider.getInformationReceiver().updateMessage(
-                    context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CONNECTING) + "1",
+                    context.getString(IStringResourceConstantConvert.ID_STRING_CONNECT_CONNECTING) + "1",
                     isBold = false,
                     isColor = false,
                     color = 0
@@ -127,7 +127,7 @@ class PixproCameraConnectSequence(private val context: AppCompatActivity, privat
             }
             SEQ_CONNECT_02 -> {
                 interfaceProvider.getInformationReceiver().updateMessage(
-                    context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CONNECTING) + "2",
+                    context.getString(IStringResourceConstantConvert.ID_STRING_CONNECT_CONNECTING) + "2",
                     isBold = false,
                     isColor = false,
                     color = 0
@@ -136,7 +136,7 @@ class PixproCameraConnectSequence(private val context: AppCompatActivity, privat
             }
             SEQ_CONNECT_03 -> {
                 interfaceProvider.getInformationReceiver().updateMessage(
-                    context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CONNECTING) + "3",
+                    context.getString(IStringResourceConstantConvert.ID_STRING_CONNECT_CONNECTING) + "3",
                     isBold = false,
                     isColor = false,
                     color = 0
@@ -145,7 +145,7 @@ class PixproCameraConnectSequence(private val context: AppCompatActivity, privat
             }
             SEQ_CONNECT_04 -> {
                 interfaceProvider.getInformationReceiver().updateMessage(
-                    context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CONNECTING) + "4",
+                    context.getString(IStringResourceConstantConvert.ID_STRING_CONNECT_CONNECTING) + "4",
                     isBold = false,
                     isColor = false,
                     color = 0
@@ -155,7 +155,7 @@ class PixproCameraConnectSequence(private val context: AppCompatActivity, privat
             }
             SEQ_CONNECT_05 -> {
                 interfaceProvider.getInformationReceiver().updateMessage(
-                    context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CONNECTING) + "5",
+                    context.getString(IStringResourceConstantConvert.ID_STRING_CONNECT_CONNECTING) + "5",
                     isBold = false,
                     isColor = false,
                     color = 0
@@ -165,7 +165,7 @@ class PixproCameraConnectSequence(private val context: AppCompatActivity, privat
             }
             SEQ_CONNECT_06 -> {
                 interfaceProvider.getInformationReceiver().updateMessage(
-                    context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CONNECTING) + "6",
+                    context.getString(IStringResourceConstantConvert.ID_STRING_CONNECT_CONNECTING) + "6",
                     isBold = false,
                     isColor = false,
                     color = 0
@@ -174,7 +174,7 @@ class PixproCameraConnectSequence(private val context: AppCompatActivity, privat
             }
             SEQ_CONNECT_07 -> {
                 interfaceProvider.getInformationReceiver().updateMessage(
-                    context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CONNECTING) + "7",
+                    context.getString(IStringResourceConstantConvert.ID_STRING_CONNECT_CONNECTING) + "7",
                     isBold = false,
                     isColor = false,
                     color = 0
@@ -183,7 +183,7 @@ class PixproCameraConnectSequence(private val context: AppCompatActivity, privat
             }
             SEQ_CONNECT_08 -> {
                 interfaceProvider.getInformationReceiver().updateMessage(
-                    context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CONNECTING) + "8",
+                    context.getString(IStringResourceConstantConvert.ID_STRING_CONNECT_CONNECTING) + "8",
                     isBold = false,
                     isColor = false,
                     color = 0
@@ -192,7 +192,7 @@ class PixproCameraConnectSequence(private val context: AppCompatActivity, privat
             }
             SEQ_CONNECT_09 -> {
                 interfaceProvider.getInformationReceiver().updateMessage(
-                    context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CONNECTING) + "9",
+                    context.getString(IStringResourceConstantConvert.ID_STRING_CONNECT_CONNECTING) + "9",
                     isBold = false,
                     isColor = false,
                     color = 0
@@ -201,7 +201,7 @@ class PixproCameraConnectSequence(private val context: AppCompatActivity, privat
             }
             SEQ_CONNECT_10 -> {
                 interfaceProvider.getInformationReceiver().updateMessage(
-                    context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CONNECTING) + "10",
+                    context.getString(IStringResourceConstantConvert.ID_STRING_CONNECT_CONNECTING) + "10",
                     isBold = false,
                     isColor = false,
                     color = 0
@@ -210,7 +210,7 @@ class PixproCameraConnectSequence(private val context: AppCompatActivity, privat
             }
             SEQ_CONNECT_11 -> {
                 interfaceProvider.getInformationReceiver().updateMessage(
-                    context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CONNECTING) + "11",
+                    context.getString(IStringResourceConstantConvert.ID_STRING_CONNECT_CONNECTING) + "11",
                     isBold = false,
                     isColor = false,
                     color = 0
@@ -229,7 +229,7 @@ class PixproCameraConnectSequence(private val context: AppCompatActivity, privat
             }
             SEQ_FLASH_AUTO, SEQ_FLASH_OFF, SEQ_FLASH_ON -> {
                 interfaceProvider.getInformationReceiver().updateMessage(
-                    context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CONNECT_FINISHED),
+                    context.getString(IStringResourceConstantConvert.ID_STRING_CONNECT_CONNECT_FINISHED),
                     isBold = false,
                     isColor = false,
                     color = 0
@@ -239,19 +239,19 @@ class PixproCameraConnectSequence(private val context: AppCompatActivity, privat
             }
             else -> {
                 Log.v(TAG, " RECEIVED UNKNOWN ID : $id")
-                onConnectError(context.getString(ICameraConstantConvert.ID_STRING_CONNECT_UNKNOWN_MESSAGE))
+                onConnectError(context.getString(IStringResourceConstantConvert.ID_STRING_CONNECT_UNKNOWN_MESSAGE))
             }
         }
     }
 
     private fun startConnectSequence()
     {
-        interfaceProvider.getInformationReceiver().updateMessage(context.getString(ICameraConstantConvert.ID_STRING_CONNECT_START),
+        interfaceProvider.getInformationReceiver().updateMessage(context.getString(IStringResourceConstantConvert.ID_STRING_CONNECT_START),
             isBold = false,
             isColor = false,
             color = 0
         )
-        cameraStatusReceiver.onStatusNotify(context.getString(ICameraConstantConvert.ID_STRING_CONNECT_START))
+        cameraStatusReceiver.onStatusNotify(context.getString(IStringResourceConstantConvert.ID_STRING_CONNECT_START))
         commandIssuer.enqueueCommand(PixproConnectSequence01(this))
     }
 
@@ -261,7 +261,7 @@ class PixproCameraConnectSequence(private val context: AppCompatActivity, privat
         {
             // 接続成功のメッセージを出す
             interfaceProvider.getInformationReceiver()
-                .updateMessage(context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CONNECTED),
+                .updateMessage(context.getString(IStringResourceConstantConvert.ID_STRING_CONNECT_CONNECTED),
                     isBold = false,
                     isColor = false,
                     color = 0
@@ -275,7 +275,7 @@ class PixproCameraConnectSequence(private val context: AppCompatActivity, privat
 
             // 接続成功！のメッセージを出す
             interfaceProvider.getInformationReceiver()
-                .updateMessage(context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CONNECTED),
+                .updateMessage(context.getString(IStringResourceConstantConvert.ID_STRING_CONNECT_CONNECTED),
                     isBold = false,
                     isColor = false,
                     color = 0
@@ -293,7 +293,7 @@ class PixproCameraConnectSequence(private val context: AppCompatActivity, privat
         try
         {
             val thread = Thread { // カメラとの接続確立を通知する
-                cameraStatusReceiver.onStatusNotify(context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CONNECTED))
+                cameraStatusReceiver.onStatusNotify(context.getString(IStringResourceConstantConvert.ID_STRING_CONNECT_CONNECTED))
                 cameraStatusReceiver.onCameraConnected()
                 interfaceProvider.getIPixproCommunicationNotify().readyToCommunicate()
                 Log.v(TAG, " onConnectNotify()")

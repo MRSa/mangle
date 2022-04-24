@@ -7,7 +7,7 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnectionStatus
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
 import jp.osdn.gokigen.gokigenassets.camera.vendor.omds.IOmdsProtocolNotify
 import jp.osdn.gokigen.gokigenassets.camera.vendor.omds.status.IOmdsCommunicationInfo
-import jp.osdn.gokigen.gokigenassets.constants.ICameraConstantConvert
+import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
 import java.lang.Exception
 import java.util.HashMap
@@ -81,7 +81,7 @@ class OmdsCameraConnectSequence(private val context: AppCompatActivity, private 
             }
             else
             {
-                cameraConnection.alertConnectingFailed(context.getString(ICameraConstantConvert.ID_STRING_CAMERA_NOT_FOUND))
+                cameraConnection.alertConnectingFailed(context.getString(IStringResourceConstantConvert.ID_STRING_CAMERA_NOT_FOUND))
             }
         }
         catch (e: Exception)
@@ -96,7 +96,7 @@ class OmdsCameraConnectSequence(private val context: AppCompatActivity, private 
         try
         {
             val thread = Thread { // カメラとの接続確立を通知する
-                cameraStatusReceiver.onStatusNotify(context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CONNECTED))
+                cameraStatusReceiver.onStatusNotify(context.getString(IStringResourceConstantConvert.ID_STRING_CONNECT_CONNECTED))
                 cameraStatusReceiver.onCameraConnected()
                 Log.v(TAG, "onConnectNotify()")
                 cameraConnection.forceUpdateConnectionStatus(ICameraConnectionStatus.CameraConnectionStatus.CONNECTED)

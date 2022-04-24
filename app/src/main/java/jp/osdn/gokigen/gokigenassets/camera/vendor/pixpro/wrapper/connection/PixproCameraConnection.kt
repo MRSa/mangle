@@ -12,7 +12,7 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnectionStatus
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.IPixproInternalInterfaces
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.status.PixproStatusChecker
-import jp.osdn.gokigen.gokigenassets.constants.ICameraConstantConvert
+import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert
 import java.lang.Exception
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
@@ -43,8 +43,8 @@ class PixproCameraConnection(private val context: AppCompatActivity, private val
      */
     private fun onReceiveBroadcastOfConnection(context: Context, intent: Intent)
     {
-        statusReceiver.onStatusNotify(context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CHECK_WIFI))
-        Log.v(TAG, context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CHECK_WIFI))
+        statusReceiver.onStatusNotify(context.getString(IStringResourceConstantConvert.ID_STRING_CONNECT_CHECK_WIFI))
+        Log.v(TAG, context.getString(IStringResourceConstantConvert.ID_STRING_CONNECT_CHECK_WIFI))
         try
         {
             val action = intent.action
@@ -124,10 +124,10 @@ class PixproCameraConnection(private val context: AppCompatActivity, private val
         try
         {
             val builder: AlertDialog.Builder = AlertDialog.Builder(context)
-                .setTitle(context.getString(ICameraConstantConvert.ID_STRING_DIALOG_TITLE_CONNECT_FAILED))
+                .setTitle(context.getString(IStringResourceConstantConvert.ID_STRING_DIALOG_TITLE_CONNECT_FAILED))
                 .setMessage(message)
-                .setPositiveButton(context.getString(ICameraConstantConvert.ID_STRING_DIALOG_BUTTON_RETRY)) { _, _ -> connect() }
-                .setNeutralButton(ICameraConstantConvert.ID_STRING_DIALOG_BUTTON_NETWORK_SETTINGS) { _, _ ->
+                .setPositiveButton(context.getString(IStringResourceConstantConvert.ID_STRING_DIALOG_BUTTON_RETRY)) { _, _ -> connect() }
+                .setNeutralButton(IStringResourceConstantConvert.ID_STRING_DIALOG_BUTTON_NETWORK_SETTINGS) { _, _ ->
                     try
                     {
                         // Wifi 設定画面を表示する

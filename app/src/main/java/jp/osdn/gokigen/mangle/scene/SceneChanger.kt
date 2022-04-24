@@ -347,14 +347,14 @@ class SceneChanger(private val activity: AppCompatActivity, private val informat
     fun finish()
     {
         Log.v(TAG, " finishCamera() ")
-        cameraControl1.finishCamera()
-        cameraControl2.finishCamera()
-        cameraControl3.finishCamera()
-        cameraControl4.finishCamera()
-        cameraControl5.finishCamera()
-        cameraControl6.finishCamera()
-        cameraControl7.finishCamera()
-        cameraControl8.finishCamera()
+        cameraControl1.finishCamera(false)
+        cameraControl2.finishCamera(false)
+        cameraControl3.finishCamera(false)
+        cameraControl4.finishCamera(false)
+        cameraControl5.finishCamera(false)
+        cameraControl6.finishCamera(false)
+        cameraControl7.finishCamera(false)
+        cameraControl8.finishCamera(false)
     }
 
     fun handleKeyDown(keyCode: Int, event: KeyEvent): Boolean

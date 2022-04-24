@@ -17,6 +17,10 @@ import jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.operation.Panasonic
 import jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.operation.PanasonicCameraZoomLensControl
 import jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.status.CameraEventObserver
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert
+import jp.osdn.gokigen.gokigenassets.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW
+import jp.osdn.gokigen.gokigenassets.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW_DEFAULT_VALUE
+import jp.osdn.gokigen.gokigenassets.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE
+import jp.osdn.gokigen.gokigenassets.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE_DEFAULT_VALUE
 import jp.osdn.gokigen.gokigenassets.liveview.ICachePositionProvider
 import jp.osdn.gokigen.gokigenassets.liveview.IIndicatorControl
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveView
@@ -29,10 +33,9 @@ import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
 
-class PanasonicCameraControl(private val context: AppCompatActivity, private val vibrator : IVibrator, private val informationNotify: IInformationReceiver, private val preference: ICameraPreferenceProvider, provider: ICameraStatusReceiver, private val cameraCoordinator: ICameraControlCoordinator, private val number: Int) : IPanasonicCameraHolder, IDisplayInjector,ILiveViewController, ICameraControl, View.OnClickListener, View.OnLongClickListener, ICameraShutter, IKeyDown
+class PanasonicCameraControl(private val context: AppCompatActivity, private val vibrator : IVibrator, private val informationNotify: IInformationReceiver, private val preference: ICameraPreferenceProvider, provider: ICameraStatusReceiver, private val cameraCoordinator: ICameraControlCoordinator, private val number: Int = 0, private val liveViewListener: CameraLiveViewListenerImpl = CameraLiveViewListenerImpl(context, informationNotify)) : IPanasonicCameraHolder, IDisplayInjector,ILiveViewController, ICameraControl, View.OnClickListener, View.OnLongClickListener, ICameraShutter, IKeyDown
 {
     private val cardSlotSelector = PanasonicCardSlotSelector()
-    private val liveViewListener = CameraLiveViewListenerImpl(context, informationNotify)
     private val cameraConnection: PanasonicCameraConnection = PanasonicCameraConnection(context, provider, this, this, cardSlotSelector, cameraCoordinator, number)
     private val storeImage = StoreImage(context, liveViewListener)
 
@@ -70,6 +73,7 @@ class PanasonicCameraControl(private val context: AppCompatActivity, private val
                 }
                 focusControl?.setCamera(panasonicCamera)
                 captureControl?.setCamera(panasonicCamera)
+                captureControl?.setCameraStatus(statusChecker.getCameraStatusConvert())
                 zoomControl.setCamera(panasonicCamera)
             }
             catch (e: Exception)
@@ -195,7 +199,7 @@ class PanasonicCameraControl(private val context: AppCompatActivity, private val
         }
     }
 
-    override fun finishCamera()
+    override fun finishCamera(isPowerOff: Boolean)
     {
         try
         {
@@ -207,7 +211,7 @@ class PanasonicCameraControl(private val context: AppCompatActivity, private val
                 }
                 isStatusWatch = false
             }
-            cameraConnection.disconnect(false)
+            cameraConnection.disconnect(isPowerOff)
             cameraConnection.stopWatchWifiStatus(context)
             stopLiveView()
         }
@@ -384,8 +388,8 @@ class PanasonicCameraControl(private val context: AppCompatActivity, private val
         try
         {
             //  preferenceから設定を取得する
-            val captureBothCamera = PreferenceAccessWrapper(context).getBoolean(IApplicationConstantConvert.ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW, IApplicationConstantConvert.ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW_DEFAULT_VALUE)
-            val notUseShutter = PreferenceAccessWrapper(context).getBoolean(IApplicationConstantConvert.ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE, IApplicationConstantConvert.ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE_DEFAULT_VALUE)
+            val captureBothCamera = PreferenceAccessWrapper(context).getBoolean(ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW, ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW_DEFAULT_VALUE)
+            val notUseShutter = PreferenceAccessWrapper(context).getBoolean(ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE, ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE_DEFAULT_VALUE)
             if ((captureBothCamera)&&(liveViewListener.isImageReceived()))
             {
                 // ライブビュー画像を保管する場合...
@@ -429,4 +433,8 @@ class PanasonicCameraControl(private val context: AppCompatActivity, private val
     {
         return (number)
     }
+
+    override fun getCameraShutter(id: Int): ICameraShutter { return (this) }
+    override fun getZoomControl(id: Int): IZoomLensControl { return (zoomControl) }
+
 }

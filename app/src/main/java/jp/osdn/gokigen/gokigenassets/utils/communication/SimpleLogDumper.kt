@@ -3,7 +3,7 @@ package jp.osdn.gokigen.gokigenassets.utils.communication
 import android.app.Activity
 import android.os.Environment
 import android.util.Log
-import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_LABEL_APP_LOCATION
+import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert.Companion.ID_LABEL_APP_LOCATION
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat

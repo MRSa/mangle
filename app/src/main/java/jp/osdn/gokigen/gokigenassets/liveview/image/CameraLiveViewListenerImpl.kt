@@ -8,9 +8,9 @@ import android.util.Log
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_DRAWABLE_SPLASH_IMAGE
-import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_CACHE_LIVE_VIEW_PICTURES
-import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_NUMBER_OF_CACHE_PICTURES
-import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_NUMBER_OF_CACHE_PICTURES_DEFAULT_VALUE
+import jp.osdn.gokigen.gokigenassets.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_CACHE_LIVE_VIEW_PICTURES
+import jp.osdn.gokigen.gokigenassets.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_NUMBER_OF_CACHE_PICTURES
+import jp.osdn.gokigen.gokigenassets.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_NUMBER_OF_CACHE_PICTURES_DEFAULT_VALUE
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveViewRefresher
 import jp.osdn.gokigen.gokigenassets.liveview.bitmapconvert.IPreviewImageConverter
 import jp.osdn.gokigen.gokigenassets.liveview.bitmapconvert.ImageConvertFactory
@@ -325,7 +325,7 @@ class CameraLiveViewListenerImpl(private val context: Context,  private val info
             val pos = (position * maxCachePics.toFloat()).toInt()
             //Log.v(TAG, " getImage (pos: $position : $pos)")
             val image : MyImageByteArray =
-            if (pos >= cachePics.size)
+            if ((cachePics.size > 0)&&(pos >= cachePics.size))
             {
                 cachePics[cachePics.size - 1]
             }

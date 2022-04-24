@@ -384,37 +384,37 @@ class CameraProvider(private val activity: AppCompatActivity, private val inform
                 {
                     if (!::cameraXControl1.isInitialized)
                     {
-                        cameraXControl1 = CameraControl(activity, cameraPreference, vibrator, informationNotify)
+                        cameraXControl1 = CameraControl(activity, cameraPreference, vibrator, informationNotify, statusReceiver, number)
                         return (cameraXControl1)
                     }
                     if (!::cameraXControl2.isInitialized)
                     {
-                        cameraXControl2 = CameraControl(activity, cameraPreference, vibrator, informationNotify)
+                        cameraXControl2 = CameraControl(activity, cameraPreference, vibrator, informationNotify, statusReceiver, number)
                         return (cameraXControl2)
                     }
                     if (!::cameraXControl3.isInitialized)
                     {
-                        cameraXControl3 = CameraControl(activity, cameraPreference, vibrator, informationNotify)
+                        cameraXControl3 = CameraControl(activity, cameraPreference, vibrator, informationNotify, statusReceiver, number)
                         return (cameraXControl3)
                     }
                     if (!::cameraXControl4.isInitialized)
                     {
-                        cameraXControl4 = CameraControl(activity, cameraPreference, vibrator, informationNotify)
+                        cameraXControl4 = CameraControl(activity, cameraPreference, vibrator, informationNotify, statusReceiver, number)
                         return (cameraXControl4)
                     }
                     if (!::cameraXControl5.isInitialized)
                     {
-                        cameraXControl5 = CameraControl(activity, cameraPreference, vibrator, informationNotify)
+                        cameraXControl5 = CameraControl(activity, cameraPreference, vibrator, informationNotify, statusReceiver, number)
                         return (cameraXControl5)
                     }
                     if (!::cameraXControl6.isInitialized)
                     {
-                        cameraXControl6 = CameraControl(activity, cameraPreference, vibrator, informationNotify)
+                        cameraXControl6 = CameraControl(activity, cameraPreference, vibrator, informationNotify, statusReceiver, number)
                         return (cameraXControl6)
                     }
                     if (!::cameraXControl7.isInitialized)
                     {
-                        cameraXControl7 = CameraControl(activity, cameraPreference, vibrator, informationNotify)
+                        cameraXControl7 = CameraControl(activity, cameraPreference, vibrator, informationNotify, statusReceiver, number)
                         return (cameraXControl7)
                     }
                 }
@@ -425,7 +425,7 @@ class CameraProvider(private val activity: AppCompatActivity, private val inform
             }
             return (cameraXControl0)
         }
-        cameraXControl0 = CameraControl(activity, cameraPreference, vibrator, informationNotify, number)
+        cameraXControl0 = CameraControl(activity, cameraPreference, vibrator, informationNotify, statusReceiver, number)
         cameraXisCreated = true
         return (cameraXControl0)
     }

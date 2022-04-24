@@ -9,9 +9,9 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraChangeListener
 import jp.osdn.gokigen.gokigenassets.camera.vendor.ICameraControlCoordinator
 import jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.IPanasonicCamera
 import jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.IPanasonicCameraHolder
-import jp.osdn.gokigen.gokigenassets.constants.ICameraConstantConvert
-import jp.osdn.gokigen.gokigenassets.constants.ICameraConstantConvert.Companion.ID_STRING_CONNECT_CAMERA_DETECTED
-import jp.osdn.gokigen.gokigenassets.constants.ICameraConstantConvert.Companion.ID_STRING_CONNECT_START
+import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert
+import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert.Companion.ID_STRING_CONNECT_CAMERA_DETECTED
+import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert.Companion.ID_STRING_CONNECT_START
 
 class PanasonicCameraConnectSequence(private val context: AppCompatActivity, private val cameraStatusReceiver: ICameraStatusReceiver, private val cameraConnection: ICameraConnection, private val cameraHolder: IPanasonicCameraHolder, private val listener: ICameraChangeListener, cameraCoordinator: ICameraControlCoordinator, number : Int) : Runnable, PanasonicSsdpClient.ISearchResultCallback
 {
@@ -40,7 +40,7 @@ class PanasonicCameraConnectSequence(private val context: AppCompatActivity, pri
         try
         {
             val thread = Thread { // カメラとの接続確立を通知する
-                cameraStatusReceiver.onStatusNotify(context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CONNECTED))
+                cameraStatusReceiver.onStatusNotify(context.getString(IStringResourceConstantConvert.ID_STRING_CONNECT_CONNECTED))
                 cameraStatusReceiver.onCameraConnected()
                 Log.v(TAG, "onConnectNotify()")
                 cameraConnection.forceUpdateConnectionStatus(ICameraConnectionStatus.CameraConnectionStatus.CONNECTED)

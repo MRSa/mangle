@@ -12,7 +12,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnection
 import jp.osdn.gokigen.gokigenassets.camera.vendor.ICameraControlCoordinator
-import jp.osdn.gokigen.gokigenassets.constants.ICameraConstantConvert
+import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert
 import java.lang.Exception
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
@@ -40,8 +40,8 @@ class SonyCameraConnection(private val context: AppCompatActivity, private val s
 
     private fun onReceiveBroadcastOfConnection(context: Context, intent: Intent)
     {
-        statusReceiver.onStatusNotify(context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CHECK_WIFI))
-        Log.v(TAG, context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CHECK_WIFI))
+        statusReceiver.onStatusNotify(context.getString(IStringResourceConstantConvert.ID_STRING_CONNECT_CHECK_WIFI))
+        Log.v(TAG, context.getString(IStringResourceConstantConvert.ID_STRING_CONNECT_CHECK_WIFI))
         try
         {
             val action = intent.action
@@ -141,10 +141,10 @@ class SonyCameraConnection(private val context: AppCompatActivity, private val s
         try
         {
             val builder: AlertDialog.Builder = AlertDialog.Builder(context)
-                .setTitle(context.getString(ICameraConstantConvert.ID_STRING_DIALOG_TITLE_CONNECT_FAILED))
+                .setTitle(context.getString(IStringResourceConstantConvert.ID_STRING_DIALOG_TITLE_CONNECT_FAILED))
                 .setMessage(message)
-                .setPositiveButton(context.getString(ICameraConstantConvert.ID_STRING_DIALOG_BUTTON_RETRY)) { _, _ -> connect() }
-                .setNeutralButton(ICameraConstantConvert.ID_STRING_DIALOG_BUTTON_NETWORK_SETTINGS) { _, _ ->
+                .setPositiveButton(context.getString(IStringResourceConstantConvert.ID_STRING_DIALOG_BUTTON_RETRY)) { _, _ -> connect() }
+                .setNeutralButton(IStringResourceConstantConvert.ID_STRING_DIALOG_BUTTON_NETWORK_SETTINGS) { _, _ ->
                     try
                     {
                         // Wifi 設定画面を表示する

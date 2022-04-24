@@ -11,7 +11,7 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.*
 import jp.osdn.gokigen.gokigenassets.camera.vendor.omds.IOmdsProtocolNotify
 import jp.osdn.gokigen.gokigenassets.camera.vendor.omds.liveview.IOmdsLiveViewControl
 import jp.osdn.gokigen.gokigenassets.camera.vendor.omds.status.IOmdsCommunicationInfo
-import jp.osdn.gokigen.gokigenassets.constants.ICameraConstantConvert
+import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert
 import java.lang.Exception
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
@@ -31,8 +31,8 @@ class OmdsCameraConnection(private val context: AppCompatActivity, private val s
 
     private fun onReceiveBroadcastOfConnection(context: Context, intent: Intent)
     {
-        statusReceiver.onStatusNotify(context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CHECK_WIFI))
-        Log.v(TAG, context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CHECK_WIFI))
+        statusReceiver.onStatusNotify(context.getString(IStringResourceConstantConvert.ID_STRING_CONNECT_CHECK_WIFI))
+        Log.v(TAG, context.getString(IStringResourceConstantConvert.ID_STRING_CONNECT_CHECK_WIFI))
         val action = intent.action
         if (action == null)
         {
@@ -119,10 +119,10 @@ class OmdsCameraConnection(private val context: AppCompatActivity, private val s
     {
         Log.v(TAG, "alertConnectingFailed() : $message")
         val builder: AlertDialog.Builder = AlertDialog.Builder(context)
-            .setTitle(context.getString(ICameraConstantConvert.ID_STRING_DIALOG_TITLE_CONNECT_FAILED))
+            .setTitle(context.getString(IStringResourceConstantConvert.ID_STRING_DIALOG_TITLE_CONNECT_FAILED))
             .setMessage(message)
-            .setPositiveButton(context.getString(ICameraConstantConvert.ID_STRING_DIALOG_BUTTON_RETRY)) { _, _ -> connect() }
-            .setNeutralButton(ICameraConstantConvert.ID_STRING_DIALOG_BUTTON_NETWORK_SETTINGS) { _, _ ->
+            .setPositiveButton(context.getString(IStringResourceConstantConvert.ID_STRING_DIALOG_BUTTON_RETRY)) { _, _ -> connect() }
+            .setNeutralButton(IStringResourceConstantConvert.ID_STRING_DIALOG_BUTTON_NETWORK_SETTINGS) { _, _ ->
                 try {
                     // Wifi 設定画面を表示する
                     context.startActivity(Intent(Settings.ACTION_WIFI_SETTINGS))

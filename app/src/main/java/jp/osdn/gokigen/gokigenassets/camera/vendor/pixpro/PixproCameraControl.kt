@@ -9,6 +9,7 @@ import jp.osdn.gokigen.gokigenassets.camera.preference.ICameraPreferenceProvider
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.operation.FocusControl
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.operation.MovieShotControl
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.operation.SingleShotControl
+import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.operation.ZoomControl
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.IPixproCamera
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.IPixproCameraInitializer
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.PixproCamera
@@ -20,7 +21,11 @@ import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.connection.Pix
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.liveview.PixproLiveViewControl
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.status.PixproStatusChecker
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert
-import jp.osdn.gokigen.gokigenassets.constants.ICameraConstantConvert.Companion.ID_STRING_COMMAND_LINE_DISCONNECTED
+import jp.osdn.gokigen.gokigenassets.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW
+import jp.osdn.gokigen.gokigenassets.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW_DEFAULT_VALUE
+import jp.osdn.gokigen.gokigenassets.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE
+import jp.osdn.gokigen.gokigenassets.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE_DEFAULT_VALUE
+import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert.Companion.ID_STRING_COMMAND_LINE_DISCONNECTED
 import jp.osdn.gokigen.gokigenassets.liveview.ICachePositionProvider
 import jp.osdn.gokigen.gokigenassets.liveview.IIndicatorControl
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveView
@@ -32,14 +37,14 @@ import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
 import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 
-class PixproCameraControl(private val context: AppCompatActivity, private val vibrator: IVibrator, private val informationNotify : IInformationReceiver, private val preference: ICameraPreferenceProvider, provider: ICameraStatusReceiver, private val number : Int = 0) : ICameraControl, View.OnClickListener, View.OnLongClickListener, ICameraShutter, IKeyDown, IPixproInternalInterfaces, IPixproCommunicationNotify, IDisplayInjector
+class PixproCameraControl(private val context: AppCompatActivity, private val vibrator: IVibrator, private val informationNotify : IInformationReceiver, private val preference: ICameraPreferenceProvider, provider: ICameraStatusReceiver, private val number : Int = 0, private val liveViewListener: CameraLiveViewListenerImpl = CameraLiveViewListenerImpl(context, informationNotify)) : ICameraControl, View.OnClickListener, View.OnLongClickListener, ICameraShutter, IKeyDown, IPixproInternalInterfaces, IPixproCommunicationNotify, IDisplayInjector
 {
     private val statusChecker = PixproStatusChecker()
-    private val liveViewListener = CameraLiveViewListenerImpl(context, informationNotify)
     private val cameraConnection = PixproCameraConnection(context, provider, this, statusChecker)
     private val pixproCameraParameter = PixproCamera()
     private val commandCommunicator = PixproCommandCommunicator(pixproCameraParameter, this, statusChecker)
     private val storeImage = StoreImage(context, liveViewListener)
+    private val zoomControl = ZoomControl(commandCommunicator)
 
     private lateinit var liveViewControl : PixproLiveViewControl
     private lateinit var cachePositionProvider : ICachePositionProvider
@@ -98,7 +103,7 @@ class PixproCameraControl(private val context: AppCompatActivity, private val vi
         }
     }
 
-    override fun finishCamera()
+    override fun finishCamera(isPowerOff: Boolean)
     {
         try
         {
@@ -107,7 +112,7 @@ class PixproCameraControl(private val context: AppCompatActivity, private val vi
                 liveViewControl.stopLiveView()
             }
             statusChecker.stopStatusWatch()
-            cameraConnection.disconnect(false)
+            cameraConnection.disconnect(isPowerOff)
             cameraConnection.stopWatchWifiStatus(context)
         }
         catch (e: Exception)
@@ -118,6 +123,7 @@ class PixproCameraControl(private val context: AppCompatActivity, private val vi
 
     override fun changeCaptureMode(mode: String) { }
     override fun needRotateImage(): Boolean { return (false) }
+
     override fun setRefresher(id : Int, refresher: ILiveViewRefresher, imageView: ILiveView, cachePosition : ICachePositionProvider)
     {
         try
@@ -301,15 +307,16 @@ class PixproCameraControl(private val context: AppCompatActivity, private val vi
         return (number)
     }
 
+    override fun getCameraShutter(id: Int): ICameraShutter { return (this) }
+    override fun getZoomControl(id: Int): IZoomLensControl { return (zoomControl) }
+
     private fun captureImageLiveView() : Boolean
     {
         try
         {
             //  preferenceから設定を取得する
-            val captureBothCamera = PreferenceAccessWrapper(context).getBoolean(
-                IApplicationConstantConvert.ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW, IApplicationConstantConvert.ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW_DEFAULT_VALUE)
-            val notUseShutter = PreferenceAccessWrapper(context).getBoolean(
-                IApplicationConstantConvert.ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE, IApplicationConstantConvert.ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE_DEFAULT_VALUE)
+            val captureBothCamera = PreferenceAccessWrapper(context).getBoolean(ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW, ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW_DEFAULT_VALUE)
+            val notUseShutter = PreferenceAccessWrapper(context).getBoolean(ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE, ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE_DEFAULT_VALUE)
             if ((captureBothCamera)&&(liveViewListener.isImageReceived()))
             {
                 // ライブビュー画像を保管する場合...

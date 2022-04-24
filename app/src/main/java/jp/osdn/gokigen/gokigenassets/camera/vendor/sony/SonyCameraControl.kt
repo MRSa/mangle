@@ -30,15 +30,18 @@ import jp.osdn.gokigen.gokigenassets.camera.vendor.sony.wrapper.ISonyCamera
 import jp.osdn.gokigen.gokigenassets.camera.vendor.sony.wrapper.SonyCameraApi
 import jp.osdn.gokigen.gokigenassets.camera.vendor.sony.wrapper.eventlistener.ISonyCameraEventObserver
 import jp.osdn.gokigen.gokigenassets.camera.vendor.sony.wrapper.eventlistener.SonyStatus
+import jp.osdn.gokigen.gokigenassets.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW
+import jp.osdn.gokigen.gokigenassets.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW_DEFAULT_VALUE
+import jp.osdn.gokigen.gokigenassets.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE
+import jp.osdn.gokigen.gokigenassets.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE_DEFAULT_VALUE
 import org.json.JSONObject
 import kotlin.collections.ArrayList
 
 
-class SonyCameraControl(private val context: AppCompatActivity, private val vibrator : IVibrator, private val informationNotify : IInformationReceiver, private val preference: ICameraPreferenceProvider, provider: ICameraStatusReceiver, private val cameraCoordinator: ICameraControlCoordinator, private val number : Int = 0) : ISonyCameraHolder,
+class SonyCameraControl(private val context: AppCompatActivity, private val vibrator : IVibrator, private val informationNotify : IInformationReceiver, private val preference: ICameraPreferenceProvider, provider: ICameraStatusReceiver, private val cameraCoordinator: ICameraControlCoordinator, private val number : Int = 0, private val liveViewListener :CameraLiveViewListenerImpl = CameraLiveViewListenerImpl(context, informationNotify)) : ISonyCameraHolder,
     IDisplayInjector, ICameraControl, View.OnClickListener, View.OnLongClickListener, ICameraShutter, IKeyDown
 {
     private val sonyCameraStatus = SonyStatus(JSONObject())
-    private val liveViewListener = CameraLiveViewListenerImpl(context, informationNotify)
     private val cameraConnection = SonyCameraConnection(context, provider, this, cameraCoordinator, number)
     private val storeImage = StoreImage(context, liveViewListener)
 
@@ -80,6 +83,7 @@ class SonyCameraControl(private val context: AppCompatActivity, private val vibr
                 if (::captureControl.isInitialized)
                 {
                     captureControl.setCameraApi(sonyCameraApi)
+                    captureControl.setCameraStatus(sonyCameraStatus)
                 }
             }
             catch (e: Exception)
@@ -217,7 +221,7 @@ class SonyCameraControl(private val context: AppCompatActivity, private val vibr
         }
     }
 
-    override fun finishCamera()
+    override fun finishCamera(isPowerOff: Boolean)
     {
         try
         {
@@ -229,7 +233,7 @@ class SonyCameraControl(private val context: AppCompatActivity, private val vibr
             {
                 liveViewControl.stopLiveView()
             }
-            cameraConnection.disconnect(false)
+            cameraConnection.disconnect(isPowerOff)
             cameraConnection.stopWatchWifiStatus(context)
         }
         catch (e : Exception)
@@ -365,10 +369,8 @@ class SonyCameraControl(private val context: AppCompatActivity, private val vibr
         try
         {
             //  preferenceから設定を取得する
-            val captureBothCamera = PreferenceAccessWrapper(context).getBoolean(
-                IApplicationConstantConvert.ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW, IApplicationConstantConvert.ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW_DEFAULT_VALUE)
-            val notUseShutter = PreferenceAccessWrapper(context).getBoolean(
-                IApplicationConstantConvert.ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE, IApplicationConstantConvert.ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE_DEFAULT_VALUE)
+            val captureBothCamera = PreferenceAccessWrapper(context).getBoolean(ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW, ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW_DEFAULT_VALUE)
+            val notUseShutter = PreferenceAccessWrapper(context).getBoolean(ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE, ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE_DEFAULT_VALUE)
             if ((captureBothCamera)&&(liveViewListener.isImageReceived()))
             {
                 // ライブビュー画像を保管する場合...
@@ -425,4 +427,8 @@ class SonyCameraControl(private val context: AppCompatActivity, private val vibr
     {
         return (number)
     }
+
+    override fun getCameraShutter(id: Int): ICameraShutter { return (this) }
+    override fun getZoomControl(id: Int): IZoomLensControl { return (zoomControl) }
+
 }

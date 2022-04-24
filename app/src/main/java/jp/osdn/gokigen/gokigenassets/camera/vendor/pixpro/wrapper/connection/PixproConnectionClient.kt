@@ -4,7 +4,7 @@ import android.content.Context
 import android.net.wifi.WifiManager
 import android.util.Log
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
-import jp.osdn.gokigen.gokigenassets.constants.ICameraConstantConvert
+import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetSocketAddress
@@ -71,7 +71,7 @@ class PixproConnectionClient(private val context: Context, private val interface
             // 要求を繰り返し送信する
             for (loop in 1..sendRepeatCount)
             {
-                cameraStatusReceiver.onStatusNotify(context.getString(ICameraConstantConvert.ID_STRING_CONNECT_CAMERA_SEARCH_REQUEST) + " " + loop)
+                cameraStatusReceiver.onStatusNotify(context.getString(IStringResourceConstantConvert.ID_STRING_CONNECT_CAMERA_SEARCH_REQUEST) + " " + loop)
                 sendReceiveSocket.send(packet)
                 Thread.sleep(SEND_WAIT_DURATION_MS.toLong())
             }
@@ -98,7 +98,7 @@ class PixproConnectionClient(private val context: Context, private val interface
             val startTime = System.currentTimeMillis()
             var currentTime = System.currentTimeMillis()
             val array = ByteArray(PACKET_BUFFER_SIZE)
-            cameraStatusReceiver.onStatusNotify(context.getString(ICameraConstantConvert.ID_STRING_CONNECT_WAIT_REPLY_CAMERA))
+            cameraStatusReceiver.onStatusNotify(context.getString(IStringResourceConstantConvert.ID_STRING_CONNECT_WAIT_REPLY_CAMERA))
             while (currentTime - startTime < REPLY_RECEIVE_TIMEOUT)
             {
                 val receivePacket = DatagramPacket(array, array.size)
@@ -133,7 +133,7 @@ class PixproConnectionClient(private val context: Context, private val interface
                 else
                 {
                     // カメラが見つからない...
-                    cameraStatusReceiver.onStatusNotify(context.getString(ICameraConstantConvert.ID_STRING_CAMERA_NOT_FOUND))
+                    cameraStatusReceiver.onStatusNotify(context.getString(IStringResourceConstantConvert.ID_STRING_CAMERA_NOT_FOUND))
                 }
                 currentTime = System.currentTimeMillis()
             }

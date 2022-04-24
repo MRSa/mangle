@@ -14,6 +14,10 @@ import jp.osdn.gokigen.gokigenassets.camera.vendor.omds.status.OmdsCameraStatusW
 import jp.osdn.gokigen.gokigenassets.camera.vendor.omds.wrapper.OmdsCaptureControl
 import jp.osdn.gokigen.gokigenassets.camera.vendor.omds.wrapper.OmdsFocusControl
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert
+import jp.osdn.gokigen.gokigenassets.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW
+import jp.osdn.gokigen.gokigenassets.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW_DEFAULT_VALUE
+import jp.osdn.gokigen.gokigenassets.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE
+import jp.osdn.gokigen.gokigenassets.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE_DEFAULT_VALUE
 import jp.osdn.gokigen.gokigenassets.liveview.ICachePositionProvider
 import jp.osdn.gokigen.gokigenassets.liveview.IIndicatorControl
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveView
@@ -25,9 +29,8 @@ import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
 import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 
-class OmdsCameraControl(private val context: AppCompatActivity, private val vibrator: IVibrator, informationNotify : IInformationReceiver, private val preference: ICameraPreferenceProvider, provider: ICameraStatusReceiver, private val number : Int = 0) : ICameraControl, View.OnClickListener, View.OnLongClickListener, ICameraShutter, IKeyDown, IDisplayInjector, IOmdsProtocolNotify
+class OmdsCameraControl(private val context: AppCompatActivity, private val vibrator: IVibrator, informationNotify : IInformationReceiver, private val preference: ICameraPreferenceProvider, provider: ICameraStatusReceiver, private val number : Int = 0,  private val liveViewListener: CameraLiveViewListenerImpl = CameraLiveViewListenerImpl(context, informationNotify)) : ICameraControl, View.OnClickListener, View.OnLongClickListener, ICameraShutter, IKeyDown, IDisplayInjector, IOmdsProtocolNotify
 {
-    private val liveViewListener = CameraLiveViewListenerImpl(context, informationNotify)
     private val statusChecker = OmdsCameraStatusWatcher()
     private val runModeControl = OmdsRunModeControl()
     private val zoomLensControl = OmdsZoomLensControl(statusChecker)
@@ -83,14 +86,13 @@ class OmdsCameraControl(private val context: AppCompatActivity, private val vibr
         }
     }
 
-    override fun finishCamera()
+    override fun finishCamera(isPowerOff: Boolean)
     {
         try
         {
             liveViewControl.stopLiveView()
             statusChecker.stopStatusWatch()
-            cameraConnection.disconnect(true)
-
+            cameraConnection.disconnect(isPowerOff)
         }
         catch (e: Exception)
         {
@@ -229,10 +231,8 @@ class OmdsCameraControl(private val context: AppCompatActivity, private val vibr
         try
         {
             //  preferenceから設定を取得する
-            val captureBothCamera = PreferenceAccessWrapper(context).getBoolean(
-                IApplicationConstantConvert.ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW, IApplicationConstantConvert.ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW_DEFAULT_VALUE)
-            val notUseShutter = PreferenceAccessWrapper(context).getBoolean(
-                IApplicationConstantConvert.ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE, IApplicationConstantConvert.ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE_DEFAULT_VALUE)
+            val captureBothCamera = PreferenceAccessWrapper(context).getBoolean(ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW, ID_PREFERENCE_CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW_DEFAULT_VALUE)
+            val notUseShutter = PreferenceAccessWrapper(context).getBoolean(ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE, ID_PREFERENCE_CAPTURE_ONLY_LIVEVIEW_IMAGE_DEFAULT_VALUE)
             if ((captureBothCamera)&&(liveViewListener.isImageReceived()))
             {
                 // ライブビュー画像を保管する場合...
@@ -259,6 +259,9 @@ class OmdsCameraControl(private val context: AppCompatActivity, private val vibr
     {
         return (number)
     }
+
+    override fun getCameraShutter(id: Int): ICameraShutter { return (this) }
+    override fun getZoomControl(id: Int): IZoomLensControl { return (zoomLensControl) }
 
     override fun detectedOpcProtocol(opcProtocol: Boolean)
     {

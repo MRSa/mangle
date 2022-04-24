@@ -30,8 +30,8 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.T
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.TORCH_MODE
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.WHITE_BALANCE
 import jp.osdn.gokigen.gokigenassets.camera.vendor.theta.status.ICaptureModeReceiver
-import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_ARRAY_CAMERA_METHOD
-import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_PREFERENCE_ARRAY_CAMERA_METHOD_VALUE
+import jp.osdn.gokigen.gokigenassets.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_ARRAY_CAMERA_METHOD
+import jp.osdn.gokigen.gokigenassets.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_ARRAY_CAMERA_METHOD_VALUE
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_CAMERAX
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_OMDS
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_PANASONIC
@@ -45,7 +45,7 @@ import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 
 class ConsolePanelControl (private val context: AppCompatActivity, private val vibrator : IVibrator, informationNotify: IInformationReceiver, private val preference: ICameraPreferenceProvider, private val number : Int = 0) : IDisplayInjector,
-    ILiveViewController, ICameraControl, View.OnClickListener, View.OnLongClickListener, ICaptureModeReceiver, ICameraShutter, IKeyDown, IAnotherDrawer, View.OnTouchListener, ICameraStatus, IDetectPositionReceiver
+    ILiveViewController, ICameraControl, View.OnClickListener, View.OnLongClickListener, ICaptureModeReceiver, ICameraShutter, IKeyDown, IAnotherDrawer, View.OnTouchListener, ICameraStatus, IDetectPositionReceiver, IZoomLensControl
 {
     private val gestureListener = ConsolePanelGestureListener(this)
     private val gestureDetector = GestureDetectorCompat(context, gestureListener)
@@ -104,7 +104,7 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
     override fun stopLiveView() { }
     override fun connectToCamera() { }
     override fun startCamera(isPreviewView: Boolean, cameraSequence: Int) { }
-    override fun finishCamera() { }
+    override fun finishCamera(isPowerOff: Boolean) { }
     override fun changeCaptureMode(mode: String) { }
     override fun needRotateImage(): Boolean { return (false) }
     override fun captureButtonReceiver(id: Int): View.OnClickListener { return (this) }
@@ -117,6 +117,8 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
     override fun doShutterOff() { }
     override fun getAnotherTouchListener(id : Int) : View.OnTouchListener { return (this) }
     override fun getCameraNumber(): Int { return (number) }
+    override fun getCameraShutter(id: Int): ICameraShutter { return (this) }
+    override fun getZoomControl(id: Int): IZoomLensControl { return (this) }
 
     override fun setNeighborCameraControl(index: Int, camera0: ICameraControl?, camera1: ICameraControl?, camera2: ICameraControl?, camera3: ICameraControl?)
     {
@@ -318,7 +320,7 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
     }
 */
 
-    override fun onDraw(canvas: Canvas?)
+    override fun onDraw(canvas: Canvas?, imageRectF: RectF, rotationDegrees: Int)
     {
         if (canvas == null)
         {
@@ -608,7 +610,7 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
             //  area : bottom-right UP
             val rect = RectF(canvasWidth * 2.0f, canvasHeight * 7.0f, canvas.width.toFloat(), canvasHeight * 8.0f)
             val msg = currentCameraStatus.getStatus(REMAIN_SHOTS)
-            val color = currentCameraStatus.getStatusColor(FOCUS_STATUS)
+            val color = currentCameraStatus.getStatusColor(REMAIN_SHOTS)
             drawString(canvas, rect, msg, color)
         }
         catch (e : Exception)
@@ -818,4 +820,14 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
         }
         return (statusItemSelector.itemSelected(currentCameraControl, widthPosition, heightPosition))
     }
+
+    override fun canZoom(): Boolean { return (false) }
+    override fun updateStatus() { }
+    override fun getMaximumFocalLength(): Float { return (0.0f) }
+    override fun getMinimumFocalLength(): Float { return (0.0f) }
+    override fun getCurrentFocalLength(): Float { return (0.0f) }
+    override fun driveZoomLens(targetLength: Float) { }
+    override fun driveZoomLens(isZoomIn: Boolean) { }
+    override fun moveInitialZoomPosition() { }
+    override fun isDrivingZoomLens(): Boolean { return (false) }
 }
