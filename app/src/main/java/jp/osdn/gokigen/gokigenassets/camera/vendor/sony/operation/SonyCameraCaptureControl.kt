@@ -30,7 +30,7 @@ class SonyCameraCaptureControl(frameDisplayer: IAutoFocusFrameDisplay, indicator
     }
 
     /**
-     *
+     * 撮影する
      *
      */
     override fun doCapture(kind: Int)
@@ -43,11 +43,13 @@ class SonyCameraCaptureControl(frameDisplayer: IAutoFocusFrameDisplay, indicator
                 val status = cameraStatus.getStatus(ICameraStatus.DRIVE_MODE).lowercase()
                 if (status.contains("cont"))  // 'Continuous' or 'Spd Priority Cont.'
                 {
+                    // 連写の場合...
                     continuousShotControl.continuousShot(isStarted)
                     isStarted = !isStarted
                     return
                 }
             }
+            // 単写の場合...
             singleShotControl.singleShot()
             return
         }

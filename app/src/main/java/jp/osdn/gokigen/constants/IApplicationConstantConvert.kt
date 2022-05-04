@@ -1,4 +1,4 @@
-package jp.osdn.gokigen.gokigenassets.constants
+package jp.osdn.gokigen.constants
 
 import jp.osdn.gokigen.mangle.R
 import jp.osdn.gokigen.mangle.preference.IPreferencePropertyAccessor.Companion.CACHE_LIVE_VIEW_PICTURES
