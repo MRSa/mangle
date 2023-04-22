@@ -1,6 +1,5 @@
 package jp.osdn.gokigen.gokigenassets.camera.console
 
-
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
@@ -9,32 +8,29 @@ class ConsolePanelGestureListener(private val positionArea : IDetectPositionRece
 {
 
     // ScaleGestureDetector.OnScaleGestureListener
-    override fun onScale(detector: ScaleGestureDetector?): Boolean
+    override fun onScale(detector: ScaleGestureDetector): Boolean
     {
         return (false)
     }
 
     // ScaleGestureDetector.OnScaleGestureListener
-    override fun onScaleBegin(detector: ScaleGestureDetector?): Boolean
+    override fun onScaleBegin(detector: ScaleGestureDetector): Boolean
     {
         return (false)
     }
 
     // ScaleGestureDetector.OnScaleGestureListener
-    override fun onScaleEnd(detector: ScaleGestureDetector?)
+    override fun onScaleEnd(detector: ScaleGestureDetector)
     {
         //
     }
 
-    override fun onLongPress(e: MotionEvent?)
+    override fun onLongPress(e: MotionEvent)
     {
         super.onLongPress(e)
         try
         {
-            if (e != null)
-            {
-                positionArea.onLongPress(e.x, e.y)
-            }
+            positionArea.onLongPress(e.x, e.y)
         }
         catch (e : Exception)
         {
@@ -42,16 +38,13 @@ class ConsolePanelGestureListener(private val positionArea : IDetectPositionRece
         }
     }
 
-    override fun onSingleTapUp(e: MotionEvent?): Boolean
+    override fun onSingleTapUp(e: MotionEvent): Boolean
     {
         var ret = false
         super.onSingleTapUp(e)
         try
         {
-            if (e != null)
-            {
-                ret = positionArea.onSingleTapUp(e.x, e.y)
-            }
+            ret = positionArea.onSingleTapUp(e.x, e.y)
         }
         catch (e : Exception)
         {

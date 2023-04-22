@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnectionStatus
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
@@ -32,6 +33,9 @@ class MainActivity : AppCompatActivity(), IVibrator, ICameraStatusReceiver
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
+        ///////// SHOW SPLASH SCREEN /////////
+        installSplashScreen()
+
         Log.v(TAG, " ----- onCreate() -----")
         super.onCreate(savedInstanceState)
 
