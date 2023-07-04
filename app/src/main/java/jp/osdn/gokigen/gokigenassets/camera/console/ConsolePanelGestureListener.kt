@@ -1,5 +1,6 @@
 package jp.osdn.gokigen.gokigenassets.camera.console
 
+
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
