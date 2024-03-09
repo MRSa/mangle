@@ -1,7 +1,6 @@
 package jp.osdn.gokigen.mangle
 
 import android.Manifest
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.*
 import android.util.Log
@@ -9,6 +8,7 @@ import android.view.KeyEvent
 import android.view.WindowManager
 import android.widget.ImageButton
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -17,11 +17,9 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnectionStatus
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import jp.osdn.gokigen.gokigenassets.scene.ShowMessage
-import jp.osdn.gokigen.gokigenassets.utils.IScopedStorageAccessPermission
 import jp.osdn.gokigen.mangle.preference.PreferenceValueInitializer
 import jp.osdn.gokigen.mangle.scene.MainButtonHandler
 import jp.osdn.gokigen.mangle.scene.SceneChanger
-
 
 class MainActivity : AppCompatActivity(), IVibrator, ICameraStatusReceiver
 {
@@ -29,7 +27,7 @@ class MainActivity : AppCompatActivity(), IVibrator, ICameraStatusReceiver
     private lateinit var sceneChanger : SceneChanger// = SceneChanger(this, showMessage)
     private var connectionStatus : ICameraConnectionStatus.CameraConnectionStatus = ICameraConnectionStatus.CameraConnectionStatus.UNKNOWN
     private val showMessage : ShowMessage = ShowMessage(this)
-    private val accessPermission : IScopedStorageAccessPermission? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) { StorageOperationWithPermission(this) } else { null }
+    //private val accessPermission : IScopedStorageAccessPermission? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) { StorageOperationWithPermission(this) } else { null }
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -56,15 +54,40 @@ class MainActivity : AppCompatActivity(), IVibrator, ICameraStatusReceiver
             e.printStackTrace()
         }
 
-        if (allPermissionsGranted())
+        try
         {
-            checkMediaWritePermission()
-            sceneChanger.initializeFragment()
-            mainButtonHandler.initialize()
+            ///////// SET PERMISSIONS /////////
+            if (!allPermissionsGranted())
+            {
+                val requestPermission = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+
+                    ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
+                    if(!allPermissionsGranted())
+                    {
+                        // Abort launch application because required permissions was rejected.
+                        Toast.makeText(this, getString(R.string.permission_not_granted), Toast.LENGTH_SHORT).show()
+                        Log.v(TAG, "----- APPLICATION LAUNCH ABORTED -----")
+                        finish()
+                    }
+                    else
+                    {
+                        checkMediaWritePermission()
+                        sceneChanger.initializeFragment()
+                        mainButtonHandler.initialize()
+                    }
+                }
+                requestPermission.launch(REQUIRED_PERMISSIONS)
+            }
+            else
+            {
+                checkMediaWritePermission()
+                sceneChanger.initializeFragment()
+                mainButtonHandler.initialize()
+            }
         }
-        else
+        catch (e: Exception)
         {
-            ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
+            e.printStackTrace()
         }
     }
 
@@ -74,8 +97,39 @@ class MainActivity : AppCompatActivity(), IVibrator, ICameraStatusReceiver
         sceneChanger.finish()
     }
 
-    private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
-        ContextCompat.checkSelfPermission(baseContext, it) == PackageManager.PERMISSION_GRANTED
+    private fun allPermissionsGranted() : Boolean
+    {
+        var result = true
+        for (param in REQUIRED_PERMISSIONS)
+        {
+            if (ContextCompat.checkSelfPermission(
+                    baseContext,
+                    param
+                ) != PackageManager.PERMISSION_GRANTED
+            )
+            {
+                // Permission Denied...
+                if ((param == Manifest.permission.ACCESS_MEDIA_LOCATION)&&(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q))
+                {
+                    //　この場合は権限付与の判断を除外 (デバイスが (10) よりも古く、ACCESS_MEDIA_LOCATION がない場合）
+                }
+                else if ((param == Manifest.permission.READ_EXTERNAL_STORAGE)&&(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU))
+                {
+                    // この場合は、権限付与の判断を除外 (SDK: 33以上はエラーになる...)
+                }
+                else if ((param == Manifest.permission.WRITE_EXTERNAL_STORAGE)&&(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU))
+                {
+                    // この場合は、権限付与の判断を除外 (SDK: 33以上はエラーになる...)
+                }
+                else
+                {
+                    // ----- 権限が得られなかった場合...
+                    Log.v(TAG, " Permission: $param : ${Build.VERSION.SDK_INT}")
+                    result = false
+                }
+            }
+        }
+        return (result)
     }
 
     private fun checkMediaWritePermission()
@@ -83,39 +137,6 @@ class MainActivity : AppCompatActivity(), IVibrator, ICameraStatusReceiver
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
         {
             StorageOperationWithPermission(this).requestStorageAccessFrameworkLocation()
-        }
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray)
-    {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == REQUEST_CODE_PERMISSIONS)
-        {
-            if (allPermissionsGranted())
-            {
-                checkMediaWritePermission()
-                sceneChanger.initializeFragment()
-                mainButtonHandler.initialize()
-            }
-            else
-            {
-                Toast.makeText(this, getString(R.string.permission_not_granted), Toast.LENGTH_SHORT).show()
-                //Snackbar.make(main_layout,"Permissions not granted by the user.", Snackbar.LENGTH_SHORT).show()
-                finish()
-            }
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
-    {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_CODE_MEDIA_EDIT)
-        {
-            accessPermission?.responseAccessPermission(resultCode, data)
-        }
-        if (requestCode == REQUEST_CODE_OPEN_DOCUMENT_TREE)
-        {
-            accessPermission?.responseStorageAccessFrameworkLocation(resultCode, data)
         }
     }
 
@@ -284,8 +305,8 @@ class MainActivity : AppCompatActivity(), IVibrator, ICameraStatusReceiver
         private val TAG = MainActivity::class.java.simpleName
 
         private const val REQUEST_CODE_PERMISSIONS = 10
-        const val REQUEST_CODE_MEDIA_EDIT = 12
-        const val REQUEST_CODE_OPEN_DOCUMENT_TREE = 20
+        //const val REQUEST_CODE_MEDIA_EDIT = 12
+        //const val REQUEST_CODE_OPEN_DOCUMENT_TREE = 20
 
         private val REQUIRED_PERMISSIONS = arrayOf(
             Manifest.permission.CAMERA,

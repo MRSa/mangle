@@ -39,12 +39,22 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
     private lateinit var cameraXCamera : Camera
     private lateinit var clickKeyDownListener : CameraClickKeyDownListener
     private var cameraIsStarted = false
+    private var isPendingTask = false
     private val cameraXCameraControl = CameraXCameraControl()
     private val cameraXCameraStatusHolder = CameraXCameraStatusHolder(cameraXCameraControl)
     private val cameraXZoomControl = CameraZoomLensControl(cameraXCameraControl)
     private val clickKeyDownListeners = mutableMapOf<Int, CameraClickKeyDownListener>()
     private val cachePositionProviders = mutableMapOf<Int, ICachePositionProvider>()
 
+    private var camera0: ICameraControl? = null
+    private var camera1: ICameraControl? = null
+    private var camera2: ICameraControl? = null
+    private var camera3: ICameraControl? = null
+    private var camera4: ICameraControl? = null
+    private var camera5: ICameraControl? = null
+    private var camera6: ICameraControl? = null
+    private var camera7: ICameraControl? = null
+    private val cameraXControlList = ArrayList<Boolean>()
     override fun getConnectionMethod(): String
     {
         return ("camerax")
@@ -371,9 +381,113 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
         clickKeyDownListeners[id] = listener
         return (listener)
     }
-    override fun setNeighborCameraControl(index: Int, camera0: ICameraControl?, camera1: ICameraControl?, camera2: ICameraControl?, camera3: ICameraControl?) { }
-    override fun setNeighborCameraControlFinished() { }
+    override fun setNeighborCameraControl(index: Int, camera0: ICameraControl?, camera1: ICameraControl?, camera2: ICameraControl?, camera3: ICameraControl?)
+    {
+        Log.v(TAG, " setNeighborCameraControl($index) ")
+        if (index == 0)
+        {
+            this.camera0 = camera0
+            this.camera1 = camera1
+            this.camera2 = camera2
+            this.camera3 = camera3
+        }
+        else  // if (index == 1)
+        {
+            this.camera4 = camera0
+            this.camera5 = camera1
+            this.camera6 = camera2
+            this.camera7 = camera3
+        }
+    }
+    override fun setNeighborCameraControlFinished()
+    {
+        try
+        {
+            checkCameraXControl()
+            checkIsPendingCameraXControl()
+            Log.v(TAG, " -=-=-=-=- camerax check ($number)  isPending : $isPendingTask -=-=-=-=- ")
+            checkConcurrentCameras()
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    private fun checkCameraXControl()
+    {
+        cameraXControlList.clear()
+        cameraXControlList.add(camera0?.getConnectionMethod().equals("camerax"))
+        cameraXControlList.add(camera1?.getConnectionMethod().equals("camerax"))
+        cameraXControlList.add(camera2?.getConnectionMethod().equals("camerax"))
+        cameraXControlList.add(camera3?.getConnectionMethod().equals("camerax"))
+        cameraXControlList.add(camera4?.getConnectionMethod().equals("camerax"))
+        cameraXControlList.add(camera5?.getConnectionMethod().equals("camerax"))
+        cameraXControlList.add(camera6?.getConnectionMethod().equals("camerax"))
+        cameraXControlList.add(camera7?.getConnectionMethod().equals("camerax"))
+    }
+
+    private fun checkIsPendingCameraXControl()
+    {
+        val startIndex = number
+        if ((startIndex >= 0)&&(startIndex < 7))
+        {
+            for (index in startIndex..7)
+            {
+                if (cameraXControlList[index])
+                {
+                    // 自分より大きい ... cameraX はそっち(大きい方)を使う
+                    isPendingTask = true
+                }
+            }
+        }
+    }
+
+    private fun checkConcurrentCameras()
+    {
+        try
+        {
+            Log.v(TAG, "      checkConcurrentCameras() ")
+            var index = 0
+            val cameraProvider: ProcessCameraProvider = ProcessCameraProvider.getInstance(activity).get()
+            for (cameraInfo in cameraProvider.availableCameraInfos)
+            {
+                Log.v(TAG, "-----****************** $index *******************-----")
+                Log.v(TAG, "lensFacing : ${cameraInfo.lensFacing}")
+                Log.v(TAG, "exposureState : ${cameraInfo.exposureState}")
+                Log.v(TAG, "sensorRotationDegrees : ${cameraInfo.sensorRotationDegrees}")
+                Log.v(TAG, "hasFlashUnit : ${cameraInfo.hasFlashUnit()}")
+                index++
+                Log.v(TAG, "-----****************************************-----")
+            }
+            index = 0
+            for (cameraInfos in cameraProvider.availableConcurrentCameraInfos)
+            {
+                Log.v(TAG, "****************** $index *******************")
+                for (cameraInfo in cameraInfos)
+                {
+                    Log.v(TAG, "lensFacing : ${cameraInfo.lensFacing}")
+                    Log.v(TAG, "exposureState : ${cameraInfo.exposureState}")
+                    Log.v(TAG, "sensorRotationDegrees : ${cameraInfo.sensorRotationDegrees}")
+                    Log.v(TAG, "hasFlashUnit : ${cameraInfo.hasFlashUnit()}")
+                }
+                index++
+                Log.v(TAG, "****************************************")
+            }
+
+            }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
     override fun getCameraStatus(): ICameraStatus { return (cameraXCameraStatusHolder) }
+
+
+
+
+
 
     override fun doShutter()
     {
