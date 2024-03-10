@@ -14,6 +14,8 @@ import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
+import androidx.camera.core.resolutionselector.ResolutionSelector
+import androidx.camera.core.resolutionselector.ResolutionStrategy
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import jp.osdn.gokigen.gokigenassets.camera.preference.ICameraPreferenceProvider
@@ -205,6 +207,8 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
         Log.v(TAG, " getImageAnalysis(option1 = '$option1', option2 = '$option2') ")
         val previewSize = if (option1.isNotBlank()) {
             when (option1) {
+                "_16K" -> Size(8640, 15360)
+                "_10K" -> Size(4320, 10240)
                 "_8K" -> Size(4320, 7680)
                 "_6K" -> Size(3384, 6016)
                 "_4K"   -> Size(4096, 2160)
@@ -215,6 +219,8 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
                 "_XGA" -> Size(1024, 768)   // XGA  : 1600x1200 @ Pixel3a
                 "_SVGA" -> Size(800, 600)   // SVGA : 1280x960  @ Pixel3a
                 "_VGA" -> Size(640, 480)   // SVGA : 1280x960  @ Pixel3a
+                "16K" -> Size(15360, 8640)
+                "10K" -> Size(10240, 4320)
                 "8K" -> Size(7680, 4320)
                 "6K" -> Size(6016, 3384)
                 "4K"   -> Size(2160, 4096)
@@ -232,11 +238,25 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
         {
             Size(640, 480)
         }
+
+        val resolutionSelector = if (option1.isNotBlank())
+        {
+            ResolutionSelector.Builder()
+                .setResolutionStrategy(
+                    ResolutionStrategy(previewSize, ResolutionStrategy.FALLBACK_RULE_CLOSEST_HIGHER_THEN_LOWER))
+                .build()
+        }
+        else
+        {
+            ResolutionSelector.Builder().build()
+        }
+
         //val useImageFormatOption = false
         return (//if (!useImageFormatOption) {
                     if (option1.isNotBlank()) {
                         ImageAnalysis.Builder()
-                            .setTargetResolution(previewSize)
+                            .setResolutionSelector(resolutionSelector)
+                            //.setTargetResolution(previewSize)
                             .setTargetRotation(getImageRotation())
                             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                             .build()
